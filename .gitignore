@@ -10,3 +10,21 @@ dist/
 .vite/
 extracted_images/
 _design-exports/
+
+# Large scaffold / build artefacts
+Website Previews/
+bw_platform_05_scaffold/
+reference-images/
+
+# Scratch / log files
+stderr.txt
+video.txt
+build_log.txt
+AI.txt
+*.xlsx
+
+# Generated helper scripts (output already committed)
+generate_website_data.py
+generate_website_platforms.py
+generated_website_data.ts
+generated_website_platforms.ts

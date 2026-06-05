@@ -1,13 +1,19 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   LayoutGrid, List, Star, Copy, CheckCircle2, X,
-  Search, ChevronLeft, ChevronRight, Loader2,
+  Search, ChevronLeft, ChevronRight, Loader2, ArrowRight,
 } from "lucide-react";
-import { platforms, familyMeta, type Family } from "../theme";
+import { platforms, videoPlatforms, websitePlatforms, familyMeta, categories as themeCats, type Family } from "../theme";
 import { libraryApi, type LibraryPrompt } from "../../lib/api";
 import { promptImageMap } from "../../lib/prompt-images";
 import { imageLibraryPrompts } from "../../lib/library-data";
+import { videoLibraryPrompts } from "../../lib/video-data";
+import { videoPlatformVersions } from "../../lib/video-platforms";
 import { PromptCard } from "../PromptCard";
+import { WebsitePromptCard, WebsitePreviewModal } from "../WebsitePromptCard";
+import { websiteDesigns } from "../../lib/website-data";
+import { websitePlatformVersions } from "../../lib/website-platforms";
 
 const PAGE_SIZE = 20;
 
@@ -39,6 +45,7 @@ function toCardItem(p: LibraryPrompt) {
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export function Library({ go, family }: { go: (p: string) => void; family?: Family | null }) {
+  const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
   const [view, setView]         = useState<"grid" | "list">("grid");
   const [cat, setCat]           = useState<string | null>(null);
   const [platform, setPlatform] = useState<string | null>(null);
@@ -116,27 +123,31 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
 
   const meta = family ? familyMeta[family] : null;
 
-  // imageLibraryPrompts only has image-generation data.
-  // Other families have no static data yet — show "coming soon" instead.
-  const isImageFamily = !family || family === "image";
+  const isImageFamily   = !family || family === "image";
+  const isVideoFamily   = family === "video";
+  const isWebsiteFamily = family === "website";
+  const activePlatforms = isWebsiteFamily ? websitePlatforms : isVideoFamily ? videoPlatforms : platforms;
 
-  // ── Fallback: filter imageLibraryPrompts locally ─────────────────────────
-  // All 350 image prompts support all 6 platforms, so platform filter
-  // doesn't reduce the count — it only sets the preferred view in Detail.
-  const fallbackFiltered = isImageFamily
-    ? imageLibraryPrompts.filter(p =>
-        (!cat || p.category === cat) &&
-        (!query || p.title.toLowerCase().includes(query.toLowerCase()) ||
-                   p.description.toLowerCase().includes(query.toLowerCase()))
-      )
-    : [];
+  // ── Fallback: filter static prompts locally ───────────────────────────────
+  const videoWithPlatforms = videoLibraryPrompts.map(p => ({
+    ...p,
+    platforms: videoPlatformVersions[p.slug ?? ""] ?? {},
+  }));
+
+  const fallbackSource = isImageFamily ? imageLibraryPrompts : isVideoFamily ? videoWithPlatforms : [];
+  const fallbackFiltered = fallbackSource.filter(p =>
+    (!cat || p.category === cat) &&
+    (!query || p.title.toLowerCase().includes(query.toLowerCase()) ||
+               p.description.toLowerCase().includes(query.toLowerCase()))
+  );
   const fallbackPage   = fallbackFiltered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const fallbackPages  = Math.ceil(fallbackFiltered.length / PAGE_SIZE);
 
   // ── Determine items to render ────────────────────────────────────────────
-  const displayItems  = useFallback ? fallbackPage : prompts.map(toCardItem);
-  const displayTotal  = useFallback ? fallbackFiltered.length : total;
-  const displayPages  = useFallback ? fallbackPages : pages;
+  const useFallbackForFamily = isImageFamily || isVideoFamily;
+  const displayItems  = (useFallback || useFallbackForFamily) ? fallbackPage : prompts.map(toCardItem);
+  const displayTotal  = (useFallback || useFallbackForFamily) ? fallbackFiltered.length : total;
+  const displayPages  = (useFallback || useFallbackForFamily) ? fallbackPages : pages;
 
   // ── Sort client-side for both sources ────────────────────────────────────
   const sorted = [...displayItems].sort((a, b) => {
@@ -144,7 +155,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
     return 0;
   });
 
-  // ── Category list — only meaningful for image family ─────────────────────
+  // ── Category list ─────────────────────────────────────────────────────────
   const staticCats = Array.from(
     imageLibraryPrompts.reduce((m, p) => {
       m.set(p.category, (m.get(p.category) ?? 0) + 1);
@@ -152,11 +163,19 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
     }, new Map<string, number>())
   ).map(([category, count]) => ({ category, count }));
 
+  const videoStaticCats  = themeCats.video.map(c => ({ category: c.name, count: videoLibraryPrompts.filter(p => p.category === c.name).length }));
+  const websiteStaticCats = themeCats.website.map(c => ({ category: c.name, count: websiteDesigns.filter(d => d.category === c.name).length }));
+
   const catList = isImageFamily
     ? (categories.length > 0 ? categories : staticCats)
+    : isVideoFamily
+    ? videoStaticCats
+    : isWebsiteFamily
+    ? websiteStaticCats
     : [];
 
   return (
+  <>
     <div className="max-w-[1400px] mx-auto px-6 py-8 text-[#094067]">
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
@@ -176,7 +195,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
           <p className="text-[#5f6c7b] mt-0.5">
             {loading
               ? "Loading…"
-              : `${displayTotal.toLocaleString()} prompt${displayTotal !== 1 ? "s" : ""}${cat ? ` in ${cat}` : ""}${platform ? ` · ${platforms.find(p => p.key === platform)?.name ?? platform}` : ""}`}
+              : `${displayTotal.toLocaleString()} prompt${displayTotal !== 1 ? "s" : ""}${cat ? ` in ${cat}` : ""}${platform ? ` · ${activePlatforms.find(p => p.key === platform)?.name ?? platform}` : ""}`}
             {searchMode === "fuzzy" && (
               <span className="ml-2 text-[11px] px-2 py-0.5 bg-[#ffd803]/40 text-[#094067] rounded-full">fuzzy match</span>
             )}
@@ -226,13 +245,13 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
             {catList.map(c => (
               <FilterPill key={c.category} active={cat===c.category} onClick={() => handleCatChange(c.category)}>
                 {c.category}
-                <span className="ml-1 text-[11px] opacity-60">({c.count})</span>
+                {c.count > 0 && <span className="ml-1 text-[11px] opacity-60">({c.count})</span>}
               </FilterPill>
             ))}
           </FilterGroup>
           <FilterGroup title="Platform">
             <FilterPill active={platform === null} onClick={() => { setPlatform(null); setPage(1); }}>All</FilterPill>
-            {platforms.map(pl => (
+            {activePlatforms.map(pl => (
               <FilterPill key={pl.key} active={platform === pl.key} onClick={() => { setPlatform(pl.key); setPage(1); }}>
                 <span className="inline-block w-2 h-2 rounded-full mr-1.5" style={{ background: pl.color }} />
                 {pl.name}
@@ -243,8 +262,31 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
 
         {/* ── Prompt grid / list ───────────────────────────────────────── */}
         <main>
-          {/* Coming-soon placeholder for families with no data yet */}
-          {!loading && !isImageFamily && sorted.length === 0 ? (
+          {/* Website Generation */}
+          {isWebsiteFamily ? (() => {
+            const filtered = websiteDesigns.filter(d => !cat || d.subCategory === cat || d.category === cat);
+            return filtered.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-24 gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-[#094067]/10 flex items-center justify-center text-3xl">⌨️</div>
+                <p className="text-[#5f6c7b]">No website prompts in this category yet.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                {filtered.map(d => (
+                  <WebsitePromptCard
+                    key={d.id}
+                    design={d}
+                    onClick={() => go("website-detail:" + d.slug)}
+                    onCopy={() => {
+                      const prompt = websitePlatformVersions[d.slug]?.lovable ?? d.description;
+                      navigator.clipboard?.writeText(prompt);
+                    }}
+                    onPreviewExpand={() => setExpandedSlug(d.slug)}
+                  />
+                ))}
+              </div>
+            );
+          })() :!loading && !isImageFamily && !isVideoFamily && !isWebsiteFamily && sorted.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
               <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#ffd803]/30 to-[#094067]/10 flex items-center justify-center text-4xl">
                 ✦
@@ -346,6 +388,191 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
             </div>
           )}
         </main>
+      </div>
+    </div>
+
+    {/* ── Website preview modal ─────────────────────────────────────── */}
+    <AnimatePresence>
+      {expandedSlug && (() => {
+        const d = websiteDesigns.find(x => x.slug === expandedSlug);
+        return d ? (
+          <WebsitePreviewModal
+            key={expandedSlug}
+            slug={expandedSlug}
+            title={d.title}
+            onClose={() => setExpandedSlug(null)}
+          />
+        ) : null;
+      })()}
+    </AnimatePresence>
+  </>
+  );
+}
+
+// ─── Library Landing ─────────────────────────────────────────────────────────
+
+const FAMILY_CARDS = [
+  {
+    key: "image",
+    title: "Image Generation",
+    tagline: "Craft stunning visuals for Midjourney, Firefly, FLUX and more",
+    count: "420+",
+    label: "prompts",
+    chips: ["Midjourney", "Firefly", "FLUX", "ChatGPT", "Gemini"],
+    bg: "bg-white",
+    border: "border-[#ffd803]/60",
+    accentBg: "bg-[#ffd803]",
+    accentText: "text-[#094067]",
+    taglineColor: "text-[#5f6c7b]",
+    countColor: "text-[#094067]",
+    chipClass: "bg-[#094067]/8 border border-[#094067]/15 text-[#5f6c7b]",
+    visual: (
+      <div className="flex gap-2 flex-wrap">
+        {["#ffd803","#ef4565","#094067","#90b4ce"].map((c, i) => (
+          <div key={i} className="w-10 h-10 rounded-xl border-2 border-white shadow-sm" style={{ background: c }} />
+        ))}
+      </div>
+    ),
+  },
+  {
+    key: "video",
+    title: "Video Generation",
+    tagline: "Direct AI-generated videos across Veo, Kling, Seedance and more",
+    count: "30",
+    label: "prompts",
+    chips: ["Veo", "Kling", "Seedance", "Higgsfield", "Pika"],
+    bg: "bg-gradient-to-br from-[#1a1a2e] to-[#4c1d95]",
+    border: "border-[#7c3aed]/40",
+    accentBg: "bg-[#7c3aed]",
+    accentText: "text-white",
+    taglineColor: "text-white/60",
+    countColor: "text-white",
+    chipClass: "border border-white/20 text-white/60",
+    visual: (
+      <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+        <div className="w-0 h-0 border-t-[8px] border-t-transparent border-l-[14px] border-l-white border-b-[8px] border-b-transparent ml-1" />
+      </div>
+    ),
+  },
+  {
+    key: "website",
+    title: "Website Generation",
+    tagline: "Full-stack UI prompts for Lovable, Bolt, Claude Code and more",
+    count: "Coming",
+    label: "soon",
+    chips: ["Lovable", "Bolt", "Claude Code", "Codex", "Replit"],
+    bg: "bg-[#094067]",
+    border: "border-[#094067]/20",
+    accentBg: "bg-[#ffd803]",
+    accentText: "text-[#094067]",
+    taglineColor: "text-white/60",
+    countColor: "text-white",
+    chipClass: "border border-white/20 text-white/60",
+    visual: (
+      <div className="flex gap-1">
+        {["#ef4565","#ffd803","#10a37f"].map((c,i) => (
+          <div key={i} className="w-3 h-3 rounded-full" style={{ background: c }} />
+        ))}
+      </div>
+    ),
+  },
+  {
+    key: "text",
+    title: "Text Generation",
+    tagline: "Structured prompts for developers, marketers, analysts and more",
+    count: "Coming",
+    label: "soon",
+    chips: ["ChatGPT", "Gemini", "Grok", "Claude"],
+    bg: "bg-[#0d1b2a]",
+    border: "border-[#094067]/30",
+    accentBg: "bg-[#ef4565]",
+    accentText: "text-white",
+    taglineColor: "text-white/50",
+    countColor: "text-white",
+    chipClass: "border border-white/15 text-white/50",
+    visual: (
+      <div className="font-mono text-[10px] text-[#bce4d8]/60 leading-4 space-y-0.5">
+        <div>const prompt = <span className="text-[#ffd803]">`</span></div>
+        <div className="pl-2 text-[#90b4ce]">You are an expert…</div>
+        <div><span className="text-[#ffd803]">`</span>;</div>
+      </div>
+    ),
+  },
+  {
+    key: "content",
+    title: "Content Generation",
+    tagline: "Campaigns, copy, and content for every channel and format",
+    count: "Coming",
+    label: "soon",
+    chips: ["ChatGPT", "Gemini", "Claude", "Grok"],
+    bg: "bg-gradient-to-br from-[#ef4565]/10 to-white",
+    border: "border-[#ef4565]/20",
+    accentBg: "bg-[#ef4565]",
+    accentText: "text-white",
+    taglineColor: "text-[#5f6c7b]",
+    countColor: "text-[#094067]",
+    chipClass: "bg-[#ef4565]/10 border border-[#ef4565]/20 text-[#ef4565]",
+    visual: (
+      <div className="flex flex-wrap gap-1">
+        {["Blog", "Email", "Ad Copy", "Social"].map(t => (
+          <span key={t} className="px-2 py-0.5 rounded-full bg-[#ef4565]/20 text-[#ef4565] text-[10px] font-semibold">{t}</span>
+        ))}
+      </div>
+    ),
+  },
+];
+
+export function LibraryLanding({ go }: { go: (p: string) => void }) {
+  return (
+    <div className="max-w-[1200px] mx-auto px-6 py-12 text-[#094067]">
+      <div className="mb-10">
+        <h1 className="text-4xl font-bold text-[#094067] mb-2">Prompt Library</h1>
+        <p className="text-[#5f6c7b] text-lg">Choose a category to explore curated, tested prompts.</p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {FAMILY_CARDS.map((card) => (
+          <motion.div
+            key={card.key}
+            onClick={() => go("library:" + card.key)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === "Enter") go("library:" + card.key); }}
+            whileHover={{ y: -6, boxShadow: "6px 10px 0 0 #094067" }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 280, damping: 22 }}
+            className={`${card.bg} border-2 ${card.border} rounded-2xl p-6 cursor-pointer flex flex-col gap-4 group relative overflow-hidden`}
+          >
+            {/* Visual accent */}
+            <div className="h-12 flex items-center">{card.visual}</div>
+
+            {/* Count badge */}
+            <div className="flex items-baseline gap-1.5">
+              <span className={`text-3xl font-black ${card.countColor}`}>{card.count}</span>
+              <span className={`text-sm font-semibold ${card.taglineColor}`}>{card.label}</span>
+            </div>
+
+            {/* Title + tagline */}
+            <div>
+              <div className={`text-lg font-bold ${card.countColor} mb-1`}>{card.title}</div>
+              <p className={`text-[13px] leading-relaxed ${card.taglineColor}`}>{card.tagline}</p>
+            </div>
+
+            {/* Platform chips */}
+            <div className="flex flex-wrap gap-1 mt-auto">
+              {card.chips.map(chip => (
+                <span key={chip} className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${card.chipClass}`}>
+                  {chip}
+                </span>
+              ))}
+            </div>
+
+            {/* Arrow */}
+            <div className={`absolute bottom-5 right-5 w-8 h-8 rounded-full ${card.accentBg} ${card.accentText} flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity`}>
+              <ArrowRight className="w-4 h-4" />
+            </div>
+          </motion.div>
+        ))}
       </div>
     </div>
   );

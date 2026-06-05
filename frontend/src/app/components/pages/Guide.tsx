@@ -1,16 +1,21 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
-import { BookOpen, Target, Layers, Wand2, Sparkles, Scale, ListChecks, Lightbulb, Copy, ChevronRight, Play } from "lucide-react";
+import { BookOpen, Target, Layers, Wand2, Sparkles, Scale, ListChecks, Lightbulb, Copy, ChevronRight, Play, Image, Globe, Video, Code2, FileText } from "lucide-react";
 
 const sections = [
-  { key: "playground", label: "Playground",          icon: Play },
-  { key: "anatomy",    label: "Anatomy of a prompt", icon: Layers },
-  { key: "variables",  label: "Using variables",      icon: Wand2 },
-  { key: "platforms",  label: "Platform differences", icon: Scale },
-  { key: "patterns",   label: "Prompt patterns",      icon: Sparkles },
-  { key: "checklist",  label: "Quality checklist",    icon: ListChecks },
-  { key: "tips",       label: "Pro tips",             icon: Lightbulb },
+  { key: "playground", label: "Playground",          icon: Play,      group: "craft" },
+  { key: "anatomy",    label: "Anatomy of a prompt", icon: Layers,    group: "craft" },
+  { key: "variables",  label: "Using variables",      icon: Wand2,     group: "craft" },
+  { key: "platforms",  label: "Platform differences", icon: Scale,     group: "craft" },
+  { key: "patterns",   label: "Prompt patterns",      icon: Sparkles,  group: "craft" },
+  { key: "checklist",  label: "Quality checklist",    icon: ListChecks,group: "craft" },
+  { key: "tips",       label: "Pro tips",             icon: Lightbulb, group: "craft" },
+  { key: "image-gen",  label: "Image Generation",     icon: Image,     group: "how-to" },
+  { key: "web-gen",    label: "Website Generation",   icon: Globe,     group: "how-to" },
+  { key: "video-gen",  label: "Video Generation",     icon: Video,     group: "how-to" },
+  { key: "code-gen",   label: "Code Generation",      icon: Code2,     group: "how-to" },
+  { key: "content-gen",label: "Content Generation",   icon: FileText,  group: "how-to" },
 ];
 
 export function Guide({ go }: { go: (p: string) => void }) {
@@ -31,7 +36,30 @@ export function Guide({ go }: { go: (p: string) => void }) {
       <div className="grid lg:grid-cols-[260px_1fr] gap-8">
         <aside className="lg:sticky lg:top-6 self-start">
           <div className="bg-[#bce4d8] border border-[#094067]/15 rounded-2xl p-2">
-            {sections.map((s) => {
+            <div className="px-3 pt-1 pb-2 text-[10px] uppercase tracking-widest text-[#5f6c7b]" style={{ fontWeight: 700 }}>
+              Prompt Craft
+            </div>
+            {sections.filter(s => s.group === "craft").map((s) => {
+              const Icon = s.icon;
+              const on = active === s.key;
+              return (
+                <button
+                  key={s.key}
+                  onClick={() => setActive(s.key)}
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition ${
+                    on ? "bg-[#ffd803] text-[#094067]" : "text-[#5f6c7b] hover:text-[#094067] hover:bg-[#094067]/5"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span style={{ fontWeight: on ? 700 : 500 }}>{s.label}</span>
+                  <ChevronRight className={`w-4 h-4 ml-auto ${on ? "opacity-100" : "opacity-40"}`} />
+                </button>
+              );
+            })}
+            <div className="px-3 pt-3 pb-2 text-[10px] uppercase tracking-widest text-[#5f6c7b]" style={{ fontWeight: 700 }}>
+              How-To Guides
+            </div>
+            {sections.filter(s => s.group === "how-to").map((s) => {
               const Icon = s.icon;
               const on = active === s.key;
               return (
@@ -68,13 +96,18 @@ export function Guide({ go }: { go: (p: string) => void }) {
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.25 }}
             >
-              {active === "playground" && <Playground />}
-              {active === "anatomy"    && <Anatomy />}
-              {active === "variables"  && <Variables />}
-              {active === "platforms"  && <Platforms />}
-              {active === "patterns"   && <Patterns />}
-              {active === "checklist"  && <Checklist />}
-              {active === "tips"       && <Tips />}
+              {active === "playground"  && <Playground />}
+              {active === "anatomy"     && <Anatomy />}
+              {active === "variables"   && <Variables />}
+              {active === "platforms"   && <Platforms />}
+              {active === "patterns"    && <Patterns />}
+              {active === "checklist"   && <Checklist />}
+              {active === "tips"        && <Tips />}
+              {active === "image-gen"   && <ImageGenGuide />}
+              {active === "web-gen"     && <WebGenGuide />}
+              {active === "video-gen"   && <VideoGenGuide />}
+              {active === "code-gen"    && <CodeGenGuide />}
+              {active === "content-gen" && <ContentGenGuide />}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -464,6 +497,346 @@ function Playground() {
               {count >= 5 && "Strong prompt. This is the structure pros reach for."}
             </div>
           </div>
+        </div>
+      </Card>
+    </Section>
+  );
+}
+
+// ─── How-To Guide helpers ────────────────────────────────────────────────────
+
+function HowToStep({ n, text }: { n: number; text: string }) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="shrink-0 w-7 h-7 rounded-full bg-[#ffd803] border-2 border-[#094067] flex items-center justify-center text-[#094067]" style={{ fontWeight: 800, fontSize: "13px" }}>
+        {n}
+      </span>
+      <span className="text-[#094067] pt-0.5" style={{ lineHeight: 1.6 }}>{text}</span>
+    </div>
+  );
+}
+
+function ToolBadge({ name, color }: { name: string; color: string }) {
+  return (
+    <span className="px-3 py-1 rounded-full border-2 text-[13px]" style={{ background: `${color}18`, color, borderColor: `${color}55`, fontWeight: 700 }}>
+      {name}
+    </span>
+  );
+}
+
+function ProTip({ text }: { text: string }) {
+  return (
+    <div className="flex items-start gap-2">
+      <span className="text-[#10a37f] text-[15px]">✅</span>
+      <span className="text-[#094067]" style={{ lineHeight: 1.6 }}>{text}</span>
+    </div>
+  );
+}
+
+// ─── Image Generation Guide ──────────────────────────────────────────────────
+
+function ImageGenGuide() {
+  return (
+    <Section title="Image Generation" icon={Image}>
+      <Card>
+        <div className="text-[#094067] mb-2" style={{ fontWeight: 700 }}>What is Image Generation?</div>
+        <p className="text-[#5f6c7b]" style={{ lineHeight: 1.6 }}>
+          Image generation prompts help AI models create visuals from text descriptions. The quality of your
+          output depends almost entirely on how precisely you describe subject, style, lighting, and composition.
+        </p>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Popular Tools</div>
+        <div className="flex flex-wrap gap-2">
+          <ToolBadge name="Midjourney"             color="#ef4565" />
+          <ToolBadge name="ChatGPT Image Gen"       color="#10a37f" />
+          <ToolBadge name="FLUX"                    color="#90b4ce" />
+          <ToolBadge name="Ideogram"                color="#094067" />
+          <ToolBadge name="Recraft"                 color="#ffd803" />
+        </div>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-4" style={{ fontWeight: 700 }}>How to Use</div>
+        <div className="space-y-4">
+          <HowToStep n={1} text="Copy a prompt from the Prompt Library." />
+          <HowToStep n={2} text="Open your preferred image generation tool." />
+          <HowToStep n={3} text="Paste the prompt and click Generate." />
+          <HowToStep n={4} text="Modify subject, style, colors, or lighting to create variations." />
+        </div>
+        <div className="mt-5">
+          <div className="text-[#5f6c7b] text-[12px] mb-2" style={{ fontWeight: 600 }}>EXAMPLE PROMPT</div>
+          <PromptBlock>{`A luxury perfume bottle on a marble pedestal,
+soft studio lighting,
+premium commercial photography,
+shallow depth of field,
+ultra realistic`}</PromptBlock>
+        </div>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Pro Tips</div>
+        <div className="space-y-3">
+          <ProTip text="Add camera angles — e.g. low angle shot, bird's eye view, close-up macro." />
+          <ProTip text="Specify lighting — golden hour lighting, soft diffused light, neon backlight." />
+          <ProTip text="End with quality boosters — ultra realistic, highly detailed, 8K resolution." />
+          <ProTip text="For Midjourney: append --ar 16:9 --s 750 for consistent cinematic output." />
+        </div>
+      </Card>
+    </Section>
+  );
+}
+
+// ─── Website Generation Guide ────────────────────────────────────────────────
+
+function WebGenGuide() {
+  return (
+    <Section title="Website Generation" icon={Globe}>
+      <Card>
+        <div className="text-[#094067] mb-2" style={{ fontWeight: 700 }}>What is Website Generation?</div>
+        <p className="text-[#5f6c7b]" style={{ lineHeight: 1.6 }}>
+          Website prompts help AI generate full landing pages, SaaS interfaces, portfolio sites, e-commerce
+          stores, and agency websites — complete with layout, components, and styling.
+        </p>
+        <div className="flex flex-wrap gap-2 mt-4">
+          {["Landing pages", "SaaS websites", "Portfolio websites", "E-commerce stores", "Agency websites"].map(t => (
+            <span key={t} className="px-2.5 py-1 rounded-full bg-[#094067]/8 text-[#094067] text-[12px]" style={{ fontWeight: 600 }}>{t}</span>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Popular Tools</div>
+        <div className="flex flex-wrap gap-2">
+          <ToolBadge name="Lovable"   color="#ef4565" />
+          <ToolBadge name="Bolt"      color="#094067" />
+          <ToolBadge name="v0"        color="#0f0f0f" />
+          <ToolBadge name="Replit AI" color="#ffd803" />
+          <ToolBadge name="Cursor"    color="#10a37f" />
+          <ToolBadge name="CodeSX"    color="#90b4ce" />
+        </div>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-4" style={{ fontWeight: 700 }}>How to Use</div>
+        <div className="space-y-4">
+          <HowToStep n={1} text="Choose a website prompt from the Library." />
+          <HowToStep n={2} text="Copy the prompt." />
+          <HowToStep n={3} text="Paste into Lovable, Bolt, or v0 and generate." />
+          <HowToStep n={4} text="Refine with follow-up prompts for colors, fonts, and spacing." />
+        </div>
+        <div className="mt-5">
+          <div className="text-[#5f6c7b] text-[12px] mb-2" style={{ fontWeight: 600 }}>EXAMPLE PROMPT</div>
+          <PromptBlock>{`Create a modern AI SaaS landing page.
+
+Features:
+- Hero section with headline + CTA
+- Feature cards (3-column)
+- Pricing section
+- Testimonials
+- FAQ
+- Dark mode toggle
+
+Style:
+- Minimal, Apple-inspired
+- Use Inter font
+- Premium SaaS aesthetic`}</PromptBlock>
+        </div>
+        <div className="mt-5">
+          <div className="text-[#5f6c7b] text-[12px] mb-2" style={{ fontWeight: 600 }}>REFINEMENT PROMPT</div>
+          <PromptBlock>{`Use purple gradients.
+Add glassmorphism to cards.
+Increase whitespace between sections.
+Make the CTA button 48px height.`}</PromptBlock>
+        </div>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Pro Tips</div>
+        <div className="space-y-3">
+          <ProTip text="Always specify layout — '3-column feature section', 'full-width hero'." />
+          <ProTip text="Name every component — Navbar, Hero, Features, Pricing, Footer." />
+          <ProTip text="Reference real design systems — 'Inspired by Linear and Figma'." />
+          <ProTip text="Iterate in small steps — one refinement prompt per change is easier to track." />
+        </div>
+      </Card>
+    </Section>
+  );
+}
+
+// ─── Video Generation Guide ──────────────────────────────────────────────────
+
+function VideoGenGuide() {
+  const structure = ["Subject", "Action", "Environment", "Camera", "Lighting", "Mood", "Style"];
+
+  return (
+    <Section title="Video Generation" icon={Video}>
+      <Card>
+        <div className="text-[#094067] mb-2" style={{ fontWeight: 700 }}>What is Video Generation?</div>
+        <p className="text-[#5f6c7b]" style={{ lineHeight: 1.6 }}>
+          Video prompts create short cinematic clips — ads, reels, product showcases, and
+          atmospheric scenes — using AI video models that interpret text into motion.
+        </p>
+        <div className="flex flex-wrap gap-2 mt-4">
+          {["Ads", "Reels", "Cinematic videos", "Product showcases"].map(t => (
+            <span key={t} className="px-2.5 py-1 rounded-full bg-[#094067]/8 text-[#094067] text-[12px]" style={{ fontWeight: 600 }}>{t}</span>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Popular Tools</div>
+        <div className="flex flex-wrap gap-2">
+          <ToolBadge name="Veo"      color="#4285f4" />
+          <ToolBadge name="Seedance" color="#094067" />
+          <ToolBadge name="Kling"    color="#ef4565" />
+          <ToolBadge name="Luma"     color="#10a37f" />
+          <ToolBadge name="Hailuo"   color="#ffd803" />
+        </div>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-4" style={{ fontWeight: 700 }}>How to Use</div>
+        <div className="space-y-4">
+          <HowToStep n={1} text="Copy a video prompt from the Library." />
+          <HowToStep n={2} text="Paste into your chosen video generation tool." />
+          <HowToStep n={3} text="Generate and preview the clip." />
+          <HowToStep n={4} text="Adjust camera movement, lighting, and mood for variations." />
+        </div>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Universal Prompt Structure</div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {structure.map((s, i) => (
+            <div key={s} className="border border-[#094067]/15 rounded-xl p-3 text-center">
+              <div className="w-6 h-6 rounded-full bg-[#ffd803] text-[#094067] flex items-center justify-center mx-auto mb-1" style={{ fontWeight: 800, fontSize: "11px" }}>
+                {i + 1}
+              </div>
+              <div className="text-[#094067]" style={{ fontWeight: 700, fontSize: "13px" }}>{s}</div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Pro Tips</div>
+        <div className="space-y-3">
+          <ProTip text="Describe camera movement explicitly — slow dolly forward, handheld tracking shot." />
+          <ProTip text="Set the mood with lighting and color grading — warm golden tones, cold blue shadows." />
+          <ProTip text="Keep prompts under 100 words — most video models work better with focused descriptions." />
+          <ProTip text="Use cinematic references — 'shot like a Nolan film', 'in the style of a Nike ad'." />
+        </div>
+      </Card>
+    </Section>
+  );
+}
+
+// ─── Code Generation Guide ───────────────────────────────────────────────────
+
+function CodeGenGuide() {
+  return (
+    <Section title="Code Generation" icon={Code2}>
+      <Card>
+        <div className="text-[#094067] mb-2" style={{ fontWeight: 700 }}>What is Code Generation?</div>
+        <p className="text-[#5f6c7b]" style={{ lineHeight: 1.6 }}>
+          Code generation prompts produce React components, full landing pages, dashboards,
+          SaaS interfaces, and utility functions — ready to drop into your project.
+        </p>
+        <div className="flex flex-wrap gap-2 mt-4">
+          {["React components", "Landing pages", "Dashboards", "SaaS interfaces", "Utility functions"].map(t => (
+            <span key={t} className="px-2.5 py-1 rounded-full bg-[#094067]/8 text-[#094067] text-[12px]" style={{ fontWeight: 600 }}>{t}</span>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Popular Tools</div>
+        <div className="flex flex-wrap gap-2">
+          <ToolBadge name="Cursor"         color="#10a37f" />
+          <ToolBadge name="Claude Code"    color="#ef4565" />
+          <ToolBadge name="GitHub Copilot" color="#094067" />
+          <ToolBadge name="ChatGPT"        color="#10a37f" />
+        </div>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Example Prompt</div>
+        <PromptBlock>{`Build a responsive pricing section in React + Tailwind CSS.
+
+Requirements:
+- 3 tiers: Free, Pro, Enterprise
+- Dark mode support
+- Highlight the middle (Pro) tier
+- Smooth hover effects on cards
+- Include a monthly/yearly toggle
+- TypeScript props for plan data`}</PromptBlock>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Pro Tips</div>
+        <div className="space-y-3">
+          <ProTip text="Specify the exact stack — React, Tailwind, TypeScript, shadcn/ui." />
+          <ProTip text="State constraints upfront — 'no external dependencies', 'single file'." />
+          <ProTip text="Ask for TypeScript interfaces — better output and easier to refine." />
+          <ProTip text="Use follow-up prompts to add features one at a time, not all at once." />
+        </div>
+      </Card>
+    </Section>
+  );
+}
+
+// ─── Content Generation Guide ────────────────────────────────────────────────
+
+function ContentGenGuide() {
+  return (
+    <Section title="Content Generation" icon={FileText}>
+      <Card>
+        <div className="text-[#094067] mb-2" style={{ fontWeight: 700 }}>What is Content Generation?</div>
+        <p className="text-[#5f6c7b]" style={{ lineHeight: 1.6 }}>
+          Content generation prompts produce blog posts, social media captions, marketing copy,
+          email sequences, and scripts — on-brand and ready to publish or edit.
+        </p>
+        <div className="flex flex-wrap gap-2 mt-4">
+          {["Blog posts", "Social captions", "Marketing copy", "Email sequences", "Ad copy"].map(t => (
+            <span key={t} className="px-2.5 py-1 rounded-full bg-[#094067]/8 text-[#094067] text-[12px]" style={{ fontWeight: 600 }}>{t}</span>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Popular Tools</div>
+        <div className="flex flex-wrap gap-2">
+          <ToolBadge name="ChatGPT" color="#10a37f" />
+          <ToolBadge name="Claude"  color="#ef4565" />
+          <ToolBadge name="Gemini"  color="#4285f4" />
+        </div>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Example Prompt</div>
+        <PromptBlock>{`Write a LinkedIn post announcing an AI startup launch.
+
+Tone: Professional but approachable
+Length: 150–200 words
+Audience: Startup founders and early adopters
+
+Include:
+- A hook in the first line
+- 2–3 key benefits
+- A clear call to action
+
+Avoid: Buzzwords, excessive emojis, passive voice`}</PromptBlock>
+      </Card>
+
+      <Card>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Pro Tips</div>
+        <div className="space-y-3">
+          <ProTip text="Always define tone — professional, casual, witty, authoritative." />
+          <ProTip text="Set an exact word count — 'under 150 words' prevents over-generation." />
+          <ProTip text="Include a negative constraint — 'avoid clichés', 'no bullet points'." />
+          <ProTip text="Provide an example of ideal output — one sample beats three adjectives." />
         </div>
       </Card>
     </Section>

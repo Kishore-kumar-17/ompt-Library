@@ -63,7 +63,25 @@ CREATE TABLE IF NOT EXISTS pl_prompt_platforms (
 );
 
 -- -----------------------------------------------------------------------------
--- 4. INDEXES
+-- 4. USER ACTIVITY FOR IMPORTED LIBRARY
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS pl_saved_prompts (
+  user_id   VARCHAR(21) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  prompt_id INTEGER     NOT NULL REFERENCES pl_prompts(id) ON DELETE CASCADE,
+  saved_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (user_id, prompt_id)
+);
+
+CREATE TABLE IF NOT EXISTS pl_copy_events (
+  id         SERIAL      PRIMARY KEY,
+  prompt_id  INTEGER     NOT NULL REFERENCES pl_prompts(id) ON DELETE CASCADE,
+  user_id    VARCHAR(21) REFERENCES users(id) ON DELETE SET NULL,
+  platform   VARCHAR(50),
+  copied_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- -----------------------------------------------------------------------------
+-- 5. INDEXES
 -- -----------------------------------------------------------------------------
 
 -- Full-text search (fast for @@ operator)
@@ -86,8 +104,14 @@ CREATE INDEX IF NOT EXISTS idx_pl_prompts_category
 CREATE INDEX IF NOT EXISTS idx_pl_platforms_prompt
   ON pl_prompt_platforms (prompt_id);
 
+CREATE INDEX IF NOT EXISTS idx_pl_saved_user
+  ON pl_saved_prompts (user_id);
+
+CREATE INDEX IF NOT EXISTS idx_pl_copy_user
+  ON pl_copy_events (user_id);
+
 -- -----------------------------------------------------------------------------
--- 5. UPDATED_AT trigger
+-- 6. UPDATED_AT trigger
 -- -----------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$

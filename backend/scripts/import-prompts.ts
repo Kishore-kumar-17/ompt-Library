@@ -214,6 +214,28 @@ async function main() {
       )
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS pl_saved_prompts (
+        user_id   VARCHAR(21) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        prompt_id INTEGER     NOT NULL REFERENCES pl_prompts(id) ON DELETE CASCADE,
+        saved_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        PRIMARY KEY (user_id, prompt_id)
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS pl_copy_events (
+        id         SERIAL      PRIMARY KEY,
+        prompt_id  INTEGER     NOT NULL REFERENCES pl_prompts(id) ON DELETE CASCADE,
+        user_id    VARCHAR(21) REFERENCES users(id) ON DELETE SET NULL,
+        platform   VARCHAR(50),
+        copied_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `;
+
+    await sql`CREATE INDEX IF NOT EXISTS idx_pl_saved_user ON pl_saved_prompts (user_id)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_pl_copy_user ON pl_copy_events (user_id)`;
+
     // Search vector column — add only if missing (ALTER is safe to re-run)
     await sql`
       DO $$ BEGIN

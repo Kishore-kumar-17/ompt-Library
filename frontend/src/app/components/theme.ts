@@ -19,6 +19,14 @@ export interface PromptItem {
 }
 
 export const categories = {
+  video: [
+    { name: "Cinematic & Film",            subs: ["Short Films", "Movie Trailers", "Cinematic Scenes", "Documentary Style Videos", "Music Videos"] },
+    { name: "Advertising & Commercial",    subs: ["Brand Advertisements", "TV Commercials", "Promotional Videos", "Corporate Commercials", "Event Promotion Videos"] },
+    { name: "Social Media Videos",         subs: ["Instagram Reels", "TikTok Videos", "YouTube Shorts", "Influencer Content", "Lifestyle & Vlog Videos"] },
+    { name: "Product & E-Commerce Videos", subs: ["Product Demonstrations", "Product Showcases", "Unboxing Videos", "Product Launch Videos", "Customer Testimonial Videos"] },
+    { name: "Education & Explainers",      subs: ["Explainer Videos", "Tutorial Videos", "Educational Animations", "Whiteboard Explainers", "Training Videos"] },
+    { name: "Creative & Entertainment",    subs: ["Animated Stories", "Comedy Skits", "Gaming Videos", "Character Animations", "Music Visualizers"] },
+  ],
   image: [
     { name: "Design Outputs", subs: ["Poster", "Banner", "Social Media"] },
     { name: "Photography", subs: ["Portrait", "Landscape", "Product"] },
@@ -26,9 +34,12 @@ export const categories = {
     { name: "Video Storyboards", subs: ["Ad", "Trailer", "Short Film"] },
   ],
   website: [
-    { name: "Landing Pages", subs: ["SaaS", "Portfolio", "Agency", "Product"] },
-    { name: "Web Apps", subs: ["Dashboard", "E-commerce", "Social", "Marketplace"] },
-    { name: "UI Components", subs: ["Header", "Hero", "Pricing Section", "Footer"] },
+    { name: "Landing Pages",          subs: ["SaaS / Software Product", "Physical Product Launch Page", "Personal Brand / Creator", "Course or Info Product", "Event / Conference"] },
+    { name: "Business Website",        subs: ["Restaurant / Cafe", "Doctor / Clinic / Hospital", "Lawyer / CA / Consulting", "Boutique / Retail Store", "Real Estate / Property Listing", "Educational Institute / Coaching Centre"] },
+    { name: "Portfolio / Creator Site", subs: ["Photographer", "Designer / Illustrator", "Writer / Journalist", "Developer / Engineer", "Personal Blog / Newsletter"] },
+    { name: "E-Commerce",             subs: ["Single Product (Shopify-style)", "Multi-Product Fashion / Apparel Store", "Multi-Product Handmade / Artisan Store", "Subscription Box Site", "Digital Product Store"] },
+    { name: "Apps & SaaS Interface",  subs: ["Dashboard Layout", "Onboarding Flow Screens", "Settings / Account Page", "Pricing Page", "Blog / Content Layout"] },
+    { name: "Reusable Sections",      subs: ["Hero Section", "Features / Benefits Section", "Pricing Table", "Testimonial Section", "FAQ Section", "Footer Design", "Navigation / Header Pattern"] },
   ],
   text: [
     { name: "Developers", subs: ["Debug", "Refactor", "Document", "Test"] },
@@ -51,12 +62,31 @@ export const platforms = [
   { key: "flux",        name: "FLUX",       color: "#90b4ce" },
 ];
 
+export const videoPlatforms = [
+  { key: "veo",        name: "Veo",        color: "#4285f4" },
+  { key: "kling",      name: "Kling",      color: "#1a1a2e" },
+  { key: "seedance",   name: "Seedance",   color: "#e94560" },
+  { key: "higgsfield", name: "Higgsfield", color: "#7c3aed" },
+  { key: "pika",       name: "Pika Labs",  color: "#f59e0b" },
+];
+
+export const websitePlatforms = [
+  { key: "lovable",  name: "Lovable",         color: "#ff4d8f" },
+  { key: "bolt",     name: "Bolt.new",        color: "#7c3aed" },
+  { key: "v0",       name: "v0",              color: "#000000" },
+  { key: "cursor",   name: "Cursor",          color: "#1a1a2e" },
+  { key: "chatgpt",  name: "ChatGPT Canvas",  color: "#10a37f" },
+  { key: "claude",   name: "Claude Artifacts",color: "#cc785c" },
+  { key: "gemini",   name: "Gemini",          color: "#4285f4" },
+  { key: "grok",     name: "Grok",            color: "#094067" },
+];
+
 export const familyCategories: Record<Family, string[]> = {
   image:   ["Design Outputs", "Photography", "Illustration", "Video Storyboards"],
-  video:   ["Video Storyboards"],
+  video:   ["Cinematic & Film", "Advertising & Commercial", "Social Media Videos", "Product & E-Commerce Videos", "Education & Explainers", "Creative & Entertainment"],
   text:    ["Developers", "Data & Analytics", "Education", "Product", "Legal", "Finance"],
   content: ["Marketing", "HR & Recruiting"],
-  website: ["Landing Pages", "Web Apps", "UI Components"],
+  website: ["Landing Pages", "Business Website", "Portfolio / Creator Site", "E-Commerce", "Apps & SaaS Interface", "Reusable Sections"],
 };
 
 export const familyMeta: Record<Family, { title: string }> = {
