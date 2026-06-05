@@ -9,6 +9,7 @@ import { categories, platforms } from "../theme";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 
 import { LaptopHero } from "../LaptopHero";
+import { PromptCity } from "../PromptCity";
 
 // ── Category images (user-supplied) ──────────────────────────────────────────
 import imgSocialMedia   from "../../../imports/WhatsApp_Image_2026-04-27_at_1.12.44_PM.jpeg";
@@ -30,8 +31,8 @@ export function Home({ go }: { go: (p: string) => void }) {
       {/* Hero */}
       <HeroCarousel go={go} />
 
-      {/* Premium Laptop Hero */}
-      <LaptopHero />
+      {/* Prompt City — interactive district explorer */}
+      <PromptCity go={go} />
 
       {/* Four doors — BounceCard layout */}
       <WhereToGoSection go={go} />
@@ -858,11 +859,15 @@ function CardDesc({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Rising panel — sits flush within the card, lifts slightly on hover
-const PANEL_BASE = "absolute bottom-0 left-0 right-0 top-[90px] rounded-t-2xl overflow-hidden transition-transform duration-[250ms] group-hover:-translate-y-2";
-
-// ─── Where do you want to go? — BounceCard layout ────────────────────────────
+// ─── Where do you want to go? — Bento grid ───────────────────────────────────
 function WhereToGoSection({ go }: { go: (p: string) => void }) {
+  const [hovered, setHovered] = useState<string | null>(null);
+
+  // Film strip speed: always scrolling, faster on hover
+  const filmDuration = hovered === "video" ? 1.8 : 5;
+
+  const FILM_COLORS = ["#5b21b6","#4c1d95","#6d28d9","#7c3aed","#8b5cf6","#5b21b6","#4c1d95","#6d28d9","#7c3aed","#8b5cf6"];
+
   return (
     <section className="max-w-[1200px] mx-auto px-6 mt-40">
       {/* Header */}
@@ -879,46 +884,221 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
         </motion.button>
       </div>
 
-      {/* Row 1 — 4 col + 8 col */}
-      <div className="mb-4 grid grid-cols-12 gap-4">
-        {/* Card 1: Image Generation */}
-        <BounceCard className="col-span-12 md:col-span-4" onClick={() => go("library:image")}>
-          <CardHeading>Image Generation</CardHeading>
-          <CardDesc>Posters, portraits, products, brochures. Prompts for Midjourney, Firefly, FLUX.</CardDesc>
-          <div className={PANEL_BASE}>
-            <img src="https://images.unsplash.com/photo-1735382515642-d8ae7ea5f9f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800&q=80" alt="AI Generated visuals" className="w-full h-full object-cover" />
-          </div>
-        </BounceCard>
+      {/* Bento grid */}
+      <div className="grid grid-cols-12 grid-rows-[minmax(300px,auto)_minmax(300px,auto)] gap-4">
 
-        {/* Card 2: Website Generation */}
-        <BounceCard className="col-span-12 md:col-span-8" onClick={() => go("library:website")}>
-          <CardHeading>Website Generation</CardHeading>
-          <CardDesc>Landing pages, portfolios, dashboards, SaaS. Prompts for v0, Bolt, Lovable.</CardDesc>
-          <div className={PANEL_BASE}>
-            <img src="https://images.unsplash.com/photo-1634084462412-b54873c0a56d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800&q=80" alt="Modern website UI design" className="w-full h-full object-cover" />
+        {/* ── Card 1: Image Generation — tall, spans 2 rows ── */}
+        <motion.button
+          onClick={() => go("library:image")}
+          onHoverStart={() => setHovered("image")}
+          onHoverEnd={() => setHovered(null)}
+          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #094067" }}
+          whileTap={{ scale: 0.98 }}
+          className="col-span-12 md:col-span-4 row-span-2 rounded-3xl bg-[#ffd803] p-6 text-left flex flex-col justify-between overflow-hidden relative"
+          style={{ border: "2.5px solid #094067", boxShadow: "5px 5px 0 0 #094067" }}
+        >
+          <div>
+            <motion.div
+              className="inline-block px-3 py-1 rounded-full bg-[#094067] text-[#ffd803] text-[11px] font-bold mb-4"
+              animate={hovered === "image" ? { scale: [1, 1.08, 1] } : {}}
+              transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 0.8 }}
+            >
+              420+ prompts
+            </motion.div>
+            <div className="text-[#094067] text-3xl font-black leading-tight mb-2">Image<br/>Generation</div>
+            <div className="text-[#094067]/70 text-sm">Midjourney · Firefly · FLUX · ChatGPT</div>
           </div>
-        </BounceCard>
-      </div>
 
-      {/* Row 2 — 8 col + 4 col */}
-      <div className="grid grid-cols-12 gap-4">
-        {/* Card 3: Text Generation */}
-        <BounceCard className="col-span-12 md:col-span-8" onClick={() => go("library:text")}>
-          <CardHeading>Text Generation</CardHeading>
-          <CardDesc>Developers, testers, analysts. Prompts for ChatGPT, Gemini, Grok.</CardDesc>
-          <div className={PANEL_BASE}>
-            <img src="https://images.unsplash.com/photo-1753998943619-b9cd910887e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800&q=80" alt="Code terminal" className="w-full h-full object-cover" />
+          {/* Staggered image grid — each image tilts on hover */}
+          <div className="grid grid-cols-2 gap-2 mt-4">
+            {["/images/image1.jpeg","/images/image41.jpeg","/images/image111.jpeg","/images/image196.jpeg"].map((src, i) => (
+              <motion.div
+                key={i}
+                className="aspect-square rounded-xl overflow-hidden border-2 border-[#094067]/20"
+                animate={hovered === "image"
+                  ? { scale: 1.07, rotate: i % 2 === 0 ? 3 : -3, y: -4 }
+                  : { scale: 1, rotate: 0, y: 0 }}
+                transition={{ delay: i * 0.07, duration: 0.35, ease: "easeOut" }}
+              >
+                <img src={src} alt="" className="w-full h-full object-cover" />
+              </motion.div>
+            ))}
           </div>
-        </BounceCard>
 
-        {/* Card 4: Content Generation — mint gradient + icon panel */}
-        <BounceCard className="col-span-12 md:col-span-4" onClick={() => go("library:content")}>
-          <CardHeading>Content Generation</CardHeading>
-          <CardDesc>Marketers, HR, editors, social. Prompts for Claude, ChatGPT, Gemini.</CardDesc>
-          <div className={`${PANEL_BASE} bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center`}>
-            <FileText className="w-20 h-20 text-white/80" strokeWidth={1.2} />
+          <motion.div
+            className="mt-4 inline-flex items-center gap-1 text-[#094067] text-sm font-bold"
+            animate={hovered === "image" ? { x: 6 } : { x: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            Explore →
+          </motion.div>
+        </motion.button>
+
+        {/* ── Card 2: Video Generation — scrolling film strip ── */}
+        <motion.button
+          onClick={() => go("library:video")}
+          onHoverStart={() => setHovered("video")}
+          onHoverEnd={() => setHovered(null)}
+          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #094067" }}
+          whileTap={{ scale: 0.98 }}
+          className="col-span-12 md:col-span-5 rounded-3xl bg-[#7c3aed] p-6 text-left flex flex-col justify-between overflow-hidden relative"
+          style={{ border: "2.5px solid #094067", boxShadow: "5px 5px 0 0 #094067" }}
+        >
+          <div>
+            <div className="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-bold mb-4">30 prompts</div>
+            <div className="text-white text-3xl font-black leading-tight mb-2">Video<br/>Generation</div>
+            <div className="text-white/70 text-sm">Veo · Kling · Seedance · Pika</div>
           </div>
-        </BounceCard>
+
+          {/* Continuously scrolling film strip */}
+          <div className="overflow-hidden mt-4 rounded-xl" style={{ maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)" }}>
+            <motion.div
+              className="flex gap-2"
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ duration: filmDuration, repeat: Infinity, ease: "linear" }}
+            >
+              {FILM_COLORS.map((c, i) => (
+                <div
+                  key={i}
+                  className="flex-shrink-0 w-[72px] h-[44px] rounded-lg flex items-center justify-center"
+                  style={{ background: c, border: "2px solid rgba(255,255,255,0.15)" }}
+                >
+                  {i % 5 === 2 && (
+                    <motion.div
+                      className="w-5 h-5 rounded-full bg-white/40 flex items-center justify-center"
+                      animate={{ scale: [1, 1.25, 1], opacity: [0.7, 1, 0.7] }}
+                      transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      <div className="w-0 h-0 border-t-[4px] border-t-transparent border-l-[7px] border-l-white border-b-[4px] border-b-transparent ml-0.5" />
+                    </motion.div>
+                  )}
+                </div>
+              ))}
+            </motion.div>
+          </div>
+        </motion.button>
+
+        {/* ── Card 3: Website Generation — browser types on hover ── */}
+        <motion.button
+          onClick={() => go("library:website")}
+          onHoverStart={() => setHovered("website")}
+          onHoverEnd={() => setHovered(null)}
+          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #094067" }}
+          whileTap={{ scale: 0.98 }}
+          className="col-span-12 md:col-span-3 rounded-3xl bg-[#3b82f6] p-6 text-left flex flex-col justify-between overflow-hidden relative"
+          style={{ border: "2.5px solid #094067", boxShadow: "5px 5px 0 0 #094067" }}
+        >
+          <div>
+            <div className="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-bold mb-4">33 types</div>
+            <div className="text-white text-3xl font-black leading-tight mb-2">Website<br/>Gen</div>
+            <div className="text-white/70 text-sm">Bolt · Lovable · Replit · Codex</div>
+          </div>
+
+          {/* Browser mockup — lines retype on hover */}
+          <div className="mt-4 rounded-xl bg-white/15 p-3 backdrop-blur">
+            <div className="flex gap-1.5 mb-2.5">
+              {[["bg-red-400","bg-red-300"],["bg-yellow-400","bg-yellow-300"],["bg-green-400","bg-green-300"]].map(([base, hover], i) => (
+                <motion.div
+                  key={i}
+                  className={`w-2.5 h-2.5 rounded-full ${hovered === "website" ? hover : base}`}
+                  animate={hovered === "website" ? { scale: [1, 1.4, 1] } : { scale: 1 }}
+                  transition={{ delay: i * 0.1, duration: 0.35 }}
+                />
+              ))}
+            </div>
+            {/* Re-typing bars — key forces remount on hover */}
+            <div key={hovered === "website" ? "typing" : "idle"} className="space-y-1.5">
+              {[1, 0.75, 0.9].map((w, i) => (
+                <motion.div
+                  key={i}
+                  className="h-2 bg-white/40 rounded-full"
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${w * 100}%` }}
+                  transition={{ delay: i * 0.18 + 0.1, duration: 0.55, ease: "easeOut" }}
+                />
+              ))}
+            </div>
+          </div>
+        </motion.button>
+
+        {/* ── Card 4: Text Generation — typewriter code ── */}
+        <motion.button
+          onClick={() => go("library:text")}
+          onHoverStart={() => setHovered("text")}
+          onHoverEnd={() => setHovered(null)}
+          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #ffd803" }}
+          whileTap={{ scale: 0.98 }}
+          className="col-span-12 md:col-span-5 rounded-3xl bg-[#094067] p-6 text-left flex flex-col justify-between overflow-hidden relative h-full min-h-[300px]"
+          style={{ border: "2.5px solid #094067", boxShadow: "5px 5px 0 0 #ffd803" }}
+        >
+          <div>
+            <div className="inline-block px-3 py-1 rounded-full bg-[#ffd803] text-[#094067] text-[11px] font-bold mb-4">Coming soon</div>
+            <div className="text-white text-3xl font-black leading-tight mb-2">Text<br/>Generation</div>
+            <div className="text-white/60 text-sm">ChatGPT · Gemini · Grok · Claude</div>
+          </div>
+
+          {/* Code block — lines slide in on hover */}
+          <div className="mt-4 rounded-xl bg-white/10 p-3 font-mono text-[11px] space-y-1.5 overflow-hidden">
+            {/* key trick: remount on hover to replay stagger */}
+            <React.Fragment key={hovered === "text" ? "hover" : "idle"}>
+              {[
+                <><span className="text-[#ffd803]">const</span> <span className="text-[#90b4ce]">prompt</span> <span className="text-white/50">=</span> <span className="text-[#ef4565]">"Act as a senior dev…"</span></>,
+                <><span className="text-[#ffd803]">function</span> <span className="text-[#bce4d8]">generate</span><span className="text-white/50">(input) {"{"}</span></>,
+                <span className="pl-4 block"><span className="text-[#90b4ce]">return</span> <span className="text-white/50">ai.complete(prompt)</span></span>,
+                <><span className="text-white/50">{"}"}</span></>,
+              ].map((line, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.1, duration: 0.3, ease: "easeOut" }}
+                >
+                  {line}
+                </motion.div>
+              ))}
+            </React.Fragment>
+            {/* Always-on blinking cursor */}
+            <motion.span
+              className="inline-block w-[7px] h-[13px] bg-[#ffd803] align-middle ml-1 rounded-sm"
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ duration: 1, repeat: Infinity, ease: "steps(1)" }}
+            />
+          </div>
+        </motion.button>
+
+        {/* ── Card 5: Content Generation — pills float on hover ── */}
+        <motion.button
+          onClick={() => go("library:content")}
+          onHoverStart={() => setHovered("content")}
+          onHoverEnd={() => setHovered(null)}
+          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #094067" }}
+          whileTap={{ scale: 0.98 }}
+          className="col-span-12 md:col-span-3 rounded-3xl bg-[#ef4565] p-6 text-left flex flex-col justify-between overflow-hidden relative h-full min-h-[300px]"
+          style={{ border: "2.5px solid #094067", boxShadow: "5px 5px 0 0 #094067" }}
+        >
+          <div>
+            <div className="inline-block px-3 py-1 rounded-full bg-white/25 text-white text-[11px] font-bold mb-4">Coming soon</div>
+            <div className="text-white text-3xl font-black leading-tight mb-2">Content<br/>Gen</div>
+            <div className="text-white/70 text-sm">Claude · ChatGPT · Gemini</div>
+          </div>
+
+          {/* Floating pills */}
+          <div className="mt-4 space-y-2">
+            {["✉️  Email copy", "📱  Social posts", "📝  Blog articles"].map((label, i) => (
+              <motion.div
+                key={label}
+                className="px-3 py-1.5 rounded-full bg-white/20 text-white text-[12px] font-semibold w-fit backdrop-blur-sm"
+                animate={hovered === "content"
+                  ? { y: -6, scale: 1.06, backgroundColor: "rgba(255,255,255,0.30)" }
+                  : { y: 0, scale: 1, backgroundColor: "rgba(255,255,255,0.20)" }}
+                transition={{ delay: i * 0.08, duration: 0.25, ease: "easeOut" }}
+              >
+                {label}
+              </motion.div>
+            ))}
+          </div>
+        </motion.button>
+
       </div>
     </section>
   );

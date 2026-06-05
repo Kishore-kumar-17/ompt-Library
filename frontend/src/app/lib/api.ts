@@ -49,6 +49,15 @@ export interface SubmitPayload {
   exampleOutput?: string;
 }
 
+export interface Submission {
+  id: string;
+  promptId: string | null;
+  rawData: SubmitPayload | Record<string, unknown> | null;
+  status: "draft" | "pending" | "approved" | "rejected";
+  reviewNote: string | null;
+  submittedAt: string;
+}
+
 // ─── Core fetch ───────────────────────────────────────────────────────────────
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
@@ -115,6 +124,8 @@ export const submissionsApi = {
       method: "POST",
       body: JSON.stringify(payload),
     }),
+
+  mine: () => apiFetch<Submission[]>("/api/submissions/mine"),
 };
 
 // ─── Profile ──────────────────────────────────────────────────────────────────
@@ -182,4 +193,13 @@ export const libraryApi = {
 
   getById: (id: number) =>
     apiFetch<LibraryPrompt & { platforms: Record<string, string> }>(`/api/library/prompts/${id}`),
+
+  copy: (id: number | string, platformId?: string) =>
+    apiFetch<{ success: boolean }>(`/api/library/prompts/${id}/copy`, {
+      method: "POST",
+      body: JSON.stringify({ platformId }),
+    }),
+
+  save: (id: number | string) =>
+    apiFetch<{ saved: boolean }>(`/api/library/prompts/${id}/save`, { method: "POST" }),
 };

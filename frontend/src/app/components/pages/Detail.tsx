@@ -4,10 +4,12 @@ import {
   Heart, Copy, Star, CheckCircle2, Share2, BookmarkPlus,
   MessageSquare, ThumbsUp, Loader2,
 } from "lucide-react";
-import { platforms, type PromptItem } from "../theme";
-import { promptsApi, authStore, libraryApi, type LibraryPrompt } from "../../lib/api";
+import { platforms, videoPlatforms, type PromptItem } from "../theme";
+import { authStore, libraryApi, type LibraryPrompt } from "../../lib/api";
 import { promptImageMap } from "../../lib/prompt-images";
 import { imageLibraryPrompts } from "../../lib/library-data";
+import { videoLibraryPrompts } from "../../lib/video-data";
+import { videoPlatformVersions } from "../../lib/video-platforms";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 import { PromptCard } from "../PromptCard";
 
@@ -42,8 +44,11 @@ function fromApi(p: LibraryPrompt & { platforms?: Record<string, string>; image_
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string) => void; defaultPlatform?: string | null }) {
-  // Check local static data first (no network needed)
-  const staticPrompt = imageLibraryPrompts.find(x => x.id === id) ?? null;
+  // Check local static data first — image then video
+  const staticPrompt =
+    imageLibraryPrompts.find(x => x.id === id) ??
+    videoLibraryPrompts.find(x => x.id === id) ??
+    null;
 
   const [prompt, setPrompt]       = useState<PromptItem | null>(staticPrompt);
   const [fetchState, setFetch]    = useState<"idle" | "loading" | "error">(
@@ -52,21 +57,26 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
   // Lazily-loaded platform versions from library-platforms.ts
   const [platformData, setPlatformData] = useState<Record<string, string> | null>(null);
 
-  const [platform, setPlatform] = useState(defaultPlatform ?? "chatgpt");
+  const isVideoPrompt = staticPrompt?.family === "video";
+  const [platform, setPlatform] = useState(defaultPlatform ?? (isVideoPrompt ? "veo" : "chatgpt"));
   const [vars, setVars]         = useState<Record<string, string>>({});
   const [saved, setSaved]       = useState(false);
   const [saving, setSaving]     = useState(false);
 
-  // For library prompts (static data): lazy-load platform versions on demand
+  // For static prompts: load platform versions from correct source
   useEffect(() => {
     if (!staticPrompt?.slug) return;
-    // Only bother if platforms map is empty (i.e., came from library-data not samplePrompts)
     if (Object.keys(staticPrompt.platforms ?? {}).length > 0) return;
-    import("../../lib/library-platforms").then(m => {
-      const versions = m.platformVersions[staticPrompt.slug!];
+    if (isVideoPrompt) {
+      const versions = videoPlatformVersions[staticPrompt.slug];
       if (versions) setPlatformData(versions);
-    });
-  }, [staticPrompt]);
+    } else {
+      import("../../lib/library-platforms").then(m => {
+        const versions = m.platformVersions[staticPrompt.slug!];
+        if (versions) setPlatformData(versions);
+      });
+    }
+  }, [staticPrompt, isVideoPrompt]);
 
   // Fetch from API when ID is numeric and not in static data
   useEffect(() => {
@@ -132,11 +142,22 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
     if (!authStore.getUser()) { toast.error("Sign in to save prompts"); return; }
     setSaving(true);
     try {
-      const res = await promptsApi.save(p.id);
+      const res = await libraryApi.save(p.id);
       setSaved(res.saved);
       toast(res.saved ? "Saved to library" : "Removed from library", { description: p.title });
     } catch { toast.error("Could not save — is the backend running?"); }
     finally { setSaving(false); }
+  };
+
+  const handleCopyPrompt = async () => {
+    navigator.clipboard?.writeText(rendered);
+    toast.success("Prompt copied", { description: `${p.title} - ${activePlatformKey}` });
+    if (!authStore.getUser()) return;
+    try {
+      await libraryApi.copy(p.id, activePlatformKey);
+    } catch {
+      // Clipboard copy should still succeed when activity tracking is unavailable.
+    }
   };
 
   return (
@@ -147,9 +168,17 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
 
       <div className="grid lg:grid-cols-2 gap-8">
         {/* ── Image / placeholder ──────────────────────────────────────── */}
-        <div className="rounded-3xl overflow-hidden border border-[#094067]/20 aspect-[4/3]">
+        <div className="rounded-3xl overflow-hidden border border-[#094067]/20 aspect-[4/3] bg-[#094067]/5 flex items-center justify-center">
           {p.image ? (
-            <ImageWithFallback src={p.image} alt={p.title} className="w-full h-full object-cover" />
+            <ImageWithFallback src={p.image} alt={p.title} className="w-full h-full object-contain" />
+          ) : isVideoPrompt ? (
+            <div className="w-full h-full flex flex-col items-center justify-center gap-3"
+              style={{ background: "linear-gradient(135deg,#1a1a2e 0%,#4c1d95 100%)" }}>
+              <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
+                <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[18px] border-l-white border-b-[10px] border-b-transparent ml-1" />
+              </div>
+              <span className="text-white/60 text-[13px] font-semibold uppercase tracking-widest">{p.subCategory}</span>
+            </div>
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-[#094067]/10 to-[#ffd803]/20 flex items-center justify-center">
               <span className="text-6xl opacity-20">✦</span>
@@ -206,7 +235,7 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
                 <Loader2 className="w-3 h-3 animate-spin" /> loading versions…
               </span>
             )}
-            {platforms.map(pl => {
+            {(isVideoPrompt ? videoPlatforms : platforms).map(pl => {
               const hasContent = availablePlatforms.includes(pl.key);
               return (
                 <button
@@ -269,7 +298,7 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
           {/* ── Actions ──────────────────────────────────────────────────── */}
           <div className="flex gap-2">
             <button
-              onClick={() => { navigator.clipboard?.writeText(rendered); toast.success("Prompt copied", { description: `${p.title} · ${activePlatformKey}` }); }}
+              onClick={handleCopyPrompt}
               className="flex-1 h-11 rounded-full bg-[#ffd803] text-[#094067] inline-flex items-center justify-center gap-2"
               style={{ fontWeight: 700 }}
             >
@@ -335,7 +364,7 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
       <section className="mt-16">
         <h2 className="text-[#094067] mb-4">Related prompts</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {imageLibraryPrompts
+          {(isVideoPrompt ? videoLibraryPrompts : imageLibraryPrompts)
             .filter(x => x.category === p.category && x.id !== p.id)
             .slice(0, 4)
             .map(x => (

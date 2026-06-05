@@ -9,11 +9,13 @@ type Props = {
 };
 
 const NAV_LINKS = [
-  { label: "Library",  route: "library"  },
-  { label: "Builder",  route: "builder"  },
-  { label: "Improver", route: "improver" },
-  { label: "Compare",  route: "compare"  },
-  { label: "Pricing",  route: "pricing"  },
+  { label: "Library",      route: "library"      },
+  { label: "Builder",      route: "builder"      },
+  { label: "Improver",     route: "improver"     },
+  { label: "Compare",      route: "compare"      },
+  { label: "Guide",        route: "guide"        },
+  { label: "Pricing",      route: "pricing"      },
+  { label: "Image Review", route: "image-review" },
 ];
 
 export function Nav({ current, onNavigate, onAuth }: Props) {

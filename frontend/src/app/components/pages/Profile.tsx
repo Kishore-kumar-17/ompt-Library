@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Settings, Heart, Clock, Upload, Sparkles } from "lucide-react";
 import { imageLibraryPrompts } from "../../lib/library-data";
 import { PromptCard } from "../PromptCard";
-import { profileApi, authStore, ProfileStats } from "../../lib/api";
+import { profileApi, authStore, submissionsApi, type ProfileStats, type Submission } from "../../lib/api";
 
 export function Profile({ go }: { go: (p: string) => void }) {
   const user = authStore.getUser();
@@ -10,6 +10,8 @@ export function Profile({ go }: { go: (p: string) => void }) {
 
   const [stats, setStats] = useState<ProfileStats>({ saved: 0, copied: 0, submitted: 0, approved: 0 });
   const [statsLoaded, setStatsLoaded] = useState(false);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [submissionsLoaded, setSubmissionsLoaded] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -17,6 +19,10 @@ export function Profile({ go }: { go: (p: string) => void }) {
       .then(setStats)
       .catch(() => {/* backend not running — keep zeros */})
       .finally(() => setStatsLoaded(true));
+    submissionsApi.mine()
+      .then(setSubmissions)
+      .catch(() => setSubmissions([]))
+      .finally(() => setSubmissionsLoaded(true));
   }, []);
 
   const statCards = [
@@ -60,16 +66,25 @@ export function Profile({ go }: { go: (p: string) => void }) {
         </div>
         {user ? (
           <div className="bg-white border border-[#094067]/15 rounded-2xl overflow-hidden">
-            {[
-              { t: "Cyberpunk portrait prompt",  s: "Approved", c: "#22c55e" },
-              { t: "Python unit-test generator", s: "Pending",  c: "#a7a9be" },
-              { t: "Brochure brand kit",         s: "Pending",  c: "#a7a9be" },
-            ].map((r, i) => (
-              <div key={i} className="flex items-center p-4 border-b last:border-b-0 border-[#094067]/15">
-                <div className="text-[#094067] flex-1 font-medium">{r.t}</div>
-                <div className="px-2 py-0.5 rounded-full text-[12px] font-bold" style={{ background: `${r.c}22`, color: r.c }}>{r.s}</div>
-              </div>
-            ))}
+            {!submissionsLoaded ? (
+              <div className="p-4 text-[#5f6c7b]">Loading submissions...</div>
+            ) : submissions.length === 0 ? (
+              <div className="p-4 text-[#5f6c7b]">No submissions yet.</div>
+            ) : submissions.map((submission) => {
+              const raw = submission.rawData as any;
+              const title = raw?.title ?? raw?.basePrompt?.slice?.(0, 60) ?? "Untitled prompt";
+              const color = submission.status === "approved"
+                ? "#22c55e"
+                : submission.status === "rejected"
+                  ? "#ef4565"
+                  : "#a7a9be";
+              return (
+                <div key={submission.id} className="flex items-center p-4 border-b last:border-b-0 border-[#094067]/15">
+                  <div className="text-[#094067] flex-1 font-medium">{title}</div>
+                  <div className="px-2 py-0.5 rounded-full text-[12px] font-bold capitalize" style={{ background: `${color}22`, color }}>{submission.status}</div>
+                </div>
+              );
+            })}
           </div>
         ) : (
           <div className="bg-white border border-[#094067]/15 rounded-2xl p-6 text-[#5f6c7b] text-center">

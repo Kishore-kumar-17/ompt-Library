@@ -10,7 +10,12 @@ declare module "hono" {
   }
 }
 
-const secret = new TextEncoder().encode(process.env.JWT_SECRET ?? "dev-secret");
+const jwtSecret = process.env.JWT_SECRET;
+if (!jwtSecret && process.env.NODE_ENV === "production") {
+  throw new Error("JWT_SECRET is required in production");
+}
+
+const secret = new TextEncoder().encode(jwtSecret ?? "dev-secret");
 
 export const requireAuth = createMiddleware(async (c, next) => {
   const authHeader = c.req.header("Authorization");

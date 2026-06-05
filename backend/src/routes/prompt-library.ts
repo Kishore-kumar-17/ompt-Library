@@ -1,40 +1,66 @@
 /**
- * prompt-library.ts
- * -----------------
  * REST API for the imported prompt library.
- *
- * Endpoints:
- *   GET  /api/library/prompts          – paginated list with filters
- *   GET  /api/library/prompts/search   – full-text + fuzzy search
- *   GET  /api/library/prompts/:id      – single prompt + all platform versions
- *   GET  /api/library/categories       – distinct category list
- *   GET  /api/library/tags             – top N tags by frequency
  */
 
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
+import { sql, type SQL } from "drizzle-orm";
 import { db } from "../db/client.js";
-import { sql } from "drizzle-orm";
+import { requireAuth } from "../middleware/auth.js";
 
 const router = new Hono();
 
-// ─── Shared query helpers ─────────────────────────────────────────────────────
-
-/**
- * Runs a raw SQL query directly via the underlying postgres.js client.
- * Drizzle doesn't have the pl_* tables in its schema, so we use raw SQL
- * for the prompt-library routes.
- */
-async function rawSql<T = Record<string, unknown>>(query: string): Promise<T[]> {
-  const result = await db.execute(sql.raw(query));
+async function rawSql<T = Record<string, unknown>>(query: SQL): Promise<T[]> {
+  const result = await db.execute(query);
   return result as unknown as T[];
 }
 
-// ─── GET /api/library/categories ─────────────────────────────────────────────
+function tagArraySql(tags: string): SQL {
+  const tagList = tags.split(",").map((t) => t.trim()).filter(Boolean);
+  if (tagList.length === 0) return sql`ARRAY[]::text[]`;
+  return sql`ARRAY[${sql.join(tagList.map((tag) => sql`${tag}`), sql`, `)}]::text[]`;
+}
+
+function filterConditions(category?: string, tags?: string): SQL[] {
+  const conditions: SQL[] = [];
+  if (category) conditions.push(sql`category = ${category}`);
+  if (tags) conditions.push(sql`tags && ${tagArraySql(tags)}`);
+  return conditions;
+}
+
+function whereClause(conditions: SQL[]): SQL {
+  return conditions.length > 0 ? sql`WHERE ${sql.join(conditions, sql` AND `)}` : sql``;
+}
+
+function andClause(conditions: SQL[]): SQL {
+  return conditions.length > 0 ? sql`AND ${sql.join(conditions, sql` AND `)}` : sql``;
+}
+
+async function ensureLibraryActivityTables() {
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS pl_saved_prompts (
+      user_id   VARCHAR(21) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      prompt_id INTEGER     NOT NULL REFERENCES pl_prompts(id) ON DELETE CASCADE,
+      saved_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      PRIMARY KEY (user_id, prompt_id)
+    )
+  `);
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS pl_copy_events (
+      id         SERIAL      PRIMARY KEY,
+      prompt_id  INTEGER     NOT NULL REFERENCES pl_prompts(id) ON DELETE CASCADE,
+      user_id    VARCHAR(21) REFERENCES users(id) ON DELETE SET NULL,
+      platform   VARCHAR(50),
+      copied_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
+  await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_pl_saved_user ON pl_saved_prompts (user_id)`);
+  await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_pl_copy_user ON pl_copy_events (user_id)`);
+}
 
 router.get("/categories", async (c) => {
-  const rows = await rawSql<{ category: string; count: number }>(`
+  const rows = await rawSql<{ category: string; count: number }>(sql`
     SELECT category, count(*)::int AS count
     FROM   pl_prompts
     GROUP  BY category
@@ -43,11 +69,11 @@ router.get("/categories", async (c) => {
   return c.json(rows);
 });
 
-// ─── GET /api/library/tags?limit=30 ──────────────────────────────────────────
-
-router.get("/tags", zValidator("query", z.object({ limit: z.coerce.number().default(30) })), async (c) => {
+router.get("/tags", zValidator("query", z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(30),
+})), async (c) => {
   const { limit } = c.req.valid("query");
-  const rows = await rawSql<{ tag: string; count: number }>(`
+  const rows = await rawSql<{ tag: string; count: number }>(sql`
     SELECT tag, count(*)::int AS count
     FROM   pl_prompts, unnest(tags) AS tag
     GROUP  BY tag
@@ -57,37 +83,25 @@ router.get("/tags", zValidator("query", z.object({ limit: z.coerce.number().defa
   return c.json(rows);
 });
 
-// ─── Query params schema (shared by list + search) ───────────────────────────
-
 const listSchema = z.object({
   category: z.string().optional(),
-  tags:     z.string().optional(),  // comma-separated
-  page:     z.coerce.number().int().min(1).default(1),
-  limit:    z.coerce.number().int().min(1).max(100).default(20),
+  tags: z.string().optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
 });
 
 const searchSchema = listSchema.extend({
-  q:    z.string().min(1),
+  q: z.string().min(1),
   mode: z.enum(["fulltext", "fuzzy", "both"]).default("both"),
 });
-
-// ─── GET /api/library/prompts ─────────────────────────────────────────────────
 
 router.get("/prompts", zValidator("query", listSchema), async (c) => {
   const { category, tags, page, limit } = c.req.valid("query");
   const offset = (page - 1) * limit;
-
-  const conditions: string[] = [];
-  if (category) conditions.push(`category = '${category.replace(/'/g, "''")}'`);
-  if (tags) {
-    const tagArr = tags.split(",").map(t => `'${t.trim().replace(/'/g, "''")}'`).join(",");
-    conditions.push(`tags && ARRAY[${tagArr}]::text[]`);
-  }
-
-  const where = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+  const where = whereClause(filterConditions(category, tags));
 
   const [rows, [{ total }]] = await Promise.all([
-    rawSql<Record<string, unknown>>(`
+    rawSql<Record<string, unknown>>(sql`
       SELECT id, slug, title, base_prompt, category, sub_category,
              prompt_type, tags, quality_score, tested, image_url, created_at
       FROM   pl_prompts
@@ -95,102 +109,90 @@ router.get("/prompts", zValidator("query", listSchema), async (c) => {
       ORDER  BY id
       LIMIT  ${limit} OFFSET ${offset}
     `),
-    rawSql<{ total: number }>(`SELECT count(*)::int AS total FROM pl_prompts ${where}`),
+    rawSql<{ total: number }>(sql`SELECT count(*)::int AS total FROM pl_prompts ${where}`),
   ]);
 
   return c.json({ data: rows, total, page, limit, pages: Math.ceil(total / limit) });
 });
 
-// ─── GET /api/library/prompts/search ─────────────────────────────────────────
-// Strategy:
-//   1. Full-text search  → uses GIN index on search_vec, very fast
-//   2. Fuzzy fallback    → uses pg_trgm similarity on title, catches typos
-//   3. Tag filter        → array overlap  &&  operator
-
 router.get("/prompts/search", zValidator("query", searchSchema), async (c) => {
   const { q, mode, category, tags, page, limit } = c.req.valid("query");
   const offset = (page - 1) * limit;
-
-  const safeQ    = q.replace(/'/g, "''");
-  const catWhere = category ? `AND category = '${category.replace(/'/g, "''")}'` : "";
-  const tagWhere = tags
-    ? `AND tags && ARRAY[${tags.split(",").map(t => `'${t.trim().replace(/'/g, "''")}'`).join(",")}]::text[]`
-    : "";
+  const filters = andClause(filterConditions(category, tags));
 
   let rows: Record<string, unknown>[] = [];
   let total = 0;
+  let resultMode: "fulltext" | "fuzzy" | "none" = "none";
 
-  // ── Full-text search (primary) ──────────────────────────────────────────────
   if (mode === "fulltext" || mode === "both") {
-    const ftRows = await rawSql<Record<string, unknown>>(`
+    rows = await rawSql<Record<string, unknown>>(sql`
       SELECT id, slug, title, base_prompt, category, sub_category,
              prompt_type, tags, quality_score, tested, image_url,
-             ts_rank(search_vec, plainto_tsquery('english', '${safeQ}')) AS rank
+             ts_rank(search_vec, plainto_tsquery('english', ${q})) AS rank
       FROM   pl_prompts
-      WHERE  search_vec @@ plainto_tsquery('english', '${safeQ}')
-             ${catWhere} ${tagWhere}
+      WHERE  search_vec @@ plainto_tsquery('english', ${q})
+             ${filters}
       ORDER  BY rank DESC
       LIMIT  ${limit} OFFSET ${offset}
     `);
 
-    const [{ count }] = await rawSql<{ count: number }>(`
-      SELECT count(*)::int AS count FROM pl_prompts
-      WHERE  search_vec @@ plainto_tsquery('english', '${safeQ}')
-             ${catWhere} ${tagWhere}
+    const [{ count }] = await rawSql<{ count: number }>(sql`
+      SELECT count(*)::int AS count
+      FROM   pl_prompts
+      WHERE  search_vec @@ plainto_tsquery('english', ${q})
+             ${filters}
     `);
 
-    rows  = ftRows;
     total = count;
+    if (rows.length > 0) resultMode = "fulltext";
   }
 
-  // ── Fuzzy fallback (trigram similarity on title) ────────────────────────────
-  // Fires when full-text returns 0 results (typos, partial words, etc.)
   if ((mode === "fuzzy" || mode === "both") && rows.length === 0) {
-    const fuzzyRows = await rawSql<Record<string, unknown>>(`
+    rows = await rawSql<Record<string, unknown>>(sql`
       SELECT id, slug, title, base_prompt, category, sub_category,
              prompt_type, tags, quality_score, tested, image_url,
-             similarity(title, '${safeQ}') AS rank
+             similarity(title, ${q}) AS rank
       FROM   pl_prompts
-      WHERE  similarity(title, '${safeQ}') > 0.15
-             ${catWhere} ${tagWhere}
+      WHERE  similarity(title, ${q}) > 0.15
+             ${filters}
       ORDER  BY rank DESC
       LIMIT  ${limit} OFFSET ${offset}
     `);
 
-    const [{ count }] = await rawSql<{ count: number }>(`
-      SELECT count(*)::int AS count FROM pl_prompts
-      WHERE  similarity(title, '${safeQ}') > 0.15
-             ${catWhere} ${tagWhere}
+    const [{ count }] = await rawSql<{ count: number }>(sql`
+      SELECT count(*)::int AS count
+      FROM   pl_prompts
+      WHERE  similarity(title, ${q}) > 0.15
+             ${filters}
     `);
 
-    rows  = fuzzyRows;
     total = count;
+    if (rows.length > 0) resultMode = "fuzzy";
   }
 
   return c.json({
-    data:   rows,
+    data: rows,
     total,
     page,
     limit,
-    pages:  Math.ceil(total / limit),
-    query:  q,
-    mode:   rows.length > 0 ? (mode === "both" && rows[0]?.rank ? "fulltext" : "fuzzy") : "none",
+    pages: Math.ceil(total / limit),
+    query: q,
+    mode: resultMode,
   });
 });
-
-// ─── GET /api/library/prompts/:id ────────────────────────────────────────────
 
 router.get("/prompts/:id", async (c) => {
   const id = Number(c.req.param("id"));
   if (isNaN(id)) return c.json({ error: "Invalid id" }, 400);
 
   const [[prompt], platforms] = await Promise.all([
-    rawSql<Record<string, unknown>>(`
+    rawSql<Record<string, unknown>>(sql`
       SELECT id, slug, title, base_prompt, category, sub_category,
              prompt_type, tags, quality_score, tested, image_url, created_at
-      FROM   pl_prompts WHERE id = ${id}
+      FROM   pl_prompts
+      WHERE  id = ${id}
     `),
-    rawSql<{ platform: string; prompt_text: string }>(`
+    rawSql<{ platform: string; prompt_text: string }>(sql`
       SELECT platform, prompt_text
       FROM   pl_prompt_platforms
       WHERE  prompt_id = ${id}
@@ -200,10 +202,62 @@ router.get("/prompts/:id", async (c) => {
 
   if (!prompt) return c.json({ error: "Not found" }, 404);
 
-  // Reshape platforms into a map: { chatgpt: "...", midjourney: "..." }
-  const platformMap = Object.fromEntries(platforms.map(p => [p.platform, p.prompt_text]));
-
+  const platformMap = Object.fromEntries(platforms.map((p) => [p.platform, p.prompt_text]));
   return c.json({ ...prompt, platforms: platformMap });
+});
+
+router.post("/prompts/:id/copy", requireAuth, async (c) => {
+  const id = Number(c.req.param("id"));
+  if (isNaN(id)) return c.json({ error: "Invalid id" }, 400);
+
+  const userId = c.get("user").sub;
+  const { platformId } = await c.req.json().catch(() => ({})) as { platformId?: string };
+
+  await ensureLibraryActivityTables();
+
+  const [prompt] = await rawSql(sql`SELECT id FROM pl_prompts WHERE id = ${id}`);
+  if (!prompt) return c.json({ error: "Not found" }, 404);
+
+  await db.execute(sql`
+    INSERT INTO pl_copy_events (prompt_id, user_id, platform)
+    VALUES (${id}, ${userId}, ${platformId ?? null})
+  `);
+
+  return c.json({ success: true });
+});
+
+router.post("/prompts/:id/save", requireAuth, async (c) => {
+  const id = Number(c.req.param("id"));
+  if (isNaN(id)) return c.json({ error: "Invalid id" }, 400);
+
+  const userId = c.get("user").sub;
+
+  await ensureLibraryActivityTables();
+
+  const [prompt] = await rawSql(sql`SELECT id FROM pl_prompts WHERE id = ${id}`);
+  if (!prompt) return c.json({ error: "Not found" }, 404);
+
+  const [existing] = await rawSql(sql`
+    SELECT 1
+    FROM   pl_saved_prompts
+    WHERE  user_id = ${userId} AND prompt_id = ${id}
+    LIMIT  1
+  `);
+
+  if (existing) {
+    await db.execute(sql`
+      DELETE FROM pl_saved_prompts
+      WHERE user_id = ${userId} AND prompt_id = ${id}
+    `);
+    return c.json({ saved: false });
+  }
+
+  await db.execute(sql`
+    INSERT INTO pl_saved_prompts (user_id, prompt_id)
+    VALUES (${userId}, ${id})
+  `);
+
+  return c.json({ saved: true });
 });
 
 export default router;

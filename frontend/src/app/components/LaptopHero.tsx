@@ -346,6 +346,7 @@ export function LaptopHero() {
             backgroundImage: `url(${laptopImg})`,
             backgroundSize: "100% 100%",
             backgroundRepeat: "no-repeat",
+            mixBlendMode: "multiply",
           }}
         >
           {/* ── Screen projection ── homography-warped flat UI ───────────── */}
