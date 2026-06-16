@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  LayoutGrid, List, Star, Copy, CheckCircle2, X,
-  Search, ChevronLeft, ChevronRight, Loader2, ArrowRight,
+  LayoutGrid, List, Star, Copy, X,
+  Search, ChevronLeft, ChevronRight, Loader2, ArrowRight, ArrowLeft,
 } from "lucide-react";
 import { platforms, videoPlatforms, websitePlatforms, familyMeta, categories as themeCats, type Family } from "../theme";
 import { libraryApi, type LibraryPrompt } from "../../lib/api";
@@ -16,6 +16,138 @@ import { websiteDesigns } from "../../lib/website-data";
 import { websitePlatformVersions } from "../../lib/website-platforms";
 
 const PAGE_SIZE = 20;
+
+const FEATURED_IMAGE_IDS = [
+  "220","15","140","5","175","40","2","310","50","120",
+  "7","12","260","130","80","170","180","30","200","348",
+  "1","205","20","60","280","110","45","300",
+];
+
+// ─── Featured Thumbnail ──────────────────────────────────────────────────────
+
+function FeaturedThumb({ design, onClick }: { design: typeof websiteDesigns[0]; onClick: () => void }) {
+  const [thumbErr, setThumbErr] = useState(false);
+  const thumbUrl = design.screenshot || `/previews/${design.slug}/thumb.jpg`;
+
+  return (
+    <motion.button
+      onClick={onClick}
+      whileHover={{ y: -3, scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 300, damping: 24 }}
+      className="rounded-xl overflow-hidden border border-[#094067]/10 bg-white text-left group"
+    >
+      <div className="w-full aspect-[16/10] bg-[#f5f5f5] overflow-hidden relative">
+        {!thumbErr ? (
+          <img
+            src={thumbUrl}
+            alt={design.title}
+            className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+            onError={() => setThumbErr(true)}
+          />
+        ) : (
+          <iframe
+            src={`/previews/${design.slug}/index.html`}
+            className="pointer-events-none"
+            style={{ width: "1280px", height: "800px", transform: "scale(0.17)", transformOrigin: "top left", border: "none" }}
+            tabIndex={-1}
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2.5">
+          <span className="text-white text-[11px] flex items-center gap-1" style={{ fontWeight: 600 }}>
+            View Details →
+          </span>
+        </div>
+      </div>
+      <div className="px-2.5 py-2">
+        <div className="text-[#094067] text-[12px] truncate" style={{ fontWeight: 700 }}>{design.title}</div>
+        <div className="text-[#5f6c7b] text-[10px] truncate mt-0.5">{design.category}</div>
+      </div>
+    </motion.button>
+  );
+}
+
+// ─── Masonry Image Card (Pinterest-style) ────────────────────────────────────
+
+function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
+  const [loaded, setLoaded] = useState(false);
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <motion.div
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      whileHover={{ y: -6 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: "spring", stiffness: 300, damping: 24 }}
+      className="break-inside-avoid rounded-[20px] overflow-hidden cursor-pointer relative group"
+      style={{
+        background: "#fff",
+        boxShadow: hovered
+          ? "0 20px 40px -12px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.06)"
+          : "0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)",
+        transition: "box-shadow 0.35s ease",
+      }}
+    >
+      {/* Image */}
+      <div className="relative overflow-hidden">
+        {p.image ? (
+          <img
+            src={p.image}
+            alt={p.title}
+            className="w-full block transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+            style={{ opacity: loaded ? 1 : 0, transition: "opacity 0.4s ease" }}
+            onLoad={() => setLoaded(true)}
+          />
+        ) : (
+          <div className="w-full aspect-[4/3] bg-gradient-to-br from-[#f0f0f0] to-[#e8e8e8] flex items-center justify-center">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </div>
+        )}
+
+        {/* Hover overlay — smooth gradient reveal */}
+        <motion.div
+          className="absolute inset-0 flex flex-col justify-end"
+          initial={false}
+          animate={{ opacity: hovered ? 1 : 0 }}
+          transition={{ duration: 0.25 }}
+          style={{ background: "linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 40%, transparent 100%)" }}
+        >
+          <div className="p-3.5 pb-4">
+            <div className="text-white text-[13px] line-clamp-2 leading-snug" style={{ fontWeight: 700, textShadow: "0 1px 3px rgba(0,0,0,0.3)" }}>{p.title}</div>
+            <div className="text-white/70 text-[11px] mt-1">{p.category}</div>
+          </div>
+        </motion.div>
+
+        {/* Save button — top right on hover */}
+        <motion.div
+          className="absolute top-2.5 right-2.5"
+          initial={false}
+          animate={{ opacity: hovered ? 1 : 0, scale: hovered ? 1 : 0.8 }}
+          transition={{ duration: 0.2 }}
+        >
+          <button
+            type="button"
+            onClick={(e) => e.stopPropagation()}
+            className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-md text-[#0a0a0a] flex items-center justify-center hover:bg-white transition-colors"
+            style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+        </motion.div>
+      </div>
+
+      {/* Title + category below */}
+      <div className="px-3.5 py-3">
+        <div className="text-[#0a0a0a] text-[13px] line-clamp-1" style={{ fontWeight: 600 }}>{p.title}</div>
+        <div className="text-[#94a3b8] text-[11px] mt-0.5">{p.subCategory || p.category}</div>
+      </div>
+    </motion.div>
+  );
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -37,7 +169,7 @@ function toCardItem(p: LibraryPrompt) {
     image:    (p as any).image_url ?? promptImageMap[p.slug] ?? "",
     platforms: {} as Record<string, string>,
     variables: [],
-    author: "PromptVault",
+    author: "Prompt Bot",
     subCategory: (p as any).sub_category ?? "",
   };
 }
@@ -85,7 +217,12 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
   };
 
   // ── Fetch prompts when deps change ───────────────────────────────────────
+  const isStaticFamily = !family || family === "image" || family === "video" || family === "website";
+
   const fetchPrompts = useCallback(async () => {
+    // Static families (image, video, website) use local data — skip API call
+    if (isStaticFamily) { setLoading(false); return; }
+
     setLoading(true);
     setSearchMode(null);
     try {
@@ -114,7 +251,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
     } finally {
       setLoading(false);
     }
-  }, [query, cat, page]);
+  }, [query, cat, page, isStaticFamily]);
 
   useEffect(() => { fetchPrompts(); }, [fetchPrompts]);
 
@@ -149,35 +286,41 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
   const displayTotal  = (useFallback || useFallbackForFamily) ? fallbackFiltered.length : total;
   const displayPages  = (useFallback || useFallbackForFamily) ? fallbackPages : pages;
 
-  // ── Sort client-side for both sources ────────────────────────────────────
-  const sorted = [...displayItems].sort((a, b) => {
+  // ── Sort client-side for both sources (memoized) ────────────────────────
+  const sorted = useMemo(() => [...displayItems].sort((a, b) => {
+    if (isImageFamily && !query) {
+      const aIdx = FEATURED_IMAGE_IDS.indexOf(a.id);
+      const bIdx = FEATURED_IMAGE_IDS.indexOf(b.id);
+      if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+      if (aIdx !== -1) return -1;
+      if (bIdx !== -1) return 1;
+    }
     if (sortBy === "score") return (b.rating ?? 0) - (a.rating ?? 0);
     return 0;
-  });
+  }), [displayItems, isImageFamily, query, sortBy]);
 
-  // ── Category list ─────────────────────────────────────────────────────────
-  const staticCats = Array.from(
-    imageLibraryPrompts.reduce((m, p) => {
-      m.set(p.category, (m.get(p.category) ?? 0) + 1);
-      return m;
-    }, new Map<string, number>())
-  ).map(([category, count]) => ({ category, count }));
-
-  const videoStaticCats  = themeCats.video.map(c => ({ category: c.name, count: videoLibraryPrompts.filter(p => p.category === c.name).length }));
-  const websiteStaticCats = themeCats.website.map(c => ({ category: c.name, count: websiteDesigns.filter(d => d.category === c.name).length }));
-
-  const catList = isImageFamily
-    ? (categories.length > 0 ? categories : staticCats)
-    : isVideoFamily
-    ? videoStaticCats
-    : isWebsiteFamily
-    ? websiteStaticCats
-    : [];
+  // ── Category list (memoized) ───────────────────────────────────────────
+  const catList = useMemo(() => {
+    if (isImageFamily) {
+      return Array.from(
+        imageLibraryPrompts.reduce((m, p) => {
+          m.set(p.category, (m.get(p.category) ?? 0) + 1);
+          return m;
+        }, new Map<string, number>())
+      ).map(([category, count]) => ({ category, count }));
+    }
+    if (isVideoFamily) return themeCats.video.map(c => ({ category: c.name, count: videoLibraryPrompts.filter(p => p.category === c.name).length }));
+    if (isWebsiteFamily) return themeCats.website.map(c => ({ category: c.name, count: websiteDesigns.filter(d => d.category === c.name).length }));
+    return categories.length > 0 ? categories : [];
+  }, [isImageFamily, isVideoFamily, isWebsiteFamily, categories]);
 
   return (
   <>
     <div className="max-w-[1400px] mx-auto px-6 py-8 text-[#094067]">
       {/* ── Header ─────────────────────────────────────────────────────── */}
+      <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#5f6c7b] hover:text-[#094067] text-[13px] mb-3 transition-colors">
+        <ArrowLeft className="w-3.5 h-3.5" /> Back to Library
+      </button>
       <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
@@ -189,6 +332,36 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
                 style={{ fontWeight: 600 }}
               >
                 <X className="w-3.5 h-3.5" /> All prompts
+              </button>
+            )}
+            {isImageFamily && (
+              <button
+                onClick={() => go("guide:image-gen")}
+                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-[#094067]/20 bg-[#094067]/5 text-[#094067] text-[13px] hover:bg-[#094067]/10 transition-colors"
+                style={{ fontWeight: 600 }}
+              >
+                <svg viewBox="0 0 16 16" fill="none" width={14} height={14}><path d="M2 3h12M2 7h8M2 11h10" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round"/></svg>
+                Image Gen Guide
+              </button>
+            )}
+            {isVideoFamily && (
+              <button
+                onClick={() => go("guide:video-gen")}
+                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-[#094067]/20 bg-[#094067]/5 text-[#094067] text-[13px] hover:bg-[#094067]/10 transition-colors"
+                style={{ fontWeight: 600 }}
+              >
+                <svg viewBox="0 0 16 16" fill="none" width={14} height={14}><path d="M2 3h12M2 7h8M2 11h10" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round"/></svg>
+                Video Gen Guide
+              </button>
+            )}
+            {isWebsiteFamily && (
+              <button
+                onClick={() => go("guide:web-gen")}
+                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-[#094067]/20 bg-[#094067]/5 text-[#094067] text-[13px] hover:bg-[#094067]/10 transition-colors"
+                style={{ fontWeight: 600 }}
+              >
+                <svg viewBox="0 0 16 16" fill="none" width={14} height={14}><path d="M2 3h12M2 7h8M2 11h10" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round"/></svg>
+                Website Gen Guide
               </button>
             )}
           </div>
@@ -249,30 +422,50 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
               </FilterPill>
             ))}
           </FilterGroup>
-          <FilterGroup title="Platform">
-            <FilterPill active={platform === null} onClick={() => { setPlatform(null); setPage(1); }}>All</FilterPill>
-            {activePlatforms.map(pl => (
-              <FilterPill key={pl.key} active={platform === pl.key} onClick={() => { setPlatform(pl.key); setPage(1); }}>
-                <span className="inline-block w-2 h-2 rounded-full mr-1.5" style={{ background: pl.color }} />
-                {pl.name}
-              </FilterPill>
-            ))}
-          </FilterGroup>
+          {!isImageFamily && !isVideoFamily && !isWebsiteFamily && (
+            <FilterGroup title="Platform">
+              <FilterPill active={platform === null} onClick={() => { setPlatform(null); setPage(1); }}>All</FilterPill>
+              {activePlatforms.map(pl => (
+                <FilterPill key={pl.key} active={platform === pl.key} onClick={() => { setPlatform(pl.key); setPage(1); }}>
+                  <span className="inline-block w-2 h-2 rounded-full mr-1.5" style={{ background: pl.color }} />
+                  {pl.name}
+                </FilterPill>
+              ))}
+            </FilterGroup>
+          )}
         </aside>
 
         {/* ── Prompt grid / list ───────────────────────────────────────── */}
         <main>
           {/* Website Generation */}
           {isWebsiteFamily ? (() => {
+            const FEATURED_IDS = [
+              "bw_01","bw_04","bw_05","bw_07","dpecom_01","lp_07","lp_15",
+              "pcpp01","pcpp05","pcpp07","pcpp11",
+              "pfecomm_01","pfecomm_02","pfecomm_04",
+              "portfolio_04","sbecom_01","sbecom_03",
+            ];
             const filtered = websiteDesigns.filter(d => !cat || d.subCategory === cat || d.category === cat);
-            return filtered.length === 0 ? (
+            // Sort: featured IDs first, rest after
+            const sorted = [...filtered].sort((a, b) => {
+              const aIdx = FEATURED_IDS.indexOf(a.id);
+              const bIdx = FEATURED_IDS.indexOf(b.id);
+              if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+              if (aIdx !== -1) return -1;
+              if (bIdx !== -1) return 1;
+              return 0;
+            });
+
+            return sorted.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-24 gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-[#094067]/10 flex items-center justify-center text-3xl">⌨️</div>
+                <div className="w-16 h-16 rounded-2xl bg-[#094067]/10 flex items-center justify-center">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#094067" strokeWidth="1.5" strokeLinecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M8 16h8"/></svg>
+                </div>
                 <p className="text-[#5f6c7b]">No website prompts in this category yet.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                {filtered.map(d => (
+                {sorted.map(d => (
                   <WebsitePromptCard
                     key={d.id}
                     design={d}
@@ -303,7 +496,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
                 .
               </p>
             </div>
-          ) : loading ? (
+          ) : (loading && !isImageFamily && !isVideoFamily) ? (
             <div className="flex items-center justify-center py-24 text-[#5f6c7b]">
               <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading prompts…
             </div>
@@ -321,11 +514,19 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
               )}
             </div>
           ) : view === "grid" ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {sorted.map(p => (
-                <PromptCard key={p.id} p={p as any} onClick={() => go("detail:" + p.id + (platform ? ":" + platform : ""))} />
-              ))}
-            </div>
+            isImageFamily ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+                {sorted.map(p => (
+                  <MasonryImageCard key={p.id} p={p as any} onClick={() => go("detail:" + p.id + (platform ? ":" + platform : ""))} />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                {sorted.map(p => (
+                  <PromptCard key={p.id} p={p as any} onClick={() => go("detail:" + p.id + (platform ? ":" + platform : ""))} />
+                ))}
+              </div>
+            )
           ) : (
             <div className="bg-white border border-[#094067]/15 rounded-2xl overflow-hidden">
               <table className="w-full">
@@ -344,7 +545,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
                       <td className="p-3 text-[#094067]" style={{ fontWeight: 600 }}>{p.title}</td>
                       <td className="p-3 text-[#5f6c7b]">{p.category}</td>
                       <td className="p-3"><span className="inline-flex items-center gap-1 text-[#094067]"><Star className="w-4 h-4 fill-[#ffd803] text-[#ef4565]" />{p.rating}</span></td>
-                      <td className="p-3">{(p as any).tested && <span className="inline-flex items-center gap-1 text-[#ef4565]"><CheckCircle2 className="w-4 h-4" />tested</span>}</td>
+                      <td className="p-3">{(p as any).tested && <span className="inline-flex items-center gap-1 text-[#ef4565]"><span className="w-1.5 h-1.5 rounded-full bg-[#ef4565]" />tested</span>}</td>
                       <td className="p-3 text-right"><Copy className="w-4 h-4 text-[#ef4565] inline" /></td>
                     </tr>
                   ))}
@@ -458,8 +659,8 @@ const FAMILY_CARDS = [
     key: "website",
     title: "Website Generation",
     tagline: "Full-stack UI prompts for Lovable, Bolt, Claude Code and more",
-    count: "Coming",
-    label: "soon",
+    count: "90+",
+    label: "designs",
     chips: ["Lovable", "Bolt", "Claude Code", "Codex", "Replit"],
     bg: "bg-[#094067]",
     border: "border-[#094067]/20",

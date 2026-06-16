@@ -1,0 +1,397 @@
+/* ============================================================
+   PROMPT CITY — interactive isometric stage
+   Stage is fixed 1536x1024; scaled to fit via --fit.
+   ============================================================ */
+
+.city-section {
+  position: relative;
+  padding: 70px 0 96px;
+  background:
+    radial-gradient(130% 90% at 50% 30%, #FFFFFF 0%, #FBFAFF 48%, #F4F1FF 100%);
+  overflow: hidden;
+}
+.city-section::before {
+  /* soft ground shadow vignette under the city */
+  content: "";
+  position: absolute;
+  left: 50%; top: 58%;
+  width: 70%; height: 40%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse at center, rgba(99, 91, 145, .16), rgba(99, 91, 145, 0) 70%);
+  filter: blur(14px);
+  pointer-events: none;
+}
+
+.city-head { text-align: center; max-width: 700px; margin: 0 auto 26px; position: relative; z-index: 2; }
+.city-head .eyebrow { color: var(--image-deep); }
+.city-head h2 { font-size: clamp(30px, 4.2vw, 50px); margin-top: 12px; }
+.city-head h2 .accent {
+  background: linear-gradient(100deg, var(--image-deep), var(--website-deep));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.city-head p { margin-top: 14px; font-size: 18px; color: var(--muted); }
+
+/* ---------- viewport + fit scaling ---------- */
+.city-viewport {
+  position: relative;
+  width: min(1280px, 96vw);
+  margin: 0 auto;
+  aspect-ratio: 1536 / 1024;
+  z-index: 2;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.city-viewport.is-focused { cursor: default; }
+
+.city-fit {
+  position: absolute;
+  top: 0; left: 0;
+  width: 1536px;
+  height: 1024px;
+  transform-origin: top left;
+  transform: scale(var(--fit, 0.8));
+}
+
+/* ---------- the camera layer (zoom target) ---------- */
+.city-camera {
+  position: absolute;
+  inset: 0;
+  transition: transform .85s var(--ease);
+  will-change: transform;
+}
+
+.city-base {
+  position: absolute;
+  inset: 0;
+  width: 1536px;
+  height: 1024px;
+  display: block;
+  -webkit-user-drag: none;
+}
+
+/* dim veil that fades the rest of the city when focusing */
+.city-veil {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--vx, 50%) var(--vy, 50%),
+    rgba(255, 255, 255, 0) 0%,
+    rgba(247, 245, 255, 0) 26%,
+    rgba(244, 242, 255, .55) 60%,
+    rgba(240, 238, 252, .72) 100%);
+  opacity: 0;
+  transition: opacity .55s var(--ease);
+  pointer-events: none;
+}
+.city-stage.dim .city-veil { opacity: 1; }
+
+/* ---------- raised district copies (lift + glow) ---------- */
+.district-lift {
+  position: absolute;
+  background-image: url("assets/prompt-city.jpeg");
+  background-repeat: no-repeat;
+  background-size: 1536px 1024px;
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 46%, rgba(0,0,0,.45) 64%, transparent 80%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 46%, rgba(0,0,0,.45) 64%, transparent 80%);
+  opacity: 0;
+  transform: scale(1);
+  transform-origin: center center;
+  transition: transform .5s var(--ease-soft), opacity .35s var(--ease), filter .4s var(--ease);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.district-lift.show {
+  opacity: 1;
+  transform: scale(1.07) translateY(-6px);
+  filter: saturate(1.16) brightness(1.04)
+          drop-shadow(0 18px 24px rgba(15, 23, 42, .28));
+}
+
+/* ---------- colored glow bloom per district ---------- */
+.district-glow {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(.6);
+  transition: opacity .5s var(--ease), transform .6s var(--ease-soft);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  filter: blur(2px);
+}
+.district-glow.show { opacity: .9; transform: scale(1); }
+
+/* glowing ring around a focused district */
+.district-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  opacity: 0;
+  transform: scale(.7);
+  transition: opacity .4s var(--ease), transform .6s var(--ease-soft);
+  pointer-events: none;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, .35) inset;
+}
+.district-ring.show { opacity: .55; transform: scale(1); animation: ringPulse 2.6s var(--ease) infinite; }
+@keyframes ringPulse {
+  0%, 100% { box-shadow: 0 0 22px 2px currentColor, 0 0 0 6px rgba(255,255,255,.3) inset; }
+  50% { box-shadow: 0 0 40px 8px currentColor, 0 0 0 6px rgba(255,255,255,.3) inset; }
+}
+
+/* ---------- district pins (idle affordance) ---------- */
+.pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 12;
+}
+.pin__dot {
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .92);
+  border: 1.5px solid rgba(255, 255, 255, .9);
+  display: grid; place-items: center;
+  font-size: 24px;
+  box-shadow: 0 10px 22px -8px rgba(15, 23, 42, .4), 0 0 0 1px rgba(15,23,42,.05);
+  backdrop-filter: blur(4px);
+  transition: transform .35s var(--ease-soft), box-shadow .3s var(--ease);
+  position: relative;
+  z-index: 2;
+}
+.pin__ping {
+  position: absolute;
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  animation: ping 2.8s var(--ease) infinite;
+}
+@keyframes ping {
+  0% { transform: scale(1); opacity: .7; }
+  70%, 100% { transform: scale(2.1); opacity: 0; }
+}
+.pin:hover .pin__dot, .pin.active .pin__dot {
+  transform: scale(1.14) translateY(-3px);
+  box-shadow: 0 16px 30px -8px currentColor, 0 0 0 1px rgba(15,23,42,.05);
+}
+.pin__count {
+  position: absolute;
+  top: -16px; left: 50%; transform: translateX(-50%);
+  font-family: var(--font-disp);
+  font-weight: 700; font-size: 12px;
+  color: var(--ink);
+  background: #fff;
+  padding: 3px 9px; border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--line);
+  opacity: 0;
+  transition: opacity .25s, transform .25s var(--ease-soft);
+}
+.pin:hover .pin__count, .pin.active .pin__count { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+/* full-district hover hotspot (covers the whole district blob) */
+.district-hotspot {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 11;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* hide pins/idle bits when a district is focused */
+.city-stage.focused .pin { opacity: 0; pointer-events: none; transition: opacity .4s; }
+.city-stage.focused .crystal-label { opacity: 0; }
+
+/* ---------- crystal plaza center ---------- */
+.crystal-glow {
+  position: absolute;
+  width: 240px; height: 240px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(139, 92, 246, .55), rgba(139, 92, 246, 0) 68%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: crystalPulse 3.4s ease-in-out infinite;
+  z-index: 6;
+}
+@keyframes crystalPulse {
+  0%, 100% { opacity: .55; transform: translate(-50%, -50%) scale(.92); }
+  50% { opacity: .95; transform: translate(-50%, -50%) scale(1.08); }
+}
+.crystal-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  pointer-events: none;
+  z-index: 13;
+  transition: opacity .4s var(--ease);
+}
+.crystal-label .tag {
+  font-family: var(--font-disp); font-weight: 700; font-size: 13px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  background: rgba(255, 255, 255, .92);
+  border: 1px solid rgba(124, 58, 237, .22);
+  padding: 5px 13px; border-radius: 999px;
+  box-shadow: 0 8px 20px -8px rgba(124, 58, 237, .5);
+  display: flex; align-items: center; gap: 7px;
+}
+.crystal-label .tag .gem { width: 8px; height: 8px; border-radius: 2px; background: var(--image); transform: rotate(45deg); box-shadow: 0 0 10px var(--image); }
+
+/* ---------- ambient particles + twinkles ---------- */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .9);
+  box-shadow: 0 0 8px 1px currentColor;
+  pointer-events: none;
+  animation: floatUp linear infinite;
+}
+@keyframes floatUp {
+  0% { transform: translateY(0) scale(.6); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: .8; }
+  100% { transform: translateY(-120px) scale(1); opacity: 0; }
+}
+.twinkle {
+  position: absolute;
+  width: 6px; height: 6px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: twinkle 2.4s ease-in-out infinite;
+}
+.twinkle::before, .twinkle::after {
+  content: ""; position: absolute; inset: 0;
+  background: #fff;
+  box-shadow: 0 0 8px 2px currentColor;
+}
+.twinkle::before { clip-path: polygon(50% 0, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0 50%, 42% 42%); }
+.twinkle::after { display: none; }
+@keyframes twinkle {
+  0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(.4); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ---------- floating info card ---------- */
+.info-card {
+  position: absolute;
+  width: 320px;
+  background: rgba(255, 255, 255, .96);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: var(--shadow-pop);
+  backdrop-filter: blur(10px);
+  z-index: 30;
+  overflow: hidden;
+  transform-origin: center bottom;
+  opacity: 0;
+  transform: translateY(10px) scale(.96);
+  transition: opacity .3s var(--ease), transform .42s var(--ease-soft);
+  pointer-events: none;
+}
+.info-card.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.info-card__bar { height: 5px; width: 100%; }
+.info-card__body { padding: 18px 20px 20px; }
+.info-card__top { display: flex; align-items: center; gap: 11px; }
+.info-card__emoji {
+  width: 40px; height: 40px; border-radius: 11px;
+  display: grid; place-items: center; font-size: 21px;
+  box-shadow: inset 0 0 0 1px rgba(15,23,42,.05);
+}
+.info-card__name { font-family: var(--font-disp); font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
+.info-card__tagline { font-size: 12.5px; color: var(--muted); margin-top: 1px; }
+.info-card__count {
+  margin-top: 16px; display: flex; align-items: baseline; gap: 7px;
+}
+.info-card__count b { font-family: var(--font-disp); font-weight: 700; font-size: 26px; letter-spacing: -0.03em; }
+.info-card__count span { font-size: 13px; color: var(--muted); font-weight: 500; }
+.info-card__trend-label {
+  margin-top: 16px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted-2);
+}
+.info-card__pills { margin-top: 9px; display: flex; flex-wrap: wrap; gap: 7px; }
+.info-card__pill {
+  font-size: 12.5px; font-weight: 600;
+  padding: 6px 11px; border-radius: 999px;
+  display: flex; align-items: center; gap: 6px;
+}
+.info-card__pill .spark { font-size: 10px; }
+.info-card__btn {
+  margin-top: 18px; width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  border: none; border-radius: 12px;
+  color: #fff; font-family: var(--font-disp); font-weight: 600; font-size: 14.5px;
+  padding: 13px;
+  transition: transform .18s var(--ease), filter .2s, box-shadow .25s;
+}
+.info-card__btn:hover { transform: translateY(-2px); filter: brightness(1.06); }
+.info-card__btn .arr { transition: transform .25s var(--ease); }
+.info-card__btn:hover .arr { transform: translateX(3px); }
+
+/* ---------- HUD: back button + hint ---------- */
+.city-hud {
+  position: absolute;
+  left: 0; right: 0; bottom: 14px;
+  display: flex; justify-content: center;
+  z-index: 40;
+  pointer-events: none;
+}
+.city-hint {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-size: 13.5px; font-weight: 500; color: var(--muted);
+  background: rgba(255, 255, 255, .82);
+  border: 1px solid var(--line);
+  padding: 9px 16px; border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(8px);
+  transition: opacity .3s;
+}
+.city-hint .kbd {
+  font-family: var(--font-disp); font-weight: 600; font-size: 12px;
+  color: var(--ink); background: #fff; border: 1px solid var(--line);
+  border-radius: 6px; padding: 2px 7px;
+}
+.city-back {
+  position: absolute;
+  left: 16px; top: 16px;
+  z-index: 45;
+  pointer-events: auto;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-disp); font-weight: 600; font-size: 14px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, .92);
+  border: 1px solid var(--line);
+  padding: 10px 16px 10px 13px; border-radius: 999px;
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(8px);
+  opacity: 0; transform: translateY(-6px);
+  transition: opacity .3s var(--ease), transform .3s var(--ease-soft), background .2s;
+}
+.city-back.show { opacity: 1; transform: translateY(0); }
+.city-back:hover { transform: translateY(-2px); }
+
+/* ---------- legend chips under the city ---------- */
+.city-legend {
+  position: relative; z-index: 3;
+  margin: 30px auto 0;
+  display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+}
+.legend-chip {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--font-disp); font-weight: 600; font-size: 14px;
+  color: var(--ink-2);
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 9px 16px 9px 12px; border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  transition: transform .2s var(--ease), box-shadow .25s, border-color .2s;
+}
+.legend-chip:hover, .legend-chip.active { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+.legend-chip .swatch { width: 11px; height: 11px; border-radius: 4px; }
+.legend-chip .lc-count { color: var(--muted-2); font-weight: 600; font-size: 13px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .crystal-glow, .pin__ping, .particle, .twinkle, .district-ring.show { animation: none !important; }
+}

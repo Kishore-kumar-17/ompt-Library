@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
-import { BookOpen, Target, Layers, Wand2, Sparkles, Scale, ListChecks, Lightbulb, Copy, ChevronRight, Play, Image, Globe, Video, Code2, FileText } from "lucide-react";
+import { BookOpen, Target, Layers, Wand2, Sparkles, Scale, ListChecks, Lightbulb, Copy, ChevronRight, Play, Image, Globe, Video, Code2, FileText, ArrowLeft } from "lucide-react";
+import { websiteDesigns, type WebsiteDesign } from "../../lib/website-data";
 
 const sections = [
   { key: "playground", label: "Playground",          icon: Play,      group: "craft" },
@@ -18,11 +19,14 @@ const sections = [
   { key: "content-gen",label: "Content Generation",   icon: FileText,  group: "how-to" },
 ];
 
-export function Guide({ go }: { go: (p: string) => void }) {
-  const [active, setActive] = useState("playground");
+export function Guide({ go, initialSection }: { go: (p: string) => void; initialSection?: string }) {
+  const [active, setActive] = useState(initialSection || "playground");
 
   return (
     <div className="max-w-[1200px] mx-auto px-6 py-12 text-[#094067]">
+      <button onClick={() => go("home")} className="inline-flex items-center gap-1.5 text-[#5f6c7b] hover:text-[#094067] text-[13px] mb-3 transition-colors">
+        <ArrowLeft className="w-3.5 h-3.5" /> Back
+      </button>
       <div className="flex items-center gap-2 text-[#ef4565] mb-3">
         <BookOpen className="w-5 h-5" />
         <span style={{ fontWeight: 700 }}>Prompt Guide</span>
@@ -104,7 +108,7 @@ export function Guide({ go }: { go: (p: string) => void }) {
               {active === "checklist"   && <Checklist />}
               {active === "tips"        && <Tips />}
               {active === "image-gen"   && <ImageGenGuide />}
-              {active === "web-gen"     && <WebGenGuide />}
+              {active === "web-gen"     && <WebGenGuide go={go} />}
               {active === "video-gen"   && <VideoGenGuide />}
               {active === "code-gen"    && <CodeGenGuide />}
               {active === "content-gen" && <ContentGenGuide />}
@@ -325,7 +329,7 @@ function Checklist() {
         <ul className="space-y-3">
           {items.map((t) => (
             <li key={t} className="flex items-start gap-3">
-              <span className="mt-1 w-5 h-5 rounded-md bg-[#ffd803] border border-[#094067] flex items-center justify-center text-[#094067]" style={{ fontWeight: 800, fontSize: "12px" }}>✓</span>
+              <span className="mt-2 w-2 h-2 rounded-full bg-[#094067] shrink-0" />
               <span className="text-[#094067]">{t}</span>
             </li>
           ))}
@@ -415,7 +419,7 @@ function Playground() {
                   fontSize:     "13px",
                 }}
               >
-                {active ? "✓ " : "+ "}{p.name}
+                {active ? <><span className="inline-block w-1.5 h-1.5 rounded-full bg-current mr-1.5" />{p.name}</> : <>{`+ ${p.name}`}</>}
               </motion.button>
             );
           })}
@@ -516,6 +520,67 @@ function HowToStep({ n, text }: { n: number; text: string }) {
   );
 }
 
+function StepCard({ stepIndex, totalSteps, done, onToggle, children }: {
+  stepIndex: number;
+  totalSteps: number;
+  done: boolean[];
+  onToggle: (i: number) => void;
+  children: React.ReactNode;
+}) {
+  const isDone = done[stepIndex];
+
+  return (
+    <div
+      className="bg-white border rounded-2xl p-6 transition-all duration-300 relative"
+      style={{
+        borderColor: isDone ? "#10b981" : "rgba(9,64,103,0.15)",
+        opacity: isDone ? 0.6 : 1,
+      }}
+    >
+      {isDone && (
+        <div className="absolute top-4 right-4 flex items-center gap-1.5 text-[#10b981]" style={{ fontSize: "12px", fontWeight: 700 }}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="8" fill="#10b981"/><path d="M5 8l2 2 4-4" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          Completed
+        </div>
+      )}
+      {children}
+      <div className="flex items-center gap-3 mt-5 pt-4 border-t border-[#094067]/10">
+        {isDone ? (
+          <button
+            onClick={() => onToggle(stepIndex)}
+            className="px-4 py-2 rounded-xl text-[13px] transition-all border border-[#ef4565]/30 text-[#ef4565] hover:bg-[#ef4565]/5 flex items-center gap-1.5"
+            style={{ fontWeight: 600 }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            Undo Step {stepIndex + 1}
+          </button>
+        ) : (
+          <button
+            onClick={() => onToggle(stepIndex)}
+            className="px-4 py-2 rounded-xl text-[13px] transition-all text-white hover:opacity-90"
+            style={{ fontWeight: 600, background: "#094067" }}
+          >
+            Mark Step {stepIndex + 1} Done
+          </button>
+        )}
+        <span className="text-[#5f6c7b] text-[11px] ml-auto" style={{ fontWeight: 600 }}>
+          {done.filter(Boolean).length}/{totalSteps} completed
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function useStepDone(count: number) {
+  const [done, setDone] = useState<boolean[]>(Array(count).fill(false));
+  const toggle = (i: number) => setDone(prev => {
+    const next = [...prev];
+    next[i] = !next[i];
+    return next;
+  });
+  return { done, toggle };
+}
+
 function ToolBadge({ name, color }: { name: string; color: string }) {
   return (
     <span className="px-3 py-1 rounded-full border-2 text-[13px]" style={{ background: `${color}18`, color, borderColor: `${color}55`, fontWeight: 700 }}>
@@ -536,63 +601,214 @@ function ProTip({ text }: { text: string }) {
 // ─── Image Generation Guide ──────────────────────────────────────────────────
 
 function ImageGenGuide() {
+  const { done, toggle } = useStepDone(8);
+
   return (
-    <Section title="Image Generation" icon={Image}>
-      <Card>
-        <div className="text-[#094067] mb-2" style={{ fontWeight: 700 }}>What is Image Generation?</div>
-        <p className="text-[#5f6c7b]" style={{ lineHeight: 1.6 }}>
-          Image generation prompts help AI models create visuals from text descriptions. The quality of your
-          output depends almost entirely on how precisely you describe subject, style, lighting, and composition.
-        </p>
-      </Card>
-
-      <Card>
-        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Popular Tools</div>
+    <Section title="Image Generation Guide" icon={Image}>
+      <StepCard stepIndex={0} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 1 — Choose an AI Tool</div>
+        <p className="text-[#5f6c7b] mb-4" style={{ lineHeight: 1.6 }}>Download or open one of these image generation tools:</p>
         <div className="flex flex-wrap gap-2">
-          <ToolBadge name="Midjourney"             color="#ef4565" />
-          <ToolBadge name="ChatGPT Image Gen"       color="#10a37f" />
-          <ToolBadge name="FLUX"                    color="#90b4ce" />
-          <ToolBadge name="Ideogram"                color="#094067" />
-          <ToolBadge name="Recraft"                 color="#ffd803" />
+          <ToolBadge name="ChatGPT"        color="#10a37f" />
+          <ToolBadge name="Leonardo AI"    color="#7C3AED" />
+          <ToolBadge name="Ideogram"       color="#094067" />
+          <ToolBadge name="Midjourney"     color="#ef4565" />
+          <ToolBadge name="Flux"           color="#90b4ce" />
+          <ToolBadge name="Adobe Firefly"  color="#ffd803" />
         </div>
-      </Card>
+      </StepCard>
 
-      <Card>
-        <div className="text-[#094067] mb-4" style={{ fontWeight: 700 }}>How to Use</div>
-        <div className="space-y-4">
-          <HowToStep n={1} text="Copy a prompt from the Prompt Library." />
-          <HowToStep n={2} text="Open your preferred image generation tool." />
-          <HowToStep n={3} text="Paste the prompt and click Generate." />
-          <HowToStep n={4} text="Modify subject, style, colors, or lighting to create variations." />
-        </div>
-        <div className="mt-5">
-          <div className="text-[#5f6c7b] text-[12px] mb-2" style={{ fontWeight: 600 }}>EXAMPLE PROMPT</div>
-          <PromptBlock>{`A luxury perfume bottle on a marble pedestal,
-soft studio lighting,
-premium commercial photography,
-shallow depth of field,
-ultra realistic`}</PromptBlock>
-        </div>
-      </Card>
-
-      <Card>
-        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Pro Tips</div>
+      <StepCard stepIndex={1} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 2 — Create an Account</div>
         <div className="space-y-3">
-          <ProTip text="Add camera angles — e.g. low angle shot, bird's eye view, close-up macro." />
-          <ProTip text="Specify lighting — golden hour lighting, soft diffused light, neon backlight." />
-          <ProTip text="End with quality boosters — ultra realistic, highly detailed, 8K resolution." />
-          <ProTip text="For Midjourney: append --ar 16:9 --s 750 for consistent cinematic output." />
+          <HowToStep n={1} text="Sign Up" />
+          <HowToStep n={2} text="Verify Email" />
+          <HowToStep n={3} text="Login" />
         </div>
-      </Card>
+      </StepCard>
+
+      <StepCard stepIndex={2} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 3 — Understand What You Want</div>
+        <p className="text-[#5f6c7b] mb-3" style={{ lineHeight: 1.6 }}>Ask yourself: What image do I want?</p>
+        <div className="flex flex-wrap gap-2">
+          {["Poster", "Product", "Advertisement", "Social Media Post", "Portrait", "Logo"].map(t => (
+            <span key={t} className="px-2.5 py-1 rounded-full bg-[#094067]/8 text-[#094067] text-[12px]" style={{ fontWeight: 600 }}>{t}</span>
+          ))}
+        </div>
+      </StepCard>
+
+      <StepCard stepIndex={3} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 4 — Learn Prompt Structure</div>
+        <p className="text-[#5f6c7b] mb-3" style={{ lineHeight: 1.6 }}>Simple formula:</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+          {["Subject", "Style", "Background", "Quality"].map((s, i) => (
+            <div key={s} className="border border-[#094067]/15 rounded-xl p-3 text-center">
+              <div className="w-6 h-6 rounded-full bg-[#ffd803] text-[#094067] flex items-center justify-center mx-auto mb-1" style={{ fontWeight: 800, fontSize: "11px" }}>{i + 1}</div>
+              <div className="text-[#094067]" style={{ fontWeight: 700, fontSize: "13px" }}>{s}</div>
+            </div>
+          ))}
+        </div>
+        <div className="text-[#5f6c7b] text-[12px] mb-2" style={{ fontWeight: 600 }}>EXAMPLE</div>
+        <PromptBlock>{`Luxury coffee cup,
+wooden table,
+cinematic lighting,
+ultra realistic`}</PromptBlock>
+      </StepCard>
+
+      <StepCard stepIndex={4} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 5 — Generate First Image</div>
+        <div className="space-y-3">
+          <HowToStep n={1} text="Paste your prompt into the tool." />
+          <HowToStep n={2} text="Click Generate." />
+          <HowToStep n={3} text="Wait for the result." />
+        </div>
+      </StepCard>
+
+      <StepCard stepIndex={5} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 6 — Improve Your Prompt</div>
+        <p className="text-[#5f6c7b] mb-3" style={{ lineHeight: 1.6 }}>Add more details to refine your output:</p>
+        <div className="flex flex-wrap gap-2">
+          {["Lighting", "Camera Angle", "Colors", "Mood"].map(t => (
+            <span key={t} className="px-2.5 py-1 rounded-full bg-[#ffd803]/20 text-[#094067] text-[12px] border border-[#ffd803]/50" style={{ fontWeight: 600 }}>{t}</span>
+          ))}
+        </div>
+      </StepCard>
+
+      <StepCard stepIndex={6} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 7 — Download Image</div>
+        <p className="text-[#5f6c7b] mb-3" style={{ lineHeight: 1.6 }}>Available formats:</p>
+        <div className="flex flex-wrap gap-2">
+          {["PNG", "JPG", "WebP"].map(t => (
+            <span key={t} className="px-3 py-1 rounded-full bg-[#094067]/8 text-[#094067] text-[12px]" style={{ fontWeight: 700 }}>{t}</span>
+          ))}
+        </div>
+      </StepCard>
+
+      <StepCard stepIndex={7} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 8 — Use in Your Projects</div>
+        <div className="flex flex-wrap gap-2">
+          {["Website", "Instagram", "Marketing", "Presentations", "Posters"].map(t => (
+            <span key={t} className="px-2.5 py-1 rounded-full bg-[#ef4565]/10 text-[#ef4565] text-[12px] border border-[#ef4565]/30" style={{ fontWeight: 600 }}>{t}</span>
+          ))}
+        </div>
+      </StepCard>
     </Section>
   );
 }
 
 // ─── Website Generation Guide ────────────────────────────────────────────────
 
-function WebGenGuide() {
+const FEATURED_WEBSITE_IDS = [
+  "bw_01", "bw_04", "bw_05", "bw_07",
+  "dpecom_01",
+  "lp_07", "lp_15",
+  "pcpp01", "pcpp05", "pcpp07", "pcpp11",
+  "pfecomm_01", "pfecomm_02", "pfecomm_04",
+  "portfolio_04",
+  "sbecom_01", "sbecom_03",
+];
+
+function FeaturedWebsiteCard({ design, onClick }: { design: WebsiteDesign; onClick: () => void }) {
+  const [thumbError, setThumbError] = useState(false);
+  const thumbUrl = design.screenshot || `/previews/${design.slug}/thumb.jpg`;
+
+  return (
+    <motion.button
+      onClick={onClick}
+      whileHover={{ y: -4, scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 300, damping: 24 }}
+      className="flex-shrink-0 rounded-2xl overflow-hidden border border-[#094067]/10 bg-white text-left group"
+      style={{ width: "260px" }}
+    >
+      <div className="w-full aspect-[16/10] bg-[#f5f5f5] overflow-hidden relative">
+        {!thumbError ? (
+          <img
+            src={thumbUrl}
+            alt={design.title}
+            className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+            onError={() => setThumbError(true)}
+          />
+        ) : (
+          <iframe
+            src={`/previews/${design.slug}/index.html`}
+            className="pointer-events-none"
+            style={{ width: "1280px", height: "800px", transform: "scale(0.203)", transformOrigin: "top left", border: "none" }}
+            tabIndex={-1}
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+          <span className="text-white text-[11px] flex items-center gap-1" style={{ fontWeight: 600 }}>
+            View Details →
+          </span>
+        </div>
+      </div>
+      <div className="p-3">
+        <div className="text-[#094067] text-[13px] truncate" style={{ fontWeight: 700 }}>{design.title}</div>
+        <div className="text-[#5f6c7b] text-[11px] truncate mt-0.5">{design.category}</div>
+      </div>
+    </motion.button>
+  );
+}
+
+function WebGenGuide({ go }: { go: (p: string) => void }) {
+  const featured = FEATURED_WEBSITE_IDS
+    .map(id => websiteDesigns.find(d => d.id === id))
+    .filter((d): d is WebsiteDesign => Boolean(d));
+  const [scrollPaused, setScrollPaused] = useState(false);
+
   return (
     <Section title="Website Generation" icon={Globe}>
+      {/* Featured Websites Showcase */}
+      <div className="rounded-2xl border border-[#094067]/10 bg-gradient-to-br from-[#094067]/[0.03] to-[#ef4565]/[0.03] p-5 -mx-1">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <div className="text-[#094067] text-[15px]" style={{ fontWeight: 800 }}>Top Website Designs</div>
+            <div className="text-[#5f6c7b] text-[12px] mt-0.5">Hand-picked from our library — click to explore</div>
+          </div>
+          <button
+            onClick={() => go("library:website")}
+            className="text-[#094067] hover:text-[#ef4565] transition-colors text-[12px]"
+            style={{ fontWeight: 600 }}
+          >
+            View all →
+          </button>
+        </div>
+        <div
+          className="overflow-hidden"
+          style={{
+            maskImage: "linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%)",
+          }}
+          onMouseEnter={() => setScrollPaused(true)}
+          onMouseLeave={() => setScrollPaused(false)}
+        >
+          <div
+            className="flex gap-4 py-1 featured-web-marquee"
+            style={{
+              width: "max-content",
+              animationPlayState: scrollPaused ? "paused" : "running",
+            }}
+          >
+            {[...featured, ...featured].map((d, i) => (
+              <FeaturedWebsiteCard
+                key={`${d.id}-${i}`}
+                design={d}
+                onClick={() => go("website-detail:" + d.slug)}
+              />
+            ))}
+          </div>
+        </div>
+        <style>{`
+          .featured-web-marquee {
+            animation: featured-web-scroll 50s linear infinite;
+          }
+          @keyframes featured-web-scroll {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+          }
+        `}</style>
+      </div>
+
       <Card>
         <div className="text-[#094067] mb-2" style={{ fontWeight: 700 }}>What is Website Generation?</div>
         <p className="text-[#5f6c7b]" style={{ lineHeight: 1.6 }}>
@@ -668,67 +884,93 @@ Make the CTA button 48px height.`}</PromptBlock>
 // ─── Video Generation Guide ──────────────────────────────────────────────────
 
 function VideoGenGuide() {
-  const structure = ["Subject", "Action", "Environment", "Camera", "Lighting", "Mood", "Style"];
+  const { done, toggle } = useStepDone(8);
 
   return (
-    <Section title="Video Generation" icon={Video}>
-      <Card>
-        <div className="text-[#094067] mb-2" style={{ fontWeight: 700 }}>What is Video Generation?</div>
-        <p className="text-[#5f6c7b]" style={{ lineHeight: 1.6 }}>
-          Video prompts create short cinematic clips — ads, reels, product showcases, and
-          atmospheric scenes — using AI video models that interpret text into motion.
-        </p>
-        <div className="flex flex-wrap gap-2 mt-4">
-          {["Ads", "Reels", "Cinematic videos", "Product showcases"].map(t => (
+    <Section title="Video Generation Guide" icon={Video}>
+      <StepCard stepIndex={0} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 1 — Choose a Video AI Tool</div>
+        <div className="flex flex-wrap gap-2">
+          <ToolBadge name="Seedance"  color="#094067" />
+          <ToolBadge name="Kling"     color="#ef4565" />
+          <ToolBadge name="Hailuo"    color="#ffd803" />
+          <ToolBadge name="Runway"    color="#7C3AED" />
+          <ToolBadge name="Pika"      color="#10a37f" />
+          <ToolBadge name="Veo"       color="#4285f4" />
+        </div>
+      </StepCard>
+
+      <StepCard stepIndex={1} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 2 — Create an Account</div>
+        <div className="space-y-3">
+          <HowToStep n={1} text="Register" />
+          <HowToStep n={2} text="Verify Email" />
+          <HowToStep n={3} text="Login" />
+        </div>
+      </StepCard>
+
+      <StepCard stepIndex={2} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 3 — Decide Your Video Type</div>
+        <div className="flex flex-wrap gap-2">
+          {["Advertisement", "Product Demo", "Short Film", "Anime", "Reel", "Commercial"].map(t => (
             <span key={t} className="px-2.5 py-1 rounded-full bg-[#094067]/8 text-[#094067] text-[12px]" style={{ fontWeight: 600 }}>{t}</span>
           ))}
         </div>
-      </Card>
+      </StepCard>
 
-      <Card>
-        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Popular Tools</div>
-        <div className="flex flex-wrap gap-2">
-          <ToolBadge name="Veo"      color="#4285f4" />
-          <ToolBadge name="Seedance" color="#094067" />
-          <ToolBadge name="Kling"    color="#ef4565" />
-          <ToolBadge name="Luma"     color="#10a37f" />
-          <ToolBadge name="Hailuo"   color="#ffd803" />
-        </div>
-      </Card>
-
-      <Card>
-        <div className="text-[#094067] mb-4" style={{ fontWeight: 700 }}>How to Use</div>
-        <div className="space-y-4">
-          <HowToStep n={1} text="Copy a video prompt from the Library." />
-          <HowToStep n={2} text="Paste into your chosen video generation tool." />
-          <HowToStep n={3} text="Generate and preview the clip." />
-          <HowToStep n={4} text="Adjust camera movement, lighting, and mood for variations." />
-        </div>
-      </Card>
-
-      <Card>
-        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Universal Prompt Structure</div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {structure.map((s, i) => (
+      <StepCard stepIndex={3} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 4 — Learn Video Prompt Formula</div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+          {["Subject", "Action", "Camera Movement", "Environment"].map((s, i) => (
             <div key={s} className="border border-[#094067]/15 rounded-xl p-3 text-center">
-              <div className="w-6 h-6 rounded-full bg-[#ffd803] text-[#094067] flex items-center justify-center mx-auto mb-1" style={{ fontWeight: 800, fontSize: "11px" }}>
-                {i + 1}
-              </div>
+              <div className="w-6 h-6 rounded-full bg-[#ffd803] text-[#094067] flex items-center justify-center mx-auto mb-1" style={{ fontWeight: 800, fontSize: "11px" }}>{i + 1}</div>
               <div className="text-[#094067]" style={{ fontWeight: 700, fontSize: "13px" }}>{s}</div>
             </div>
           ))}
         </div>
-      </Card>
+        <div className="text-[#5f6c7b] text-[12px] mb-2" style={{ fontWeight: 600 }}>EXAMPLE</div>
+        <PromptBlock>{`A luxury sports car driving through a futuristic city,
+cinematic drone shot,
+rain reflections,
+night atmosphere`}</PromptBlock>
+      </StepCard>
 
-      <Card>
-        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Pro Tips</div>
+      <StepCard stepIndex={4} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 5 — Generate Video</div>
         <div className="space-y-3">
-          <ProTip text="Describe camera movement explicitly — slow dolly forward, handheld tracking shot." />
-          <ProTip text="Set the mood with lighting and color grading — warm golden tones, cold blue shadows." />
-          <ProTip text="Keep prompts under 100 words — most video models work better with focused descriptions." />
-          <ProTip text="Use cinematic references — 'shot like a Nolan film', 'in the style of a Nike ad'." />
+          <HowToStep n={1} text="Paste your prompt into the tool." />
+          <HowToStep n={2} text="Click Generate." />
+          <HowToStep n={3} text="Preview the result." />
         </div>
-      </Card>
+      </StepCard>
+
+      <StepCard stepIndex={5} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 6 — Improve Motion</div>
+        <p className="text-[#5f6c7b] mb-3" style={{ lineHeight: 1.6 }}>Add camera movements to enhance your video:</p>
+        <div className="flex flex-wrap gap-2">
+          {["Zoom In", "Tracking Shot", "Orbit Shot", "Slow Motion"].map(t => (
+            <span key={t} className="px-2.5 py-1 rounded-full bg-[#ffd803]/20 text-[#094067] text-[12px] border border-[#ffd803]/50" style={{ fontWeight: 600 }}>{t}</span>
+          ))}
+        </div>
+      </StepCard>
+
+      <StepCard stepIndex={6} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 7 — Export Video</div>
+        <div className="flex flex-wrap gap-2">
+          {["MP4", "MOV"].map(t => (
+            <span key={t} className="px-3 py-1 rounded-full bg-[#094067]/8 text-[#094067] text-[12px]" style={{ fontWeight: 700 }}>{t}</span>
+          ))}
+        </div>
+      </StepCard>
+
+      <StepCard stepIndex={7} totalSteps={8} done={done} onToggle={toggle}>
+        <div className="text-[#094067] mb-3" style={{ fontWeight: 700 }}>Step 8 — Publish</div>
+        <div className="flex flex-wrap gap-2">
+          {["Instagram", "YouTube", "Website", "Marketing Campaign"].map(t => (
+            <span key={t} className="px-2.5 py-1 rounded-full bg-[#ef4565]/10 text-[#ef4565] text-[12px] border border-[#ef4565]/30" style={{ fontWeight: 600 }}>{t}</span>
+          ))}
+        </div>
+      </StepCard>
     </Section>
   );
 }

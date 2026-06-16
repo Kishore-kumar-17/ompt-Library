@@ -1,9 +1,34 @@
-import { Heart, Copy, Star, CheckCircle2 } from "lucide-react";
+import { useState } from "react";
+import { Heart, Copy } from "lucide-react";
 import { motion } from "motion/react";
+import { toast } from "sonner";
 import { PromptItem } from "./theme";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { authStore, libraryApi } from "../lib/api";
 
 export function PromptCard({ p, onClick }: { p: PromptItem; onClick?: () => void }) {
+  const [saved, setSaved] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleSave = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!authStore.getUser()) { toast.error("Sign in to save prompts"); return; }
+    try {
+      const res = await libraryApi.save(p.id);
+      setSaved(res.saved);
+      toast(res.saved ? "Saved to library" : "Removed from library", { description: p.title });
+    } catch { toast.error("Could not save"); }
+  };
+
+  const handleCopy = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(p.description ?? "");
+      setCopied(true);
+      toast.success("Prompt copied", { description: p.title });
+      setTimeout(() => setCopied(false), 2000);
+    } catch { toast.error("Failed to copy"); }
+  };
   return (
     <motion.div
       role="button"
@@ -43,30 +68,31 @@ export function PromptCard({ p, onClick }: { p: PromptItem; onClick?: () => void
           </span>
           {p.tested && (
             <span className="px-2 py-0.5 rounded-full bg-[#ffd803]/90 text-[#094067] text-[11px] flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3" /> tested
+              <span className="w-1.5 h-1.5 rounded-full bg-[#094067]" /> tested
             </span>
           )}
         </div>
         <button
           type="button"
-          onClick={(e) => e.stopPropagation()}
+          onClick={handleSave}
           className="absolute top-2 right-2 p-1.5 rounded-full bg-[#094067]/50 hover:bg-[#ef4565] text-[#bce4d8] backdrop-blur"
         >
-          <Heart className="w-4 h-4" />
+          <Heart className={`w-4 h-4 ${saved ? "fill-current" : ""}`} />
         </button>
       </div>
       <div className="p-4">
         <div className="text-[#094067] mb-1 line-clamp-1" style={{ fontWeight: 600 }}>{p.title}</div>
         <p className="text-[#5f6c7b] line-clamp-2 mb-3" style={{ fontSize: "13px" }}>{p.description}</p>
         <div className="flex items-center justify-between text-[#5f6c7b]">
-          <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 fill-[#ffd803] text-[#ef4565]" />
-            <span className="text-[#094067]" style={{ fontWeight: 600 }}>{p.rating}</span>
-            <span style={{ fontSize: "12px" }}>({p.reviews})</span>
-          </div>
-          <div className="flex items-center gap-1 text-[#ef4565]" style={{ fontSize: "13px" }}>
-            <Copy className="w-4 h-4" /> Copy
-          </div>
+          <span className="text-[12px]">{p.category}</span>
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="flex items-center gap-1 text-[#ef4565] hover:text-[#ef4565]/80 transition-colors"
+            style={{ fontSize: "13px" }}
+          >
+            <Copy className="w-4 h-4" /> {copied ? "Copied!" : "Copy"}
+          </button>
         </div>
       </div>
     </motion.div>

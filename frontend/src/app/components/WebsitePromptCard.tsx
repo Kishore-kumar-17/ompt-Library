@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useAnimation } from "motion/react";
-import { Star, Copy, ExternalLink, CheckCircle2, Maximize2, X, Loader2 } from "lucide-react";
+import { Star, Copy, ExternalLink, Maximize2, X, Loader2 } from "lucide-react";
 import { type WebsiteDesign } from "../lib/website-data";
+import { patchIframeLinks, guardIframeNavigation } from "../lib/patch-iframe-links";
 
 // ─── Simulated website preview (used when no screenshot is provided) ──────────
 
@@ -279,7 +280,15 @@ export function WebsitePreviewModal({
             src={previewUrl}
             className="w-full h-full border-0"
             style={{ opacity: loaded ? 1 : 0, transition: "opacity 0.3s" }}
-            onLoad={() => setLoaded(true)}
+            onLoad={(e) => {
+              const el = e.currentTarget;
+              if (guardIframeNavigation(el, slug)) {
+                setLoaded(true);
+                return;
+              }
+              setLoaded(true);
+              patchIframeLinks(el, slug);
+            }}
             title={title}
             sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
           />
@@ -324,12 +333,13 @@ export function WebsitePromptCard({
 
   const handleHoverEnd = () => {
     setIsHovered(false);
+    controls.stop();
     if (thumbError) {
       controls.start({ y: 0, transition: { duration: 1.2, ease: "easeOut" } });
     }
   };
 
-  const previewUrl = `${design.slug.replace("_", "-")}.vercel.app`;
+  const previewUrl = `${design.slug.replaceAll("_", "-")}.vercel.app`;
 
   return (
     <motion.div
@@ -405,7 +415,7 @@ export function WebsitePromptCard({
           <div className="flex items-center gap-1 shrink-0">
             <Star className="w-3.5 h-3.5 fill-[#ffd803] text-[#ffd803]" />
             <span className="text-[13px] font-bold text-[#094067]">{design.rating}</span>
-            {design.tested && <CheckCircle2 className="w-3 h-3 text-[#28c840]" />}
+            {design.tested && <span className="w-1.5 h-1.5 rounded-full bg-[#28c840]" />}
           </div>
         </div>
 

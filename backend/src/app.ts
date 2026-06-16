@@ -9,6 +9,8 @@ import submissionsRouter from "./routes/submissions.js";
 import profileRouter from "./routes/profile.js";
 import adminRouter from "./routes/admin.js";
 import promptLibraryRouter from "./routes/prompt-library.js";
+import builderRouter from "./routes/builder.js";
+import improverRouter from "./routes/improver.js";
 
 const app = new Hono();
 
@@ -30,6 +32,8 @@ app.route("/api/submissions", submissionsRouter);
 app.route("/api/profile", profileRouter);
 app.route("/api/admin", adminRouter);
 app.route("/api/library", promptLibraryRouter);
+app.route("/api/builder", builderRouter);
+app.route("/api/improver", improverRouter);
 
 app.get("/health", (c) => c.json({ status: "ok", ts: new Date().toISOString() }));
 

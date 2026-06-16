@@ -29,7 +29,7 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
         toast.success("Welcome back!");
       } else {
         await authApi.register(email, password, name || email.split("@")[0]);
-        toast.success("Account created!", { description: "Welcome to PromptVault." });
+        toast.success("Account created!", { description: "Welcome to Prompt Bot." });
       }
       onClose();
       window.location.reload();

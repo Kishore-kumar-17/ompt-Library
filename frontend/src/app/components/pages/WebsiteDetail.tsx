@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Copy, Star, CheckCircle2, ExternalLink, ChevronDown, ChevronUp, Loader2, Maximize2, X, Lock } from "lucide-react";
+import { Copy, Star, ExternalLink, ChevronDown, ChevronUp, Loader2, Maximize2, X, Lock, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { websiteDesigns } from "../../lib/website-data";
 import { websitePlatformVersions } from "../../lib/website-platforms";
 import { websitePlatforms } from "../theme";
+import { patchIframeLinks, guardIframeNavigation } from "../../lib/patch-iframe-links";
 
 const DOCS = [
   { key: "orchestrator", label: "00 Orchestrator",    desc: "Step-by-step AI build guide" },
@@ -39,7 +40,9 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
     return (
       <div className="max-w-[1400px] mx-auto px-6 py-16 text-center">
         <p className="text-[#5f6c7b] mb-4">Website design not found.</p>
-        <button onClick={() => go("library:website")} className="text-[#094067] underline">← Back to library</button>
+        <button onClick={() => go("library:website")} className="inline-flex items-center gap-1.5 text-[#094067] hover:text-[#094067]/80 text-[13px] transition-colors">
+          <ArrowLeft className="w-3.5 h-3.5" /> Back to Library
+        </button>
       </div>
     );
   }
@@ -48,15 +51,19 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
   const promptText = versions[platform] ?? Object.values(versions)[0] ?? design.description;
   const activePl = websitePlatforms.find(p => p.key === platform);
 
-  const handleCopy = () => {
-    navigator.clipboard?.writeText(promptText);
-    toast.success("Prompt copied", { description: `${design.title} — ${activePl?.name}` });
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(promptText);
+      toast.success("Prompt copied", { description: `${design.title} — ${activePl?.name}` });
+    } catch {
+      toast.error("Failed to copy to clipboard");
+    }
   };
 
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-8 text-[#094067]">
-      <button onClick={() => go("library:website")} className="text-[#5f6c7b] hover:text-[#094067] mb-6 flex items-center gap-1 text-[14px]">
-        ← Back to Website Generation
+      <button onClick={() => go("library:website")} className="inline-flex items-center gap-1.5 text-[#5f6c7b] hover:text-[#094067] text-[13px] mb-4 transition-colors">
+        <ArrowLeft className="w-3.5 h-3.5" /> Back to Website Generation
       </button>
 
       <div className="grid lg:grid-cols-2 gap-10 items-start">
@@ -112,7 +119,15 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                     src={previewUrl}
                     className="w-full h-full border-0"
                     style={{ opacity: iframeLoaded ? 1 : 0, transition: "opacity 0.3s", pointerEvents: "none" }}
-                    onLoad={() => setIframeLoaded(true)}
+                    onLoad={(e) => {
+                      const el = e.currentTarget;
+                      if (guardIframeNavigation(el, slug)) {
+                        setIframeLoaded(true);
+                        return;
+                      }
+                      setIframeLoaded(true);
+                      patchIframeLinks(el, slug);
+                    }}
                     onError={() => setIframeError(true)}
                     title={design.title}
                     sandbox="allow-scripts allow-same-origin"
@@ -159,7 +174,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
             <span className="text-[#5f6c7b] text-[12px]">{design.subCategory}</span>
             {design.tested && (
               <span className="px-2 py-0.5 rounded-full bg-[#ffd803]/20 text-[#ef4565] text-[11px] inline-flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> tested
+                <span className="w-1.5 h-1.5 rounded-full bg-[#ef4565]" /> tested
               </span>
             )}
           </div>
@@ -302,6 +317,11 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                   className="w-full h-full border-0"
                   title={`${design.title} — fullscreen`}
                   sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                  onLoad={(e) => {
+                    const el = e.currentTarget;
+                    if (guardIframeNavigation(el, slug)) return;
+                    patchIframeLinks(el, slug);
+                  }}
                 />
               </div>
             </motion.div>
@@ -537,14 +557,24 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
         </span>
         {allDone
           ? <span className="text-[#3fb950] font-bold text-[13px] flex items-center gap-1">
-              <CheckCircle2 className="w-4 h-4" /> All done — website is live!
+              <span className="w-2 h-2 rounded-full bg-[#3fb950]" /> All done — website is live!
             </span>
-          : <button
-              onClick={() => { setProgress(0); setReviewStep(null); }}
-              className="text-[11px] text-[#8b949e] hover:text-[#ef4565] transition-colors"
-            >
-              Reset
-            </button>
+          : <div className="flex items-center gap-3">
+              {progress > 0 && (
+                <button
+                  onClick={() => { setProgress(p => Math.max(0, p - 1)); setReviewStep(null); }}
+                  className="text-[11px] text-[#8b949e] hover:text-[#e6edf3] transition-colors"
+                >
+                  Undo
+                </button>
+              )}
+              <button
+                onClick={() => { setProgress(0); setReviewStep(null); }}
+                className="text-[11px] text-[#8b949e] hover:text-[#ef4565] transition-colors"
+              >
+                Reset
+              </button>
+            </div>
         }
       </div>
 
@@ -598,7 +628,7 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
                         : "bg-[#161b22] border-white/10 text-white/20"
                     }`}
                   >
-                    {status === "completed" ? "✓" : status === "locked" ? <Lock className="w-3 h-3" /> : idx + 1}
+                    {status === "completed" ? <span className="w-2 h-2 rounded-full bg-current" /> : status === "locked" ? <Lock className="w-3 h-3" /> : idx + 1}
                   </motion.div>
 
                   {/* Label */}
@@ -664,7 +694,7 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
                       className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0"
                       style={{ background: reviewStep !== null ? "#3fb950" : "#ffd803", color: reviewStep !== null ? "#fff" : "#0d1117" }}
                     >
-                      {reviewStep !== null ? "✓" : activeStep + 1}
+                      {reviewStep !== null ? <span className="w-2 h-2 rounded-full bg-current" /> : activeStep + 1}
                     </span>
                     <span
                       className="text-[13px] font-bold truncate"

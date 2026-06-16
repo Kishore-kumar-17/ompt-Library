@@ -15,7 +15,6 @@ const NAV_LINKS = [
   { label: "Compare",      route: "compare"      },
   { label: "Guide",        route: "guide"        },
   { label: "Pricing",      route: "pricing"      },
-  { label: "Image Review", route: "image-review" },
 ];
 
 export function Nav({ current, onNavigate, onAuth }: Props) {
@@ -35,7 +34,7 @@ export function Nav({ current, onNavigate, onAuth }: Props) {
             <polygon points="4,3 23,13 4,23" fill="#1a1a1a" />
           </svg>
           <span style={{ fontSize: "15px", fontWeight: 700, color: "#0f0f0f", letterSpacing: "-0.01em" }}>
-            PromptVault
+            Prompt Bot
           </span>
         </button>
 

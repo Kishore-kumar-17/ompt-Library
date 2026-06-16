@@ -1,0 +1,10 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+/* Motion's useScroll falls back to the document scroll root as its container
+   when only a `target` is provided, and warns unless that container has a
+   non-static position. Promote the scroll root to `relative` to satisfy it. */
+html {
+  position: relative;
+}

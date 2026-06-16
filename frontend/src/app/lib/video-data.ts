@@ -9,7 +9,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Award-winning cinematic short film — character walks through rain-soaked city street at night with emotional progression",
     category: "Cinematic & Film", subCategory: "Short Films", family: "video",
     tags: ["short film", "cinematic", "rain", "emotion", "night", "character"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "422", slug: "VID-CF-002",
@@ -17,7 +17,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Hollywood-style blockbuster movie trailer — hero on a life-changing mission across massive cinematic landscapes",
     category: "Cinematic & Film", subCategory: "Movie Trailers", family: "video",
     tags: ["movie trailer", "blockbuster", "hero", "action", "cinematic", "epic"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "423", slug: "VID-CF-003",
@@ -25,7 +25,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Premium cinematic scene — character on a breathtaking mountain cliff at sunrise with sweeping landscape reveal",
     category: "Cinematic & Film", subCategory: "Cinematic Scenes", family: "video",
     tags: ["cinematic", "mountain", "landscape", "sunrise", "orbit shot", "epic"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "424", slug: "VID-CF-004",
@@ -33,7 +33,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Professional documentary — character shares daily life authentically in a culturally rich environment",
     category: "Cinematic & Film", subCategory: "Documentary Style Videos", family: "video",
     tags: ["documentary", "authentic", "daily life", "handheld", "cultural", "realistic"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "425", slug: "VID-CF-005",
@@ -41,7 +41,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Premium music video production — performer in a visually stunning neon-lit environment with beat-synchronized transitions",
     category: "Cinematic & Film", subCategory: "Music Videos", family: "video",
     tags: ["music video", "performer", "neon", "stage", "beat sync", "cinematic"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
 
   // ── 2. Advertising & Commercial ───────────────────────────────────────────
@@ -51,7 +51,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Luxury brand advertisement — character confidently represents a premium lifestyle brand in an elegant environment",
     category: "Advertising & Commercial", subCategory: "Brand Advertisements", family: "video",
     tags: ["brand", "luxury", "advertisement", "lifestyle", "premium", "cinematic"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "427", slug: "VID-AC-002",
@@ -59,7 +59,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Professional television commercial — character enjoys product in everyday life with authentic interactions",
     category: "Advertising & Commercial", subCategory: "TV Commercials", family: "video",
     tags: ["tv commercial", "product", "family", "authentic", "home", "lifestyle"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "428", slug: "VID-AC-003",
@@ -67,7 +67,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Modern promotional marketing video — character enthusiastically presents a product with dynamic reveal shots",
     category: "Advertising & Commercial", subCategory: "Promotional Videos", family: "video",
     tags: ["promotional", "marketing", "product", "energetic", "call to action", "dynamic"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "429", slug: "VID-AC-004",
@@ -75,7 +75,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Corporate brand commercial — character demonstrates leadership and innovation in a modern office environment",
     category: "Advertising & Commercial", subCategory: "Corporate Commercials", family: "video",
     tags: ["corporate", "office", "leadership", "professional", "brand", "business"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "430", slug: "VID-AC-005",
@@ -83,7 +83,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "High-energy event promotion — character experiences an exciting large-scale event with vibrant crowd energy",
     category: "Advertising & Commercial", subCategory: "Event Promotion Videos", family: "video",
     tags: ["event", "promotion", "concert", "festival", "crowd", "energy"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
 
   // ── 3. Social Media Videos ────────────────────────────────────────────────
@@ -93,7 +93,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Viral Instagram Reel — character walks through stylish urban location showcasing fashion and lifestyle",
     category: "Social Media Videos", subCategory: "Instagram Reels", family: "video",
     tags: ["instagram", "reel", "fashion", "lifestyle", "urban", "viral", "9:16"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "432", slug: "VID-SM-002",
@@ -101,7 +101,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Viral TikTok content — character participates in trending challenge with dynamic transitions and direct audience engagement",
     category: "Social Media Videos", subCategory: "TikTok Videos", family: "video",
     tags: ["tiktok", "trending", "challenge", "viral", "dynamic", "9:16"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "433", slug: "VID-SM-003",
@@ -109,7 +109,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "High-retention YouTube Short — character shares inspiring moment with strong hook and professional content-creator style",
     category: "Social Media Videos", subCategory: "YouTube Shorts", family: "video",
     tags: ["youtube shorts", "content creator", "engaging", "hook", "9:16"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "434", slug: "VID-SM-004",
@@ -117,7 +117,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Premium influencer content — character shares personal recommendations naturally in a clean aesthetic environment",
     category: "Social Media Videos", subCategory: "Influencer Content", family: "video",
     tags: ["influencer", "recommendation", "authentic", "lifestyle", "9:16"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "435", slug: "VID-SM-005",
@@ -125,7 +125,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Cinematic lifestyle vlog — character documents daily life across multiple meaningful moments with authentic storytelling",
     category: "Social Media Videos", subCategory: "Lifestyle & Vlog Videos", family: "video",
     tags: ["vlog", "lifestyle", "daily life", "authentic", "cinematic", "9:16"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
 
   // ── 4. Product & E-Commerce Videos ───────────────────────────────────────
@@ -135,7 +135,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Professional product demo — presenter naturally explains and showcases key features with close-up detail shots",
     category: "Product & E-Commerce Videos", subCategory: "Product Demonstrations", family: "video",
     tags: ["product demo", "presenter", "features", "close-up", "commercial"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "437", slug: "VID-PE-002",
@@ -143,7 +143,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "High-end product showcase — brand ambassador highlights premium design with elegant orbit shots and macro details",
     category: "Product & E-Commerce Videos", subCategory: "Product Showcases", family: "video",
     tags: ["product showcase", "luxury", "orbit shot", "macro", "premium"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "438", slug: "VID-PE-003",
@@ -151,7 +151,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Premium unboxing content — creator receives and opens a product with genuine excitement and close-up package details",
     category: "Product & E-Commerce Videos", subCategory: "Unboxing Videos", family: "video",
     tags: ["unboxing", "creator", "product reveal", "excitement", "9:16"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "439", slug: "VID-PE-004",
@@ -159,7 +159,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Premium product launch event — presenter introduces a revolutionary product with dramatic cinematic reveal",
     category: "Product & E-Commerce Videos", subCategory: "Product Launch Videos", family: "video",
     tags: ["product launch", "reveal", "futuristic", "dramatic", "cinematic"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "440", slug: "VID-PE-005",
@@ -167,7 +167,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Professional customer testimonial — customer shares authentic experience showing how product improved their life",
     category: "Product & E-Commerce Videos", subCategory: "Customer Testimonial Videos", family: "video",
     tags: ["testimonial", "customer", "authentic", "interview style", "trust"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
 
   // ── 5. Education & Explainers ─────────────────────────────────────────────
@@ -177,7 +177,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Professional explainer video — presenter clearly explains a concept with engaging visuals and educational graphics",
     category: "Education & Explainers", subCategory: "Explainer Videos", family: "video",
     tags: ["explainer", "educational", "presenter", "graphics", "concept"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "442", slug: "VID-ED-002",
@@ -185,7 +185,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Professional tutorial — instructor demonstrates step-by-step process with over-the-shoulder views and detail shots",
     category: "Education & Explainers", subCategory: "Tutorial Videos", family: "video",
     tags: ["tutorial", "instructor", "step by step", "demonstration", "educational"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "443", slug: "VID-ED-003",
@@ -193,7 +193,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Modern educational animation — presenter introduces topics while animated diagrams and motion graphics support understanding",
     category: "Education & Explainers", subCategory: "Educational Animations", family: "video",
     tags: ["animation", "educational", "motion graphics", "diagrams", "presenter"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "444", slug: "VID-ED-004",
@@ -201,7 +201,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Professional whiteboard explainer — instructor explains with handwritten diagrams appearing on a digital whiteboard",
     category: "Education & Explainers", subCategory: "Whiteboard Explainers", family: "video",
     tags: ["whiteboard", "explainer", "diagrams", "instructor", "educational"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "445", slug: "VID-ED-005",
@@ -209,7 +209,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Corporate training video — trainer teaches workplace skills with realistic scenario-based demonstrations",
     category: "Education & Explainers", subCategory: "Training Videos", family: "video",
     tags: ["training", "corporate", "workplace", "skills", "professional"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
 
   // ── 6. Creative & Entertainment ───────────────────────────────────────────
@@ -219,7 +219,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Premium animated fantasy — character embarks on a magical adventure through enchanted environments with wonder and discovery",
     category: "Creative & Entertainment", subCategory: "Animated Stories", family: "video",
     tags: ["animated", "fantasy", "adventure", "magical", "storytelling", "enchanted"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "447", slug: "VID-CE-002",
@@ -227,7 +227,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Modern comedy skit — character in a humorous everyday situation with comedic timing and expressive reactions",
     category: "Creative & Entertainment", subCategory: "Comedy Skits", family: "video",
     tags: ["comedy", "skit", "humor", "reactions", "everyday", "9:16"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "448", slug: "VID-CE-003",
@@ -235,7 +235,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "AAA cinematic gaming experience — hero character explores an immersive game world with epic action sequences",
     category: "Creative & Entertainment", subCategory: "Gaming Videos", family: "video",
     tags: ["gaming", "cinematic", "hero", "action", "AAA", "game world"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "449", slug: "VID-CE-004",
@@ -243,7 +243,7 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "High-quality character animation — character performs expressive actions and emotions showcasing unique personality",
     category: "Creative & Entertainment", subCategory: "Character Animations", family: "video",
     tags: ["character", "animation", "expression", "personality", "performance"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
   {
     id: "450", slug: "VID-CE-005",
@@ -251,6 +251,6 @@ export const videoLibraryPrompts: PromptItem[] = [
     description: "Premium music visualizer — performer in a surreal world where light, particles, and abstract effects react to music",
     category: "Creative & Entertainment", subCategory: "Music Visualizers", family: "video",
     tags: ["music visualizer", "abstract", "particles", "synchronized", "surreal"],
-    tested: false, rating: 5, reviews: 0, image: "", author: "PromptVault", variables: [], platforms: {},
+    tested: false, rating: 5, reviews: 0, image: "", author: "Prompt Bot", variables: [], platforms: {},
   },
 ];

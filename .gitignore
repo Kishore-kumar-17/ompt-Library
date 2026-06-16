@@ -28,3 +28,8 @@ generate_website_data.py
 generate_website_platforms.py
 generated_website_data.ts
 generated_website_platforms.ts
+
+# Preview sites are generated build artifacts — too large for git
+# Only keep the thumbnail screenshots
+frontend/public/previews/**/*
+!frontend/public/previews/**/thumb.jpg

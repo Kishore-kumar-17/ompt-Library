@@ -1,429 +1,207 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './PromptCity.css';
 
-const STAGE_W = 1536;
-const STAGE_H = 1024;
-const CENTER = { x: 768, y: 512 };
-const ZOOM = 1.42;
+const STEP_COUNT = 5;
+const V = '?v=2';
 
 interface District {
   id: string;
   name: string;
   emoji: string;
+  tagline: string;
+  description: string;
+  categories: string[];
   color: string;
   deep: string;
   rgb: string;
   count: string;
-  blurb: string;
-  trending: string[];
-  rect: { x: number; y: number; w: number; h: number };
-  center: { x: number; y: number };
-  glowR: number;
-  ringR: number;
-  card: { x: number; y: number };
+  cityLayer: string;
+  standalone: string;
 }
 
 const DISTRICTS: District[] = [
   {
     id: 'image', name: 'Image District', emoji: '🎨',
+    tagline: 'Visualize Ideas',
+    description: 'Create stunning visuals, product photography, posters, portraits, social media campaigns and cinematic artwork.',
+    categories: ['Marketing', 'Advertising', 'Posters', 'Portraits', 'Product Photography', 'Ghibli', 'Concept Art'],
     color: '#8B5CF6', deep: '#6D28D9', rgb: '124,58,237',
-    count: '12,450', blurb: 'Visual creativity & image generation',
-    trending: ['Ghibli Style', 'Product Photography', 'Poster Design', 'Cinematic Portraits'],
-    rect: { x: 430, y: 36, w: 624, h: 332 },
-    center: { x: 748, y: 206 },
-    glowR: 300, ringR: 232,
-    card: { x: 92, y: 60 },
+    count: '12,450+',
+    cityLayer: `/images/districts/city-step-image.png${V}`,
+    standalone: `/images/districts/district-image.png${V}`,
   },
   {
     id: 'video', name: 'Video District', emoji: '🎬',
+    tagline: 'Make It Motion',
+    description: 'Generate cinematic videos, commercials, trailers, anime scenes, reels and storytelling content.',
+    categories: ['Cinematic', 'Commercials', 'Trailers', 'Anime', 'Reels', 'Explainers', 'Music Videos'],
     color: '#F0463E', deep: '#DC2626', rgb: '239,68,68',
-    count: '8,920', blurb: 'Video generation & filmmaking',
-    trending: ['Cinematic B-Roll', 'Explainer Videos', 'VFX Compositing', 'Music Visualizers'],
-    rect: { x: 978, y: 228, w: 544, h: 360 },
-    center: { x: 1252, y: 410 },
-    glowR: 300, ringR: 236,
-    card: { x: 1158, y: 132 },
+    count: '8,920+',
+    cityLayer: `/images/districts/city-step-video.png${V}`,
+    standalone: `/images/districts/district-video.png${V}`,
   },
   {
     id: 'website', name: 'Website District', emoji: '🌐',
+    tagline: 'Design Experience',
+    description: 'Design and build websites, landing pages, dashboards, portfolios and complete web experiences.',
+    categories: ['SaaS', 'Portfolio', 'Agency', 'Restaurant', 'Healthcare', 'Landing Pages', 'E-commerce'],
     color: '#3B82F6', deep: '#2563EB', rgb: '37,99,235',
-    count: '6,780', blurb: 'Website creation & UI design',
-    trending: ['Landing Pages', 'SaaS Dashboards', 'Design Systems', 'Framer Layouts'],
-    rect: { x: 820, y: 596, w: 600, h: 384 },
-    center: { x: 1118, y: 792 },
-    glowR: 300, ringR: 244,
-    card: { x: 1160, y: 690 },
+    count: '6,780+',
+    cityLayer: `/images/districts/city-step-website.png${V}`,
+    standalone: `/images/districts/district-website.png${V}`,
   },
   {
     id: 'code', name: 'Code District', emoji: '💻',
+    tagline: 'Build the Future',
+    description: 'Write production code, build components, create APIs, automate workflows and ship software faster.',
+    categories: ['React', 'Next.js', 'Tailwind', 'Node.js', 'Python', 'AI Apps', 'APIs'],
     color: '#20B257', deep: '#15803D', rgb: '22,163,74',
-    count: '9,410', blurb: 'Programming & software development',
-    trending: ['React Components', 'Python Scripts', 'SQL Queries', 'API Design'],
-    rect: { x: 78, y: 596, w: 600, h: 376 },
-    center: { x: 384, y: 788 },
-    glowR: 300, ringR: 242,
-    card: { x: 44, y: 690 },
+    count: '9,410+',
+    cityLayer: `/images/districts/city-step-code.png${V}`,
+    standalone: `/images/districts/district-code.png${V}`,
   },
   {
     id: 'creator', name: 'Creator District', emoji: '✨',
+    tagline: 'Share Knowledge',
+    description: 'Craft compelling content, newsletters, social posts, ad copy, SEO articles and brand storytelling.',
+    categories: ['Blogs', 'SEO', 'Copywriting', 'LinkedIn', 'Email Marketing', 'Scripts', 'Brand Voice'],
     color: '#F59E0B', deep: '#D97706', rgb: '217,119,6',
-    count: '7,230', blurb: 'Content creation & writing',
-    trending: ['Newsletter Copy', 'Twitter Threads', 'Blog Outlines', 'Brand Voice'],
-    rect: { x: 40, y: 218, w: 478, h: 362 },
-    center: { x: 276, y: 402 },
-    glowR: 290, ringR: 232,
-    card: { x: 44, y: 224 },
+    count: '7,230+',
+    cityLayer: `/images/districts/city-step-creator.png${V}`,
+    standalone: `/images/districts/district-creator.png${V}`,
   },
 ];
 
-const TWINKLES = [
-  { x: 690, y: 150, c: '#fff', d: 0 }, { x: 920, y: 120, c: '#C4B5FD', d: .8 },
-  { x: 1300, y: 300, c: '#FCA5A5', d: .4 }, { x: 1080, y: 360, c: '#FECACA', d: 1.2 },
-  { x: 980, y: 700, c: '#93C5FD', d: .6 }, { x: 1240, y: 760, c: '#BFDBFE', d: 1.5 },
-  { x: 300, y: 720, c: '#86EFAC', d: .3 }, { x: 540, y: 780, c: '#BBF7D0', d: 1.1 },
-  { x: 200, y: 360, c: '#FCD34D', d: .9 }, { x: 420, y: 320, c: '#FDE68A', d: 1.7 },
-  { x: 768, y: 300, c: '#DDD6FE', d: 2.0 },
-];
-
-function makeParticles() {
-  const zones = DISTRICTS.map((d) => d.center).concat([{ x: 768, y: 430 }]);
-  const out = [];
-  for (let i = 0; i < 30; i++) {
-    const z = zones[i % zones.length];
-    const colors = ['255,255,255', '196,181,253', '147,197,253', '253,224,71', '134,239,172'];
-    out.push({
-      x: z.x + (Math.random() - 0.5) * 220,
-      y: z.y + (Math.random() - 0.5) * 160,
-      size: 2 + Math.random() * 4,
-      dur: 6 + Math.random() * 7,
-      delay: -Math.random() * 12,
-      color: colors[Math.floor(Math.random() * colors.length)],
-    });
-  }
-  return out;
-}
-
-interface InfoCardProps {
-  d: District | null;
-  shown: boolean;
-  onExplore: (id: string) => void;
-}
-
-function InfoCard({ d, shown, onExplore }: InfoCardProps) {
-  if (!d) return null;
+/* ── Info overlay on the city side ──────────────────── */
+function DistrictOverlay({ d, active, go }: { d: District; active: boolean; go: (r: string) => void }) {
   return (
-    <div
-      className={'info-card' + (shown ? ' show' : '')}
-      style={{ left: d.card.x, top: d.card.y }}
-    >
-      <div className="info-card__bar" style={{ background: `linear-gradient(90deg, ${d.color}, ${d.deep})` }} />
-      <div className="info-card__body">
-        <div className="info-card__top">
-          <div className="info-card__emoji" style={{ background: `rgba(${d.rgb},.12)` }}>{d.emoji}</div>
-          <div>
-            <div className="info-card__name">{d.name}</div>
-            <div className="info-card__tagline">{d.blurb}</div>
-          </div>
+    <div className={'do' + (active ? ' do--active' : '')}>
+      <div className="do__bar" style={{ background: `linear-gradient(90deg, ${d.color}, ${d.deep})` }} />
+      <div className="do__body">
+        <div className="do__icon" style={{ background: `rgba(${d.rgb},.12)` }}>{d.emoji}</div>
+        <div className="do__tag" style={{ color: d.deep }}>{d.tagline}</div>
+        <h3 className="do__title">{d.name}</h3>
+        <p className="do__desc">{d.description}</p>
+        <div className="do__count">
+          <span className="do__count-num" style={{ color: d.deep }}>{d.count}</span>
+          <span className="do__count-label">prompts</span>
         </div>
-        <div className="info-card__count">
-          <b style={{ color: d.deep }}>{d.count}</b>
-          <span>prompts</span>
-        </div>
-        <div className="info-card__trend-label">Trending now</div>
-        <div className="info-card__pills">
-          {d.trending.map((t) => (
-            <span key={t} className="info-card__pill" style={{ background: `rgba(${d.rgb},.10)`, color: d.deep }}>
-              <span className="spark">▲</span>{t}
-            </span>
+        <div className="do__cats-label">Popular</div>
+        <div className="do__cats">
+          {d.categories.map((c) => (
+            <span key={c} className="do__cat" style={{ background: `rgba(${d.rgb},.10)`, color: d.deep }}>{c}</span>
           ))}
         </div>
         <button
-          className="info-card__btn"
+          className="do__cta"
           style={{
             background: `linear-gradient(120deg, ${d.color}, ${d.deep})`,
-            boxShadow: `0 10px 22px -8px rgba(${d.rgb},.6)`,
+            boxShadow: `0 10px 24px -8px rgba(${d.rgb},.55)`,
           }}
-          onClick={() => onExplore(d.id)}
+          onClick={() => go(`library:${d.id}`)}
         >
-          Explore District <span className="arr">→</span>
+          Explore {d.name.replace(' District', '')} Prompts
+          <span className="do__arr">→</span>
         </button>
       </div>
     </div>
   );
 }
 
+/* ── Main export ────────────────────────────────────── */
 export function PromptCity({ go }: { go: (route: string) => void }) {
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const sectionRef  = useRef<HTMLDivElement>(null);
-  const [fit, setFit] = useState(0.8);
-  const [hoveredRaw, setHoveredRaw] = useState<string | null>(null);
-  const [focused, setFocused] = useState<string | null>(null);
-  const [parallaxX, setParallaxX] = useState(0);
-  const [parallaxY, setParallaxY] = useState(0);
-  const [scrollScale, setScrollScale] = useState(1);
-  const particles = useMemo(makeParticles, []);
+  const outerRef = useRef<HTMLDivElement>(null);
+  const [progress, setProgress] = useState(0);
 
-  /* fit-to-width scaling */
-  useEffect(() => {
-    const el = viewportRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(() => setFit(el.clientWidth / STAGE_W));
-    ro.observe(el);
-    setFit(el.clientWidth / STAGE_W);
-    return () => ro.disconnect();
-  }, []);
+  const isIntro = progress < 0.08;
+  const step = isIntro ? -1 : Math.min(STEP_COUNT - 1, Math.floor((progress - 0.08) / (0.92 / STEP_COUNT)));
 
-  /* esc to close focus */
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setFocused(null); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
-
-  /* scroll-driven gentle scale 1.0 → 1.05 */
   useEffect(() => {
     const onScroll = () => {
-      const el = sectionRef.current;
+      const el = outerRef.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      const progress = Math.max(0, Math.min(1, -rect.top / (rect.height * 0.6)));
-      setScrollScale(1 + progress * 0.05);
+      const scrollRange = el.offsetHeight - window.innerHeight;
+      const p = Math.max(0, Math.min(1, -rect.top / scrollRange));
+      setProgress(p);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  /* mouse parallax */
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
-    const rect = sectionRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const cx = (e.clientX - rect.left) / rect.width - 0.5;
-    const cy = (e.clientY - rect.top) / rect.height - 0.5;
-    setParallaxX(cx * 14);
-    setParallaxY(cy * 8);
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setParallaxX(0);
-    setParallaxY(0);
-  }, []);
-
-  const hovered  = focused ? null : hoveredRaw;
-  const activeId = focused || hovered;
-  const active   = DISTRICTS.find((d) => d.id === activeId) || null;
-
-  const cameraStyle = useMemo(() => {
-    if (!focused) return {
-      transform: 'translate(0px,0px) scale(1)',
-      transformOrigin: `${CENTER.x}px ${CENTER.y}px`,
-    };
-    const d = DISTRICTS.find((x) => x.id === focused)!;
-    return {
-      transform: `translate(${CENTER.x - d.center.x}px, ${CENTER.y - d.center.y}px) scale(${ZOOM})`,
-      transformOrigin: `${d.center.x}px ${d.center.y}px`,
-    };
-  }, [focused]);
-
-  const veilStyle: React.CSSProperties = active
-    ? {
-        ['--vx' as string]: (active.center.x / STAGE_W * 100) + '%',
-        ['--vy' as string]: (active.center.y / STAGE_H * 100) + '%',
-      }
-    : {};
-
-  const onPinEnter = useCallback((id: string) => setHoveredRaw(id), []);
-  const onPinLeave = useCallback(() => setHoveredRaw(null), []);
-  const onPinClick = useCallback((id: string) => setFocused((f) => (f === id ? null : id)), []);
-  const onExplore  = useCallback((id: string) => go(`library:${id}`), [go]);
-
-  const parallaxStyle: React.CSSProperties = {
-    transform: `translate(${parallaxX}px, ${parallaxY}px) scale(${scrollScale})`,
-  };
-
   return (
-    <section
-      className="city-section"
-      ref={sectionRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-    >
-      {/* background decoration orbs */}
-      <div className="city-bg-orb city-bg-orb--purple" />
-      <div className="city-bg-orb city-bg-orb--blue" />
-      <div className="city-bg-orb city-bg-orb--amber" />
+    <div className="city-scroll-outer" ref={outerRef}>
+      <div className="city-sticky">
+        {/* heading */}
+        <div className="city-head">
+          <div className="city-eyebrow">Explore Districts</div>
+          <h2 className="city-title">Your <span className="city-accent">Prompt City</span></h2>
+          <p className="city-subtitle">Five creative districts. Thousands of prompts. Scroll to explore.</p>
+        </div>
 
-      {/* heading */}
-      <div className="city-head">
-        <div className="eyebrow">Explore Districts</div>
-        <h2>Your <span className="accent">Prompt City</span></h2>
-        <p>Five creative districts. Thousands of prompts.<br />Hover to preview, click to explore.</p>
-      </div>
-
-      {/* city hero area */}
-      <div className="city-hero-area">
-        {/* ambient glow ring behind city */}
-        <div className="city-ambient-ring" />
-        {/* levitation shadow below city */}
-        <div className="city-shadow" />
-
-        {/* parallax layer (mouse + scroll) */}
-        <div className="city-parallax" style={parallaxStyle}>
-          {/* floating bob animation */}
-          <div className="city-float-anim">
-
-            <div
-              ref={viewportRef}
-              className={'city-viewport' + (focused ? ' is-focused' : '')}
-            >
-              <div className="city-fit" style={{ ['--fit' as string]: fit }}>
-                <div className={'city-stage' + (active ? ' dim' : '') + (focused ? ' focused' : '')}>
-
-                  {/* camera zoom layer */}
-                  <div className="city-camera" style={cameraStyle}>
-                    <img
-                      className="city-base"
-                      src="/images/prompt-city.jpeg"
-                      alt="PromptVault isometric city"
-                      draggable={false}
-                    />
-                    <div className="city-veil" style={veilStyle} />
-
-                    {/* glows */}
-                    {DISTRICTS.map((d) => (
-                      <div
-                        key={'g' + d.id}
-                        className={'district-glow' + (activeId === d.id ? ' show' : '')}
-                        style={{
-                          left: d.center.x - d.glowR, top: d.center.y - d.glowR,
-                          width: d.glowR * 2, height: d.glowR * 2,
-                          background: `radial-gradient(circle, rgba(${d.rgb},.42), rgba(${d.rgb},0) 66%)`,
-                        }}
-                      />
-                    ))}
-
-                    {/* lifted district copies */}
-                    {DISTRICTS.map((d) => (
-                      <div
-                        key={'l' + d.id}
-                        className={'district-lift' + (activeId === d.id ? ' show' : '')}
-                        style={{
-                          left: d.rect.x, top: d.rect.y, width: d.rect.w, height: d.rect.h,
-                          backgroundPosition: `${-d.rect.x}px ${-d.rect.y}px`,
-                        }}
-                      />
-                    ))}
-
-                    {/* pulsing rings */}
-                    {DISTRICTS.map((d) => (
-                      <div
-                        key={'r' + d.id}
-                        className={'district-ring' + (activeId === d.id ? ' show' : '')}
-                        style={{
-                          left: d.center.x - d.ringR, top: d.center.y - d.ringR,
-                          width: d.ringR * 2, height: d.ringR * 1.18,
-                          color: d.color,
-                        }}
-                      />
-                    ))}
-
-                    {/* crystal plaza center glow */}
-                    <div className="crystal-glow" style={{ left: 776, top: 470 }} />
-
-                    {/* twinkles */}
-                    {TWINKLES.map((t, i) => (
-                      <div
-                        key={'t' + i}
-                        className="twinkle"
-                        style={{ left: t.x, top: t.y, color: t.c, animationDelay: t.d + 's' }}
-                      />
-                    ))}
-
-                    {/* ambient particles */}
-                    {particles.map((p, i) => (
-                      <div
-                        key={'p' + i}
-                        className="particle"
-                        style={{
-                          left: p.x, top: p.y, width: p.size, height: p.size,
-                          color: `rgb(${p.color})`, background: `rgba(${p.color},.95)`,
-                          animationDuration: p.dur + 's', animationDelay: p.delay + 's',
-                        }}
-                      />
-                    ))}
-
-                    {/* pins */}
-                    {DISTRICTS.map((d) => (
-                      <div
-                        key={'pin' + d.id}
-                        className={'pin' + (activeId === d.id ? ' active' : '')}
-                        style={{ left: d.center.x, top: d.center.y, color: d.color }}
-                      >
-                        <span className="pin__ping" />
-                        <span className="pin__count" style={{ color: d.deep }}>{d.count} prompts</span>
-                        <span className="pin__dot">{d.emoji}</span>
-                      </div>
-                    ))}
-
-                    {/* hotspots */}
-                    {DISTRICTS.map((d) => (
-                      <div
-                        key={'hot' + d.id}
-                        className="district-hotspot"
-                        style={{ left: d.rect.x, top: d.rect.y, width: d.rect.w, height: d.rect.h }}
-                        onMouseEnter={() => onPinEnter(d.id)}
-                        onMouseLeave={onPinLeave}
-                        onClick={() => onPinClick(d.id)}
-                      />
-                    ))}
-                  </div>
-
-                  {/* crystal plaza label — screen space */}
-                  <div className="crystal-label" style={{ left: 776, top: 372 }}>
-                    <span className="tag"><span className="gem" />PromptVault Plaza</span>
-                  </div>
-
-                  {/* info card — screen space */}
-                  <InfoCard d={active} shown={!!active} onExplore={onExplore} />
-
-                  {/* back button */}
-                  <button
-                    className={'city-back' + (focused ? ' show' : '')}
-                    onClick={() => setFocused(null)}
-                  >
-                    <span style={{ fontSize: 16, lineHeight: 1 }}>←</span> Back to city
-                  </button>
-                </div>
-
-                {/* hint */}
-                <div className="city-hud">
-                  <div className="city-hint" style={{ opacity: focused ? 0 : 1 }}>
-                    <span className="kbd">Hover</span> a district · <span className="kbd">Click</span> to explore
-                  </div>
-                </div>
-              </div>
+        {/* 70 / 30 split */}
+        <div className="city-content">
+          {/* LEFT 70% — City + info overlay */}
+          <div className="city-left">
+            <div className="city-layers">
+              <img src={`/images/districts/city-bw.png${V}`} alt="Prompt Bot city" className="city-layer city-layer--base" draggable={false} />
+              {DISTRICTS.map((d, i) => (
+                <img
+                  key={d.id}
+                  src={d.cityLayer}
+                  alt={`${d.name} highlighted`}
+                  className={'city-layer city-layer--color' + (step >= i ? ' city-layer--visible' : '')}
+                  draggable={false}
+                />
+              ))}
             </div>
 
-          </div>{/* city-float-anim */}
-        </div>{/* city-parallax */}
-      </div>{/* city-hero-area */}
+            {/* Info overlays — positioned on the city */}
+            <div className="city-overlays">
+              {DISTRICTS.map((d, i) => (
+                <DistrictOverlay key={d.id} d={d} active={step === i} go={go} />
+              ))}
+            </div>
+          </div>
 
-      {/* legend chips */}
-      <div className="city-legend">
-        {DISTRICTS.map((d) => (
-          <button
-            key={'leg' + d.id}
-            className={'legend-chip' + (activeId === d.id ? ' active' : '')}
-            onMouseEnter={() => onPinEnter(d.id)}
-            onMouseLeave={onPinLeave}
-            onClick={() => onPinClick(d.id)}
-            style={activeId === d.id ? { borderColor: d.color } : undefined}
-          >
-            <span className="swatch" style={{ background: `linear-gradient(135deg, ${d.color}, ${d.deep})` }} />
-            {d.name.replace(' District', '')}
-            <span className="lc-count">{d.count}</span>
-          </button>
-        ))}
+          {/* RIGHT 30% — Standalone district image only */}
+          <div className="city-right">
+            {DISTRICTS.map((d, i) => (
+              <div key={d.id} className={'dr' + (step === i ? ' dr--active' : '')}>
+                <img src={d.standalone} alt={d.name} className="dr__img" draggable={false} />
+              </div>
+            ))}
+
+            {/* Intro state */}
+            <div className={'city-right-intro' + (isIntro ? ' city-right-intro--visible' : '')}>
+              <div className="city-right-intro__icon">🏙️</div>
+              <p className="city-right-intro__text">Scroll to discover<br />each district</p>
+            </div>
+          </div>
+        </div>
+
+        {/* scroll progress dots */}
+        <div className="scroll-nav">
+          {DISTRICTS.map((d, i) => (
+            <div key={'dot' + d.id} className="scroll-nav__item">
+              <div
+                className={'scroll-dot' + (step === i ? ' scroll-dot--active' : '') + (step > i ? ' scroll-dot--passed' : '')}
+                style={step >= i && step !== -1 ? { background: d.color, borderColor: d.color, boxShadow: step === i ? `0 0 10px ${d.color}` : 'none' } : undefined}
+              />
+              <span className={'scroll-dot__label' + (step === i ? ' scroll-dot__label--active' : '')} style={step === i ? { color: d.deep } : undefined}>
+                {d.name.replace(' District', '')}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* scroll hint */}
+        <div className="city-scroll-hint" style={{ opacity: isIntro ? 1 : 0 }}>
+          <div className="scroll-hint__mouse"><div className="scroll-hint__wheel" /></div>
+          <span>Scroll to explore districts</span>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }

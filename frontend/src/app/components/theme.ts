@@ -167,7 +167,7 @@ export const samplePrompts: PromptItem[] = [
       flux:       "(not applicable)",
     },
     variables: [
-      { name: "product",  placeholder: "e.g. PromptVault Pro" },
+      { name: "product",  placeholder: "e.g. Prompt Bot Pro" },
       { name: "audience", placeholder: "e.g. product designers" },
       { name: "tone",     placeholder: "e.g. professional, energetic" },
     ],
@@ -422,7 +422,7 @@ export const samplePrompts: PromptItem[] = [
       flux:       "(not applicable)",
     },
     variables: [
-      { name: "product",  placeholder: "e.g. PromptVault" },
+      { name: "product",  placeholder: "e.g. Prompt Bot" },
       { name: "audience", placeholder: "e.g. designers and developers" },
       { name: "tone",     placeholder: "e.g. bold and minimal, friendly" },
     ],

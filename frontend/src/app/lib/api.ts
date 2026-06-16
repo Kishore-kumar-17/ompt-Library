@@ -203,3 +203,50 @@ export const libraryApi = {
   save: (id: number | string) =>
     apiFetch<{ saved: boolean }>(`/api/library/prompts/${id}/save`, { method: "POST" }),
 };
+
+// ─── Builder ─────────────────────────────────────────────────────────────────
+
+export interface BuilderResult {
+  prompt: string;
+  platform: string;
+  family: string;
+  tokensUsed: number;
+}
+
+export const builderApi = {
+  generate: (payload: {
+    idea: string;
+    family: string;
+    platform: string;
+    style?: string;
+    mood?: string;
+    aspect?: string;
+  }) =>
+    apiFetch<BuilderResult>("/api/builder/generate", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+};
+
+// ─── Improver ────────────────────────────────────────────────────────────────
+
+export interface ImproverChange {
+  label: string;
+  applied: boolean;
+}
+
+export interface ImproverResult {
+  improved: string;
+  changes: ImproverChange[];
+  platform: string;
+  family: string;
+  tokensUsed: number;
+}
+
+export const improverApi = {
+  improve: (payload: { prompt: string; platform: string; family?: string }) =>
+    apiFetch<ImproverResult>("/api/improver/improve", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+};

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import {
   Copy, Save, Sparkles, Wand2, ChevronDown, ChevronUp,
-  RefreshCw, Check, ArrowRight, Layers,
+  RefreshCw, Check, ArrowRight, Layers, ArrowLeft,
 } from "lucide-react";
 import { toast } from "sonner";
 import { platforms } from "../theme";
-import { authStore } from "../../lib/api";
+import { authStore, builderApi } from "../../lib/api";
 
 // ─── Enhancement options ──────────────────────────────────────────────────────
 
@@ -14,113 +14,11 @@ const MOODS   = ["Dramatic", "Peaceful", "Energetic", "Mysterious", "Nostalgic",
 const ASPECTS = ["1:1", "16:9", "9:16", "4:3", "2:3", "3:2", "21:9"];
 
 const FAMILIES = [
-  { key: "image",   label: "🎨 Image",   desc: "Midjourney, Flux…" },
-  { key: "video",   label: "🎬 Video",   desc: "Sora, Runway…" },
-  { key: "text",    label: "✍️ Text",    desc: "ChatGPT, Claude…" },
-  { key: "content", label: "📣 Content", desc: "Ads, posts, copy…" },
+  { key: "image",   label: "Image",   desc: "Midjourney, Flux..." },
+  { key: "video",   label: "Video",   desc: "Sora, Runway..." },
+  { key: "text",    label: "Text",    desc: "ChatGPT, Claude..." },
+  { key: "content", label: "Content", desc: "Ads, posts, copy..." },
 ];
-
-// ─── Prompt variations ────────────────────────────────────────────────────────
-// Each platform × family pair has 4 structurally different prompt approaches.
-// Regenerate cycles through them so each click gives a genuinely different result.
-
-function getVariations(
-  idea: string,
-  family: string,
-  style: string,
-  mood: string,
-  aspect: string,
-  platform: string,
-): string[] {
-  const s  = style ? `, ${style.toLowerCase()} style`      : "";
-  const m  = mood  ? `, ${mood.toLowerCase()} mood`        : "";
-  const sa = style ? `, ${style.toLowerCase()} aesthetic`  : "";
-  const ma = mood  ? `, ${mood.toLowerCase()} atmosphere`  : "";
-  const ar = aspect || "16:9";
-  const st = style || "cinematic";
-  const mo = mood  || "dramatic";
-
-  // ── IMAGE ──────────────────────────────────────────────────────────────────
-  if (family === "image") {
-    if (platform === "midjourney") return [
-      `${idea}${s}${m}, ultra-detailed, dramatic lighting, professional composition --ar ${ar} --v 6 --style raw --q 2`,
-      `${idea}${sa}${ma}, 8K resolution, sharp focus, masterpiece quality --ar ${ar} --v 6 --chaos 10 --stylize 500`,
-      `cinematic still of ${idea}${s}${m}, film grain, anamorphic bokeh, golden hour --ar ${ar} --v 6 --style expressive`,
-      `editorial photography of ${idea}${s}${m}, studio lighting, high contrast, award-winning shot --ar ${ar} --v 6 --q 2`,
-    ];
-    if (platform === "flux") return [
-      `Ultra-detailed ${idea}${sa}${ma}, shot on 85mm lens, f/1.8, soft diffused lighting, editorial composition, photorealistic 8K, aspect ratio ${ar}.`,
-      `Photorealistic render of ${idea}${s}${m}. Hyperdetailed textures, professional studio lighting, sharp focus, 4K resolution. Aspect ratio ${ar}.`,
-      `${idea} — ${st} aesthetic, ${mo} atmosphere, depth-of-field bokeh, golden ratio composition, ultra-sharp, cinematic 8K. Ratio ${ar}.`,
-      `High-end commercial photograph of ${idea}. Style: ${st}. Mood: ${mo}. Technical: Hasselblad medium format, 50mm, f/2.8, natural light. ${ar} crop.`,
-    ];
-    if (platform === "firefly") return [
-      `${idea}${s}${m}, high detail, professional photography, sharp focus, dramatic lighting, high resolution.`,
-      `${idea}, ${st} look, ${mo} tone, vibrant colors, ultra sharp, 8K quality, cinematic framing.`,
-      `Detailed artistic render of ${idea}${s}${m}. Professional composition, rich colors, studio-quality lighting.`,
-      `${idea}, photorealistic, ${st} style, ${mo} atmosphere, depth of field, award-winning photography.`,
-    ];
-    if (platform === "grok") return [
-      `Visualize: ${idea}.${style ? ` Style: ${style}.` : ""}${mood ? ` Mood: ${mood}.` : ""} Aspect ratio ${ar}.`,
-      `Imagine a ${mo} scene: ${idea}. Rendered in ${st} style. Sharp details, professional quality. ${ar}.`,
-      `Create image — Subject: ${idea}. Aesthetic: ${st}. Atmosphere: ${mo}. Format: ${ar}.`,
-      `${idea} — depicted with ${st} visual style and ${mo} emotional tone. High quality, ${ar} format.`,
-    ];
-    if (platform === "chatgpt") return [
-      `Generate an image of ${idea}.${style ? `\nArt style: ${style}.` : ""}${mood ? `\nMood: ${mood}.` : ""}\nAspect ratio: ${ar}\nQuality: ultra-detailed, professional composition, sharp focus.`,
-      `Create a photorealistic image showing ${idea}.\nVisual style: ${st}\nEmotional tone: ${mo}\nTechnical specs: high resolution, ${ar} aspect ratio, professional lighting.`,
-      `I want an image of ${idea}. Apply a ${st} visual treatment with a ${mo} atmosphere. Use dramatic lighting, sharp detail, and ${ar} format.`,
-      `Render: ${idea}\nStyle parameters: ${st} aesthetic, ${mo} mood, editorial composition\nOutput: high-resolution, ${ar} aspect ratio, print-quality detail.`,
-    ];
-    if (platform === "gemini") return [
-      `Create a photorealistic image of ${idea}${s}${m}. Ultra-detailed with professional composition and dramatic lighting. Aspect ratio ${ar}.`,
-      `Generate ${idea} in ${st} visual style with ${mo} mood. Include rich textures, dramatic lighting, and professional composition. ${ar} format.`,
-      `Produce a high-quality image depicting ${idea}. Aesthetic: ${st}. Tone: ${mo}. Ensure sharp focus, vibrant detail, and ${ar} ratio.`,
-      `Image prompt: ${idea} — ${st} style, ${mo} atmosphere, cinematic framing, ultra-detailed render, ${ar} aspect ratio.`,
-    ];
-  }
-
-  // ── VIDEO ──────────────────────────────────────────────────────────────────
-  if (family === "video") {
-    const cam = "slow cinematic push-in, shallow depth of field";
-    if (platform === "chatgpt" || platform === "gemini" || platform === "grok") return [
-      `Create a short cinematic video of ${idea}${s}${m}.\nCamera: ${cam}.\nLighting: dramatic and natural.\nDuration: 5–10 seconds, seamless loop.`,
-      `Direct a ${mo} video sequence: ${idea}. Style: ${st}. Use slow motion, cinematic color grading, and atmospheric sound design. 8–12 seconds.`,
-      `Video brief — Scene: ${idea}. Visual tone: ${st}. Emotion: ${mo}. Camera work: handheld, intimate. Duration: 6 seconds. Seamless loop.`,
-      `Cinematic short: ${idea}. Apply ${st} color grading. Mood: ${mo}. Transition: fade in/out. Duration: 10 seconds. Aspect: ${ar}.`,
-    ];
-    return [
-      `Cinematic video — ${idea}${s}${m}. Camera: ${cam}. Lighting: dramatic and natural. 5–10 second seamless loop. ${ar}.`,
-      `${idea}, ${st} color grade, ${mo} energy, slow motion, depth of field, cinematic quality. 8 seconds, loop. ${ar}.`,
-      `Short film sequence: ${idea}. Style: ${st}. Mood: ${mo}. Steady-cam movement, anamorphic lens flare. 10 seconds. ${ar} format.`,
-      `Atmospheric video clip — ${idea}. ${st} aesthetic. ${mo} feel. 24fps cinematic, golden hour lighting, seamless loop. Ratio: ${ar}.`,
-    ];
-  }
-
-  // ── TEXT ──────────────────────────────────────────────────────────────────
-  if (family === "text") {
-    const tone = style || "professional";
-    return [
-      `You are an expert writer. Write about: "${idea}".\n${style ? `Tone: ${style}.\n` : ""}${mood ? `Mood: ${mood}.\n` : ""}Keep it clear, engaging, and well-structured. Begin directly without preamble.`,
-      `Act as a ${tone} writer. Create compelling content about "${idea}". Maintain a ${mo} tone throughout. Use vivid language, strong verbs, and clear structure.`,
-      `Write a detailed, engaging piece on "${idea}". Style: ${tone}. Emotional register: ${mo}. Include a strong opening, supporting detail, and memorable close.`,
-      `Craft a ${tone}-style piece about "${idea}". Voice: confident and authoritative. Tone: ${mo}. Length: 3–5 paragraphs. No filler — every sentence should earn its place.`,
-    ];
-  }
-
-  // ── CONTENT ───────────────────────────────────────────────────────────────
-  if (family === "content") {
-    const voice = style || "conversational";
-    return [
-      `Act as a professional content strategist. Create compelling content for: "${idea}".\n${style ? `Voice: ${style}.\n` : ""}Goal: engage the audience, drive action, and communicate value clearly.`,
-      `Write high-converting content about "${idea}". Voice: ${voice}. Format: punchy headline + 3 key points + CTA. Audience-first, benefit-driven.`,
-      `Content brief — Topic: "${idea}". Tone: ${voice}. Goal: share, engage, convert. Lead with a hook, support with value, close with a clear action.`,
-      `Create scroll-stopping content on "${idea}". Style: ${voice}. Structure: hook → insight → proof → CTA. Keep each line intentional and punchy.`,
-    ];
-  }
-
-  return [`${idea}${s}${m}.`];
-}
 
 // ─── Chip selector ────────────────────────────────────────────────────────────
 
@@ -151,7 +49,7 @@ function ChipGroup({ label, options, value, onChange }: {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export function Builder() {
+export function Builder({ go }: { go: (p: string) => void }) {
   const [idea, setIdea]         = useState("");
   const [family, setFamily]     = useState("image");
   const [style, setStyle]       = useState("");
@@ -163,35 +61,68 @@ export function Builder() {
 
   // Generation state
   const [generated, setGenerated]   = useState("");
-  const [varIndex, setVarIndex]     = useState(0);
+  const [allPlatformResults, setAllPlatformResults] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading]   = useState(false);
   const [copied, setCopied]         = useState(false);
   const [hasGenerated, setHasGenerated] = useState(false);
+  const [error, setError]           = useState("");
 
   const canGenerate = idea.trim().length > 0;
 
-  function runGenerate(nextVarIndex: number) {
-    if (!canGenerate) return;
+  async function handleGenerate() {
+    if (!canGenerate || isLoading) return;
     setIsLoading(true);
+    setError("");
     setHasGenerated(false);
-    setTimeout(() => {
-      const variations = getVariations(idea, family, style, mood, aspect, platform);
-      setGenerated(variations[nextVarIndex % variations.length]);
-      setIsLoading(false);
+    setAllPlatformResults({});
+
+    try {
+      const result = await builderApi.generate({
+        idea, family, platform,
+        style: style || undefined,
+        mood: mood || undefined,
+        aspect: (family === "image" || family === "video") ? aspect : undefined,
+      });
+      setGenerated(result.prompt);
       setHasGenerated(true);
-    }, 520);
+    } catch (err: any) {
+      setError(err?.message ?? "Generation failed");
+      toast.error("Generation failed", { description: err?.message });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
-  function handleGenerate() {
-    const next = 0;
-    setVarIndex(next);
-    runGenerate(next);
+  async function handleRegenerate() {
+    await handleGenerate();
   }
 
-  function handleRegenerate() {
-    const next = varIndex + 1;
-    setVarIndex(next);
-    runGenerate(next);
+  async function handleGenerateAll() {
+    if (!canGenerate || isLoading) return;
+    setIsLoading(true);
+    setError("");
+    setShowAllPlatforms(true);
+
+    const results: Record<string, string> = {};
+    try {
+      const promises = platforms.map(async (pl) => {
+        const result = await builderApi.generate({
+          idea, family, platform: pl.key,
+          style: style || undefined,
+          mood: mood || undefined,
+          aspect: (family === "image" || family === "video") ? aspect : undefined,
+        });
+        results[pl.key] = result.prompt;
+      });
+      await Promise.all(promises);
+      setAllPlatformResults(results);
+      setHasGenerated(true);
+    } catch (err: any) {
+      setError(err?.message ?? "Generation failed");
+      toast.error("Multi-platform generation failed");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function handleCopy() {
@@ -201,30 +132,27 @@ export function Builder() {
     setTimeout(() => setCopied(false), 2000);
   }
 
-  // All-platforms preview
-  const allPlatformOutputs = platforms.map((pl) => ({
-    ...pl,
-    prompt: getVariations(idea, family, style, mood, aspect, pl.key)[varIndex % 4],
-  }));
-
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-10 text-[#094067]">
 
       {/* Header */}
       <div className="mb-8">
+        <button onClick={() => go("home")} className="inline-flex items-center gap-1.5 text-[#5f6c7b] hover:text-[#094067] text-[13px] mb-3 transition-colors">
+          <ArrowLeft className="w-3.5 h-3.5" /> Back
+        </button>
         <div className="inline-flex items-center gap-2 text-[#ef4565] mb-2">
           <Sparkles className="w-4 h-4" /> Prompt Builder
         </div>
-        <h1 className="text-3xl font-bold">Describe your idea — generate a ready-to-use prompt</h1>
+        <h1 className="text-3xl font-bold">Describe your idea — AI generates a pro prompt</h1>
         <p className="text-[#5f6c7b] mt-1">
-          Type a sentence or scene title, pick your platform, and hit Generate.
+          Powered by the v4.2 Pro Formula with geometry locks, camera rigs, and platform-native formatting.
         </p>
       </div>
 
       <div className="grid lg:grid-cols-[1fr_1fr] gap-6 items-start">
 
         {/* ── Left: Input panel ──────────────────────────────────────────── */}
-        <div className="space-y-4">
+        <div className="space-y-4 min-w-0">
 
           {/* Idea input */}
           <div className="bg-white border-2 border-[#094067]/20 rounded-2xl p-5 focus-within:border-[#ffd803] transition-colors">
@@ -236,7 +164,7 @@ export function Builder() {
               rows={3}
               value={idea}
               onChange={(e) => { setIdea(e.target.value); setHasGenerated(false); }}
-              placeholder={`Try:\n"a samurai standing in rain at night"\n"write a product launch email for an AI tool"`}
+              placeholder={`Try:\n"a samurai standing in rain at night"\n"luxury perfume bottle on marble surface"\n"write a product launch email for an AI tool"`}
               className="w-full resize-none text-[#094067] placeholder:text-[#5f6c7b]/50 text-[15px] outline-none leading-relaxed bg-transparent"
             />
             <div className="text-[11px] text-[#5f6c7b]/50 mt-1 text-right">{idea.length} chars</div>
@@ -245,7 +173,7 @@ export function Builder() {
           {/* Family */}
           <div>
             <div className="text-[13px] text-[#5f6c7b] mb-2">What are you creating?</div>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {FAMILIES.map((f) => (
                 <button
                   key={f.key}
@@ -321,20 +249,20 @@ export function Builder() {
             {isLoading ? (
               <>
                 <RefreshCw className="w-5 h-5 animate-spin" />
-                Generating…
+                Generating with AI...
               </>
             ) : (
               <>
                 <Sparkles className="w-5 h-5" />
-                Generate Prompt
+                Generate Pro Prompt
                 <ArrowRight className="w-4 h-4 opacity-60" />
               </>
             )}
           </button>
         </div>
 
-        {/* ── Right: Output panel ────────────────────────────────────────── */}
-        <div className="bg-white border border-[#094067]/15 rounded-2xl p-6 flex flex-col gap-4">
+        {/* ── Right: Output panel (sticky) ─────────────────────────────── */}
+        <div className="bg-white border border-[#094067]/15 rounded-2xl p-6 flex flex-col gap-4 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
 
           {/* View toggle */}
           <div className="flex items-center justify-between">
@@ -342,8 +270,15 @@ export function Builder() {
               {hasGenerated ? "Generated prompt" : "Output"}
             </div>
             <button
-              onClick={() => setShowAllPlatforms(!showAllPlatforms)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] border transition-all ${
+              onClick={() => {
+                if (!showAllPlatforms && canGenerate && Object.keys(allPlatformResults).length === 0) {
+                  handleGenerateAll();
+                } else {
+                  setShowAllPlatforms(!showAllPlatforms);
+                }
+              }}
+              disabled={isLoading || !canGenerate}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] border transition-all disabled:opacity-40 ${
                 showAllPlatforms
                   ? "bg-[#094067] text-white border-[#094067]"
                   : "border-[#094067]/20 text-[#5f6c7b] hover:border-[#094067]/40 hover:text-[#094067]"
@@ -353,6 +288,13 @@ export function Builder() {
               All platforms
             </button>
           </div>
+
+          {/* Error */}
+          {error && (
+            <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-[13px] text-red-600">
+              {error}
+            </div>
+          )}
 
           {/* Single platform output */}
           {!showAllPlatforms && (
@@ -370,7 +312,7 @@ export function Builder() {
                       />
                     ))}
                   </div>
-                  <span className="text-[13px] text-[#5f6c7b]">Building your prompt…</span>
+                  <span className="text-[13px] text-[#5f6c7b]">AI is crafting your v4.2 prompt...</span>
                 </div>
               ) : hasGenerated ? (
                 <pre className="whitespace-pre-wrap font-mono text-[13px] leading-relaxed text-[#094067]">{generated}</pre>
@@ -390,23 +332,33 @@ export function Builder() {
           {/* All platforms output */}
           {showAllPlatforms && (
             <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
-              {allPlatformOutputs.map((pl) => (
-                <div key={pl.key} className="rounded-xl border border-[#094067]/10 p-3 bg-[#f8f9ff]">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="w-2.5 h-2.5 rounded-full" style={{ background: pl.color }} />
-                    <span className="text-[12px] font-semibold text-[#094067]">{pl.name}</span>
-                    <button
-                      onClick={() => { navigator.clipboard?.writeText(pl.prompt); }}
-                      className="ml-auto text-[11px] text-[#5f6c7b] hover:text-[#094067] flex items-center gap-1"
-                    >
-                      <Copy className="w-3 h-3" /> Copy
-                    </button>
-                  </div>
-                  <p className="font-mono text-[11px] text-[#5f6c7b] leading-relaxed whitespace-pre-wrap line-clamp-4">
-                    {canGenerate ? pl.prompt : "—"}
-                  </p>
+              {isLoading ? (
+                <div className="flex flex-col items-center justify-center py-12 gap-3">
+                  <RefreshCw className="w-6 h-6 animate-spin text-[#094067]/40" />
+                  <span className="text-[13px] text-[#5f6c7b]">Generating for all 6 platforms...</span>
                 </div>
-              ))}
+              ) : (
+                platforms.map((pl) => (
+                  <div key={pl.key} className="rounded-xl border border-[#094067]/10 p-3 bg-[#f8f9ff]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="w-2.5 h-2.5 rounded-full" style={{ background: pl.color }} />
+                      <span className="text-[12px] font-semibold text-[#094067]">{pl.name}</span>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard?.writeText(allPlatformResults[pl.key] ?? "");
+                          toast.success(`Copied ${pl.name} prompt`);
+                        }}
+                        className="ml-auto text-[11px] text-[#5f6c7b] hover:text-[#094067] flex items-center gap-1"
+                      >
+                        <Copy className="w-3 h-3" /> Copy
+                      </button>
+                    </div>
+                    <pre className="font-mono text-[11px] text-[#5f6c7b] leading-relaxed whitespace-pre-wrap max-h-[200px] overflow-y-auto">
+                      {allPlatformResults[pl.key] ?? "—"}
+                    </pre>
+                  </div>
+                ))
+              )}
             </div>
           )}
 
@@ -418,9 +370,6 @@ export function Builder() {
               {(family === "image" || family === "video") && aspect && (
                 <span className="px-2 py-0.5 rounded-full bg-[#ffd803]/30 text-[11px] text-[#094067]">{aspect}</span>
               )}
-              <span className="px-2 py-0.5 rounded-full bg-[#bce4d8]/40 text-[11px] text-[#094067]">
-                variation {(varIndex % 4) + 1}/4
-              </span>
             </div>
           )}
 

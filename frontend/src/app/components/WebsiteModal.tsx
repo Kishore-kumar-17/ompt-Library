@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Copy, Star, CheckCircle2 } from "lucide-react";
+import { X, Copy, Star } from "lucide-react";
 import { toast } from "sonner";
 import { type WebsiteDesign } from "../lib/website-data";
 import { websitePlatformVersions } from "../lib/website-platforms";
@@ -254,9 +254,13 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
   const promptText = versions[platform] ?? Object.values(versions)[0] ?? design.description;
   const activePl   = websitePlatforms.find(p => p.key === platform);
 
-  const handleCopy = () => {
-    navigator.clipboard?.writeText(promptText);
-    toast.success("Prompt copied", { description: `${design.title} — ${activePl?.name}` });
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(promptText);
+      toast.success("Prompt copied", { description: `${design.title} — ${activePl?.name}` });
+    } catch {
+      toast.error("Failed to copy to clipboard");
+    }
   };
 
   return (
@@ -327,7 +331,7 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
                 <div className="flex items-center gap-1 shrink-0">
                   <Star className="w-3.5 h-3.5 fill-[#ffd803] text-[#ffd803]" />
                   <span className="text-[13px] font-bold text-[#094067]">{design.rating}</span>
-                  {design.tested && <CheckCircle2 className="w-3.5 h-3.5 text-[#28c840]" />}
+                  {design.tested && <span className="w-1.5 h-1.5 rounded-full bg-[#28c840]" />}
                 </div>
               </div>
               {/* Stack */}

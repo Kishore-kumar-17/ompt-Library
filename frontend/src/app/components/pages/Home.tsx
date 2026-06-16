@@ -1,15 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import imageGenVideo from "../../../imports/AI_Generates_Stunning_Visuals_Instantly.mp4";
-import videoGenVideo from "../../../imports/From_Static_Image_to_Cinema.mp4";
-import textGenVideo  from "../../../imports/From_Raw_Thought_to_Structured_Intelligence.mp4";
-import { PlatformLogo } from "../PlatformLogo";
-import { Image as ImageIcon, Type, Users, Sparkles, Film, FileText } from "lucide-react";
-import { motion, AnimatePresence, useInView, useMotionValue, useSpring, useTransform } from "motion/react";
-import { categories, platforms } from "../theme";
+import { Users, Sparkles, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence, useInView, useMotionValue, useSpring, useTransform, useScroll, type MotionValue } from "motion/react";
+import frame1Video from "../../../imports/Frame_1.mp4";
+import frame2Video from "../../../imports/Frame_2.mp4";
+import frame3Video from "../../../imports/Frame_3.mp4";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
-
-import { LaptopHero } from "../LaptopHero";
-import { PromptCity } from "../PromptCity";
+import RotatingText from "../RotatingText";
 
 // ── Category images (user-supplied) ──────────────────────────────────────────
 import imgSocialMedia   from "../../../imports/WhatsApp_Image_2026-04-27_at_1.12.44_PM.jpeg";
@@ -23,60 +19,91 @@ import imgApparel       from "../../../imports/WhatsApp_Image_2026-04-27_at_2.04
 import imgFashion       from "../../../imports/WhatsApp_Image_2026-04-27_at_2.07.53_PM.jpeg";
 import imgIllustration  from "../../../imports/WhatsApp_Image_2026-04-27_at_2.29.43_PM-2.jpeg";
 
-// (LaptopHero handles the laptop section — see LaptopHero.tsx)
-
 export function Home({ go }: { go: (p: string) => void }) {
   return (
-    <div className="text-[#094067]">
+    <div className="text-[#0a0a0a]">
       {/* Hero */}
       <HeroCarousel go={go} />
 
-      {/* Prompt City — interactive district explorer */}
-      <PromptCity go={go} />
+      {/* Breathing space 1 */}
+      <div className="py-28 md:py-40 border-t border-[#0a0a0a]/8">
+        <div className="max-w-[1100px] mx-auto px-6 text-center">
+          <div className="flex items-center justify-center gap-2 text-[#0a0a0a] mb-6" style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "0.02em" }}>
+            <span className="text-[#94a3b8] font-mono" style={{ fontSize: "12px" }}>1.0</span>
+            <span>Philosophy</span>
+          </div>
+          <h2
+            className="text-[#0a0a0a] mb-6 whitespace-nowrap"
+            style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 400, lineHeight: 1.08, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+          >
+            <span style={{ fontWeight: 800 }}>Prompting</span> is the <span style={{ fontWeight: 800 }}>New Coding.</span>
+          </h2>
+          <p className="text-[#6b7280] max-w-[620px] mx-auto" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
+            The best AI outputs don't come from better models — they come from better prompts. Master the craft of prompting and unlock the full potential of every AI tool.
+          </p>
+        </div>
+      </div>
+
+      {/* Story Showcase — Discover / Learn / Create */}
+      <StoryShowcase go={go} />
+
+      {/* Breathing space 2 */}
+      <div className="py-28 md:py-40 border-t border-[#0a0a0a]/8">
+        <div className="max-w-[720px] mx-auto px-6 text-center">
+          <div className="flex items-center justify-center gap-2 text-[#0a0a0a] mb-6" style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "0.02em" }}>
+            <span className="text-[#94a3b8] font-mono" style={{ fontSize: "12px" }}>2.0</span>
+            <span>Possibilities</span>
+          </div>
+          <h2
+            className="text-[#0a0a0a] flex flex-wrap items-center justify-center gap-3 md:gap-4 mb-6"
+            style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 400, lineHeight: 1.08, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+          >
+            <span>A new way to</span>
+            <RotatingText
+              texts={['CREATE', 'BUILD', 'THINK', 'LEARN']}
+              mainClassName="px-3 md:px-5 bg-[#0a0a0a] text-white overflow-hidden py-1 md:py-2 justify-center rounded-xl"
+              staggerFrom="last"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "-120%" }}
+              staggerDuration={0.025}
+              splitLevelClassName="overflow-hidden pb-0.5 md:pb-1"
+              transition={{ type: "spring", damping: 30, stiffness: 400 }}
+              rotationInterval={2000}
+              splitBy="characters"
+              auto
+              loop
+            />
+          </h2>
+          <p className="text-[#6b7280]" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
+            From stunning images to production code, from viral videos to full websites — one prompt is all it takes. Browse what works, copy it, make it yours.
+          </p>
+        </div>
+      </div>
 
       {/* Four doors — BounceCard layout */}
-      <WhereToGoSection go={go} />
 
       <BrowseByCategory go={go} />
 
-      <section className="max-w-[1200px] mx-auto px-6 mt-16">
-        <h2 className="text-[#094067] mb-6">Featured platforms</h2>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", gap: 48, flexWrap: "wrap" }}>
-          {platforms.map((p) => (
-            <button
-              key={p.key}
-              onClick={() => go(`library:${p.key}`)}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 10,
-                cursor: "pointer",
-                background: "none",
-                border: "none",
-                padding: 0,
-                opacity: 0.8,
-                transition: "opacity 0.18s, transform 0.18s",
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.opacity = "1";
-                (e.currentTarget as HTMLElement).style.transform = "translateY(-3px)";
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.opacity = "0.8";
-                (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
-              }}
-            >
-              <div style={{ width: 64, height: 64, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <PlatformLogo platformKey={p.key} size={64} />
-              </div>
-              <div style={{ color: "#094067", fontWeight: 600, fontSize: 14, textAlign: "center", whiteSpace: "nowrap" }}>{p.name}</div>
-            </button>
-          ))}
+      {/* Breathing space — Mastery */}
+      <div className="py-28 md:py-40 border-t border-[#0a0a0a]/8">
+        <div className="max-w-[1100px] mx-auto px-6 text-center">
+          <div className="flex items-center justify-center gap-2 text-[#0a0a0a] mb-6" style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "0.02em" }}>
+            <span className="text-[#94a3b8] font-mono" style={{ fontSize: "12px" }}>4.0</span>
+            <span>Mastery</span>
+          </div>
+          <h2
+            className="text-[#0a0a0a] mb-6 whitespace-nowrap"
+            style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 400, lineHeight: 1.08, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+          >
+            Don't just use <span style={{ fontWeight: 800 }}>AI</span> — <em style={{ fontWeight: 400, fontStyle: "italic" }}>Master it.</em>
+          </h2>
+          <p className="text-[#6b7280] max-w-[620px] mx-auto" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
+            The gap between average and exceptional AI output is the prompt. Our curated library gives you the exact words that produce professional-grade results, every time.
+          </p>
         </div>
-      </section>
+      </div>
 
-      <TryImageGenerator />
       <CommunityPrizes go={go} />
     </div>
   );
@@ -93,14 +120,15 @@ const TYPEWRITER_TEXTS = [
   "Build a marketing campaign",
 ];
 
-const ARCH_IMG      = "https://images.unsplash.com/photo-1560118355-24c162658e84?w=600&q=80";
-const SKY_IMG       = "https://images.unsplash.com/photo-1724247306612-d079a82f2ff7?w=800&q=80";
-const BUTTERFLY_IMG = "https://images.unsplash.com/photo-1581270985785-a23081d5d649?w=600&q=80";
-const INSECT_IMG    = "https://images.unsplash.com/photo-1753490607361-bbbc7946e981?w=400&q=80";
-const DRAGONFLY_IMG = "https://images.unsplash.com/photo-1775829820430-dd3af91a91b2?w=400&q=80";
-const DARK_IMG      = "https://images.unsplash.com/photo-1730646105653-3a2162bbd733?w=600&q=80";
-const NEON_IMG      = "https://images.unsplash.com/photo-1759265844881-a139bb028df5?w=600&q=80";
-const TYPO_IMG      = "https://images.unsplash.com/photo-1656234948440-1e9bdcdc8fa6?w=600&q=80";
+const HERO_IMAGES = [
+  { src: "/images/districts/hero1.png",  label: "Anime Portrait" },
+  { src: "/images/districts/hero2.png",  label: "Ink & Bamboo" },
+  { src: "/images/districts/hero3.png",  label: "Golden Hour" },
+  { src: "/images/districts/hero4.png",  label: "Wildflower" },
+  { src: "/images/districts/hero5.png",  label: "Rose Essence" },
+  { src: "/images/districts/hero6.jpeg", label: "Urban Collage" },
+  { src: "/images/districts/hero7.jpeg", label: "Soft Light" },
+];
 
 // Measures the real viewport width and updates on resize so cards always tile edge-to-edge
 function useViewportWidth() {
@@ -124,104 +152,14 @@ function useViewportHeight() {
 }
 
 function HeroCard({ id }: { id: number }) {
-  if (id === 0) return (
-    <div style={{ position: "relative", width: "100%", height: "100%", background: "#f5f500", overflow: "hidden" }}>
-      <div style={{ position: "absolute", left: 11, top: 22, writingMode: "vertical-lr", fontSize: 9, fontWeight: 700, color: "#111", letterSpacing: "0.18em", textTransform: "uppercase" }}>MENU</div>
-      <div style={{ position: "absolute", left: 26, top: "20%", fontSize: 60, fontWeight: 900, lineHeight: 0.86, color: "#111", textTransform: "uppercase", fontStyle: "italic", letterSpacing: "-0.03em" }}>WORKS</div>
-      <div style={{ position: "absolute", bottom: 18, left: 18, width: 32, height: 32, background: "#ef4565", borderRadius: 5, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <svg viewBox="0 0 16 16" fill="none" width={13} height={13}><path d="M2 14L14 2M14 2H6M14 2V10" stroke="white" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"/></svg>
-      </div>
-    </div>
-  );
-  if (id === 1) return (
-    <div style={{ position: "relative", width: "100%", height: "100%", background: "#111", display: "flex", flexDirection: "column" }}>
-      <div style={{ padding: "14px 16px 10px", borderBottom: "1px solid #1e1e1e" }}>
-        <span style={{ color: "#bbb", fontSize: 14, fontWeight: 500 }}>collectiv</span>
-      </div>
-      <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
-        <img src={ARCH_IMG} alt="arch" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(100%) brightness(0.65)" }} />
-        <div style={{ position: "absolute", bottom: 8, left: 14 }}><p style={{ color: "#666", fontSize: 9.5, fontWeight: 500 }}>• Ancient Ancient</p></div>
-      </div>
-      <div style={{ padding: "10px 12px 12px" }}>
-        <div style={{ background: "#1c1c1c", borderRadius: 8, padding: "7px 12px", display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{ width: 18, height: 18, borderRadius: "50%", background: "#2e2e2e" }} />
-          <span style={{ color: "#444", fontSize: 11 }}>Search</span>
-        </div>
-      </div>
-    </div>
-  );
-  if (id === 2) return (
-    <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden" }}>
-      <div style={{ height: "58%", overflow: "hidden", position: "relative" }}>
-        <img src={SKY_IMG} alt="sky" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ fontSize: 54, fontWeight: 900, color: "rgba(10,10,10,0.85)", lineHeight: 0.88, textAlign: "center", letterSpacing: "-0.025em", textShadow: "0 1px 12px rgba(255,255,255,0.5)" }}>
-            Geo<br/>Garden
-          </div>
-        </div>
-      </div>
-      <div style={{ height: "42%", overflow: "hidden" }}>
-        <img src={BUTTERFLY_IMG} alt="butterfly" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-      </div>
-      <div style={{ position: "absolute", bottom: 14, right: 14, width: 30, height: 30, borderRadius: "50%", background: "white", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.2)", fontSize: 20, color: "#333", fontWeight: 300 }}>+</div>
-    </div>
-  );
-  if (id === 3) return (
-    <div style={{ position: "relative", width: "100%", height: "100%", background: "#2d0a1a", display: "flex", flexDirection: "column", padding: "14px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
-        <span style={{ color: "#d9a0be", fontSize: 11.5, fontWeight: 700, letterSpacing: "0.08em" }}>A / REPS</span>
-        <div style={{ display: "flex", gap: 4 }}>
-          {["Artists", "Categories", "Contact"].map(t => (
-            <span key={t} style={{ padding: "2px 7px", borderRadius: 3, border: "1px solid #4a2840", color: "#907080", fontSize: 8.5, fontWeight: 500 }}>{t}</span>
-          ))}
-        </div>
-      </div>
-      <div style={{ flex: 1, overflow: "hidden", borderRadius: 8, position: "relative" }}>
-        <img src={DARK_IMG} alt="gallery" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.4, borderRadius: 8 }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg,rgba(45,10,26,0.5) 0%,transparent 60%)", borderRadius: 8 }} />
-      </div>
-    </div>
-  );
-  // ── Card 4 — photo grid ────────────────────────────────────────────────────
-  if (id === 4) return (
-    <div style={{ position: "relative", width: "100%", height: "100%", background: "#e8e0f8", padding: "16px", display: "flex", flexDirection: "column" }}>
-      <div style={{ marginBottom: 12 }}>
-        <div style={{ color: "#aaa", fontSize: 9, marginBottom: 5 }}>©Alex Carter</div>
-        <div style={{ fontSize: 36, fontWeight: 800, color: "#1a1a1a", lineHeight: 1, letterSpacing: "-0.025em" }}>Person</div>
-      </div>
-      <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
-        <div style={{ borderRadius: 8, overflow: "hidden" }}><img src={INSECT_IMG} alt="n1" style={{ width: "100%", height: "100%", objectFit: "cover" }} /></div>
-        <div style={{ borderRadius: 8, overflow: "hidden" }}><img src={DRAGONFLY_IMG} alt="n2" style={{ width: "100%", height: "100%", objectFit: "cover" }} /></div>
-        <div style={{ borderRadius: 8, background: "#d4c8f2" }} />
-        <div style={{ borderRadius: 8, background: "#c8beed" }} />
-      </div>
-    </div>
-  );
-  // ── Card 5 — neon abstract ─────────────────────────────────────────────────
-  if (id === 5) return (
-    <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden" }}>
-      <img src={NEON_IMG} alt="neon" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg,rgba(10,5,30,0.55) 0%,transparent 60%)" }} />
-      <div style={{ position: "absolute", top: 16, left: 16 }}>
-        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", color: "rgba(255,255,255,0.7)", textTransform: "uppercase", marginBottom: 4 }}>Studio</div>
-        <div style={{ fontSize: 26, fontWeight: 800, color: "#fff", lineHeight: 1, letterSpacing: "-0.02em" }}>Prism</div>
-      </div>
-      <div style={{ position: "absolute", bottom: 16, left: 16, right: 16, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-        <span style={{ fontSize: 9, color: "rgba(255,255,255,0.5)", fontWeight: 500 }}>Visual Arts</span>
-        <div style={{ width: 28, height: 28, borderRadius: "50%", background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <svg viewBox="0 0 16 16" fill="none" width={11} height={11}><path d="M3 13L13 3M13 3H7M13 3V9" stroke="white" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"/></svg>
-        </div>
-      </div>
-    </div>
-  );
-  // ── Card 6 — bold typography poster ───────────────────────────────────────
+  const img = HERO_IMAGES[id];
+  if (!img) return null;
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden" }}>
-      <img src={TYPO_IMG} alt="typo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,rgba(0,0,0,0.18) 0%,rgba(0,0,0,0.62) 100%)" }} />
-      <div style={{ position: "absolute", bottom: 18, left: 14, right: 14 }}>
-        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.16em", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", marginBottom: 6 }}>Type / Works</div>
-        <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", lineHeight: 1.05, letterSpacing: "-0.02em" }}>Bold Ideas<br/>Louder Voices</div>
+    <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden", background: "#0a0a0a" }}>
+      <img src={img.src} alt={img.label} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.5) 100%)" }} />
+      <div style={{ position: "absolute", bottom: 14, left: 14, right: 14 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>{img.label}</div>
       </div>
     </div>
   );
@@ -236,10 +174,10 @@ const heroCategories = [
     description: "Drive growth and reach your audience.",
     cardGradient: "linear-gradient(to bottom, rgba(109,40,217,0.28) 0%, rgba(0,0,0,0.78) 100%)",
     accentColor: "#8b5cf6",
-    icon: "📣",
+    icon: "",
     img: "https://images.unsplash.com/photo-1658062117791-18cae7ff46c1?w=500&q=80",
     prompt: {
-      badge: "Marketing", badgeBg: "#f3e8ff", badgeText: "#7c3aed", emoji: "📣",
+      badge: "Marketing", badgeBg: "#f3e8ff", badgeText: "#7c3aed", emoji: "",
       title: "Brand Campaign Brief",
       subtitle: "Create compelling marketing campaigns that reach and convert your target audience.",
       tags: ["Marketing", "Ads", "Campaign", "Brand"],
@@ -252,10 +190,10 @@ const heroCategories = [
     description: "Engage your followers and build your brand.",
     cardGradient: "linear-gradient(to bottom, rgba(29,78,216,0.28) 0%, rgba(0,0,0,0.78) 100%)",
     accentColor: "#3b82f6",
-    icon: "📱",
+    icon: "",
     img: "https://images.unsplash.com/photo-1600096194534-95cf5ece04cf?w=500&q=80",
     prompt: {
-      badge: "Social Media", badgeBg: "#dbeafe", badgeText: "#1d4ed8", emoji: "📱",
+      badge: "Social Media", badgeBg: "#dbeafe", badgeText: "#1d4ed8", emoji: "",
       title: "Instagram Caption Pack",
       subtitle: "Create engaging captions that boost social media presence and drive real engagement.",
       tags: ["Instagram", "Caption", "Hashtags", "Engagement"],
@@ -268,10 +206,10 @@ const heroCategories = [
     description: "Boost sales with product descriptions that convert.",
     cardGradient: "linear-gradient(to bottom, rgba(180,83,9,0.28) 0%, rgba(0,0,0,0.78) 100%)",
     accentColor: "#f59e0b",
-    icon: "🛍️",
+    icon: "",
     img: "https://images.unsplash.com/photo-1649013439319-aa7e2dc91267?w=500&q=80",
     prompt: {
-      badge: "E-commerce", badgeBg: "#fef3c7", badgeText: "#b45309", emoji: "🛍️",
+      badge: "E-commerce", badgeBg: "#fef3c7", badgeText: "#b45309", emoji: "",
       title: "Product Description",
       subtitle: "Generate persuasive product descriptions that convert visitors into customers.",
       tags: ["Sales", "E-commerce", "Product", "Description"],
@@ -284,10 +222,10 @@ const heroCategories = [
     description: "Capture personality and bring portraits to life.",
     cardGradient: "linear-gradient(to bottom, rgba(55,65,81,0.28) 0%, rgba(0,0,0,0.78) 100%)",
     accentColor: "#a78bfa",
-    icon: "🧑‍🎨",
+    icon: "",
     img: "https://images.unsplash.com/photo-1689600944138-da3b150d9cb8?w=500&q=80",
     prompt: {
-      badge: "Portraits", badgeBg: "#ede9fe", badgeText: "#6d28d9", emoji: "🧑‍🎨",
+      badge: "Portraits", badgeBg: "#ede9fe", badgeText: "#6d28d9", emoji: "",
       title: "Realistic Portrait",
       subtitle: "Create detailed portrait prompts for stunning AI-generated headshots.",
       tags: ["Portrait", "Photography", "Realism", "AI Art"],
@@ -300,10 +238,10 @@ const heroCategories = [
     description: "Create stunning visuals and unique artwork.",
     cardGradient: "linear-gradient(to bottom, rgba(124,45,18,0.28) 0%, rgba(0,0,0,0.78) 100%)",
     accentColor: "#f97316",
-    icon: "🎨",
+    icon: "",
     img: "https://images.unsplash.com/photo-1591693898234-f2bba7c8beaa?w=500&q=80",
     prompt: {
-      badge: "Art", badgeBg: "#fff7ed", badgeText: "#c2410c", emoji: "🎨",
+      badge: "Art", badgeBg: "#fff7ed", badgeText: "#c2410c", emoji: "",
       title: "Digital Illustration",
       subtitle: "Generate breathtaking illustrations with detailed and evocative style descriptions.",
       tags: ["Art", "Illustration", "Digital", "Creative"],
@@ -485,11 +423,11 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
             style={{
-              background: "linear-gradient(135deg,#6B5DD3 0%,#4f46e5 100%)",
+              background: "#4FC3F7",
               color: "white", border: "none", borderRadius: 999,
               padding: "12px 28px", fontSize: 15, fontWeight: 600,
               cursor: "pointer", letterSpacing: "0.005em",
-              boxShadow: "0 4px 20px rgba(79,70,229,0.36)",
+              boxShadow: "0 4px 20px rgba(79,195,247,0.36)",
             }}
           >
             Get started
@@ -537,6 +475,206 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
   );
 }
 
+// ─── How It Works ─────────────────────────────────────────────────────────────
+
+// ─── Story Showcase — scroll-driven Discover / Learn / Create ─────────────────
+
+const STORY_STEPS = [
+  {
+    num: "01",
+    key: "discover",
+    name: "Discover",
+    headline: "Discover Better Prompts",
+    description: [
+      "Find proven prompts in seconds instead of spending hours experimenting.",
+      "Explore thousands of curated prompts across image generation, video creation, website development, coding, and content creation.",
+    ],
+    benefits: ["Curated Library", "Real-World Results", "Multiple Categories", "Ready To Use"],
+  },
+  {
+    num: "02",
+    key: "learn",
+    name: "Learn",
+    headline: "Learn Prompt Engineering",
+    description: [
+      "Master AI workflows using beginner-friendly guides and proven frameworks.",
+      "Learn how to generate better images, videos, websites, code, and content.",
+    ],
+    benefits: ["Beginner Friendly", "Step-by-Step Guides", "Proven Frameworks", "Practical Examples"],
+  },
+  {
+    num: "03",
+    key: "create",
+    name: "Create",
+    headline: "Create Without Limits",
+    description: [
+      "Turn ideas into outputs using prompts that actually work.",
+      "Build images, videos, websites, applications, and content faster than ever.",
+    ],
+    benefits: ["Faster Creation", "Better Results", "Save Time", "Save Money"],
+  },
+];
+
+const STORY_VIDEOS = [frame1Video, frame2Video, frame3Video];
+const ACCENT = "#0a0a0a";
+
+function useStoryStepProgress(scrollYProgress: MotionValue<number>, index: number, count: number) {
+  const w = 1 / count;
+  const start = index * w;
+  const end = start + w;
+  const ramp = w * 0.22;
+  const peakStart = start + ramp;
+  const peakEnd = end - ramp;
+  const isFirst = index === 0;
+  const isLast = index === count - 1;
+  if (isFirst) return useTransform(scrollYProgress, [0, peakEnd, end], [1, 1, 0]);
+  if (isLast) return useTransform(scrollYProgress, [start, peakStart, 1], [0, 1, 1]);
+  return useTransform(scrollYProgress, [start, peakStart, peakEnd, end], [0, 1, 1, 0]);
+}
+
+function StoryNavItem({ step, progress }: { step: typeof STORY_STEPS[0]; progress: MotionValue<number> }) {
+  const opacity = useTransform(progress, [0, 1], [0.32, 1]);
+  const x = useTransform(progress, [0, 1], [0, 6]);
+  const nameSize = useTransform(progress, [0, 1], [18, 26]);
+  const nameWeight = useTransform(progress, [0, 1], [400, 600]);
+  const color = useTransform(progress, [0, 1], ["#94a3b8", ACCENT]);
+  const barScale = useTransform(progress, [0, 1], [0, 1]);
+  const numColor = useTransform(progress, [0, 1], ["#cbd5e1", ACCENT]);
+
+  return (
+    <motion.div className="flex items-center gap-4" style={{ opacity, x }}>
+      <motion.span className="block w-[3px] rounded-full" style={{ height: 28, background: ACCENT, scaleY: barScale, originY: 0.5 }} />
+      <motion.span style={{ fontSize: 13, letterSpacing: 1, color: numColor }}>{step.num}</motion.span>
+      <motion.span style={{ fontSize: nameSize, fontWeight: nameWeight, fontStyle: "italic", color, letterSpacing: -0.4, fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}>{step.name}</motion.span>
+    </motion.div>
+  );
+}
+
+function StoryLeftFrame({ step, progress }: { step: typeof STORY_STEPS[0]; progress: MotionValue<number> }) {
+  const opacity = useTransform(progress, [0, 0.4, 0.6, 1], [0, 0, 1, 1]);
+  const y = useTransform(progress, [0.4, 1], [18, 0]);
+  return (
+    <motion.div className="absolute inset-x-0 top-0" style={{ opacity, y }}>
+      <h3 className="text-[#0a0a0a]" style={{ fontSize: "clamp(26px, 2.6vw, 38px)", lineHeight: 1.12, letterSpacing: -1, fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif", fontWeight: 800 }}>
+        <span style={{ fontStyle: "italic", fontWeight: 400 }}>{step.headline.split(" ")[0]}</span>{" "}
+        {step.headline.split(" ").slice(1).join(" ")}
+      </h3>
+      {step.description.map((d) => (
+        <p key={d} className="mt-4 text-[#6b7280]" style={{ fontSize: 15, lineHeight: 1.6 }}>{d}</p>
+      ))}
+      <div className="mt-7 grid grid-cols-2 gap-x-5 gap-y-3">
+        {step.benefits.map((b) => (
+          <div key={b} className="flex items-center gap-2.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0a0a0a] shrink-0" />
+            <span className="text-[#0a0a0a]" style={{ fontSize: 13.5 }}>{b}</span>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+function StoryFrameShell({ progress, children }: { progress: MotionValue<number>; children: React.ReactNode }) {
+  const opacity = useTransform(progress, [0, 0.45, 0.55, 1], [0, 0, 1, 1]);
+  const y = useTransform(progress, [0.45, 1], [28, 0]);
+  const scale = useTransform(progress, [0.45, 1], [0.97, 1]);
+  return (
+    <motion.div className="absolute inset-0 flex items-center justify-center" style={{ opacity, y, scale }}>
+      {children}
+    </motion.div>
+  );
+}
+
+function StoryFramedVideo({ src, path, progress, widthClass = "max-w-full" }: { src: string; path: string; progress: MotionValue<number>; widthClass?: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const apply = (v: number) => {
+      const el = videoRef.current;
+      if (!el) return;
+      if (v > 0.5) el.play().catch(() => {});
+      else el.pause();
+    };
+    apply(progress.get());
+    return progress.on("change", apply);
+  }, [progress]);
+
+  return (
+    <div
+      className={`w-full ${widthClass} overflow-hidden rounded-3xl border-2 border-[#0a0a0a]/15 bg-white`}
+      style={{ boxShadow: "0 40px 90px -35px rgba(9,64,103,0.25), 0 1px 0 rgba(255,255,255,0.9) inset" }}
+    >
+      <div className="flex items-center gap-3 border-b border-[#0a0a0a]/10 bg-[#0a0a0a]/3 px-4 py-2.5">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#ef4565]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#ffd803]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#3fb950]" />
+        </div>
+        <div className="mx-auto flex w-[55%] max-w-[300px] items-center justify-center gap-2 rounded-full border border-[#0a0a0a]/10 bg-[#0a0a0a]/5 px-3 py-1 text-[#6b7280]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#3fb950]" />
+          <span style={{ fontSize: 11 }}>{path}</span>
+        </div>
+        <div className="w-[46px]" />
+      </div>
+      <div className="relative w-full bg-[#f8fafc] aspect-video">
+        <video ref={videoRef} src={src} muted loop playsInline preload="metadata" className="absolute inset-0 w-full h-full object-cover" />
+      </div>
+    </div>
+  );
+}
+
+function StoryShowcase({ go }: { go: (p: string) => void }) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
+
+  const p0 = useStoryStepProgress(scrollYProgress, 0, STORY_STEPS.length);
+  const p1 = useStoryStepProgress(scrollYProgress, 1, STORY_STEPS.length);
+  const p2 = useStoryStepProgress(scrollYProgress, 2, STORY_STEPS.length);
+  const progresses = [p0, p1, p2];
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative w-full"
+      style={{ height: "320vh", background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 45%, #ffffff 100%)" }}
+    >
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
+        {/* Ambient blobs */}
+        <div aria-hidden className="pointer-events-none absolute -right-40 top-10 w-[520px] h-[520px] rounded-full" style={{ background: "radial-gradient(circle, rgba(9,64,103,0.06) 0%, transparent 70%)" }} />
+        <div aria-hidden className="pointer-events-none absolute -left-40 bottom-0 w-[480px] h-[480px] rounded-full" style={{ background: "radial-gradient(circle, rgba(255,216,3,0.12) 0%, transparent 70%)" }} />
+
+        <div className="relative mx-auto flex h-full max-w-[1500px] items-center gap-12 px-8">
+          {/* LEFT — nav + copy (38%) */}
+          <div className="relative hidden lg:flex flex-col justify-center" style={{ flexBasis: "38%", minWidth: 340 }}>
+            <div className="mb-9 flex flex-col gap-4">
+              {STORY_STEPS.map((s, i) => (
+                <StoryNavItem key={s.key} step={s} progress={progresses[i]} />
+              ))}
+            </div>
+            <div className="relative min-h-[280px]">
+              {STORY_STEPS.map((s, i) => (
+                <StoryLeftFrame key={s.key} step={s} progress={progresses[i]} />
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT — scroll-activated video frames (62%) */}
+          <div className="relative h-full flex-1" style={{ flexBasis: "62%" }}>
+            <StoryFrameShell progress={p0}>
+              <StoryFramedVideo src={frame1Video} path="promptvault.app/discover" progress={p0} />
+            </StoryFrameShell>
+            <StoryFrameShell progress={p1}>
+              <StoryFramedVideo src={frame2Video} path="promptvault.app/learn" progress={p1} />
+            </StoryFrameShell>
+            <StoryFrameShell progress={p2}>
+              <StoryFramedVideo src={frame3Video} path="promptvault.app/create" progress={p2} />
+            </StoryFrameShell>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Counters ─────────────────────────────────────────────────────────────────
 
 function Counter({ to }: { to: number }) {
@@ -577,187 +715,10 @@ function Typewriter({ items }: { items: string[] }) {
     }
   }, [text, deleting, idx, items]);
 
-  return <>{text}<span className="inline-block w-[1px] h-3 bg-[#094067] ml-px align-middle animate-pulse" /></>;
+  return <>{text}<span className="inline-block w-[1px] h-3 bg-[#0a0a0a] ml-px align-middle animate-pulse" /></>;
 }
 
-// ─── TryImageGenerator ────────────────────────────────────────────────────────
 
-const promptSuggestions: { text: string; img: string }[] = [
-  { text: "Moon rising over the mountains",      img: "https://images.unsplash.com/photo-1532978879514-6cb1f0e5045d?w=900&q=75" },
-  { text: "A giraffe walking in a city with cars", img: "https://images.unsplash.com/photo-1547721064-da6cfb341d50?w=900&q=75" },
-  { text: "A robot with a glowing visor",        img: "https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=900&q=75" },
-  { text: "Cyberpunk street at neon midnight",   img: "https://images.unsplash.com/photo-1518481612222-68bbe828ecd1?w=900&q=75" },
-  { text: "Watercolor portrait of a fox",        img: "https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=900&q=75" },
-];
-
-const styleChips = [
-  { name: "Dreamy",    img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=160&q=70" },
-  { name: "Anime",     img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=160&q=70" },
-  { name: "Watercol.", img: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=160&q=70" },
-  { name: "Filmic",    img: "https://images.unsplash.com/photo-1518562180175-34a163b1a9a6?w=160&q=70" },
-];
-
-function TryImageGenerator() {
-  const [prompt, setPrompt] = useState(promptSuggestions[1].text);
-  const [previewImg, setPreviewImg] = useState(promptSuggestions[1].img);
-  const [style, setStyle] = useState("Dreamy");
-  const [loading, setLoading] = useState(false);
-  const [imgKey, setImgKey] = useState(0);
-  const [openSugg, setOpenSugg] = useState(false);
-  const wrapRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const onClickOutside = (e: MouseEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpenSugg(false);
-    };
-    document.addEventListener("mousedown", onClickOutside);
-    return () => document.removeEventListener("mousedown", onClickOutside);
-  }, []);
-
-  const generate = () => {
-    if (!prompt.trim()) return;
-    setLoading(true);
-    setOpenSugg(false);
-    setTimeout(() => { setLoading(false); setImgKey((k) => k + 1); }, 900);
-  };
-
-  const pickSuggestion = (s: { text: string; img: string }) => {
-    setPrompt(s.text);
-    setPreviewImg(s.img);
-    setOpenSugg(false);
-    setImgKey((k) => k + 1);
-  };
-
-  const filtered = promptSuggestions.filter((s) => s.text.toLowerCase() !== prompt.toLowerCase());
-
-  return (
-    <section className="max-w-[1200px] mx-auto px-6 mt-40">
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.6 }}
-        className="grid lg:grid-cols-[1fr_540px] gap-14 items-center bg-white border-2 border-[#094067] rounded-3xl p-12 md:p-16"
-      >
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ffd803] text-[#094067] mb-4" style={{ fontSize: "12px", fontWeight: 700 }}>
-            <Sparkles className="w-3.5 h-3.5" /> Image Generator
-          </div>
-          <h2 className="text-[#094067] mb-3" style={{ fontSize: "36px", fontWeight: 800, lineHeight: 1.1 }}>
-            Try Image Generator
-          </h2>
-          <p className="text-[#5f6c7b] mb-6 max-w-md" style={{ fontSize: "15px", lineHeight: 1.6 }}>
-            Turn pure text to art with Magic Media™ and our range of AI art generation tools. Simply
-            enter a prompt, pick a style, and watch your words transform into beautiful art.
-          </p>
-
-          <div ref={wrapRef} className="relative max-w-lg">
-            <div className="flex items-stretch gap-2">
-              <div className="flex-1 flex items-center gap-2 px-3 h-11 rounded-full bg-[#f5f7fa] border-2 border-[#094067]/20 focus-within:border-[#ffd803]">
-                <Sparkles className="w-4 h-4 text-[#ef4565]" />
-                <input
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  onFocus={() => setOpenSugg(true)}
-                  onKeyDown={(e) => e.key === "Enter" && generate()}
-                  placeholder="Describe an image..."
-                  className="flex-1 bg-transparent outline-none text-[#094067] placeholder:text-[#5f6c7b]"
-                  style={{ fontSize: "14px" }}
-                />
-                {prompt && (
-                  <button onClick={() => setPrompt("")} className="text-[#5f6c7b] hover:text-[#ef4565]" aria-label="Clear">×</button>
-                )}
-              </div>
-              <button
-                onClick={generate}
-                disabled={loading}
-                className="h-11 px-6 rounded-full bg-[#ef4565] text-[#bce4d8] inline-flex items-center gap-2"
-                style={{ fontWeight: 700 }}
-              >
-                {loading ? "Generating…" : "Generate"}
-              </button>
-            </div>
-
-            <AnimatePresence>
-              {openSugg && filtered.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: -6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.18 }}
-                  className="absolute left-0 right-0 top-full mt-2 bg-white border-2 border-[#094067] rounded-2xl shadow-[6px_6px_0_0_#094067] overflow-hidden z-30"
-                >
-                  <div className="px-4 pt-3 pb-1 text-[#90b4ce]" style={{ fontSize: "12px", fontWeight: 700 }}>
-                    Try these...
-                  </div>
-                  {filtered.map((s) => (
-                    <button
-                      key={s.text}
-                      onMouseDown={(e) => { e.preventDefault(); pickSuggestion(s); }}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-[#ffd803]/30"
-                    >
-                      <div className="w-8 h-8 rounded-md overflow-hidden border border-[#094067]/20 shrink-0">
-                        <ImageWithFallback src={s.img} alt={s.text} className="w-full h-full object-cover" />
-                      </div>
-                      <span className="text-[#094067]" style={{ fontSize: "14px" }}>{s.text}</span>
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <div className="flex flex-wrap gap-2 mt-5">
-            {styleChips.map((chip) => (
-              <button
-                key={chip.name}
-                onClick={() => setStyle(chip.name)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-full border-2 transition ${
-                  style === chip.name ? "border-[#094067] bg-[#094067]/10" : "border-[#094067]/20 hover:border-[#094067]/40"
-                }`}
-              >
-                <div className="w-5 h-5 rounded overflow-hidden">
-                  <ImageWithFallback src={chip.img} alt={chip.name} className="w-full h-full object-cover" />
-                </div>
-                <span className="text-[#094067] text-[13px]" style={{ fontWeight: style === chip.name ? 700 : 500 }}>{chip.name}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="relative">
-          <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border-2 border-[#094067]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={imgKey + style}
-                initial={{ opacity: 0, scale: 1.04 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="absolute inset-0"
-              >
-                <ImageWithFallback src={previewImg} alt={prompt} className="w-full h-full object-cover" />
-              </motion.div>
-            </AnimatePresence>
-            {loading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-[#094067]/30 backdrop-blur-sm">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
-                  className="w-10 h-10 rounded-full border-4 border-[#bce4d8] border-t-[#ffd803]"
-                />
-              </div>
-            )}
-            <div className="absolute bottom-3 left-3 right-3 flex items-center gap-2 bg-[#bce4d8]/90 backdrop-blur border border-[#094067]/20 rounded-xl p-2">
-              <span className="text-[#094067] text-[12px] flex-1 truncate" style={{ fontWeight: 600 }}>{prompt}</span>
-              <span className="px-2 py-0.5 rounded-full bg-[#ffd803] text-[#094067] text-[11px]" style={{ fontWeight: 700 }}>{style}</span>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    </section>
-  );
-}
 
 // ─── Cursor Arrow Icon ────────────────────────────────────────────────────────
 function CursorArrow() {
@@ -825,7 +786,7 @@ function BounceCard({
       onClick={onClick}
       whileHover={{ scale: 0.95, rotate: "-1deg" }}
       whileTap={{ scale: 0.97 }}
-      className={`group relative min-h-[340px] cursor-pointer overflow-hidden rounded-2xl border-2 border-[#094067] bg-white p-6 ${className ?? ""}`}
+      className={`group relative min-h-[340px] cursor-pointer overflow-hidden rounded-2xl border-2 border-[#0a0a0a] bg-white p-6 ${className ?? ""}`}
     >
       {children}
     </motion.div>
@@ -835,7 +796,7 @@ function BounceCard({
 function CardBadge({ children }: { children: React.ReactNode }) {
   return (
     <span
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[#094067]/25 bg-[#094067]/6 text-[#094067] mb-3"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[#0a0a0a]/25 bg-[#0a0a0a]/6 text-[#0a0a0a] mb-3"
       style={{ fontSize: "11px", fontWeight: 700 }}
     >
       {children}
@@ -845,7 +806,7 @@ function CardBadge({ children }: { children: React.ReactNode }) {
 
 function CardHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h3 className="text-[#094067] mb-2" style={{ fontSize: "22px", fontWeight: 700 }}>
+    <h3 className="text-[#0a0a0a] mb-2" style={{ fontSize: "22px", fontWeight: 700 }}>
       {children}
     </h3>
   );
@@ -853,7 +814,7 @@ function CardHeading({ children }: { children: React.ReactNode }) {
 
 function CardDesc({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[#5f6c7b] leading-relaxed" style={{ fontSize: "13px" }}>
+    <p className="text-[#6b7280] leading-relaxed" style={{ fontSize: "13px" }}>
       {children}
     </p>
   );
@@ -872,12 +833,12 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
     <section className="max-w-[1200px] mx-auto px-6 mt-40">
       {/* Header */}
       <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
-        <h2 className="text-[#094067]">Where do you want to go?</h2>
+        <h2 className="text-[#0a0a0a]">Where do you want to go?</h2>
         <motion.button
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => go("library")}
-          className="whitespace-nowrap rounded-xl bg-[#094067] px-5 py-2 text-white"
+          className="whitespace-nowrap rounded-xl bg-[#0a0a0a] px-5 py-2 text-white"
           style={{ fontWeight: 600, fontSize: "14px" }}
         >
           Browse all →
@@ -892,21 +853,21 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
           onClick={() => go("library:image")}
           onHoverStart={() => setHovered("image")}
           onHoverEnd={() => setHovered(null)}
-          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #094067" }}
+          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #0a0a0a" }}
           whileTap={{ scale: 0.98 }}
           className="col-span-12 md:col-span-4 row-span-2 rounded-3xl bg-[#ffd803] p-6 text-left flex flex-col justify-between overflow-hidden relative"
-          style={{ border: "2.5px solid #094067", boxShadow: "5px 5px 0 0 #094067" }}
+          style={{ border: "2.5px solid #0a0a0a", boxShadow: "5px 5px 0 0 #0a0a0a" }}
         >
           <div>
             <motion.div
-              className="inline-block px-3 py-1 rounded-full bg-[#094067] text-[#ffd803] text-[11px] font-bold mb-4"
+              className="inline-block px-3 py-1 rounded-full bg-[#0a0a0a] text-[#ffd803] text-[11px] font-bold mb-4"
               animate={hovered === "image" ? { scale: [1, 1.08, 1] } : {}}
               transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 0.8 }}
             >
               420+ prompts
             </motion.div>
-            <div className="text-[#094067] text-3xl font-black leading-tight mb-2">Image<br/>Generation</div>
-            <div className="text-[#094067]/70 text-sm">Midjourney · Firefly · FLUX · ChatGPT</div>
+            <div className="text-[#0a0a0a] text-3xl font-black leading-tight mb-2">Image<br/>Generation</div>
+            <div className="text-[#0a0a0a]/70 text-sm">Midjourney · Firefly · FLUX · ChatGPT</div>
           </div>
 
           {/* Staggered image grid — each image tilts on hover */}
@@ -914,7 +875,7 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
             {["/images/image1.jpeg","/images/image41.jpeg","/images/image111.jpeg","/images/image196.jpeg"].map((src, i) => (
               <motion.div
                 key={i}
-                className="aspect-square rounded-xl overflow-hidden border-2 border-[#094067]/20"
+                className="aspect-square rounded-xl overflow-hidden border-2 border-[#0a0a0a]/20"
                 animate={hovered === "image"
                   ? { scale: 1.07, rotate: i % 2 === 0 ? 3 : -3, y: -4 }
                   : { scale: 1, rotate: 0, y: 0 }}
@@ -926,7 +887,7 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
           </div>
 
           <motion.div
-            className="mt-4 inline-flex items-center gap-1 text-[#094067] text-sm font-bold"
+            className="mt-4 inline-flex items-center gap-1 text-[#0a0a0a] text-sm font-bold"
             animate={hovered === "image" ? { x: 6 } : { x: 0 }}
             transition={{ duration: 0.2 }}
           >
@@ -939,10 +900,10 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
           onClick={() => go("library:video")}
           onHoverStart={() => setHovered("video")}
           onHoverEnd={() => setHovered(null)}
-          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #094067" }}
+          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #0a0a0a" }}
           whileTap={{ scale: 0.98 }}
           className="col-span-12 md:col-span-5 rounded-3xl bg-[#7c3aed] p-6 text-left flex flex-col justify-between overflow-hidden relative"
-          style={{ border: "2.5px solid #094067", boxShadow: "5px 5px 0 0 #094067" }}
+          style={{ border: "2.5px solid #0a0a0a", boxShadow: "5px 5px 0 0 #0a0a0a" }}
         >
           <div>
             <div className="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-bold mb-4">30 prompts</div>
@@ -983,13 +944,13 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
           onClick={() => go("library:website")}
           onHoverStart={() => setHovered("website")}
           onHoverEnd={() => setHovered(null)}
-          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #094067" }}
+          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #0a0a0a" }}
           whileTap={{ scale: 0.98 }}
           className="col-span-12 md:col-span-3 rounded-3xl bg-[#3b82f6] p-6 text-left flex flex-col justify-between overflow-hidden relative"
-          style={{ border: "2.5px solid #094067", boxShadow: "5px 5px 0 0 #094067" }}
+          style={{ border: "2.5px solid #0a0a0a", boxShadow: "5px 5px 0 0 #0a0a0a" }}
         >
           <div>
-            <div className="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-bold mb-4">33 types</div>
+            <div className="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-bold mb-4">90+ designs</div>
             <div className="text-white text-3xl font-black leading-tight mb-2">Website<br/>Gen</div>
             <div className="text-white/70 text-sm">Bolt · Lovable · Replit · Codex</div>
           </div>
@@ -1028,11 +989,11 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
           onHoverEnd={() => setHovered(null)}
           whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #ffd803" }}
           whileTap={{ scale: 0.98 }}
-          className="col-span-12 md:col-span-5 rounded-3xl bg-[#094067] p-6 text-left flex flex-col justify-between overflow-hidden relative h-full min-h-[300px]"
-          style={{ border: "2.5px solid #094067", boxShadow: "5px 5px 0 0 #ffd803" }}
+          className="col-span-12 md:col-span-5 rounded-3xl bg-[#0a0a0a] p-6 text-left flex flex-col justify-between overflow-hidden relative h-full min-h-[300px]"
+          style={{ border: "2.5px solid #0a0a0a", boxShadow: "5px 5px 0 0 #ffd803" }}
         >
           <div>
-            <div className="inline-block px-3 py-1 rounded-full bg-[#ffd803] text-[#094067] text-[11px] font-bold mb-4">Coming soon</div>
+            <div className="inline-block px-3 py-1 rounded-full bg-[#ffd803] text-[#0a0a0a] text-[11px] font-bold mb-4">Coming soon</div>
             <div className="text-white text-3xl font-black leading-tight mb-2">Text<br/>Generation</div>
             <div className="text-white/60 text-sm">ChatGPT · Gemini · Grok · Claude</div>
           </div>
@@ -1071,10 +1032,10 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
           onClick={() => go("library:content")}
           onHoverStart={() => setHovered("content")}
           onHoverEnd={() => setHovered(null)}
-          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #094067" }}
+          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #0a0a0a" }}
           whileTap={{ scale: 0.98 }}
           className="col-span-12 md:col-span-3 rounded-3xl bg-[#ef4565] p-6 text-left flex flex-col justify-between overflow-hidden relative h-full min-h-[300px]"
-          style={{ border: "2.5px solid #094067", boxShadow: "5px 5px 0 0 #094067" }}
+          style={{ border: "2.5px solid #0a0a0a", boxShadow: "5px 5px 0 0 #0a0a0a" }}
         >
           <div>
             <div className="inline-block px-3 py-1 rounded-full bg-white/25 text-white text-[11px] font-bold mb-4">Coming soon</div>
@@ -1084,7 +1045,7 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
 
           {/* Floating pills */}
           <div className="mt-4 space-y-2">
-            {["✉️  Email copy", "📱  Social posts", "📝  Blog articles"].map((label, i) => (
+            {["Email copy", "Social posts", "Blog articles"].map((label, i) => (
               <motion.div
                 key={label}
                 className="px-3 py-1.5 rounded-full bg-white/20 text-white text-[12px] font-semibold w-fit backdrop-blur-sm"
@@ -1107,59 +1068,111 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
 // ─── BrowseByCategory ────────────────────────────────────────────────────────
 
 const browseCategories = [
-  { name: "Illustration",  img: imgIllustration },
-  { name: "Fashion",       img: imgFashion      },
-  { name: "Apparel",       img: imgApparel      },
-  { name: "Advertising",   img: imgAdvertising  },
-  { name: "People",        img: imgPeople       },
-  { name: "Portraits",     img: imgPortraits    },
-  { name: "Marketing",     img: imgMarketing    },
-  { name: "Product",       img: imgProduct      },
-  { name: "E-commerce",    img: imgEcommerce    },
-  { name: "Social Media",  img: imgSocialMedia  },
-  { name: "Art",           img: "https://images.unsplash.com/photo-1762865417591-e9d09a06de32?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600" },
+  { name: "Illustration",  img: imgIllustration, desc: "Hand-drawn styles, vector art, and digital illustrations for any project." },
+  { name: "Fashion",       img: imgFashion,      desc: "High-fashion editorials, runway looks, and trendsetting style imagery." },
+  { name: "Apparel",       img: imgApparel,      desc: "Clothing mockups, fabric textures, and product shots for apparel brands." },
+  { name: "Advertising",   img: imgAdvertising,  desc: "Campaign-ready visuals, ad creatives, and attention-grabbing brand imagery." },
+  { name: "People",        img: imgPeople,       desc: "Lifestyle scenes, candid moments, and diverse human subjects for any context." },
+  { name: "Portraits",     img: imgPortraits,    desc: "Studio-quality headshots, creative portraits, and expressive character shots." },
+  { name: "Marketing",     img: imgMarketing,    desc: "Social ads, banners, and promotional visuals that convert." },
+  { name: "Product",       img: imgProduct,      desc: "Clean product photography, lifestyle placements, and commercial compositions." },
+  { name: "E-commerce",    img: imgEcommerce,    desc: "Storefront imagery, catalog shots, and conversion-optimized product visuals." },
+  { name: "Social Media",  img: imgSocialMedia,  desc: "Scroll-stopping content for Instagram, TikTok, Pinterest, and beyond." },
+  { name: "Art",           img: "https://images.unsplash.com/photo-1762865417591-e9d09a06de32?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", desc: "Fine art, abstract, and experimental AI-generated artwork." },
 ];
 
-
-
 function BrowseByCategory({ go }: { go: (p: string) => void }) {
-  // Duplicate for seamless infinite loop — CSS animation moves -50% = one full set
   const doubled = [...browseCategories, ...browseCategories];
+  const [paused, setPaused] = useState(false);
 
   return (
-    <section className="mt-16">
-      {/* Header — contained */}
-      <div className="max-w-[1200px] mx-auto px-6 mb-6 flex items-center justify-between">
-        <h2 className="text-[#094067]">Browse by category</h2>
+    <section
+      className="mt-16 py-16 relative overflow-hidden"
+      style={{
+        borderRadius: "32px",
+        margin: "64px 0 0 0",
+        background: "radial-gradient(ellipse at 20% 50%, rgba(230,230,240,0.5) 0%, transparent 50%), radial-gradient(ellipse at 80% 50%, rgba(220,225,235,0.4) 0%, transparent 50%), #f8f8fa",
+      }}
+    >
+      {/* Floating blobs for liquid glass background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden>
+        <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full" style={{ background: "radial-gradient(circle, rgba(200,200,210,0.35) 0%, transparent 70%)", filter: "blur(40px)" }} />
+        <div className="absolute top-10 right-[15%] w-48 h-48 rounded-full" style={{ background: "radial-gradient(circle, rgba(190,195,210,0.3) 0%, transparent 70%)", filter: "blur(30px)" }} />
+        <div className="absolute -bottom-16 left-[40%] w-64 h-64 rounded-full" style={{ background: "radial-gradient(circle, rgba(210,210,220,0.3) 0%, transparent 70%)", filter: "blur(35px)" }} />
+        <div className="absolute top-[60%] -right-10 w-56 h-56 rounded-full" style={{ background: "radial-gradient(circle, rgba(195,200,215,0.25) 0%, transparent 70%)", filter: "blur(30px)" }} />
+      </div>
+
+      {/* Dot pattern overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.15]"
+        aria-hidden
+        style={{
+          backgroundImage: "radial-gradient(circle, #999 0.6px, transparent 0.6px)",
+          backgroundSize: "18px 18px",
+        }}
+      />
+
+      {/* Header */}
+      <div className="max-w-[1200px] mx-auto px-6 mb-8 flex items-end justify-between relative z-10">
+        <div>
+          <h2
+            className="text-[#0a0a0a] mb-2"
+            style={{ fontSize: "clamp(28px, 4vw, 40px)", fontWeight: 400, letterSpacing: "-0.03em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+          >
+            Browse by category
+          </h2>
+          <p className="text-[#6b7280]" style={{ fontSize: "15px" }}>
+            Explore curated prompts across every creative discipline.
+          </p>
+        </div>
         <button
           onClick={() => go("library")}
-          className="text-[#094067] hover:text-[#ef4565] transition-colors"
+          className="text-[#0a0a0a] hover:text-[#555] transition-colors"
           style={{ fontSize: "14px", fontWeight: 600 }}
         >
           View all →
         </button>
       </div>
 
-      {/* Fade edges + overflow clip */}
+      {/* Auto-scrolling carousel */}
       <div
-        className="relative overflow-hidden category-marquee-outer"
+        className="relative overflow-hidden z-10"
         style={{
-          maskImage: "linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)",
-          WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)",
+          maskImage: "linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)",
         }}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
       >
-        {/* Marquee track */}
-        <div className="flex gap-5 py-2 category-marquee" style={{ width: "max-content" }}>
+        <div
+          className="flex gap-6 py-4 browse-cat-marquee"
+          style={{
+            width: "max-content",
+            animationPlayState: paused ? "paused" : "running",
+          }}
+        >
           {doubled.map((cat, i) => (
-            <button
+            <motion.button
               key={`${cat.name}-${i}`}
-              onClick={() => go("library")}
-              className="flex-shrink-0 flex flex-col gap-2 text-left group"
+              onClick={() => go("library:image")}
+              whileHover={{ y: -8, scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300, damping: 24 }}
+              className="flex-shrink-0 rounded-[24px] p-4 pb-5 text-center flex flex-col items-center gap-1 group"
+              style={{
+                width: "280px",
+                background: "linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.4) 100%)",
+                backdropFilter: "blur(24px) saturate(1.4)",
+                WebkitBackdropFilter: "blur(24px) saturate(1.4)",
+                border: "1.5px solid rgba(255,255,255,0.7)",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.06), 0 1.5px 0 rgba(255,255,255,0.9) inset, 0 -1px 3px rgba(0,0,0,0.03) inset",
+              }}
             >
-              {/* Landscape image card — 210×148, no shadow */}
               <div
-                className="overflow-hidden rounded-xl"
-                style={{ width: "210px", height: "148px", background: "#f3f4f6" }}
+                className="w-full aspect-[4/3] rounded-[16px] overflow-hidden mb-4"
+                style={{
+                  border: "1px solid rgba(255,255,255,0.6)",
+                  boxShadow: "0 2px 12px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.8)",
+                }}
               >
                 <ImageWithFallback
                   src={cat.img}
@@ -1167,17 +1180,30 @@ function BrowseByCategory({ go }: { go: (p: string) => void }) {
                   className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 />
               </div>
-              {/* Name below */}
-              <span
-                className="text-[#094067] px-0.5"
-                style={{ fontSize: "13px", fontWeight: 600 }}
+              <h3
+                className="text-[#0a0a0a]"
+                style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.02em" }}
               >
                 {cat.name}
-              </span>
-            </button>
+              </h3>
+              <p className="text-[#6b7280] leading-relaxed mt-1 px-2" style={{ fontSize: "13px" }}>
+                {cat.desc}
+              </p>
+            </motion.button>
           ))}
         </div>
       </div>
+
+      {/* Marquee CSS */}
+      <style>{`
+        .browse-cat-marquee {
+          animation: browse-cat-scroll 40s linear infinite;
+        }
+        @keyframes browse-cat-scroll {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+      `}</style>
     </section>
   );
 }
@@ -1185,52 +1211,129 @@ function BrowseByCategory({ go }: { go: (p: string) => void }) {
 // ─── CommunityPrizes ────────────────────────────────────────────────────────
 
 const prizes = [
-  { rank: "🥇", label: "Prompt of the Month", reward: "$100 Gift Card",         accent: "#ffd803" },
-  { rank: "⭐", label: "Approved prompts",    reward: "10k+ readers see your name", accent: "#3a86ff" },
-  { rank: "🏅", label: "5+ approved",         reward: "Top Creator Badge",       accent: "#22c55e" },
+  {
+    rank: "01",
+    label: "Prompt of the Month",
+    reward: "$100 Gift Card",
+    desc: "The best community prompt each month wins a $100 gift card. Quality over quantity.",
+    accent: "#0a0a0a",
+    bg: "#0a0a0a",
+  },
+  {
+    rank: "02",
+    label: "Get Featured",
+    reward: "10k+ readers see your work",
+    desc: "Every approved prompt gets showcased in our library. Your name, your craft, seen by thousands.",
+    accent: "#0a0a0a",
+    bg: "#0a0a0a",
+  },
+  {
+    rank: "03",
+    label: "Top Creator Badge",
+    reward: "Exclusive creator status",
+    desc: "Get 5+ prompts approved and earn the Top Creator badge on your profile. Stand out from the crowd.",
+    accent: "#0a0a0a",
+    bg: "#0a0a0a",
+  },
 ];
 
 function CommunityPrizes({ go }: { go: (p: string) => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+
   return (
-    <section className="max-w-[1200px] mx-auto px-6 mt-12 mb-20">
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 0.45 }}
-        className="flex flex-col sm:flex-row sm:items-center gap-6 rounded-3xl border-2 border-[#094067] px-10 py-8 bg-white"
-      >
-        <div className="shrink-0">
-          <div className="inline-flex items-center gap-1.5 text-[#094067] mb-2" style={{ fontSize: "13px", fontWeight: 700, letterSpacing: "0.07em" }}>
-            <Users className="w-4 h-4" /> COMMUNITY SPOTLIGHT
-          </div>
-          <div className="text-[#094067]" style={{ fontSize: "24px", fontWeight: 800, lineHeight: 1.2 }}>
-            Submit a prompt.<br />
-            <span style={{ color: "#ef4565" }}>Win prizes.</span>
-          </div>
-        </div>
-        <div className="hidden sm:block w-px self-stretch bg-[#094067]/15 mx-3" />
-        <div className="flex flex-wrap gap-3 flex-1">
-          {prizes.map((p) => (
-            <div key={p.label} className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-[#094067]/10" style={{ background: `${p.accent}20` }}>
-              <span className="text-2xl leading-none">{p.rank}</span>
-              <div>
-                <div style={{ color: p.accent === "#ffd803" ? "#a07700" : p.accent, fontSize: "12px", fontWeight: 700 }}>{p.label}</div>
-                <div className="text-[#094067]" style={{ fontSize: "14px", fontWeight: 600 }}>{p.reward}</div>
-              </div>
+    <section ref={ref} className="max-w-[1100px] mx-auto px-6 mt-32 mb-24">
+      {/* Prize cards first */}
+      <div className="grid md:grid-cols-3 gap-6 mb-14">
+        {prizes.map((p, i) => (
+          <motion.div
+            key={p.label}
+            initial={{ opacity: 0, y: 28 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.12 * (i + 1) }}
+            className="relative group rounded-2xl p-6 border border-[#e7e9f1] bg-white transition-all duration-300 hover:-translate-y-1"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = `0 12px 32px -8px ${p.accent}25, 0 4px 12px rgba(0,0,0,0.06)`;
+              e.currentTarget.style.borderColor = `${p.accent}50`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = "none";
+              e.currentTarget.style.borderColor = "#e7e9f1";
+            }}
+          >
+            {/* Rank badge */}
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 text-white"
+              style={{ background: p.bg, fontSize: "14px", fontWeight: 800 }}
+            >
+              {p.rank}
             </div>
-          ))}
+
+            {/* Label */}
+            <div
+              style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: p.accent, marginBottom: 6 }}
+            >
+              {p.label}
+            </div>
+
+            {/* Reward */}
+            <h3
+              className="text-[#0a0a0a] mb-2"
+              style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.02em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+            >
+              {p.reward}
+            </h3>
+
+            {/* Description */}
+            <p className="text-[#6b7280] leading-relaxed" style={{ fontSize: "13.5px" }}>
+              {p.desc}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Header + CTA below the cards */}
+      <motion.div
+        className="text-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.5, delay: 0.5 }}
+      >
+        <div
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0a0a0a]/5 text-[#0a0a0a] mb-5"
+          style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}
+        >
+          <Users className="w-3.5 h-3.5" /> Community
         </div>
+        <h2
+          className="text-[#0a0a0a] mb-3"
+          style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-0.03em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+        >
+          <span style={{ fontWeight: 400 }}>Submit a prompt.</span> <span style={{ fontWeight: 800, color: "#0a0a0a" }}>Win prizes.</span>
+        </h2>
+        <p className="text-[#6b7280] max-w-lg mx-auto mb-8" style={{ fontSize: "16px", lineHeight: 1.6 }}>
+          Share your best prompts with the community and get rewarded.
+        </p>
         <motion.button
           onClick={() => go("submit")}
-          whileHover={{ scale: 1.04 }}
+          whileHover={{ scale: 1.04, y: -2 }}
           whileTap={{ scale: 0.97 }}
-          className="shrink-0 h-12 px-8 rounded-full border-2 border-[#ffd803] text-[#094067] inline-flex items-center gap-2"
-          style={{ background: "#ffd803", fontWeight: 700, fontSize: "16px" }}
+          className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full text-white"
+          style={{
+            background: "#4FC3F7",
+            fontWeight: 700,
+            fontSize: "15px",
+            boxShadow: "0 4px 20px rgba(79,195,247,0.35)",
+            fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          }}
         >
-          ✍️ Submit
+          Submit Your Prompt
+          <svg viewBox="0 0 16 16" fill="none" width={14} height={14}>
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </motion.button>
       </motion.div>
     </section>
   );
 }
+

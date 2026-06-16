@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Star, Copy, Loader2 } from "lucide-react";
+import { Star, Copy, Loader2, ArrowLeft } from "lucide-react";
 import { platforms } from "../theme";
 import { imageLibraryPrompts } from "../../lib/library-data";
 
-export function Compare() {
+export function Compare({ go }: { go: (p: string) => void }) {
   const [promptId, setPromptId]     = useState(imageLibraryPrompts[0].id);
   const [platformData, setPlatform] = useState<Record<string, string> | null>(null);
   const [loading, setLoading]       = useState(false);
@@ -26,6 +26,9 @@ export function Compare() {
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-10 text-[#094067]">
       <div className="mb-8">
+        <button onClick={() => go("home")} className="inline-flex items-center gap-1.5 text-[#5f6c7b] hover:text-[#094067] text-[13px] mb-3 transition-colors">
+          <ArrowLeft className="w-3.5 h-3.5" /> Back
+        </button>
         <h1 className="text-3xl">Compare across platforms</h1>
         <p className="text-[#5f6c7b]">See how the same prompt performs on ChatGPT, Gemini, Grok, Midjourney, Firefly, and FLUX.</p>
       </div>

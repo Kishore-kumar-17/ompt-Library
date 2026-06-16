@@ -41,13 +41,14 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const current = route.startsWith("detail:") || route.startsWith("library:") || route.startsWith("website-detail:") ? "library" : route;
+  const current = route.startsWith("detail:") || route.startsWith("library:") || route.startsWith("website-detail:") ? "library" : route.startsWith("guide:") ? "guide" : route;
   // route format: "detail:42" or "detail:42:midjourney"
   const detailParts    = route.startsWith("detail:") ? route.split(":") : null;
   const detailId       = detailParts ? detailParts[1] : null;
   const detailPlatform = detailParts?.[2] ?? null;
   const libraryFamily  = route.startsWith("library:") ? (route.split(":")[1] as any) : null;
   const websiteSlug    = route.startsWith("website-detail:") ? route.split(":")[1] : null;
+  const guideSection   = route.startsWith("guide:") ? route.split(":")[1] : null;
 
   return (
     <div className="min-h-screen bg-white text-[#094067]">
@@ -57,19 +58,19 @@ export default function App() {
         {route === "library"   && <LibraryLanding go={setRoute} />}
         {libraryFamily         && <Library go={setRoute} family={libraryFamily} />}
         {detailId              && <Detail key={detailId} id={detailId} defaultPlatform={detailPlatform} go={setRoute} />}
-        {route === "builder"   && <Builder />}
-        {route === "improver"  && <Improver />}
-        {route === "compare"   && <Compare />}
+        {route === "builder"   && <Builder go={setRoute} />}
+        {route === "improver"  && <Improver go={setRoute} />}
+        {route === "compare"   && <Compare go={setRoute} />}
         {route === "dashboard" && <Dashboard />}
         {route === "profile"   && <Profile go={setRoute} />}
         {route === "submit"    && <Submit />}
         {route === "admin"     && <AdminImport />}
         {route === "image-review" && <AdminImageReview />}
         {websiteSlug && <WebsiteDetail key={websiteSlug} slug={websiteSlug} go={setRoute} />}
-        {route === "guide"     && <Guide go={setRoute} />}
-        {route === "pricing"   && <Pricing onAuth={() => setAuthOpen(true)} />}
+        {(route === "guide" || guideSection) && <Guide go={setRoute} initialSection={guideSection ?? undefined} />}
+        {route === "pricing"   && <Pricing go={setRoute} onAuth={() => setAuthOpen(true)} />}
       </main>
-      <Footer />
+      <Footer go={setRoute} />
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
       <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} go={setRoute} />
       <Toaster

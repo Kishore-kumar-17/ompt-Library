@@ -1,4 +1,4 @@
-import { Check, Zap, Star, Building2 } from "lucide-react";
+import { Check, Zap, Star, Building2, ArrowLeft } from "lucide-react";
 
 const plans = [
   {
@@ -71,12 +71,15 @@ const faqs = [
   { q: "Do submitted prompts get reviewed?", a: "Yes — all submissions go through editorial review before going live. Pro users get priority review (usually within 24 hours)." },
 ];
 
-export function Pricing({ onAuth }: { onAuth?: () => void }) {
+export function Pricing({ go, onAuth }: { go: (p: string) => void; onAuth?: () => void }) {
   return (
     <div className="max-w-[1100px] mx-auto px-6 py-14 text-[#094067]">
 
       {/* Header */}
       <div className="text-center mb-14">
+        <button onClick={() => go("home")} className="inline-flex items-center gap-1.5 text-[#5f6c7b] hover:text-[#094067] text-[13px] mb-3 mx-auto transition-colors">
+          <ArrowLeft className="w-3.5 h-3.5" /> Back
+        </button>
         <div className="inline-flex items-center gap-2 text-[#ef4565] mb-3 text-[13px] font-semibold">
           <Zap className="w-4 h-4" /> Pricing
         </div>
@@ -122,14 +125,14 @@ export function Pricing({ onAuth }: { onAuth?: () => void }) {
             <ul className="space-y-2.5 flex-1 mb-7">
               {plan.features.map((f) => (
                 <li key={f} className="flex items-start gap-2 text-[14px]">
-                  <Check className="w-4 h-4 mt-0.5 text-[#ef4565] shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#ef4565] shrink-0 mt-2" />
                   <span className="text-[#094067]">{f}</span>
                 </li>
               ))}
             </ul>
 
             <button
-              onClick={plan.id !== "enterprise" ? onAuth : undefined}
+              onClick={plan.id !== "enterprise" ? () => onAuth?.() : undefined}
               className={`w-full h-11 rounded-full font-bold text-[14px] border-2 border-[#094067] transition-all hover:shadow-[3px_3px_0_0_#094067] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] ${
                 plan.highlighted
                   ? "bg-[#094067] text-white"
