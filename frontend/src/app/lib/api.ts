@@ -204,9 +204,32 @@ export const libraryApi = {
     apiFetch<{ saved: boolean }>(`/api/library/prompts/${id}/save`, { method: "POST" }),
 };
 
+// ─── Engine lock layer (shared by Builder + Improver) ────────────────────────
+
+export interface LockSectionItem {
+  key: string;
+  label: string;
+  value: string;
+  required: boolean;
+}
+
+export interface EngineValidation {
+  valid: boolean;
+  warnings: string[];
+  missingRequiredFields: string[];
+}
+
+export interface EngineLockFields {
+  categoryId: string | null;
+  categoryLabel: string | null;
+  lockSection: LockSectionItem[];
+  negativeLocks: string[];
+  validation: EngineValidation | null;
+}
+
 // ─── Builder ─────────────────────────────────────────────────────────────────
 
-export interface BuilderResult {
+export interface BuilderResult extends EngineLockFields {
   prompt: string;
   platform: string;
   family: string;
@@ -221,6 +244,7 @@ export const builderApi = {
     style?: string;
     mood?: string;
     aspect?: string;
+    category?: string;
   }) =>
     apiFetch<BuilderResult>("/api/builder/generate", {
       method: "POST",
@@ -235,7 +259,7 @@ export interface ImproverChange {
   applied: boolean;
 }
 
-export interface ImproverResult {
+export interface ImproverResult extends EngineLockFields {
   improved: string;
   changes: ImproverChange[];
   platform: string;

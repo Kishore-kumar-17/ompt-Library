@@ -1,3 +1,4 @@
+import { CATEGORY_IDS } from "./types.js";
 import type { CategoryId } from "./types.js";
 
 export const CATEGORY_LABELS: Record<CategoryId, string> = {
@@ -57,7 +58,11 @@ export function normalizeCategoryLabel(value: string): string {
 }
 
 export function resolveCategoryId(categoryLabel: string): CategoryId | null {
-  return CATEGORY_ALIASES[normalizeCategoryLabel(categoryLabel)] ?? null;
+  const normalized = normalizeCategoryLabel(categoryLabel);
+  // Accept the canonical CategoryId form directly (e.g. "people-portraits"),
+  // so callers like Builder/Improver can pass ids, not just labels.
+  if ((CATEGORY_IDS as readonly string[]).includes(normalized)) return normalized as CategoryId;
+  return CATEGORY_ALIASES[normalized] ?? null;
 }
 
 export function getCategoryLabel(categoryId: CategoryId): string {

@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import Anthropic from "@anthropic-ai/sdk";
+import { assembleFromText } from "../engine/index.js";
 
 const router = new Hono();
 
@@ -140,6 +141,7 @@ router.post("/generate", async (c) => {
     style?: string;
     mood?: string;
     aspect?: string;
+    category?: string;
   }>();
 
   if (!body.idea?.trim()) {
@@ -175,11 +177,28 @@ IMPORTANT: Output ONLY the final prompt text. No explanations, no markdown code 
       .map((b) => b.text)
       .join("");
 
+    // For image prompts with a known category, derive a lock layer + negative
+    // locks from the generated text via the engine (no DB, pure assembly).
+    const locks =
+      body.family === "image" && body.category
+        ? assembleFromText({
+            text: text.trim(),
+            category: body.category,
+            platform: body.platform,
+            title: body.idea,
+          })
+        : null;
+
     return c.json({
       prompt: text.trim(),
       platform: body.platform,
       family: body.family,
       tokensUsed: response.usage.input_tokens + response.usage.output_tokens,
+      categoryId: locks?.categoryId ?? null,
+      categoryLabel: locks?.categoryLabel ?? null,
+      lockSection: locks?.lockSection ?? [],
+      negativeLocks: locks?.negativeLockSection ?? [],
+      validation: locks?.validation ?? null,
     });
   } catch (err: any) {
     console.error("Builder AI error:", err?.message ?? err);

@@ -155,6 +155,30 @@ export function assembleFromRecord(
   };
 }
 
+/**
+ * Generate a lock layer + negative locks for a piece of prompt TEXT (e.g. a
+ * Builder/Improver output that isn't in the library). Wraps the text as an
+ * in-memory PromptRecord and runs the normal assembly. Unsupported categories
+ * pass through with empty lock sections.
+ */
+export function assembleFromText(input: {
+  text: string;
+  category: string;
+  platform?: PlatformId | string;
+  title?: string;
+}): AssembledPromptResult {
+  const platformId = (input.platform as string) || "chatgpt";
+  const record: PromptRecord = {
+    id: "generated",
+    title: input.title ?? "",
+    category: input.category,
+    description: input.text,
+    basePrompt: input.text,
+    platforms: { [platformId]: input.text },
+  };
+  return assembleFromRecord(record, platformId);
+}
+
 export interface EngineSearchResult {
   id: string;
   title: string;

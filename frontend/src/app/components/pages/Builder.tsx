@@ -5,7 +5,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { platforms } from "../theme";
-import { authStore, builderApi } from "../../lib/api";
+import { authStore, builderApi, type EngineLockFields } from "../../lib/api";
+import { LockLayerPanel } from "../LockLayerPanel";
 
 // ─── Enhancement options ──────────────────────────────────────────────────────
 
@@ -18,6 +19,17 @@ const FAMILIES = [
   { key: "video",   label: "Video",   desc: "Sora, Runway..." },
   { key: "text",    label: "Text",    desc: "ChatGPT, Claude..." },
   { key: "content", label: "Content", desc: "Ads, posts, copy..." },
+];
+
+// Image categories drive which lock template the engine applies.
+const CATEGORIES = [
+  { key: "people-portraits",  label: "People & Portraits" },
+  { key: "product-ecommerce", label: "Product & Ecommerce" },
+  { key: "fashion-apparel",   label: "Fashion & Apparel" },
+  { key: "marketing-ads",     label: "Marketing & Ads" },
+  { key: "art-illustration",  label: "Art & Illustration" },
+  { key: "trending-viral",    label: "Trending & Viral" },
+  { key: "social-media",      label: "Social Media" },
 ];
 
 // ─── Chip selector ────────────────────────────────────────────────────────────
@@ -66,6 +78,8 @@ export function Builder({ go }: { go: (p: string) => void }) {
   const [copied, setCopied]         = useState(false);
   const [hasGenerated, setHasGenerated] = useState(false);
   const [error, setError]           = useState("");
+  const [category, setCategory]     = useState("people-portraits");
+  const [lockData, setLockData]     = useState<EngineLockFields | null>(null);
 
   const canGenerate = idea.trim().length > 0;
 
@@ -75,6 +89,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
     setError("");
     setHasGenerated(false);
     setAllPlatformResults({});
+    setLockData(null);
 
     try {
       const result = await builderApi.generate({
@@ -82,8 +97,10 @@ export function Builder({ go }: { go: (p: string) => void }) {
         style: style || undefined,
         mood: mood || undefined,
         aspect: (family === "image" || family === "video") ? aspect : undefined,
+        category: family === "image" ? category : undefined,
       });
       setGenerated(result.prompt);
+      setLockData(result);
       setHasGenerated(true);
     } catch (err: any) {
       setError(err?.message ?? "Generation failed");
@@ -190,6 +207,30 @@ export function Builder({ go }: { go: (p: string) => void }) {
               ))}
             </div>
           </div>
+
+          {/* Category (drives the image lock layer) */}
+          {family === "image" && (
+            <div>
+              <div className="text-[13px] text-[#5f6c7b] mb-2">
+                Category <span className="text-[#5f6c7b]/60">(for lock layer)</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.key}
+                    onClick={() => { setCategory(cat.key); setHasGenerated(false); }}
+                    className={`px-3 py-1 rounded-full text-[12px] border transition-all ${
+                      category === cat.key
+                        ? "bg-[#094067] text-white border-[#094067]"
+                        : "bg-white border-[#094067]/20 text-[#5f6c7b] hover:border-[#094067]/50 hover:text-[#094067]"
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Enhancements */}
           <div className="bg-white border border-[#094067]/15 rounded-2xl overflow-hidden">
@@ -411,6 +452,18 @@ export function Builder({ go }: { go: (p: string) => void }) {
           </div>
         </div>
       </div>
+
+      {/* Engine lock layer (image only) */}
+      {hasGenerated && lockData && (
+        <div className="mt-6">
+          <LockLayerPanel
+            categoryLabel={lockData.categoryLabel}
+            lockSection={lockData.lockSection}
+            negativeLocks={lockData.negativeLocks}
+            validation={lockData.validation}
+          />
+        </div>
+      )}
     </div>
   );
 }

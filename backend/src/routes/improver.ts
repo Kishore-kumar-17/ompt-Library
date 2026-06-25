@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import Anthropic from "@anthropic-ai/sdk";
+import { assembleFromText } from "../engine/index.js";
 
 const router = new Hono();
 
@@ -108,8 +109,19 @@ router.post("/improve", async (c) => {
       .map((b) => b.text)
       .join("");
 
-    // Parse the response — expect JSON with improved prompt + changes
+    // Parse the response — expect JSON with improved prompt + changes (+ category)
     const parsed = parseResponse(text);
+
+    // For image prompts, derive a lock layer + negative locks from the improved
+    // text using the category the model classified.
+    const locks =
+      family === "image" && parsed.category && parsed.category !== "none"
+        ? assembleFromText({
+            text: parsed.improved,
+            category: parsed.category,
+            platform: body.platform,
+          })
+        : null;
 
     return c.json({
       improved: parsed.improved,
@@ -117,6 +129,11 @@ router.post("/improve", async (c) => {
       platform: body.platform,
       family,
       tokensUsed: response.usage.input_tokens + response.usage.output_tokens,
+      categoryId: locks?.categoryId ?? null,
+      categoryLabel: locks?.categoryLabel ?? null,
+      lockSection: locks?.lockSection ?? [],
+      negativeLocks: locks?.negativeLockSection ?? [],
+      validation: locks?.validation ?? null,
     });
   } catch (err: any) {
     console.error("Improver AI error:", err?.message ?? err);
@@ -179,6 +196,7 @@ Transform the weak prompt into a structured, high-quality AI instruction with:
 RESPONSE FORMAT: You MUST respond with valid JSON only. No markdown, no code fences, no extra text.
 {
   "improved": "the full improved prompt text here",
+  "category": "for IMAGE prompts, the single best-fit category id from: people-portraits, product-ecommerce, fashion-apparel, marketing-ads, art-illustration, trending-viral, social-media. For non-image prompts use: none",
   "changes": [
     {"label": "description of change 1", "applied": true},
     {"label": "description of change 2", "applied": true},
@@ -193,6 +211,7 @@ The "improved" field must contain ONLY the final prompt — no explanations, no 
 function parseResponse(text: string): {
   improved: string;
   changes: { label: string; applied: boolean }[];
+  category?: string;
 } {
   // Try to extract JSON from the response
   const cleaned = text.replace(/```json?\s*/g, "").replace(/```\s*/g, "").trim();

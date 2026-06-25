@@ -2,14 +2,15 @@ import { useState } from "react";
 import { Wand2, Copy, Check, RefreshCw, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { platforms } from "../theme";
-import { improverApi, type ImproverChange } from "../../lib/api";
+import { improverApi, type ImproverResult } from "../../lib/api";
+import { LockLayerPanel } from "../LockLayerPanel";
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function Improver({ go }: { go: (p: string) => void }) {
   const [input, setInput]     = useState("");
   const [platform, setPlatform] = useState("chatgpt");
-  const [result, setResult]   = useState<{ text: string; changes: ImproverChange[] } | null>(null);
+  const [result, setResult]   = useState<ImproverResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied]   = useState(false);
   const [error, setError]     = useState("");
@@ -22,7 +23,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
 
     try {
       const res = await improverApi.improve({ prompt: input, platform });
-      setResult({ text: res.improved, changes: res.changes });
+      setResult(res);
     } catch (err: any) {
       setError(err?.message ?? "Improvement failed");
       toast.error("Improvement failed", { description: err?.message });
@@ -32,8 +33,8 @@ export function Improver({ go }: { go: (p: string) => void }) {
   }
 
   function handleCopy() {
-    if (!result?.text) return;
-    navigator.clipboard?.writeText(result.text);
+    if (!result?.improved) return;
+    navigator.clipboard?.writeText(result.improved);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
@@ -119,7 +120,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
                 <span className="text-[13px] text-[#5f6c7b]">AI is improving your prompt...</span>
               </div>
             ) : result ? (
-              <pre className="whitespace-pre-wrap text-[#094067] font-mono text-[13px] leading-relaxed">{result.text}</pre>
+              <pre className="whitespace-pre-wrap text-[#094067] font-mono text-[13px] leading-relaxed">{result.improved}</pre>
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
                 <p className="text-[#5f6c7b] text-[13px] text-center px-6">
@@ -158,6 +159,18 @@ export function Improver({ go }: { go: (p: string) => void }) {
             ))}
           </ul>
         </section>
+      )}
+
+      {/* Engine lock layer */}
+      {result && (
+        <div className="mt-6">
+          <LockLayerPanel
+            categoryLabel={result.categoryLabel}
+            lockSection={result.lockSection}
+            negativeLocks={result.negativeLocks}
+            validation={result.validation}
+          />
+        </div>
       )}
     </div>
   );
