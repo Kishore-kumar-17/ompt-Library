@@ -1,0 +1,611 @@
+Prompt Intelligence Engine v1
+
+Status: Phase 1 specification
+Scope: Architecture and implementation contract
+Repository: prompt-library-backend
+
+1. Purpose
+
+This project should not build prompts from scratch.
+
+This project should retrieve, interpret, validate, and enhance prompts that already exist in the library.
+
+The engine exists to do four things reliably:
+
+1. Find the correct prompt from the library.
+2. Select the correct AI-platform-specific prompt variant.
+3. Generate a reusable lock layer and negative lock layer from category rules.
+4. Return one final assembled prompt output.
+
+The engine is therefore a Prompt Intelligence Engine, not a prompt generator.
+
+
+2. Strategic Decisions
+
+The following decisions are fixed for v1:
+
+1. The existing prompt library is the source of truth.
+2. AI-specific prompt variants already written by the team must be preserved.
+3. Locks must be generated from reusable category templates, not hardcoded into every prompt.
+4. The engine must be built inside the current repository, not as a separate parallel project.
+5. The first working version should support one category end-to-end before expanding.
+
+Out of scope for v1:
+
+- inventing new prompt content from nothing
+- rewriting all 350 prompts
+- redesigning the frontend
+- replacing the existing prompt library data model everywhere at once
+
+
+3. Repository Reality
+
+This repository already contains:
+
+- frontend/: main React application
+- backend/: main Hono API
+- library prompt data and platform variants
+- builder and improver product surfaces
+
+Because of that, the engine should be implemented primarily in backend/ first.
+
+Recommended engine location:
+
+backend/src/engine/
+
+
+4. Product Model
+
+The prompt system has four layers.
+
+Layer 1: Description Layer
+- What the prompt is about.
+- Subject, scene, action, wardrobe, product, composition, lighting, style, etc.
+
+Layer 2: AI-Specific Layer
+- Platform-ready variants for ChatGPT, Gemini, Flux, Midjourney, Ideogram, Seedream, Recraft, and future models.
+- These already exist for much of the library and must be reused.
+
+Layer 3: Lock Layer
+- Reusable category-based consistency rules.
+- Locks freeze the visual decisions that make the output still feel like the same image across models.
+
+Layer 4: Negative Lock Layer
+- Category-specific things to suppress.
+- Example: plastic skin, warped geometry, cropped extremities, floating product, obvious AI artifacts.
+
+
+5. Core Philosophy
+
+The engine does not ask:
+
+"What prompt should I invent?"
+
+It asks:
+
+"Which existing prompt should I retrieve, how should I interpret it, and which consistency controls should I apply?"
+
+The lock rule is:
+
+Only lock values that materially preserve identity across image models.
+
+If a value does not noticeably improve cross-model consistency, it should not be part of the default lock framework.
+
+Avoid pseudo-precision by default.
+
+Examples of bad default locks:
+
+- eyelids 78%
+- face occupies 27%
+- x=0.51
+- y=0.44
+- catchlight at 10 o'clock
+- contrast 4.3:1
+
+
+6. Engine Responsibilities
+
+The engine is composed of nine logical modules.
+
+Module 1: Prompt Database Interface
+- Load prompt records from the current library source.
+- Support retrieval by id, slug, title, category, and keyword.
+- Do not generate prompt text.
+
+Module 2: Search Engine
+- Resolve user intent to one or more prompt candidates.
+- Example query: "software engineer portrait"
+- Output: ranked prompt matches.
+
+Module 3: Category Engine
+- Determine category and subcategory for a prompt.
+- Decide which lock template and negative template apply.
+
+Module 4: Prompt Parser
+- Extract structured values from the prompt description layer.
+- No AI required in v1.
+- Rule-based structured parsing only.
+
+Module 5: Lock Engine
+- Take a category template plus extracted values.
+- Produce the final lock section.
+
+Module 6: Negative Lock Engine
+- Take the category.
+- Append standard category-specific negative locks.
+
+Module 7: Platform Engine
+- Return the correct AI-specific prompt variant for the requested platform.
+- No prompt conversion in v1.
+- Reuse the authored platform variants.
+
+Module 8: Validator
+- Check for missing required fields.
+- Warn if a prompt cannot produce a reliable lock layer.
+
+Module 9: Output Engine
+- Assemble:
+  - AI-specific prompt
+  - lock layer
+  - negative lock layer
+- Return final prompt payload.
+
+
+7. Data Contracts
+
+These contracts define what must exist before implementation.
+
+7.1 PromptRecord
+
+Each library prompt should be represented in code as a single structured record.
+
+Minimum fields for v1:
+
+- id: string
+- title: string
+- category: string
+- subcategory?: string
+- description?: string
+- basePrompt?: string
+- platforms: record of platform id to platform prompt text
+- tags?: string[]
+- metadata?: free-form prompt metadata
+
+
+7.2 PlatformPromptMap
+
+Supported v1 platform ids:
+
+- chatgpt
+- gemini
+- flux
+- midjourney
+- ideogram
+- seedream
+- recraft
+
+Additional platforms may be added later without changing engine structure.
+
+
+7.3 CategoryId
+
+The engine standardizes the following category ids:
+
+- people-portraits
+- fashion-apparel
+- product-ecommerce
+- marketing-ads
+- art-illustration
+- trending-viral
+- social-media
+
+
+7.4 ExtractedPromptFields
+
+The parser output should normalize prompt description values into a structured object.
+
+Common fields:
+
+- subject
+- action
+- expression
+- gaze
+- pose
+- handPosition
+- headPosition
+- wardrobe
+- garment
+- garmentVisibility
+- garmentColor
+- product
+- productOrientation
+- scale
+- props
+- background
+- composition
+- crop
+- cameraAngle
+- lighting
+- material
+- surface
+- palette
+- styleDna
+
+The parser is allowed to return partial data.
+
+
+7.5 LockTemplate
+
+Each category template must define:
+
+- category id
+- category purpose
+- mandatory locks
+- optional locks
+- locks to avoid
+- extraction rules
+- default negative locks
+- examples
+
+
+7.6 LockSection
+
+The final generated lock section should be a structured list first, and formatted text second.
+
+Each lock item must contain:
+
+- key
+- label
+- value
+- required: boolean
+
+
+7.7 ValidationResult
+
+The validator should return:
+
+- valid: boolean
+- warnings: string[]
+- missingRequiredFields: string[]
+
+
+7.8 AssembledPromptResult
+
+The final output should include:
+
+- prompt id
+- title
+- category
+- selected platform
+- platform prompt text
+- lock section
+- negative lock section
+- validation result
+- final assembled text
+
+
+8. Lock Standard
+
+Every category lock system should be organized around four lock concepts:
+
+1. Identity Locks
+- Who or what is the hero.
+
+2. Composition Locks
+- Where the subject is and how it is framed.
+
+3. Material Locks
+- How surfaces and physical realism should behave.
+
+4. Style Locks
+- The artistic, editorial, or brand language.
+
+Each category uses the same concepts but different priorities.
+
+
+9. Category Specifications
+
+9.1 People & Portraits
+
+Purpose:
+- Preserve person identity, pose, wardrobe presence, scene framing, and visual tone.
+
+Mandatory lock families:
+- subject
+- expression
+- gaze
+- pose
+- hand position
+- wardrobe
+- background
+- composition
+- lighting
+- style DNA
+
+Optional:
+- age
+- gender
+- ethnicity when essential
+- facial hair
+- hair
+- accessories
+- head position
+- crop
+- skin/material notes
+
+Avoid:
+- micro facial percentages
+- coordinate systems
+- exact catchlight geometry
+
+
+9.2 Fashion & Apparel
+
+Purpose:
+- Protect the garment first, model second.
+
+Mandatory:
+- model
+- garment
+- garment visibility
+- garment color
+- garment fit
+- pose
+- hand position
+- composition
+- lighting
+- fabric
+- style DNA
+
+
+9.3 Product & Ecommerce
+
+Purpose:
+- Protect the product form, orientation, visibility, material, and brand feel.
+
+Mandatory:
+- product
+- orientation
+- scale
+- position
+- visibility
+- composition
+- background
+- lighting
+- material
+- brand style
+
+
+9.4 Marketing & Advertising
+
+Purpose:
+- Protect campaign message clarity and commercial composition.
+
+Mandatory:
+- hero subject
+- product
+- action
+- emotion
+- composition
+- CTA space
+- brand colors
+- lighting
+- campaign style
+
+
+9.5 Art & Illustration
+
+Purpose:
+- Protect illustration language more than realism.
+
+Mandatory:
+- art style
+- character
+- pose
+- expression
+- palette
+- lighting
+- rendering style
+- background
+- composition
+- style DNA
+
+
+9.6 Trending & Viral
+
+Purpose:
+- Protect the visual hook and attention pattern.
+
+Mandatory:
+- main subject
+- visual hook
+- expression
+- action
+- composition
+- lighting
+- color impact
+- viral style
+
+
+9.7 Social Media
+
+Purpose:
+- Protect engagement and platform-ready composition.
+
+Mandatory:
+- hero subject
+- action
+- expression
+- composition
+- platform crop
+- lighting
+- brand colors
+- social style
+
+
+10. Functional Classification
+
+10.1 Functional Defaults
+
+These usually affect the output and are allowed by default:
+
+- subject
+- pose
+- hand position
+- expression
+- wardrobe
+- garment
+- product
+- orientation
+- crop
+- background
+- lighting
+- style DNA
+
+
+10.2 Semi-Functional
+
+Allowed when clearly useful:
+
+- head position
+- hair
+- negative space
+- camera height
+- camera angle
+
+
+10.3 Non-Functional by Default
+
+Avoid unless a special case proves they matter:
+
+- eyelids 78%
+- mouth corner lift 3 degrees
+- face occupies 27%
+- x/y coordinates
+- exact lens height values
+- catchlight clock positions
+- seam spacing
+- drape angle
+- specular percentages
+
+
+11. Initial File Structure
+
+The engine should be added to backend as follows:
+
+backend/src/engine/
+  types.ts
+  prompts.ts
+  search.ts
+  categories.ts
+  parser.ts
+  validator.ts
+  assembler.ts
+  locks/
+    people.ts
+    fashion.ts
+    product.ts
+    marketing.ts
+    art.ts
+    trending.ts
+    social.ts
+  negatives/
+    people.ts
+    fashion.ts
+    product.ts
+    marketing.ts
+    art.ts
+    trending.ts
+    social.ts
+
+
+12. MVP Scope
+
+The first end-to-end implementation must be intentionally narrow.
+
+MVP includes:
+
+1. Load prompts from the existing library source.
+2. Search prompts by title and keyword.
+3. Resolve category.
+4. Parse one category reliably.
+5. Generate locks for one category.
+6. Generate negative locks for one category.
+7. Select one platform variant.
+8. Assemble final output.
+9. Validate required fields.
+
+MVP target category:
+
+People & Portraits
+
+Reason:
+- it has the clearest identity and pose logic
+- it establishes the parser and lock template pattern
+- it will generalize well to Fashion and Product next
+
+
+13. Build Order
+
+Phase 1: Specification
+- Rewrite Engine.txt into a single source of truth.
+
+Phase 2: Contracts
+- Define TypeScript types for prompt records, extracted values, templates, and outputs.
+
+Phase 3: Prompt Data Access
+- Build the prompt loader and retrieval helpers.
+
+Phase 4: Search
+- Build id, title, and keyword lookup.
+
+Phase 5: Category Resolution
+- Standardize category mapping from existing prompt data.
+
+Phase 6: Parser MVP
+- Build People & Portraits extraction rules.
+
+Phase 7: Lock Engine MVP
+- Build People & Portraits master lock template and formatter.
+
+Phase 8: Negative Lock MVP
+- Build People & Portraits negative lock template.
+
+Phase 9: Validator MVP
+- Warn on missing required portrait fields.
+
+Phase 10: Output Engine MVP
+- Assemble platform prompt + locks + negatives into final text output.
+
+Phase 11: Expansion
+- Fashion
+- Product
+- Marketing
+- Art
+- Trending
+- Social
+
+
+14. Success Criteria
+
+Phase 1 is complete when:
+
+1. Engine.txt describes one architecture only.
+2. The engine is defined for this repository, not a hypothetical new one.
+3. Data contracts are explicit enough to code against.
+4. The first implementation target is narrowed to one category.
+5. The team can build the engine module by module without re-arguing architecture.
+
+
+15. Immediate Next Step
+
+The next deliverable after this document is:
+
+Phase 2: define the TypeScript contracts and the backend engine folder skeleton.
+
+That work should begin with:
+
+- backend/src/engine/types.ts
+- backend/src/engine/categories.ts
+- backend/src/engine/locks/people.ts
+
