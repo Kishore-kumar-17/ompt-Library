@@ -72,7 +72,7 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
       const versions = videoPlatformVersions[staticPrompt.slug];
       if (versions) setPlatformData(versions);
     } else {
-      import("../../lib/library-platforms").then(m => {
+      import("../../lib/library-platforms-locked").then(m => {
         const versions = m.platformVersions[staticPrompt.slug!];
         if (versions) setPlatformData(versions);
       });

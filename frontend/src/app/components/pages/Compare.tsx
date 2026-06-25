@@ -15,7 +15,7 @@ export function Compare({ go }: { go: (p: string) => void }) {
   useEffect(() => {
     setPlatform(null);
     setLoading(true);
-    import("../../lib/library-platforms").then(m => {
+    import("../../lib/library-platforms-locked").then(m => {
       const versions = m.platformVersions[prompt.slug ?? ""] ?? {};
       setPlatform(versions);
     }).finally(() => setLoading(false));
