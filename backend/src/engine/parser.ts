@@ -81,6 +81,9 @@ const LIGHTING_PATTERNS: Array<[RegExp, string]> = [
   [/\bsoft(?:box)? key\b/i, "Soft key light"],
   [/\b(?:window|warm|front) key\b/i, "Key light"],
   [/\bsoftbox\b/i, "Softbox light"],
+  [/\bring light\b/i, "Ring light"],
+  [/\bmixed natural\b/i, "Mixed natural light"],
+  [/\bambient\b/i, "Ambient light"],
   [/\bbeauty dish\b/i, "Beauty-dish light"],
   [/\bside-?light\b/i, "Side light"],
   [/\bkey light\b/i, "Key light"],
@@ -125,21 +128,28 @@ function extractWardrobe(source: string): string | undefined {
   return extractAfterLabel(source, "Wardrobe")
     ?? extractAfterLabel(source, "wardrobe layered")
     ?? source.match(/\bwearing ([^\.]+?)(?:, against\b|, with\b|, under\b|, in\b|, inside\b|\.|$)/i)?.[1]?.trim()
+    ?? source.match(/\b(?:dressed in|clad in|draped in) ([^\.,;]{3,60})/i)?.[1]?.trim()
     ?? source.match(/\bwears ([^\.]+)/i)?.[1]?.trim();
 }
 
 function extractBackground(source: string): string | undefined {
-  return extractAfterLabel(source, "Setting")
-    ?? extractAfterLabel(source, "Background")
-    ?? (/brick wall/i.test(source) ? "Brick wall backdrop" : undefined)
-    ?? (/kitchen/i.test(source) ? "Kitchen environment" : undefined)
-    ?? (/workstation/i.test(source) ? "Workstation environment" : undefined)
-    // "clean soft-gradient studio background", "flat sage-green background", etc.
-    ?? (() => {
-      const m = source.match(/\b([a-z][\w-]*(?: [\w-]+){0,2}) background\b/i)?.[1];
-      return m ? `${compactWhitespace(m)} background` : undefined;
-    })()
-    ?? (/\bseamless\b/i.test(source) ? "Seamless backdrop" : undefined);
+  const labeled = extractAfterLabel(source, "Setting") ?? extractAfterLabel(source, "Background");
+  if (labeled) return labeled;
+  if (/brick wall/i.test(source)) return "Brick wall backdrop";
+  if (/kitchen/i.test(source)) return "Kitchen environment";
+  if (/workstation/i.test(source)) return "Workstation environment";
+  // descriptor immediately before "background"/"backdrop"
+  const before = source.match(/\b([a-z][\w-]*(?: [\w-]+){0,2}) (?:background|backdrop)\b/i)?.[1];
+  if (before) return `${compactWhitespace(before)} background`;
+  // "backdrop of foliage", "background of neon signage"
+  const after = source.match(/\b(?:background|backdrop) of ([a-z][\w-]*(?: [\w-]+){0,2})/i)?.[1];
+  if (after) return `${compactWhitespace(after)} backdrop`;
+  if (/\bseamless\b/i.test(source)) return "Seamless backdrop";
+  if (/\bgradient\b/i.test(source)) return "Gradient background";
+  if (/\bstudio\b/i.test(source)) return "Studio background";
+  // any explicit mention of a background still counts as a defined backdrop lock
+  if (/\b(?:background|backdrop)\b/i.test(source)) return "Defined background";
+  return undefined;
 }
 
 function extractSubject(source: string, fallbackTitle: string): string {
@@ -208,9 +218,13 @@ function buildParseSource(prompt: PromptRecord, platformText?: string | null): s
 function extractLeadingDescriptor(source: string): string | undefined {
   // Anchor on a sentence boundary because the variant's leading clause sits
   // after the title + base prompt in the combined parse source.
-  const lead = source.match(
-    /(?:^|[.;]\s)([A-Za-z][^.;:]{5,68}?)\s+(?:depicting|designed|for (?:the |an? )?)/i,
-  )?.[1];
+  const lead =
+    source.match(
+      /(?:^|[.;]\s)([A-Za-z][^.;:]{5,68}?)\s+(?:depicting|designed|titled|for (?:the |an? )?)/i,
+    )?.[1] ??
+    source.match(
+      /(?:^|[.;]\s)([A-Za-z][^.;:]{5,68}?)\s*[.]\s*(?:Subject|Composition|Layout|Capture|Render)\b/i,
+    )?.[1];
   if (lead) {
     const cleaned = compactWhitespace(lead);
     if (cleaned.length >= 4 && cleaned.length <= 70) return cleaned;
@@ -386,7 +400,7 @@ export function parseProductEcommercePrompt(
     productVisibility: firstMatch(source, VISIBILITY_PATTERNS),
     composition: firstMatch(source, PRODUCT_COMPOSITION_PATTERNS),
     background: extractProductBackground(source),
-    lighting: firstMatch(source, PRODUCT_LIGHTING_PATTERNS),
+    lighting: extractGenericLighting(source),
     material: firstMatch(source, MATERIAL_PATTERNS),
     brandStyle: firstMatch(source, BRAND_STYLE_PATTERNS) ?? extractLeadingDescriptor(source),
     surface: /\b(?:reflective|reflection|glossy reflection)\b/i.test(source)
@@ -449,6 +463,12 @@ const GARMENT_COLOR_PATTERNS: Array<[RegExp, string]> = [
 ];
 
 const FABRIC_PATTERNS: Array<[RegExp, string]> = [
+  [/\bplatinum\b/i, "Platinum"],
+  [/\bdiamond\b/i, "Diamond"],
+  [/\bgold\b/i, "Gold"],
+  [/\bpearl\b/i, "Pearl"],
+  [/\bstainless steel\b/i, "Stainless steel"],
+  [/\bsteel\b/i, "Steel"],
   [/\bsilk\b/i, "Silk"],
   [/\bdenim\b/i, "Denim"],
   [/\blinen\b/i, "Linen"],
@@ -544,9 +564,9 @@ export function parseFashionApparelPrompt(
     pose: firstMatch(source, FASHION_POSE_PATTERNS),
     handPosition: extractFashionHand(source),
     composition: firstMatch(source, FASHION_COMPOSITION_PATTERNS),
-    lighting: firstMatch(source, FASHION_LIGHTING_PATTERNS),
+    lighting: firstMatch(source, FASHION_LIGHTING_PATTERNS) ?? extractGenericLighting(source),
     material: firstMatch(source, FABRIC_PATTERNS),
-    styleDna: firstMatch(source, FASHION_STYLE_PATTERNS),
+    styleDna: firstMatch(source, FASHION_STYLE_PATTERNS) ?? extractLeadingDescriptor(source),
     background: extractFashionBackground(source),
     expression: firstMatch(source, EXPRESSION_PATTERNS),
     gaze: firstMatch(source, GAZE_PATTERNS),

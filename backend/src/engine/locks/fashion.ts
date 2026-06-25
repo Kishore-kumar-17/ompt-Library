@@ -29,13 +29,6 @@ export const fashionLockTemplate: LockTemplate = {
       warning: "Garment color was not clearly extracted; color identity may drift across platforms.",
     },
     {
-      key: "garmentFit",
-      label: "Garment Fit",
-      required: true,
-      description: "The silhouette and fit that define the look.",
-      extractionHints: ["tailored", "oversized", "slim-fit", "flowing", "draped", "structured"],
-    },
-    {
       key: "composition",
       label: "Composition",
       required: true,
@@ -66,6 +59,13 @@ export const fashionLockTemplate: LockTemplate = {
     },
   ],
   optionalLocks: [
+    {
+      key: "garmentFit",
+      label: "Garment Fit",
+      required: false,
+      description: "Silhouette/fit — only on worn garments (absent on jewelry/watch/accessory shots).",
+      extractionHints: ["tailored", "oversized", "slim-fit", "flowing", "draped", "structured"],
+    },
     {
       key: "pose",
       label: "Pose",

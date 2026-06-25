@@ -21,13 +21,6 @@ export const peopleLockTemplate: LockTemplate = {
       extractionHints: ["smile", "serious", "confident", "calm", "dramatic", "intense"],
     },
     {
-      key: "wardrobe",
-      label: "Wardrobe",
-      required: true,
-      description: "Clothing or signature wearables that must remain recognizable.",
-      extractionHints: ["hoodie", "saree", "kimono", "suit", "medical coat", "jewelry"],
-    },
-    {
       key: "background",
       label: "Background",
       required: true,
@@ -59,6 +52,13 @@ export const peopleLockTemplate: LockTemplate = {
     },
   ],
   optionalLocks: [
+    {
+      key: "wardrobe",
+      label: "Wardrobe",
+      required: false,
+      description: "Clothing/wearables — only when visible (absent on face-only avatar crops).",
+      extractionHints: ["hoodie", "saree", "kimono", "suit", "medical coat", "jewelry"],
+    },
     {
       key: "pose",
       label: "Pose",
