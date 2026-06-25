@@ -9,62 +9,62 @@ const router = new Hono();
 const PLATFORM_RULES: Record<string, string> = {
   midjourney: `Midjourney improvements:
 - Convert to :: weight-break format with hyphenated tokens
-- Add lock blocks (GEOMETRY/ORIENTATION/FRAMING/LIGHT/MATERIAL or CLOTHING) as :: segments with hyphenated values
+- Tighten composition: framing, subject placement, angle, negative space
 - Add camera rig segment: "Phase One XF IQ4 150MP Schneider 80mm LS f/8 1/125s ISO 50 tethered ::"
 - Add grade segment: "Capture-One-LUT grain-N +/-EV ::"
 - Add palette with hex codes and percentages
 - Add reference photographers/brands
 - End with --ar X:Y --v 6.1 --stylize 0 --style raw --q 2 --no <excludes>
 - Delete cargo-cult tokens: "8K ultra-sharp", "aesthetic"
-- Word budget: 210-250 words`,
+- Word budget: 180-220 words`,
 
   flux: `Flux improvements:
 - Expand into the longest, most narrative version with full sentences
 - Use "Subject: ..." opener for description
-- Add lock blocks with LOCK suffix headers: **GEOMETRY LOCK:**, **ORIENTATION LOCK:**, etc. as full sentences
+- Add "Composition: ..." line — framing, placement, angle, negative space
 - Add "Capture: ..." line with camera body, lens, aperture, shutter, ISO
 - Add "Grade: ..." line with LUT, film emulation, grain, EV
 - Add "Palette: ..." with named colors + hex + percentages
 - Add "References: ..." with 3-5 full names
 - Add "Exclude: ..." comma-separated
-- Word budget: 255-285 words`,
+- Word budget: 230-270 words`,
 
   firefly: `Firefly improvements:
 - Start with "editorial [shot type] [AR]" to signal commercial intent
-- Add lock blocks with bolded headers (no "LOCKS —" prefix)
+- Tighten composition: framing + placement
 - Add compressed camera + grade line (drop "tethered", "focus-stacked")
 - Add palette with hex + percentages
 - Add references (surname-only for photographers)
 - Add exclude list
-- Word budget: 155-180 words`,
+- Word budget: 140-165 words`,
 
   chatgpt: `ChatGPT improvements:
-- Add lock blocks with "**LOCKS — GEOMETRY:**", "**ORIENTATION:**", etc. inline bolded headers
+- Tighten composition: framing, subject placement, angle, negative space
 - Add Camera: line with full rig details
 - Add Grade: line with LUT, film emulation, grain, EV
 - Add Palette: with named colors, hex codes, percentages
 - Add References: with 3-4 photographer/campaign names
 - Add Exclude: comma-separated
-- Word budget: 200-225 words`,
+- Word budget: 180-210 words`,
 
   gemini: `Gemini improvements:
-- Add lock blocks with bolded headers (no "LOCKS —" prefix)
+- Tighten composition: framing + placement in one line
 - Compress camera + grade to single line
 - Add palette with hex + percentages
 - Add short reference list
 - Add exclude list
 - Drop articles and compress where possible
-- Word budget: 155-180 words`,
+- Word budget: 140-165 words`,
 
   grok: `Grok improvements:
 - Maximum compression — tightest word budget
-- Add lock blocks with bolded headers, maximally compressed values
+- Minimal composition note (framing + placement)
 - Use slash-separated light notation: key az/alt/Kelvin
 - Camera + grade on one bare line
 - Palette: hex + percentage only
 - References: surnames only
 - Short exclude list
-- Word budget: 140-165 words`,
+- Word budget: 125-150 words`,
 };
 
 // ─── Route ───────────────────────────────────────────────────────────────────
@@ -134,6 +134,7 @@ router.post("/improve", async (c) => {
       lockSection: locks?.lockSection ?? [],
       negativeLocks: locks?.negativeLockSection ?? [],
       validation: locks?.validation ?? null,
+      finalAssembledText: locks?.finalAssembledText ?? parsed.improved,
     });
   } catch (err: any) {
     console.error("Improver AI error:", err?.message ?? err);
@@ -156,11 +157,12 @@ Your job is to take a weak/basic prompt and transform it into a professional v4.
 
 CORE RULES:
 - Apply the correct tier: PRODUCT (products/packaging/marketing), PEOPLE (portraits/fashion/social), ART (cultural/digital/traditional)
-- Add lock blocks with precise numeric values (GEOMETRY, ORIENTATION, FRAMING, LIGHT, MATERIAL/CLOTHING)
+- Tighten composition: framing, subject placement, angle, negative space
 - Quantization: Use non-round numbers (48% not 50%, 47deg not 45deg, 1.52m not 1.5m, 5200K not 5000K)
 - Add camera rig, grade, palette (3-5 colors with hex + percentages), references, exclude list
 - Delete cargo-cult tokens: "8K ultra-sharp", "aesthetic", vague adjective stacks
-- Lock block is authoritative; prose is atmosphere
+
+CRITICAL — do NOT output any lock block (no "**LOCKS — …**", no "GEOMETRY/ORIENTATION/FRAMING/LIGHT/MATERIAL:" headers, no ":: GEOMETRY" segments, no "X LOCK:" lines). Improve ONLY the descriptive prompt; a standardized lock layer + negative locks are appended automatically afterward.
 
 ${platformRule}`;
 

@@ -34,7 +34,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
 
   function handleCopy() {
     if (!result?.improved) return;
-    navigator.clipboard?.writeText(result.improved);
+    navigator.clipboard?.writeText(result.finalAssembledText || result.improved);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }

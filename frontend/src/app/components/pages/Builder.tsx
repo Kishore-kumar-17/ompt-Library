@@ -128,8 +128,10 @@ export function Builder({ go }: { go: (p: string) => void }) {
           style: style || undefined,
           mood: mood || undefined,
           aspect: (family === "image" || family === "video") ? aspect : undefined,
+          category: family === "image" ? category : undefined,
         });
-        results[pl.key] = result.prompt;
+        // Canonical structure per platform: descriptive + (platform-invariant) lock layer.
+        results[pl.key] = result.finalAssembledText || result.prompt;
       });
       await Promise.all(promises);
       setAllPlatformResults(results);
@@ -144,7 +146,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
 
   function handleCopy() {
     if (!generated) return;
-    navigator.clipboard?.writeText(generated);
+    navigator.clipboard?.writeText(lockData?.finalAssembledText || generated);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }

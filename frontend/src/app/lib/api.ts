@@ -225,6 +225,9 @@ export interface EngineLockFields {
   lockSection: LockSectionItem[];
   negativeLocks: string[];
   validation: EngineValidation | null;
+  // Full canonical output: descriptive prompt + LOCK LAYER + NEGATIVE LOCKS.
+  // Falls back to the plain prompt for non-image families.
+  finalAssembledText: string;
 }
 
 // ─── Builder ─────────────────────────────────────────────────────────────────
