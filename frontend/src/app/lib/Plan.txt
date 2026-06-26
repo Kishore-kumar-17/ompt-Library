@@ -1,0 +1,294 @@
+ Plan: Prompt Library — UI/UX polish, Guide fixes, Builder/Improver engine integration
+
+ ▎ Replaces prior plans. Covers the user's 5-issue list. Issues #2 (image quality)
+ ▎ and #3 (website previews → S3) are deferred at the user's request ("wait")
+ ▎ and parked at the end with their open decisions. This plan executes the three
+ ▎ ready workstreams: #1 UI/UX, #4 engine for Builder/Improver, #5 Guide.
+
+ Context
+
+ The frontend (React/Vite, Tailwind v4 + shadcn/ui, string-routing in App.tsx) is
+ feature-rich but has consistency/polish gaps. The Builder/Improver call Claude directly
+ and don't use the lock engine we built. The user wants a general polish pass + the
+ engine wired into Builder/Improver. Decisions confirmed: UI/UX + Guide = general
+ audit + polish, my judgment; image-quality + S3 = deferred.
+
+ Reusable building blocks already in the repo:
+ - Engine: assembleFromRecord(record, platform) (backend/src/engine/index.ts) — pure, no DB; returns lockSection,
+ negativeLockSection, validation, finalAssembledText. resolveCategoryId (engine/categories.ts), CATEGORY_ENGINES
+ (engine/registry.ts).
+ - Builder/Improver routes: backend/src/routes/builder.ts, improver.ts (Claude claude-sonnet-4-20250514).
+ - API client: frontend/src/app/lib/api.ts (builderApi, improverApi).
+ - Theme tokens: frontend/src/app/components/theme.ts; shadcn/ui in components/ui/.
+
+ ---
+ Workstream A — UI/UX audit + polish (#1)
+okay
+ Bounded set of fixes (not an open-ended rewrite):
+
+ 1. Theme consistency. Centralize the palette in theme.ts (primary #094067, accent #ef4565, highlight #ffd803, etc.) and replace
+ Home.tsx's divergent palette (#0a0a0a/#6b7280/#94a3b8) so Home matches the rest of the app. Normalize fonts (DM Sans/Inter) to one
+ scale.
+ 2. Resolve "Coming soon" placeholders so nothing looks broken: Text/Content-gen cards (Home.tsx ~996/1041), Google/GitHub auth
+ (AuthModal.tsx), Website library family (Library.tsx ~488). Either gate them cleanly behind a tasteful "planned" state or remove
+ until ready — consistent treatment.
+ 3. Replace misleading hardcoded data. Dashboard.tsx sample charts and Detail.tsx sample reviews — wire to real API where it exists
+ (profileApi, reviews) or clearly label as demo/empty-state instead of fake numbers.
+ 4. Accessibility. Convert role="button" divs (e.g. masonry card Library.tsx, hover-only handlers in Home.tsx) to real <button>s with
+ keyboard focus; add missing aria-labels; move hover-only styling to CSS :hover/:focus-visible.
+ 5. Empty/loading states. Polish Profile.tsx favorites/recently-viewed empty states and add consistent skeletons/spinners across
+ pages that fetch.
+ 6. Dead code. Remove the unused heroCategories stub (Home.tsx ~170) and similar.
+
+ Files: theme.ts, pages/Home.tsx, pages/Library.tsx, pages/Dashboard.tsx, pages/Detail.tsx, pages/Profile.tsx,
+ components/AuthModal.tsx, plus shared components/ui/* where a primitive needs an a11y tweak. Keep changes incremental and
+ re-buildable after each.
+
+ ---
+ Workstream B — Guide fixes + polish (#5)
+
+ Guide.tsx (1086 lines, 11 sections) is complete and hardcoded; no critical bugs found, so this is targeted polish:
+
+ 1. Deep-link integrity. Verify every guide:<section> route (from App.tsx) and every Footer link to a guide subsection resolves to
+ the right section; fix any mismatch.
+ 2. Website-gen guide carousel uses hardcoded design IDs (~701-709) — make it resilient to missing IDs (filter, fallback) so it can't
+ render blanks.
+ 3. Theme alignment with Workstream A tokens.
+ 4. Playground interactive builder (lines 381-507) — verify the live assembly + score behave; fix any rough edges.
+ 5. Leave content authoring as-is unless the user later supplies specific copy issues.
+
+ Files: pages/Guide.tsx, components/Footer.tsx (link targets).
+
+ ---
+ Workstream C — Engine into Builder + Improver (#4)
+
+ Goal: after Claude generates/improves, run the lock engine on the output and return a lock layer + negative locks + validation,
+ surfaced in the UI.
+
+ Backend — routes/builder.ts:
+ - Keep the existing Claude generation. Add an optional category?: string to the request (the Builder UI sends one of the 7 image
+ categories; default = infer from family/idea).
+ - After generation, build an in-memory PromptRecord ({ id, title: idea, category, description: generatedText, platforms: {
+ [platform]: generatedText } }) and call assembleFromRecord(record, platform).
+ - Extend the response with lockSection, negativeLocks, validation, categoryId. Image-only (video/text/content skip the lock step —
+ engine handles only image categories; passthrough returns empty locks).
+
+ Backend — routes/improver.ts:
+ - Keep the Claude improvement. Detect category from the improved text via resolveCategoryId on extracted cues (or a lightweight
+ category hint param); build a PromptRecord from the improved text and call assembleFromRecord.
+ - Add lockSection, negativeLocks, validation, categoryId to the response; optionally add lock-related entries to the changes array
+ ("Added Lighting lock", etc.).
+
+ Frontend — pages/Builder.tsx, pages/Improver.tsx, lib/api.ts:
+ - Extend BuilderResult / ImproverResult types with the new fields.
+ - Add a collapsible "Lock Layer" panel (renders lockSection as LOCK 01 - LABEL: value) and a "Negative Locks" list, plus a small
+ validation badge (valid / N missing). Builder gets a category selector (7 categories) feeding the new category param.
+
+ Reuses: assembleFromRecord, formatLockSection, resolveCategoryId, registry — no engine changes needed.
+
+ ---
+ Suggested execution order
+
+ C (engine — highest product value, self-contained, testable offline) → A (UI/UX polish) → B (Guide). Each committed separately on
+ feat/prompt-intelligence-engine (or a new branch per the user's preference).
+
+ Verification
+
+ - Backend (C): cd backend && npm run build. Unit-style check: a small script (like engine-smoke.ts) feeding a sample generated
+ prompt through the new builder/improver post-processing to confirm lockSection/negatives populate. Live: with ANTHROPIC_API_KEY set,
+ POST /api/builder/generate and /api/improver/improve return the new fields.
+ - Frontend (A, B, C): cd frontend && npm run build (must stay green). Run npm run dev and manually verify: Home palette matches app,
+ no broken "coming soon", Builder/Improver show the lock panel, Guide deep-links work, keyboard nav on cards.
+ - Commit each workstream separately; rebuild after each.
+
+ Risks / notes
+
+ - Builder/Improver live testing needs ANTHROPIC_API_KEY (already used by those routes). The engine post-processing itself is pure
+ and testable offline.
+ - Category inference for Improver is heuristic; where it can't resolve, it gracefully returns no lock layer (passthrough) rather
+ than a wrong one.
+ - "General polish" is scoped to the bounded list above to avoid an unbounded redesign; larger redesigns can be a follow-up.
+
+ ---
+ DEFERRED — pending your decision ("wait")
+
+ #2 Image quality. Options on the table: (a) regenerate images via an image model from the upgraded locked prompts (needs an
+ image-gen API + budget), (b) optimize the existing 347 JPEGs (→ WebP/AVIF, responsive sizes — cheap, no new content), or (c) you
+ supply new images and I wire them in (prompt-images.ts + public/images). Decision needed before planning.
+
+ #3 Website previews → S3. Confirmed root cause: 91 designs expect public/previews/<slug>/index.html + thumb.jpg, but those are huge
+ built Next.js apps (~5–27 GB) on a local D: drive (Website Previews/project_store), gitignored, never deployed → all show
+ placeholders. Plan-to-build: an S3 upload script + add previewUrl/thumbnailUrl to website-data.ts + update
+ WebsiteDetail.tsx/WebsitePromptCard.tsx to use the URLs. Blocked on: access to the built preview files + an S3 bucket + AWS
+ credentials. Decision needed: do you have/where are the preview files, and an S3 account?
+
+ Verification
+
+ - Backend (C): cd backend && npm run build. Unit-style check: a small script (like engine-smoke.ts) feeding a sample generated
+ prompt through the new builder/improver post-processing to confirm lockSection/negatives populate. Live: with ANTHROPIC_API_KEY set,
+ POST /api/builder/generate and /api/improver/improve return the new fields.
+ - Frontend (A, B, C): cd frontend && npm run build (must stay green). Run npm run dev and manually verify: Home palette matches app,
+ no broken "coming soon", Builder/Improver show the lock panel, Guide deep-links work, keyboard nav on cards.
+ - Commit each workstream separately; rebuild after each.
+
+ Risks / notes
+
+ - Builder/Improver live testing needs ANTHROPIC_API_KEY (already used by those routes). The engine post-processing itself is pure
+ and testable offline.
+ - Category inference for Improver is heuristic; where it can't resolve, it gracefully returns no lock layer (passthrough) rather
+ than a wrong one.
+ - "General polish" is scoped to the bounded list above to avoid an unbounded redesign; larger redesigns can be a follow-up.
+
+ ---
+ DEFERRED — pending your decision ("wait")
+
+ #2 Image quality. Options on the table: (a) regenerate images via an image model from the upgraded locked prompts (needs an
+ image-gen API + budget), (b) optimize the existing 347 JPEGs (→ WebP/AVIF, responsive sizes — cheap, no new content), or (c) you
+ supply new images and I wire them in (prompt-images.ts + public/images). Decision needed before planning.
+
+ #3 Website previews → S3. Confirmed root cause: 91 designs expect public/previews/<slug>/index.html + thumb.jpg, but those are huge
+ built Next.js apps (~5–27 GB) on a local D: drive (Website Previews/project_store), gitignored, never deployed → all show
+ placeholders. Plan-to-build: an S3 upload script + add previewUrl/thumbnailUrl to website-data.ts + update
+ WebsiteDetail.tsx/WebsitePromptCard.tsx to use the URLs. Blocked on: access to the built preview files + an S3 bucket + AWS
+ credentials. Decision needed: do you have/where are the preview files, and an S3 account?
+  - #2 Image quality — regenerate via AI / optimize existing JPEGs / you supply images?
+  - #3 S3 previews — blocked on access to the preview files (on your D: drive) + an S3 bucket/credentials.
+
+  Full detail (files, verification, risks) is in the plan file.
+
+● User approved Claude's plan
+  ⎿  Plan saved to: ~\.claude\plans\dazzling-sprouting-hippo.md · /plan to edit
+     Plan: Prompt Library — UI/UX polish, Guide fixes, Builder/Improver engine integration
+
+     ▎ Replaces prior plans. Covers the user's 5-issue list. Issues #2 (image quality)
+     ▎ and #3 (website previews → S3) are deferred at the user's request ("wait")
+     ▎ and parked at the end with their open decisions. This plan executes the three
+     ▎ ready workstreams: #1 UI/UX, #4 engine for Builder/Improver, #5 Guide.
+
+     Context
+
+     The frontend (React/Vite, Tailwind v4 + shadcn/ui, string-routing in App.tsx) is
+     feature-rich but has consistency/polish gaps. The Builder/Improver call Claude directly
+     and don't use the lock engine we built. The user wants a general polish pass + the
+     engine wired into Builder/Improver. Decisions confirmed: UI/UX + Guide = general
+     audit + polish, my judgment; image-quality + S3 = deferred.
+
+     Reusable building blocks already in the repo:
+     - Engine: assembleFromRecord(record, platform) (backend/src/engine/index.ts) — pure, no DB; returns lockSection,
+     negativeLockSection, validation, finalAssembledText. resolveCategoryId (engine/categories.ts), CATEGORY_ENGINES
+     (engine/registry.ts).
+     - Builder/Improver routes: backend/src/routes/builder.ts, improver.ts (Claude claude-sonnet-4-20250514).
+     - API client: frontend/src/app/lib/api.ts (builderApi, improverApi).
+     - Theme tokens: frontend/src/app/components/theme.ts; shadcn/ui in components/ui/.
+
+     ---
+     Workstream A — UI/UX audit + polish (#1)
+
+     Bounded set of fixes (not an open-ended rewrite):
+
+     1. Theme consistency. Centralize the palette in theme.ts (primary #094067, accent #ef4565, highlight #ffd803, etc.) and replace
+     Home.tsx's divergent palette (#0a0a0a/#6b7280/#94a3b8) so Home matches the rest of the app. Normalize fonts (DM Sans/Inter) to
+     one scale.
+     2. Resolve "Coming soon" placeholders so nothing looks broken: Text/Content-gen cards (Home.tsx ~996/1041), Google/GitHub auth
+     (AuthModal.tsx), Website library family (Library.tsx ~488). Either gate them cleanly behind a tasteful "planned" state or remove
+     until ready — consistent treatment.
+     3. Replace misleading hardcoded data. Dashboard.tsx sample charts and Detail.tsx sample reviews — wire to real API where it
+     exists (profileApi, reviews) or clearly label as demo/empty-state instead of fake numbers.
+     4. Accessibility. Convert role="button" divs (e.g. masonry card Library.tsx, hover-only handlers in Home.tsx) to real <button>s
+     with keyboard focus; add missing aria-labels; move hover-only styling to CSS :hover/:focus-visible.
+     5. Empty/loading states. Polish Profile.tsx favorites/recently-viewed empty states and add consistent skeletons/spinners across
+     pages that fetch.
+     6. Dead code. Remove the unused heroCategories stub (Home.tsx ~170) and similar.
+
+     Files: theme.ts, pages/Home.tsx, pages/Library.tsx, pages/Dashboard.tsx, pages/Detail.tsx, pages/Profile.tsx,
+     components/AuthModal.tsx, plus shared components/ui/* where a primitive needs an a11y tweak. Keep changes incremental and
+     re-buildable after each.
+
+     ---
+     Workstream B — Guide fixes + polish (#5)
+
+     Guide.tsx (1086 lines, 11 sections) is complete and hardcoded; no critical bugs found, so this is targeted polish:
+
+     1. Deep-link integrity. Verify every guide:<section> route (from App.tsx) and every Footer link to a guide subsection resolves to
+     the right section; fix any mismatch.
+     2. Website-gen guide carousel uses hardcoded design IDs (~701-709) — make it resilient to missing IDs (filter, fallback) so it
+     can't render blanks.
+     3. Theme alignment with Workstream A tokens.
+     4. Playground interactive builder (lines 381-507) — verify the live assembly + score behave; fix any rough edges.
+     5. Leave content authoring as-is unless the user later supplies specific copy issues.
+
+     Files: pages/Guide.tsx, components/Footer.tsx (link targets).
+
+     ---
+     Workstream C — Engine into Builder + Improver (#4)
+
+     Goal: after Claude generates/improves, run the lock engine on the output and return a lock layer + negative locks + validation,
+     surfaced in the UI.
+
+     Backend — routes/builder.ts:
+     - Keep the existing Claude generation. Add an optional category?: string to the request (the Builder UI sends one of the 7 image
+     categories; default = infer from family/idea).
+     - After generation, build an in-memory PromptRecord ({ id, title: idea, category, description: generatedText, platforms: {
+     [platform]: generatedText } }) and call assembleFromRecord(record, platform).
+     - Extend the response with lockSection, negativeLocks, validation, categoryId. Image-only (video/text/content skip the lock step
+     — engine handles only image categories; passthrough returns empty locks).
+
+     Backend — routes/improver.ts:
+     - Keep the Claude improvement. Detect category from the improved text via resolveCategoryId on extracted cues (or a lightweight
+     category hint param); build a PromptRecord from the improved text and call assembleFromRecord.
+     - Add lockSection, negativeLocks, validation, categoryId to the response; optionally add lock-related entries to the changes
+     array ("Added Lighting lock", etc.).
+
+     Frontend — pages/Builder.tsx, pages/Improver.tsx, lib/api.ts:
+     - Extend BuilderResult / ImproverResult types with the new fields.
+     - Add a collapsible "Lock Layer" panel (renders lockSection as LOCK 01 - LABEL: value) and a "Negative Locks" list, plus a small
+     validation badge (valid / N missing). Builder gets a category selector (7 categories) feeding the new category param.
+
+     Reuses: assembleFromRecord, formatLockSection, resolveCategoryId, registry — no engine changes needed.
+
+     ---
+     Suggested execution order
+
+     C (engine — highest product value, self-contained, testable offline) → A (UI/UX polish) → B (Guide). Each committed separately on
+     feat/prompt-intelligence-engine (or a new branch per the user's preference).
+
+     Verification
+
+     - Backend (C): cd backend && npm run build. Unit-style check: a small script (like engine-smoke.ts) feeding a sample generated
+     prompt through the new builder/improver post-processing to confirm lockSection/negatives populate. Live: with ANTHROPIC_API_KEY
+     set, POST /api/builder/generate and /api/improver/improve return the new fields.
+     - Frontend (A, B, C): cd frontend && npm run build (must stay green). Run npm run dev and manually verify: Home palette matches
+     app, no broken "coming soon", Builder/Improver show the lock panel, Guide deep-links work, keyboard nav on cards.
+     - Commit each workstream separately; rebuild after each.
+
+     Risks / notes
+
+     - Builder/Improver live testing needs ANTHROPIC_API_KEY (already used by those routes). The engine post-processing itself is pure
+     and testable offline.
+     - Category inference for Improver is heuristic; where it can't resolve, it gracefully returns no lock layer (passthrough) rather
+     than a wrong one.
+     - "General polish" is scoped to the bounded list above to avoid an unbounded redesign; larger redesigns can be a follow-up.
+
+     ---
+     DEFERRED — pending your decision ("wait")
+
+     #2 Image quality. Options on the table: (a) regenerate images via an image model from the upgraded locked prompts (needs an
+     image-gen API + budget), (b) optimize the existing 347 JPEGs (→ WebP/AVIF, responsive sizes — cheap, no new content), or (c) you
+     supply new images and I wire them in (prompt-images.ts + public/images). Decision needed before planning.
+
+     #3 Website previews → S3. Confirmed root cause: 91 designs expect public/previews/<slug>/index.html + thumb.jpg, but those are
+     huge built Next.js apps (~5–27 GB) on a local D: drive (Website Previews/project_store), gitignored, never deployed → all show
+     placeholders. Plan-to-build: an S3 upload script + add previewUrl/thumbnailUrl to website-data.ts + update
+     WebsiteDetail.tsx/WebsitePromptCard.tsx to use the URLs. Blocked on: access to the built preview files + an S3 bucket + AWS
+     credentials. Decision needed: do you have/where are the preview files, and an S3 account?
+
+● Approved. I'll start with Workstream C (engine into Builder/Improver) — highest value and testable offline. Let me set up tasks and
+  re-read the exact route handlers I'm extending.
+
+● Reading 1 file… (ctrl+o to expand)
+  ⎿  backend\src\routes\builder.ts
+
+✻ Unable to connect to API (FailedToOpenSocket) · Retrying in 0s · attempt 8/10
+  ⎿  ◻ C1: Engine into builder route
+     ◻ C2: Engine into improver route
+     ◻ C3: Builder/Improver UI lock panel
