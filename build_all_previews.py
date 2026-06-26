@@ -10,8 +10,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
-BASE     = "D:/PL Backend/prompt-library-backend/Website Previews/project_store"
-OUT_DIR  = "D:/PL Backend/prompt-library-backend/frontend/public/previews"
+HERE     = os.path.dirname(os.path.abspath(__file__))
+BASE     = os.path.join(HERE, "Website Previews", "project_store")
+OUT_DIR  = os.path.join(HERE, "frontend", "public", "previews")
 WORKERS  = 4
 
 os.makedirs(OUT_DIR, exist_ok=True)
@@ -66,11 +67,32 @@ def build_project(slug, project_dir):
                 "npm install --prefer-offline --no-audit --no-fund --legacy-peer-deps",
                 cwd=project_dir, shell=True,
                 capture_output=True, text=True,
-                encoding="utf-8", errors="replace", timeout=300,
+                encoding="utf-8", errors="replace", timeout=600,
             )
             if r.returncode != 0:
                 log(f"  FAIL  {slug} — npm install failed\n{r.stderr[-200:]}")
                 return "fail", slug
+
+        # Step 1.5: pin basePath/assetPrefix so the export's /_next/ assets resolve
+        # when served from the subpath /previews/<slug>/ (otherwise they 404).
+        base_path = f"/previews/{slug}"
+        cfg = (
+            "/** @type {import('next').NextConfig} */\n"
+            "const nextConfig = {\n"
+            "  output: 'export',\n"
+            "  images: { unoptimized: true },\n"
+            f"  basePath: '{base_path}',\n"
+            f"  assetPrefix: '{base_path}/',\n"
+            "  trailingSlash: true,\n"
+            "}\n"
+            "export default nextConfig\n"
+        )
+        for name in ("next.config.js", "next.config.ts"):
+            jp = os.path.join(project_dir, name)
+            if os.path.isfile(jp):
+                os.remove(jp)
+        with open(os.path.join(project_dir, "next.config.mjs"), "w", encoding="utf-8") as f:
+            f.write(cfg)
 
         # Step 2: next build
         r = subprocess.run(
@@ -103,6 +125,12 @@ def build_project(slug, project_dir):
     except Exception as e:
         log(f"  FAIL  {slug} — {e}")
         return "fail", slug
+    finally:
+        # Reclaim disk: drop node_modules / .next / out after the static export is copied.
+        for junk in ("node_modules", ".next", "out"):
+            p = os.path.join(project_dir, junk)
+            if os.path.isdir(p):
+                shutil.rmtree(p, ignore_errors=True)
 
 t_start = time.time()
 with ThreadPoolExecutor(max_workers=args.workers) as pool:

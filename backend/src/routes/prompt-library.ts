@@ -37,6 +37,34 @@ function andClause(conditions: SQL[]): SQL {
   return conditions.length > 0 ? sql`AND ${sql.join(conditions, sql` AND `)}` : sql``;
 }
 
+// Lazily ensure the engine lock tables exist (memoized once per process). The
+// bake-locks script creates these too; this keeps reads safe before the first bake.
+let lockSchemaReady: Promise<void> | null = null;
+function ensureLockSchema(): Promise<void> {
+  if (!lockSchemaReady) {
+    lockSchemaReady = (async () => {
+      await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS pl_prompt_locks (
+          prompt_id      INTEGER     PRIMARY KEY REFERENCES pl_prompts(id) ON DELETE CASCADE,
+          category_id    VARCHAR(40),
+          category_label VARCHAR(60),
+          lock_layer_text TEXT,
+          lock_section   JSONB,
+          negative_locks TEXT[]      NOT NULL DEFAULT '{}',
+          valid          BOOLEAN,
+          warnings       TEXT[]      NOT NULL DEFAULT '{}',
+          generated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+      `);
+      await db.execute(sql`ALTER TABLE pl_prompt_platforms ADD COLUMN IF NOT EXISTS locked_prompt_text TEXT`);
+    })().catch((err) => {
+      lockSchemaReady = null; // allow retry on next request if it failed
+      throw err;
+    });
+  }
+  return lockSchemaReady;
+}
+
 async function ensureLibraryActivityTables() {
   await db.execute(sql`
     CREATE TABLE IF NOT EXISTS pl_saved_prompts (
@@ -181,29 +209,66 @@ router.get("/prompts/search", zValidator("query", searchSchema), async (c) => {
   });
 });
 
+interface LockRow {
+  category_id: string | null;
+  category_label: string | null;
+  lock_layer_text: string | null;
+  lock_section: unknown;
+  negative_locks: string[];
+  valid: boolean | null;
+  warnings: string[];
+}
+
 router.get("/prompts/:id", async (c) => {
   const id = Number(c.req.param("id"));
   if (isNaN(id)) return c.json({ error: "Invalid id" }, 400);
 
-  const [[prompt], platforms] = await Promise.all([
+  await ensureLockSchema();
+
+  const [[prompt], platforms, [lock]] = await Promise.all([
     rawSql<Record<string, unknown>>(sql`
       SELECT id, slug, title, base_prompt, category, sub_category,
              prompt_type, tags, quality_score, tested, image_url, created_at
       FROM   pl_prompts
       WHERE  id = ${id}
     `),
-    rawSql<{ platform: string; prompt_text: string }>(sql`
-      SELECT platform, prompt_text
+    rawSql<{ platform: string; prompt_text: string; locked_prompt_text: string | null }>(sql`
+      SELECT platform, prompt_text, locked_prompt_text
       FROM   pl_prompt_platforms
       WHERE  prompt_id = ${id}
       ORDER  BY platform
+    `),
+    rawSql<LockRow>(sql`
+      SELECT category_id, category_label, lock_layer_text, lock_section,
+             negative_locks, valid, warnings
+      FROM   pl_prompt_locks
+      WHERE  prompt_id = ${id}
     `),
   ]);
 
   if (!prompt) return c.json({ error: "Not found" }, 404);
 
   const platformMap = Object.fromEntries(platforms.map((p) => [p.platform, p.prompt_text]));
-  return c.json({ ...prompt, platforms: platformMap });
+  const lockedPlatforms = Object.fromEntries(
+    platforms.filter((p) => p.locked_prompt_text).map((p) => [p.platform, p.locked_prompt_text]),
+  );
+
+  return c.json({
+    ...prompt,
+    platforms: platformMap,
+    lockedPlatforms,
+    locks: lock
+      ? {
+          categoryId: lock.category_id,
+          categoryLabel: lock.category_label,
+          lockLayerText: lock.lock_layer_text,
+          lockSection: lock.lock_section,
+          negativeLocks: lock.negative_locks,
+          valid: lock.valid,
+          warnings: lock.warnings,
+        }
+      : null,
+  });
 });
 
 router.post("/prompts/:id/copy", requireAuth, async (c) => {
