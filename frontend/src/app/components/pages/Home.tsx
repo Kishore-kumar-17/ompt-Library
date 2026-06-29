@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+﻿import React, { useEffect, useRef, useState } from "react";
 import { Users, Sparkles, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence, useInView, useMotionValue, useSpring, useTransform, useScroll, type MotionValue } from "motion/react";
 import frame1Video from "../../../imports/Frame_1.mp4";
@@ -7,7 +7,7 @@ import frame3Video from "../../../imports/Frame_3.mp4";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 import RotatingText from "../RotatingText";
 
-// ── Category images (user-supplied) ──────────────────────────────────────────
+// â”€â”€ Category images (user-supplied) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import imgSocialMedia   from "../../../imports/WhatsApp_Image_2026-04-27_at_1.12.44_PM.jpeg";
 import imgEcommerce     from "../../../imports/WhatsApp_Image_2026-04-27_at_1.14.01_PM.jpeg";
 import imgProduct       from "../../../imports/WhatsApp_Image_2026-04-27_at_1.15.29_PM.jpeg";
@@ -39,12 +39,12 @@ export function Home({ go }: { go: (p: string) => void }) {
             <span style={{ fontWeight: 800 }}>Prompting</span> is the <span style={{ fontWeight: 800 }}>New Coding.</span>
           </h2>
           <p className="text-[#6b7280] max-w-[620px] mx-auto" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
-            The best AI outputs don't come from better models — they come from better prompts. Master the craft of prompting and unlock the full potential of every AI tool.
+            The best AI outputs don't come from better models â€” they come from better prompts. Master the craft of prompting and unlock the full potential of every AI tool.
           </p>
         </div>
       </div>
 
-      {/* Story Showcase — Discover / Learn / Create */}
+      {/* Story Showcase â€” Discover / Learn / Create */}
       <StoryShowcase go={go} />
 
       {/* Breathing space 2 */}
@@ -76,16 +76,16 @@ export function Home({ go }: { go: (p: string) => void }) {
             />
           </h2>
           <p className="text-[#6b7280]" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
-            From stunning images to production code, from viral videos to full websites — one prompt is all it takes. Browse what works, copy it, make it yours.
+            From stunning images to production code, from viral videos to full websites â€” one prompt is all it takes. Browse what works, copy it, make it yours.
           </p>
         </div>
       </div>
 
-      {/* Four doors — BounceCard layout */}
+      {/* Four doors â€” BounceCard layout */}
 
       <BrowseByCategory go={go} />
 
-      {/* Breathing space — Mastery */}
+      {/* Breathing space â€” Mastery */}
       <div className="py-28 md:py-40 border-t border-[#0a0a0a]/8">
         <div className="max-w-[1100px] mx-auto px-6 text-center">
           <div className="flex items-center justify-center gap-2 text-[#0a0a0a] mb-6" style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "0.02em" }}>
@@ -96,7 +96,7 @@ export function Home({ go }: { go: (p: string) => void }) {
             className="text-[#0a0a0a] mb-6 whitespace-nowrap"
             style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 400, lineHeight: 1.08, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
           >
-            Don't just use <span style={{ fontWeight: 800 }}>AI</span> — <em style={{ fontWeight: 400, fontStyle: "italic" }}>Master it.</em>
+            Don't just use <span style={{ fontWeight: 800 }}>AI</span> â€” <em style={{ fontWeight: 400, fontStyle: "italic" }}>Master it.</em>
           </h2>
           <p className="text-[#6b7280] max-w-[620px] mx-auto" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
             The gap between average and exceptional AI output is the prompt. Our curated library gives you the exact words that produce professional-grade results, every time.
@@ -109,9 +109,9 @@ export function Home({ go }: { go: (p: string) => void }) {
   );
 }
 
-// ─── Hero Section ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Hero Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-// Base card size — all cards share these intrinsic dimensions; scale transforms resize them per slot
+// Base card size â€” all cards share these intrinsic dimensions; scale transforms resize them per slot
 const TYPEWRITER_TEXTS = [
   "Write Instagram captions",
   "Design a landing page",
@@ -167,7 +167,7 @@ function HeroCard({ id }: { id: number }) {
 
 const CARD_IDS = [0, 1, 2, 3, 4, 5, 6];
 
-// ── (legacy heroCategories stub kept for type safety) ──────────────────────────
+// â”€â”€ (legacy heroCategories stub kept for type safety) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const heroCategories = [
   {
     id: "marketing", name: "Marketing",
@@ -252,9 +252,9 @@ const heroCategories = [
 ];
 
 function HeroCarousel({ go }: { go: (p: string) => void }) {
-  // ── 9:16 card ratio — height drives width ─────────────────────────────────
+  // â”€â”€ 9:16 card ratio â€” height drives width â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // CARD_H is capped to keep the section within the viewport.
-  // BASE_W = CARD_H × (9/16) → every card is exactly 9:16 portrait.
+  // BASE_W = CARD_H Ã— (9/16) â†’ every card is exactly 9:16 portrait.
   useViewportWidth();  // kept to trigger re-render on resize (min-width guard)
   const vh = useViewportHeight();
   // Nav is h-16 = 64px; fill remaining viewport so LaptopHero never peeks through
@@ -287,7 +287,7 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
     { dx:  dx_far,  sx: SX_FAR,  sy: SY_FAR,  z: 1, op: 0.58 },
     { dx:  dx_xfar, sx: SX_XFAR, sy: SY_XFAR, z: 0, op: 0.38 },
   ];
-  // ──────────────────────────────────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const [active, setActive]       = useState(3);
   const [paused, setPaused]       = useState(false);
@@ -354,7 +354,7 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* ── Floating Cards ── */}
+      {/* â”€â”€ Floating Cards â”€â”€ */}
       {CARD_IDS.map((id) => {
         const slotIdx = displayOrder.indexOf(id);
         const slot = SLOTS[slotIdx];
@@ -388,7 +388,7 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
         );
       })}
 
-      {/* ── Floating Prompt Box — true center, larger diagonally ── */}
+      {/* â”€â”€ Floating Prompt Box â€” true center, larger diagonally â”€â”€ */}
       <div
         style={{
           position: "absolute",
@@ -435,7 +435,7 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
         </div>
       </div>
 
-      {/* ── Nav Controls — bottom-right ── */}
+      {/* â”€â”€ Nav Controls â€” bottom-right â”€â”€ */}
       <div style={{ position: "absolute", bottom: 26, right: 30, display: "flex", alignItems: "center", gap: 10, zIndex: 20 }}>
         <button
           onClick={() => manualNav(prev)}
@@ -475,9 +475,9 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
   );
 }
 
-// ─── How It Works ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ How It Works â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-// ─── Story Showcase — scroll-driven Discover / Learn / Create ─────────────────
+// â”€â”€â”€ Story Showcase â€” scroll-driven Discover / Learn / Create â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const STORY_STEPS = [
   {
@@ -601,12 +601,12 @@ function StoryFramedVideo({ src, path, progress, widthClass = "max-w-full" }: { 
   return (
     <div
       className={`w-full ${widthClass} overflow-hidden rounded-3xl border-2 border-[#0a0a0a]/15 bg-white`}
-      style={{ boxShadow: "0 40px 90px -35px rgba(9,64,103,0.25), 0 1px 0 rgba(255,255,255,0.9) inset" }}
+      style={{ boxShadow: "0 40px 90px -35px rgba(10, 10, 10,0.25), 0 1px 0 rgba(255,255,255,0.9) inset" }}
     >
       <div className="flex items-center gap-3 border-b border-[#0a0a0a]/10 bg-[#0a0a0a]/3 px-4 py-2.5">
         <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#ef4565]" />
-          <span className="w-2.5 h-2.5 rounded-full bg-[#ffd803]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#4FC3F7]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#4FC3F7]" />
           <span className="w-2.5 h-2.5 rounded-full bg-[#3fb950]" />
         </div>
         <div className="mx-auto flex w-[55%] max-w-[300px] items-center justify-center gap-2 rounded-full border border-[#0a0a0a]/10 bg-[#0a0a0a]/5 px-3 py-1 text-[#6b7280]">
@@ -639,11 +639,11 @@ function StoryShowcase({ go }: { go: (p: string) => void }) {
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* Ambient blobs */}
-        <div aria-hidden className="pointer-events-none absolute -right-40 top-10 w-[520px] h-[520px] rounded-full" style={{ background: "radial-gradient(circle, rgba(9,64,103,0.06) 0%, transparent 70%)" }} />
+        <div aria-hidden className="pointer-events-none absolute -right-40 top-10 w-[520px] h-[520px] rounded-full" style={{ background: "radial-gradient(circle, rgba(10, 10, 10,0.06) 0%, transparent 70%)" }} />
         <div aria-hidden className="pointer-events-none absolute -left-40 bottom-0 w-[480px] h-[480px] rounded-full" style={{ background: "radial-gradient(circle, rgba(255,216,3,0.12) 0%, transparent 70%)" }} />
 
         <div className="relative mx-auto flex h-full max-w-[1500px] items-center gap-12 px-8">
-          {/* LEFT — nav + copy (38%) */}
+          {/* LEFT â€” nav + copy (38%) */}
           <div className="relative hidden lg:flex flex-col justify-center" style={{ flexBasis: "38%", minWidth: 340 }}>
             <div className="mb-9 flex flex-col gap-4">
               {STORY_STEPS.map((s, i) => (
@@ -657,7 +657,7 @@ function StoryShowcase({ go }: { go: (p: string) => void }) {
             </div>
           </div>
 
-          {/* RIGHT — scroll-activated video frames (62%) */}
+          {/* RIGHT â€” scroll-activated video frames (62%) */}
           <div className="relative h-full flex-1" style={{ flexBasis: "62%" }}>
             <StoryFrameShell progress={p0}>
               <StoryFramedVideo src={frame1Video} path="promptvault.app/discover" progress={p0} />
@@ -675,7 +675,7 @@ function StoryShowcase({ go }: { go: (p: string) => void }) {
   );
 }
 
-// ─── Counters ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Counters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function Counter({ to }: { to: number }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -687,7 +687,7 @@ function Counter({ to }: { to: number }) {
   return <motion.span ref={ref}>{display}</motion.span>;
 }
 
-// ─── Typewriter (cycling items) ────────────────────────────────────────────────
+// â”€â”€â”€ Typewriter (cycling items) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function Typewriter({ items }: { items: string[] }) {
   const [idx, setIdx] = useState(0);
@@ -720,7 +720,7 @@ function Typewriter({ items }: { items: string[] }) {
 
 
 
-// ─── Cursor Arrow Icon ────────────────────────────────────────────────────────
+// â”€â”€â”€ Cursor Arrow Icon â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function CursorArrow() {
   return (
     <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4" xmlns="http://www.w3.org/2000/svg">
@@ -729,7 +729,7 @@ function CursorArrow() {
   );
 }
 
-// ─── AutoplayVideo — reliably plays in iframes / sandboxes ───────────────────
+// â”€â”€â”€ AutoplayVideo â€” reliably plays in iframes / sandboxes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function AutoplayVideo({ src, className }: { src: string; className?: string }) {
   const ref = useRef<HTMLVideoElement>(null);
   const visible = useRef(false);
@@ -771,7 +771,7 @@ function AutoplayVideo({ src, className }: { src: string; className?: string }) 
   );
 }
 
-// ─── BounceCard primitives ─────────────────────────────────────────────────────
+// â”€â”€â”€ BounceCard primitives â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function BounceCard({
   children,
   className,
@@ -820,7 +820,7 @@ function CardDesc({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ─── Where do you want to go? — Bento grid ───────────────────────────────────
+// â”€â”€â”€ Where do you want to go? â€” Bento grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function WhereToGoSection({ go }: { go: (p: string) => void }) {
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -841,38 +841,38 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
           className="whitespace-nowrap rounded-xl bg-[#0a0a0a] px-5 py-2 text-white"
           style={{ fontWeight: 600, fontSize: "14px" }}
         >
-          Browse all →
+          Browse all â†’
         </motion.button>
       </div>
 
       {/* Bento grid */}
       <div className="grid grid-cols-12 grid-rows-[minmax(300px,auto)_minmax(300px,auto)] gap-4">
 
-        {/* ── Card 1: Image Generation — tall, spans 2 rows ── */}
+        {/* â”€â”€ Card 1: Image Generation â€” tall, spans 2 rows â”€â”€ */}
         <motion.button
           onClick={() => go("library:image")}
           onHoverStart={() => setHovered("image")}
           onHoverEnd={() => setHovered(null)}
           whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #0a0a0a" }}
           whileTap={{ scale: 0.98 }}
-          className="col-span-12 md:col-span-4 row-span-2 rounded-3xl bg-[#ffd803] p-6 text-left flex flex-col justify-between overflow-hidden relative"
+          className="col-span-12 md:col-span-4 row-span-2 rounded-3xl bg-[#4FC3F7] p-6 text-left flex flex-col justify-between overflow-hidden relative"
           style={{ border: "2.5px solid #0a0a0a", boxShadow: "5px 5px 0 0 #0a0a0a" }}
         >
           <div>
             <motion.div
-              className="inline-block px-3 py-1 rounded-full bg-[#0a0a0a] text-[#ffd803] text-[11px] font-bold mb-4"
+              className="inline-block px-3 py-1 rounded-full bg-[#0a0a0a] text-[#4FC3F7] text-[11px] font-bold mb-4"
               animate={hovered === "image" ? { scale: [1, 1.08, 1] } : {}}
               transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 0.8 }}
             >
               420+ prompts
             </motion.div>
             <div className="text-[#0a0a0a] text-3xl font-black leading-tight mb-2">Image<br/>Generation</div>
-            <div className="text-[#0a0a0a]/70 text-sm">Midjourney · Firefly · FLUX · ChatGPT</div>
+            <div className="text-[#0a0a0a]/70 text-sm">Midjourney Â· Firefly Â· FLUX Â· ChatGPT</div>
           </div>
 
-          {/* Staggered image grid — each image tilts on hover */}
+          {/* Staggered image grid â€” each image tilts on hover */}
           <div className="grid grid-cols-2 gap-2 mt-4">
-            {["/images/image1.jpeg","/images/image41.jpeg","/images/image111.jpeg","/images/image196.jpeg"].map((src, i) => (
+            {["/images/image1.png","/images/image41.png","/images/image111.png","/images/image196.png"].map((src, i) => (
               <motion.div
                 key={i}
                 className="aspect-square rounded-xl overflow-hidden border-2 border-[#0a0a0a]/20"
@@ -891,11 +891,11 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
             animate={hovered === "image" ? { x: 6 } : { x: 0 }}
             transition={{ duration: 0.2 }}
           >
-            Explore →
+            Explore â†’
           </motion.div>
         </motion.button>
 
-        {/* ── Card 2: Video Generation — scrolling film strip ── */}
+        {/* â”€â”€ Card 2: Video Generation â€” scrolling film strip â”€â”€ */}
         <motion.button
           onClick={() => go("library:video")}
           onHoverStart={() => setHovered("video")}
@@ -908,7 +908,7 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
           <div>
             <div className="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-bold mb-4">30 prompts</div>
             <div className="text-white text-3xl font-black leading-tight mb-2">Video<br/>Generation</div>
-            <div className="text-white/70 text-sm">Veo · Kling · Seedance · Pika</div>
+            <div className="text-white/70 text-sm">Veo Â· Kling Â· Seedance Â· Pika</div>
           </div>
 
           {/* Continuously scrolling film strip */}
@@ -939,7 +939,7 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
           </div>
         </motion.button>
 
-        {/* ── Card 3: Website Generation — browser types on hover ── */}
+        {/* â”€â”€ Card 3: Website Generation â€” browser types on hover â”€â”€ */}
         <motion.button
           onClick={() => go("library:website")}
           onHoverStart={() => setHovered("website")}
@@ -952,10 +952,10 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
           <div>
             <div className="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-bold mb-4">90+ designs</div>
             <div className="text-white text-3xl font-black leading-tight mb-2">Website<br/>Gen</div>
-            <div className="text-white/70 text-sm">Bolt · Lovable · Replit · Codex</div>
+            <div className="text-white/70 text-sm">Bolt Â· Lovable Â· Replit Â· Codex</div>
           </div>
 
-          {/* Browser mockup — lines retype on hover */}
+          {/* Browser mockup â€” lines retype on hover */}
           <div className="mt-4 rounded-xl bg-white/15 p-3 backdrop-blur">
             <div className="flex gap-1.5 mb-2.5">
               {[["bg-red-400","bg-red-300"],["bg-yellow-400","bg-yellow-300"],["bg-green-400","bg-green-300"]].map(([base, hover], i) => (
@@ -967,7 +967,7 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
                 />
               ))}
             </div>
-            {/* Re-typing bars — key forces remount on hover */}
+            {/* Re-typing bars â€” key forces remount on hover */}
             <div key={hovered === "website" ? "typing" : "idle"} className="space-y-1.5">
               {[1, 0.75, 0.9].map((w, i) => (
                 <motion.div
@@ -982,29 +982,29 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
           </div>
         </motion.button>
 
-        {/* ── Card 4: Text Generation — typewriter code ── */}
+        {/* â”€â”€ Card 4: Text Generation â€” typewriter code â”€â”€ */}
         <motion.button
           onClick={() => go("library:text")}
           onHoverStart={() => setHovered("text")}
           onHoverEnd={() => setHovered(null)}
-          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #ffd803" }}
+          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #4FC3F7" }}
           whileTap={{ scale: 0.98 }}
           className="col-span-12 md:col-span-5 rounded-3xl bg-[#0a0a0a] p-6 text-left flex flex-col justify-between overflow-hidden relative h-full min-h-[300px]"
-          style={{ border: "2.5px solid #0a0a0a", boxShadow: "5px 5px 0 0 #ffd803" }}
+          style={{ border: "2.5px solid #0a0a0a", boxShadow: "5px 5px 0 0 #4FC3F7" }}
         >
           <div>
-            <div className="inline-block px-3 py-1 rounded-full bg-[#ffd803] text-[#0a0a0a] text-[11px] font-bold mb-4">Coming soon</div>
+            <div className="inline-block px-3 py-1 rounded-full bg-[#4FC3F7] text-[#0a0a0a] text-[11px] font-bold mb-4">Coming soon</div>
             <div className="text-white text-3xl font-black leading-tight mb-2">Text<br/>Generation</div>
-            <div className="text-white/60 text-sm">ChatGPT · Gemini · Grok · Claude</div>
+            <div className="text-white/60 text-sm">ChatGPT Â· Gemini Â· Grok Â· Claude</div>
           </div>
 
-          {/* Code block — lines slide in on hover */}
+          {/* Code block â€” lines slide in on hover */}
           <div className="mt-4 rounded-xl bg-white/10 p-3 font-mono text-[11px] space-y-1.5 overflow-hidden">
             {/* key trick: remount on hover to replay stagger */}
             <React.Fragment key={hovered === "text" ? "hover" : "idle"}>
               {[
-                <><span className="text-[#ffd803]">const</span> <span className="text-[#90b4ce]">prompt</span> <span className="text-white/50">=</span> <span className="text-[#ef4565]">"Act as a senior dev…"</span></>,
-                <><span className="text-[#ffd803]">function</span> <span className="text-[#bce4d8]">generate</span><span className="text-white/50">(input) {"{"}</span></>,
+                <><span className="text-[#4FC3F7]">const</span> <span className="text-[#90b4ce]">prompt</span> <span className="text-white/50">=</span> <span className="text-[#0a0a0a]">"Act as a senior devâ€¦"</span></>,
+                <><span className="text-[#4FC3F7]">function</span> <span className="text-[#bce4d8]">generate</span><span className="text-white/50">(input) {"{"}</span></>,
                 <span className="pl-4 block"><span className="text-[#90b4ce]">return</span> <span className="text-white/50">ai.complete(prompt)</span></span>,
                 <><span className="text-white/50">{"}"}</span></>,
               ].map((line, i) => (
@@ -1020,27 +1020,27 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
             </React.Fragment>
             {/* Always-on blinking cursor */}
             <motion.span
-              className="inline-block w-[7px] h-[13px] bg-[#ffd803] align-middle ml-1 rounded-sm"
+              className="inline-block w-[7px] h-[13px] bg-[#4FC3F7] align-middle ml-1 rounded-sm"
               animate={{ opacity: [1, 0, 1] }}
               transition={{ duration: 1, repeat: Infinity, ease: "steps(1)" }}
             />
           </div>
         </motion.button>
 
-        {/* ── Card 5: Content Generation — pills float on hover ── */}
+        {/* â”€â”€ Card 5: Content Generation â€” pills float on hover â”€â”€ */}
         <motion.button
           onClick={() => go("library:content")}
           onHoverStart={() => setHovered("content")}
           onHoverEnd={() => setHovered(null)}
           whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #0a0a0a" }}
           whileTap={{ scale: 0.98 }}
-          className="col-span-12 md:col-span-3 rounded-3xl bg-[#ef4565] p-6 text-left flex flex-col justify-between overflow-hidden relative h-full min-h-[300px]"
+          className="col-span-12 md:col-span-3 rounded-3xl bg-[#4FC3F7] p-6 text-left flex flex-col justify-between overflow-hidden relative h-full min-h-[300px]"
           style={{ border: "2.5px solid #0a0a0a", boxShadow: "5px 5px 0 0 #0a0a0a" }}
         >
           <div>
             <div className="inline-block px-3 py-1 rounded-full bg-white/25 text-white text-[11px] font-bold mb-4">Coming soon</div>
             <div className="text-white text-3xl font-black leading-tight mb-2">Content<br/>Gen</div>
-            <div className="text-white/70 text-sm">Claude · ChatGPT · Gemini</div>
+            <div className="text-white/70 text-sm">Claude Â· ChatGPT Â· Gemini</div>
           </div>
 
           {/* Floating pills */}
@@ -1065,7 +1065,7 @@ function WhereToGoSection({ go }: { go: (p: string) => void }) {
   );
 }
 
-// ─── BrowseByCategory ────────────────────────────────────────────────────────
+// â”€â”€â”€ BrowseByCategory â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const browseCategories = [
   { name: "Illustration",  img: imgIllustration, desc: "Hand-drawn styles, vector art, and digital illustrations for any project." },
@@ -1130,7 +1130,7 @@ function BrowseByCategory({ go }: { go: (p: string) => void }) {
           className="text-[#0a0a0a] hover:text-[#555] transition-colors"
           style={{ fontSize: "14px", fontWeight: 600 }}
         >
-          View all →
+          View all â†’
         </button>
       </div>
 
@@ -1208,7 +1208,7 @@ function BrowseByCategory({ go }: { go: (p: string) => void }) {
   );
 }
 
-// ─── CommunityPrizes ────────────────────────────────────────────────────────
+// â”€â”€â”€ CommunityPrizes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const prizes = [
   {

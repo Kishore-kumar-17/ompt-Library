@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
 import { Nav } from "./components/Nav";
 import { Footer } from "./components/Footer";
@@ -51,7 +51,7 @@ export default function App() {
   const guideSection   = route.startsWith("guide:") ? route.split(":")[1] : null;
 
   return (
-    <div className="min-h-screen bg-white text-[#094067]">
+    <div className="min-h-screen bg-white text-[#0a0a0a]">
       <Nav current={current} onNavigate={setRoute} onAuth={() => setAuthOpen(true)} />
       <main>
         {route === "home"      && <Home go={setRoute} />}
@@ -79,9 +79,9 @@ export default function App() {
         toastOptions={{
           style: {
             background: "#ffffff",
-            color: "#094067",
-            border: "2px solid #094067",
-            boxShadow: "4px 4px 0 0 #094067",
+            color: "#0a0a0a",
+            border: "2px solid #0a0a0a",
+            boxShadow: "4px 4px 0 0 #0a0a0a",
           },
         }}
       />

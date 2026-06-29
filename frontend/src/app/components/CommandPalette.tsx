@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, Command, CornerDownLeft, FileText, Library as LibraryIcon, Wand2, Sparkles, BarChart3, User, BookOpen, Upload } from "lucide-react";
 import { imageLibraryPrompts } from "../lib/library-data";
@@ -72,7 +72,7 @@ export function CommandPalette({ open, onClose, go }: { open: boolean; onClose: 
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 z-[100] bg-[#094067]/40 backdrop-blur-sm flex items-start justify-center pt-24 px-4"
+          className="fixed inset-0 z-[100] bg-[#0a0a0a]/40 backdrop-blur-sm flex items-start justify-center pt-24 px-4"
         >
           <motion.div
             onClick={(e) => e.stopPropagation()}
@@ -80,24 +80,24 @@ export function CommandPalette({ open, onClose, go }: { open: boolean; onClose: 
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 280, damping: 24 }}
-            className="w-full max-w-xl bg-white border-2 border-[#094067] rounded-2xl shadow-[8px_8px_0_0_#094067] overflow-hidden"
+            className="w-full max-w-xl bg-white border-2 border-[#0a0a0a] rounded-2xl shadow-[8px_8px_0_0_#0a0a0a] overflow-hidden"
           >
-            <div className="flex items-center gap-3 px-4 h-14 border-b-2 border-[#094067]/10">
-              <Search className="w-4 h-4 text-[#5f6c7b]" />
+            <div className="flex items-center gap-3 px-4 h-14 border-b-2 border-[#0a0a0a]/10">
+              <Search className="w-4 h-4 text-[#6b7280]" />
               <input
                 ref={inputRef}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 onKeyDown={onKey}
                 placeholder="Search prompts, jump to pages..."
-                className="flex-1 bg-transparent outline-none text-[#094067] placeholder:text-[#5f6c7b]"
+                className="flex-1 bg-transparent outline-none text-[#0a0a0a] placeholder:text-[#6b7280]"
                 style={{ fontSize: "15px" }}
               />
-              <kbd className="px-2 py-0.5 rounded bg-[#ffd803] text-[#094067] text-[11px]" style={{ fontWeight: 700 }}>ESC</kbd>
+              <kbd className="px-2 py-0.5 rounded bg-[#4FC3F7] text-[#0a0a0a] text-[11px]" style={{ fontWeight: 700 }}>ESC</kbd>
             </div>
             <div className="max-h-[360px] overflow-y-auto py-2">
               {results.length === 0 && (
-                <div className="px-4 py-8 text-center text-[#5f6c7b]">
+                <div className="px-4 py-8 text-center text-[#6b7280]">
                   No matches. Try another word.
                 </div>
               )}
@@ -110,25 +110,25 @@ export function CommandPalette({ open, onClose, go }: { open: boolean; onClose: 
                     onMouseEnter={() => setCursor(idx)}
                     onClick={() => choose(i.route)}
                     className={`w-full flex items-center gap-3 px-4 py-2.5 text-left ${
-                      on ? "bg-[#ffd803]/30" : "hover:bg-[#094067]/5"
+                      on ? "bg-[#4FC3F7]/30" : "hover:bg-[#0a0a0a]/5"
                     }`}
                   >
-                    <Icon className="w-4 h-4 text-[#ef4565]" />
+                    <Icon className="w-4 h-4 text-[#0a0a0a]" />
                     <div className="flex-1 min-w-0">
-                      <div className="text-[#094067] truncate" style={{ fontWeight: 600 }}>{i.label}</div>
-                      {i.hint && <div className="text-[#5f6c7b] text-[12px] truncate">{i.hint}</div>}
+                      <div className="text-[#0a0a0a] truncate" style={{ fontWeight: 600 }}>{i.label}</div>
+                      {i.hint && <div className="text-[#6b7280] text-[12px] truncate">{i.hint}</div>}
                     </div>
-                    <span className="text-[11px] text-[#5f6c7b] uppercase" style={{ fontWeight: 700 }}>
+                    <span className="text-[11px] text-[#6b7280] uppercase" style={{ fontWeight: 700 }}>
                       {i.kind === "page" ? "Page" : "Prompt"}
                     </span>
-                    {on && <CornerDownLeft className="w-4 h-4 text-[#094067]" />}
+                    {on && <CornerDownLeft className="w-4 h-4 text-[#0a0a0a]" />}
                   </button>
                 );
               })}
             </div>
-            <div className="flex items-center gap-4 px-4 h-10 border-t-2 border-[#094067]/10 bg-[#094067]/5 text-[11px] text-[#5f6c7b]">
-              <span className="inline-flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-white border border-[#094067]/20">↑↓</kbd> navigate</span>
-              <span className="inline-flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-white border border-[#094067]/20">↵</kbd> open</span>
+            <div className="flex items-center gap-4 px-4 h-10 border-t-2 border-[#0a0a0a]/10 bg-[#0a0a0a]/5 text-[11px] text-[#6b7280]">
+              <span className="inline-flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-white border border-[#0a0a0a]/20">â†‘â†“</kbd> navigate</span>
+              <span className="inline-flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-white border border-[#0a0a0a]/20">â†µ</kbd> open</span>
               <span className="ml-auto inline-flex items-center gap-1"><Command className="w-3 h-3" /> K to toggle</span>
             </div>
           </motion.div>

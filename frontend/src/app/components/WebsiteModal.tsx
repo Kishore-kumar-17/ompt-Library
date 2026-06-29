@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Copy, Star } from "lucide-react";
 import { toast } from "sonner";
@@ -6,13 +6,13 @@ import { type WebsiteDesign } from "../lib/website-data";
 import { websitePlatformVersions } from "../lib/website-platforms";
 import { websitePlatforms } from "./theme";
 
-// ─── Full-size website preview ────────────────────────────────────────────────
+// â”€â”€â”€ Full-size website preview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function WebsiteFullPreview({ design }: { design: WebsiteDesign }) {
   return (
     <div className="w-full" style={{ background: design.bgColor, fontFamily: "sans-serif" }}>
 
-      {/* ── Nav ── */}
+      {/* â”€â”€ Nav â”€â”€ */}
       <div
         className="sticky top-0 z-10 flex items-center justify-between px-8 py-4 border-b"
         style={{ background: design.bgColor, borderColor: "#E5E7EB" }}
@@ -35,7 +35,7 @@ function WebsiteFullPreview({ design }: { design: WebsiteDesign }) {
         </div>
       </div>
 
-      {/* ── Hero ── */}
+      {/* â”€â”€ Hero â”€â”€ */}
       <div
         className="px-8 py-24 flex flex-col items-center text-center"
         style={{ background: "#1A1A1A" }}
@@ -64,25 +64,25 @@ function WebsiteFullPreview({ design }: { design: WebsiteDesign }) {
               border: "1px solid rgba(255,255,255,0.35)", padding: "12px 24px", borderRadius: "2px",
             }}
           >
-            View Menu →
+            View Menu â†’
           </button>
         </div>
       </div>
 
-      {/* ── Menu Preview Strip ── */}
+      {/* â”€â”€ Menu Preview Strip â”€â”€ */}
       <div className="px-8 py-12" style={{ background: design.bgColor }}>
         <div className="flex items-center justify-between mb-6">
           <h2 style={{ fontSize: "22px", fontWeight: 700, color: "#1A1A1A" }}>Our Menu</h2>
           <span style={{ fontSize: "13px", color: design.accentColor, fontWeight: 600, cursor: "pointer" }}>
-            View Full Menu →
+            View Full Menu â†’
           </span>
         </div>
         <div className="flex gap-4 overflow-x-auto pb-2">
           {[
-            { name: "Pork Ribs Vindaloo",   desc: "Goan slow-braise, pickled shallots, roti",  price: "₹1,450", veg: false },
-            { name: "Mumbai Masala Chips",   desc: "Spiced butter, tamarind chutney, peanuts",  price: "₹450",   veg: true },
-            { name: "Bombay Sour",           desc: "House whisky, kokum shrub, curry leaf salt", price: "₹750",   veg: true },
-            { name: "Dal Chawal Arancini",   desc: "Crispy risotto, tadka dal, green chutney",  price: "₹550",   veg: true },
+            { name: "Pork Ribs Vindaloo",   desc: "Goan slow-braise, pickled shallots, roti",  price: "â‚¹1,450", veg: false },
+            { name: "Mumbai Masala Chips",   desc: "Spiced butter, tamarind chutney, peanuts",  price: "â‚¹450",   veg: true },
+            { name: "Bombay Sour",           desc: "House whisky, kokum shrub, curry leaf salt", price: "â‚¹750",   veg: true },
+            { name: "Dal Chawal Arancini",   desc: "Crispy risotto, tadka dal, green chutney",  price: "â‚¹550",   veg: true },
           ].map(dish => (
             <div
               key={dish.name}
@@ -108,7 +108,7 @@ function WebsiteFullPreview({ design }: { design: WebsiteDesign }) {
         </div>
       </div>
 
-      {/* ── Canteen Stories ── */}
+      {/* â”€â”€ Canteen Stories â”€â”€ */}
       <div className="px-8 py-12" style={{ background: "#F9FAFB" }}>
         <h2 style={{ fontSize: "22px", fontWeight: 700, color: "#1A1A1A" }} className="mb-6">
           Canteen Stories
@@ -131,13 +131,13 @@ function WebsiteFullPreview({ design }: { design: WebsiteDesign }) {
               <div style={{ fontSize: "17px", fontWeight: 700, color: "#fff", lineHeight: 1.3 }} className="mb-2">
                 {story.title}
               </div>
-              <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)" }}>Read More →</div>
+              <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)" }}>Read More â†’</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ── Team Section ── */}
+      {/* â”€â”€ Team Section â”€â”€ */}
       <div className="px-8 py-12" style={{ background: design.bgColor }}>
         <h2 style={{ fontSize: "22px", fontWeight: 700, color: "#1A1A1A" }} className="mb-6">
           The People Behind the Plate
@@ -164,17 +164,17 @@ function WebsiteFullPreview({ design }: { design: WebsiteDesign }) {
         </div>
       </div>
 
-      {/* ── Merch Shop ── */}
+      {/* â”€â”€ Merch Shop â”€â”€ */}
       <div className="px-8 py-12" style={{ background: "#1A1A1A" }}>
         <div className="flex items-center justify-between mb-6">
           <h2 style={{ fontSize: "22px", fontWeight: 700, color: "#FFFDF6" }}>The Canteen Shop</h2>
-          <span style={{ fontSize: "13px", color: design.accentColor, fontWeight: 600 }}>View All →</span>
+          <span style={{ fontSize: "13px", color: design.accentColor, fontWeight: 600 }}>View All â†’</span>
         </div>
         <div className="grid grid-cols-3 gap-4">
           {[
-            { name: "Cocktail Book", type: "Physical", price: "₹1,200" },
-            { name: "Gift Card",     type: "Digital",  price: "₹2,000" },
-            { name: "Canteen Tee",   type: "Apparel",  price: "₹800" },
+            { name: "Cocktail Book", type: "Physical", price: "â‚¹1,200" },
+            { name: "Gift Card",     type: "Digital",  price: "â‚¹2,000" },
+            { name: "Canteen Tee",   type: "Apparel",  price: "â‚¹800" },
           ].map(item => (
             <div key={item.name} style={{ background: "#2A2A2A", borderRadius: "2px", padding: "16px" }}>
               <div className="h-28 mb-3 flex items-center justify-center" style={{ background: "#333", borderRadius: "2px" }}>
@@ -196,7 +196,7 @@ function WebsiteFullPreview({ design }: { design: WebsiteDesign }) {
         </div>
       </div>
 
-      {/* ── Footer ── */}
+      {/* â”€â”€ Footer â”€â”€ */}
       <div className="px-8 py-10" style={{ background: "#0D0D0D" }}>
         <div className="grid grid-cols-3 gap-8 mb-8">
           <div>
@@ -204,7 +204,7 @@ function WebsiteFullPreview({ design }: { design: WebsiteDesign }) {
               CULINARYNARRATIVE
             </div>
             <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)", lineHeight: 1.6 }}>
-              A Canteen for the Curious.<br />Mumbai · London · Singapore
+              A Canteen for the Curious.<br />Mumbai Â· London Â· Singapore
             </div>
           </div>
           <div>
@@ -225,14 +225,14 @@ function WebsiteFullPreview({ design }: { design: WebsiteDesign }) {
           </div>
         </div>
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "20px", fontSize: "11px", color: "rgba(255,255,255,0.25)" }}>
-          © 2026 CulinaryNarrative. All rights reserved.
+          Â© 2026 CulinaryNarrative. All rights reserved.
         </div>
       </div>
     </div>
   );
 }
 
-// ─── Modal ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClose: () => void }) {
   const [platform, setPlatform] = useState("lovable");
@@ -257,7 +257,7 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(promptText);
-      toast.success("Prompt copied", { description: `${design.title} — ${activePl?.name}` });
+      toast.success("Prompt copied", { description: `${design.title} â€” ${activePl?.name}` });
     } catch {
       toast.error("Failed to copy to clipboard");
     }
@@ -290,8 +290,8 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
           style={{ maxWidth: "1200px", height: "88vh", display: "grid", gridTemplateColumns: "1fr 380px" }}
           onClick={e => e.stopPropagation()}
         >
-          {/* ── Left: Browser preview ─────────────────────────────────── */}
-          <div className="flex flex-col border-r border-[#094067]/10 min-h-0">
+          {/* â”€â”€ Left: Browser preview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          <div className="flex flex-col border-r border-[#0a0a0a]/10 min-h-0">
             {/* Browser chrome */}
             <div className="shrink-0 flex items-center gap-2 px-4 py-3 bg-[#f0f0f0] border-b border-[#d8d8d8]">
               <div className="flex gap-1.5">
@@ -301,13 +301,13 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
               </div>
               <div className="flex-1 bg-white rounded-md px-3 py-1 flex items-center gap-2 border border-[#d8d8d8]">
                 <div className="w-2 h-2 rounded-full bg-[#28c840] shrink-0" />
-                <span className="text-[12px] text-[#5f6c7b] truncate">
+                <span className="text-[12px] text-[#6b7280] truncate">
                   {design.slug.replace("_", "-")}.vercel.app
                 </span>
               </div>
               <button
                 onClick={onClose}
-                className="p-1 rounded-lg text-[#5f6c7b] hover:text-[#094067] hover:bg-[#094067]/8 transition-colors"
+                className="p-1 rounded-lg text-[#6b7280] hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/8 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -319,32 +319,32 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
             </div>
           </div>
 
-          {/* ── Right: Prompt panel ───────────────────────────────────── */}
+          {/* â”€â”€ Right: Prompt panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <div className="flex flex-col min-h-0">
             {/* Header */}
-            <div className="shrink-0 px-5 pt-5 pb-4 border-b border-[#094067]/10">
+            <div className="shrink-0 px-5 pt-5 pb-4 border-b border-[#0a0a0a]/10">
               <div className="flex items-start justify-between mb-1">
                 <div>
-                  <h2 className="text-[#094067] text-[18px] font-bold leading-tight">{design.title}</h2>
-                  <p className="text-[#5f6c7b] text-[12px]">{design.style}</p>
+                  <h2 className="text-[#0a0a0a] text-[18px] font-bold leading-tight">{design.title}</h2>
+                  <p className="text-[#6b7280] text-[12px]">{design.style}</p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
-                  <Star className="w-3.5 h-3.5 fill-[#ffd803] text-[#ffd803]" />
-                  <span className="text-[13px] font-bold text-[#094067]">{design.rating}</span>
+                  <Star className="w-3.5 h-3.5 fill-[#4FC3F7] text-[#4FC3F7]" />
+                  <span className="text-[13px] font-bold text-[#0a0a0a]">{design.rating}</span>
                   {design.tested && <span className="w-1.5 h-1.5 rounded-full bg-[#28c840]" />}
                 </div>
               </div>
               {/* Stack */}
               <div className="flex flex-wrap gap-1 mt-2">
                 {design.stack.map(s => (
-                  <span key={s} className="px-1.5 py-0.5 rounded bg-[#094067]/5 text-[#5f6c7b] text-[9px] font-mono">{s}</span>
+                  <span key={s} className="px-1.5 py-0.5 rounded bg-[#0a0a0a]/5 text-[#6b7280] text-[9px] font-mono">{s}</span>
                 ))}
               </div>
             </div>
 
             {/* Platform selector */}
-            <div className="shrink-0 px-5 py-4 border-b border-[#094067]/10">
-              <div className="text-[10px] text-[#5f6c7b] uppercase tracking-widest font-bold mb-2">Choose AI tool</div>
+            <div className="shrink-0 px-5 py-4 border-b border-[#0a0a0a]/10">
+              <div className="text-[10px] text-[#6b7280] uppercase tracking-widest font-bold mb-2">Choose AI tool</div>
               <div className="flex flex-wrap gap-1.5">
                 {websitePlatforms.map(pl => (
                   <button
@@ -354,7 +354,7 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
                     style={
                       platform === pl.key
                         ? { background: pl.color, borderColor: pl.color, color: "#fff" }
-                        : { borderColor: "rgba(9,64,103,0.2)", color: "#5f6c7b" }
+                        : { borderColor: "rgba(10, 10, 10,0.2)", color: "#6b7280" }
                     }
                   >
                     {pl.name}
@@ -365,24 +365,24 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
 
             {/* Prompt text */}
             <div className="flex-1 overflow-y-auto px-5 py-4">
-              <div className="text-[10px] text-[#5f6c7b] uppercase tracking-widest font-bold mb-2">
+              <div className="text-[10px] text-[#6b7280] uppercase tracking-widest font-bold mb-2">
                 {activePl?.name} prompt
               </div>
-              <pre className="whitespace-pre-wrap text-[#094067] font-mono text-[11px] leading-relaxed bg-[#094067]/3 rounded-xl p-3">
+              <pre className="whitespace-pre-wrap text-[#0a0a0a] font-mono text-[11px] leading-relaxed bg-[#0a0a0a]/3 rounded-xl p-3">
                 {promptText}
               </pre>
             </div>
 
             {/* Copy button */}
-            <div className="shrink-0 px-5 py-4 border-t border-[#094067]/10">
+            <div className="shrink-0 px-5 py-4 border-t border-[#0a0a0a]/10">
               <button
                 onClick={handleCopy}
-                className="w-full h-11 rounded-full bg-[#ffd803] text-[#094067] font-bold text-[14px] flex items-center justify-center gap-2 hover:bg-[#ffd803]/90 transition-colors"
+                className="w-full h-11 rounded-full bg-[#4FC3F7] text-[#0a0a0a] font-bold text-[14px] flex items-center justify-center gap-2 hover:bg-[#4FC3F7]/90 transition-colors"
               >
                 <Copy className="w-4 h-4" />
                 Copy {activePl?.name} Prompt
               </button>
-              <p className="text-[10px] text-[#5f6c7b] text-center mt-2">
+              <p className="text-[10px] text-[#6b7280] text-center mt-2">
                 Paste directly into {activePl?.name} to generate this website
               </p>
             </div>

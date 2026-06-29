@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+﻿import { useMemo, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -6,21 +6,24 @@ import {
   MessageSquare, ThumbsUp, Loader2, Lock, ExternalLink, ArrowLeft,
 } from "lucide-react";
 import { platforms, videoPlatforms, type PromptItem } from "../theme";
-import { authStore, libraryApi, type LibraryPrompt } from "../../lib/api";
+import { authStore, libraryApi, variablesApi, type LibraryPrompt, type VariableField } from "../../lib/api";
 import { promptImageMap } from "../../lib/prompt-images";
 import { imageLibraryPrompts } from "../../lib/library-data";
+import { promptVariables } from "../../lib/library-variables";
+import { VariablePanel } from "../VariablePanel";
+import { highlight } from "../../lib/highlight";
 import { videoLibraryPrompts } from "../../lib/video-data";
 import { videoPlatformVersions } from "../../lib/video-platforms";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 import { PromptCard } from "../PromptCard";
 
 const SAMPLE_REVIEWS = [
-  { name: "Arjun S.",   initials: "AS", color: "#094067", stars: 5, helpful: 34, body: "Produced exactly what I needed — sharp, editorial output on the first try. Saved me 20 minutes of prompt tweaking." },
-  { name: "Priya M.",  initials: "PM", color: "#ef4565", stars: 5, helpful: 21, body: "Love how the variables work. Dropped in my project details and got a production-ready prompt immediately." },
-  { name: "Thomas W.", initials: "TW", color: "#ffd803", stars: 4, helpful: 17, body: "Works great on ChatGPT and Gemini. Midjourney output needed a small tweak for my style, but overall solid." },
+  { name: "Arjun S.",   initials: "AS", color: "#0a0a0a", stars: 5, helpful: 34, body: "Produced exactly what I needed â€” sharp, editorial output on the first try. Saved me 20 minutes of prompt tweaking." },
+  { name: "Priya M.",  initials: "PM", color: "#4FC3F7", stars: 5, helpful: 21, body: "Love how the variables work. Dropped in my project details and got a production-ready prompt immediately." },
+  { name: "Thomas W.", initials: "TW", color: "#4FC3F7", stars: 4, helpful: 17, body: "Works great on ChatGPT and Gemini. Midjourney output needed a small tweak for my style, but overall solid." },
 ];
 
-// ─── Normalise API prompt to a PromptItem-like shape ─────────────────────────
+// â”€â”€â”€ Normalise API prompt to a PromptItem-like shape â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function fromApi(p: LibraryPrompt & { platforms?: Record<string, string>; image_url?: string }): PromptItem {
   return {
@@ -42,10 +45,10 @@ function fromApi(p: LibraryPrompt & { platforms?: Record<string, string>; image_
   };
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string) => void; defaultPlatform?: string | null }) {
-  // Check local static data first — image then video
+  // Check local static data first â€” image then video
   const staticPrompt =
     imageLibraryPrompts.find(x => x.id === id) ??
     videoLibraryPrompts.find(x => x.id === id) ??
@@ -98,25 +101,81 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
     ...(platformData ?? {}),
   };
 
-  const rendered = useMemo(() => {
+  // AI-regenerated descriptive (Option B), overrides the stored text when present.
+  const [regenText, setRegenText] = useState<string | null>(null);
+  const [regenerating, setRegenerating] = useState(false);
+  useEffect(() => { setRegenText(null); }, [platform]);
+
+  // Descriptive text for the active platform (carries [TOKEN] placeholders).
+  const baseText = useMemo(() => {
     if (!p) return "";
-    // Use platform-specific text if available; fall back to base description
-    const s0 = resolvedPlatforms[platform]
+    if (regenText) return regenText;
+    return resolvedPlatforms[platform]
       ?? resolvedPlatforms["chatgpt"]
       ?? Object.values(resolvedPlatforms)[0]
       ?? p.description
       ?? "";
-    let s = s0;
-    (p.variables ?? []).forEach(v => { s = s.replaceAll(`[${v.name}]`, vars[v.name] || `[${v.name}]`); });
-    return s;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [p, platform, vars, platformData]);
+  }, [p, platform, platformData, regenText]);
 
-  // ── Loading state ──────────────────────────────────────────────────────
+  async function handleRegenerate() {
+    if (!p || regenerating) return;
+    setRegenerating(true);
+    try {
+      const res = await variablesApi.expand({
+        category: p.category ?? "",
+        platform,
+        brief: vars,
+        title: p.title,
+      });
+      setRegenText(res.finalAssembledText);
+      toast.success("Regenerated with your values");
+    } catch (e: any) {
+      toast.error("Regeneration failed", { description: e?.message });
+    } finally {
+      setRegenerating(false);
+    }
+  }
+
+  // Variable layer: prefer the curated/typed fields baked per slug; otherwise
+  // auto-detect any [TOKEN]s in the text as generic text fields.
+  const variableFields: VariableField[] = useMemo(() => {
+    const slug = p?.slug;
+    const curated = slug ? promptVariables[slug] : undefined;
+    if (curated && curated.length > 0) return curated;
+    const seen = new Set<string>();
+    const fields: VariableField[] = [];
+    for (const m of baseText.matchAll(/\[([A-Z0-9_]+)\]/g)) {
+      const name = m[1]!;
+      if (seen.has(name)) continue;
+      seen.add(name);
+      const label = name.toLowerCase().split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+      fields.push({ name, label, type: "text", placeholder: `Your ${label.toLowerCase()}` });
+    }
+    return fields;
+  }, [p?.slug, baseText]);
+
+  // Pre-fill the brief with each variable's default so the prompt reads complete
+  // out-of-the-box; never overrides a value the user already changed.
+  useEffect(() => {
+    const defaults: Record<string, string> = {};
+    for (const f of variableFields) if (f.default && vars[f.name] === undefined) defaults[f.name] = f.default;
+    if (Object.keys(defaults).length) setVars(prev => ({ ...defaults, ...prev }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variableFields]);
+
+  // Substitute filled variables into the descriptive text (locks stay invariant).
+  const rendered = useMemo(() => {
+    let s = baseText;
+    variableFields.forEach(v => { s = s.replaceAll(`[${v.name}]`, vars[v.name]?.trim() ? vars[v.name] : `[${v.name}]`); });
+    return s;
+  }, [baseText, variableFields, vars]);
+
+  // â”€â”€ Loading state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (fetchState === "loading") {
     return (
-      <div className="flex items-center justify-center py-32 text-[#5f6c7b]">
-        <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading prompt…
+      <div className="flex items-center justify-center py-32 text-[#6b7280]">
+        <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading promptâ€¦
       </div>
     );
   }
@@ -124,8 +183,8 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
   if (fetchState === "error" || !p) {
     return (
       <div className="max-w-[1400px] mx-auto px-6 py-16 text-center">
-        <p className="text-[#5f6c7b] mb-4">Prompt not found.</p>
-        <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#094067] hover:text-[#094067]/80 text-[13px] transition-colors">
+        <p className="text-[#6b7280] mb-4">Prompt not found.</p>
+        <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#0a0a0a] hover:text-[#0a0a0a]/80 text-[13px] transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Library
         </button>
       </div>
@@ -148,7 +207,7 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
       const res = await libraryApi.save(p.id);
       setSaved(res.saved);
       toast(res.saved ? "Saved to library" : "Removed from library", { description: p.title });
-    } catch { toast.error("Could not save — is the backend running?"); }
+    } catch { toast.error("Could not save â€” is the backend running?"); }
     finally { setSaving(false); }
   };
 
@@ -169,16 +228,16 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
   };
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-8 text-[#094067]">
-      <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#5f6c7b] hover:text-[#094067] text-[13px] mb-4 transition-colors">
+    <div className="max-w-[1400px] mx-auto px-6 py-8 text-[#0a0a0a]">
+      <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-4 transition-colors">
         <ArrowLeft className="w-3.5 h-3.5" /> Back to Library
       </button>
 
       <div className="grid lg:grid-cols-[1fr_420px] gap-8">
-        {/* ── Left: Image + Build Guide (scrollable) ──────────────────── */}
+        {/* â”€â”€ Left: Image + Build Guide (scrollable) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div>
           {/* Image / placeholder */}
-          <div className="rounded-3xl overflow-hidden border border-[#094067]/20 aspect-[4/3] bg-[#094067]/5 flex items-center justify-center">
+          <div className="rounded-3xl overflow-hidden border border-[#0a0a0a]/20 aspect-[4/3] bg-[#0a0a0a]/5 flex items-center justify-center">
             {p.image ? (
               <ImageWithFallback src={p.image} alt={p.title} className="w-full h-full object-contain" />
             ) : isVideoPrompt ? (
@@ -190,8 +249,8 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
                 <span className="text-white/60 text-[13px] font-semibold uppercase tracking-widest">{p.subCategory}</span>
               </div>
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-[#094067]/10 to-[#ffd803]/20 flex items-center justify-center">
-                <span className="text-6xl opacity-20">✦</span>
+              <div className="w-full h-full bg-gradient-to-br from-[#0a0a0a]/10 to-[#4FC3F7]/20 flex items-center justify-center">
+                <span className="text-6xl opacity-20">âœ¦</span>
               </div>
             )}
           </div>
@@ -200,25 +259,25 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
           {(p.tags ?? []).length > 0 && (
             <div className="flex flex-wrap gap-2 mt-4 mb-4">
               {(p.tags ?? []).map(t => (
-                <span key={t} className="px-2 py-1 rounded-full bg-[#094067]/5 border border-[#094067]/20 text-[#5f6c7b] text-[12px]">#{t}</span>
+                <span key={t} className="px-2 py-1 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#6b7280] text-[12px]">#{t}</span>
               ))}
             </div>
           )}
 
           {/* Build Guide */}
-          <div className="mt-6 rounded-2xl overflow-hidden border border-[#094067]/15">
-            <div className="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-[#094067]/5 to-[#ffd803]/10 border-b border-[#094067]/10">
-              <span className="w-8 h-8 rounded-full bg-[#ffd803] border-2 border-[#094067] flex items-center justify-center text-lg shrink-0">
-                {isVideoPrompt ? "🎬" : "🎨"}
+          <div className="mt-6 rounded-2xl overflow-hidden border border-[#0a0a0a]/15">
+            <div className="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-[#0a0a0a]/5 to-[#4FC3F7]/10 border-b border-[#0a0a0a]/10">
+              <span className="w-8 h-8 rounded-full bg-[#4FC3F7] border-2 border-[#0a0a0a] flex items-center justify-center text-lg shrink-0">
+                {isVideoPrompt ? "ðŸŽ¬" : "ðŸŽ¨"}
               </span>
               <div>
-                <div className="text-[#094067] font-bold text-[15px]">
+                <div className="text-[#0a0a0a] font-bold text-[15px]">
                   {isVideoPrompt
-                    ? "How to Create This — From Prompt to Video"
-                    : "How to Create This — From Prompt to Image"}
+                    ? "How to Create This â€” From Prompt to Video"
+                    : "How to Create This â€” From Prompt to Image"}
                 </div>
-                <div className="text-[#5f6c7b] text-[12px]">
-                  8 steps · Beginner friendly · Prompt to output
+                <div className="text-[#6b7280] text-[12px]">
+                  8 steps Â· Beginner friendly Â· Prompt to output
                 </div>
               </div>
             </div>
@@ -229,42 +288,42 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
           </div>
         </div>
 
-        {/* ── Right: Prompt panel (STICKY) ─────────────────────────────── */}
+        {/* â”€â”€ Right: Prompt panel (STICKY) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="lg:sticky lg:top-8 self-start">
           <div className="flex items-center gap-2 mb-3 flex-wrap">
-            <span className="px-2 py-0.5 rounded-full bg-[#094067]/5 border border-[#094067]/20 text-[#5f6c7b]" style={{ fontSize: "13px" }}>{p.category}</span>
+            <span className="px-2 py-0.5 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#6b7280]" style={{ fontSize: "13px" }}>{p.category}</span>
             {p.subCategory && (
               <>
-                <span className="text-[#5f6c7b]">·</span>
-                <span className="text-[#5f6c7b]" style={{ fontSize: "13px" }}>{p.subCategory}</span>
+                <span className="text-[#6b7280]">Â·</span>
+                <span className="text-[#6b7280]" style={{ fontSize: "13px" }}>{p.subCategory}</span>
               </>
             )}
             {p.tested && (
-              <span className="ml-2 px-2 py-0.5 rounded-full bg-[#ffd803]/20 text-[#ef4565] inline-flex items-center gap-1 text-[12px]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#ef4565]" />tested
+              <span className="ml-2 px-2 py-0.5 rounded-full bg-[#4FC3F7]/20 text-[#0a0a0a] inline-flex items-center gap-1 text-[12px]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#4FC3F7]" />tested
               </span>
             )}
           </div>
 
-          <h1 className="text-[#094067] text-3xl mb-2">{p.title}</h1>
-          <p className="text-[#5f6c7b] mb-4 line-clamp-3">{p.description}</p>
+          <h1 className="text-[#0a0a0a] text-3xl mb-2">{p.title}</h1>
+          <p className="text-[#6b7280] mb-4 line-clamp-3">{p.description}</p>
 
-          <div className="flex items-center gap-4 mb-6 text-[#5f6c7b]">
-            <span className="inline-flex items-center gap-1 text-[#094067]">
-              <Star className="w-4 h-4 fill-[#ffd803] text-[#ef4565]" />
+          <div className="flex items-center gap-4 mb-6 text-[#6b7280]">
+            <span className="inline-flex items-center gap-1 text-[#0a0a0a]">
+              <Star className="w-4 h-4 fill-[#4FC3F7] text-[#0a0a0a]" />
               {p.rating}
               {p.reviews > 0 && <span>({p.reviews})</span>}
             </span>
             <button
               onClick={handleSave}
-              className={`inline-flex items-center gap-1 transition-colors ${saved ? "text-[#ef4565]" : "hover:text-[#ef4565]"}`}
+              className={`inline-flex items-center gap-1 transition-colors ${saved ? "text-[#0a0a0a]" : "hover:text-[#0a0a0a]"}`}
             >
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Heart className={`w-4 h-4 ${saved ? "fill-[#ef4565]" : ""}`} />}
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Heart className={`w-4 h-4 ${saved ? "fill-[#4FC3F7]" : ""}`} />}
               {saved ? "Saved" : "Save"}
             </button>
             <button
               onClick={() => { navigator.clipboard?.writeText(window.location.href); toast("Link copied"); }}
-              className="inline-flex items-center gap-1 hover:text-[#094067]"
+              className="inline-flex items-center gap-1 hover:text-[#0a0a0a]"
             >
               <Share2 className="w-4 h-4" />Share
             </button>
@@ -272,11 +331,11 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
 
           {/* Platform selector */}
           <div className="mb-3">
-            <div className="text-[11px] text-[#5f6c7b] uppercase tracking-widest font-semibold mb-2">Choose your AI tool</div>
+            <div className="text-[11px] text-[#6b7280] uppercase tracking-widest font-semibold mb-2">Choose your AI tool</div>
             <div className="flex flex-wrap gap-2 items-center">
               {!platformData && !Object.keys(p.platforms ?? {}).length && (
-                <span className="text-[12px] text-[#5f6c7b] flex items-center gap-1 mr-1">
-                  <Loader2 className="w-3 h-3 animate-spin" /> loading versions…
+                <span className="text-[12px] text-[#6b7280] flex items-center gap-1 mr-1">
+                  <Loader2 className="w-3 h-3 animate-spin" /> loading versionsâ€¦
                 </span>
               )}
               {(isVideoPrompt ? videoPlatforms : platforms).map(pl => {
@@ -288,10 +347,10 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
                     onClick={() => { if (hasContent) setPlatform(pl.key); }}
                     className={`px-3 py-1.5 rounded-full border text-[12px] transition-colors ${
                       activePlatformKey === pl.key
-                        ? "bg-[#094067]/10 border-[#094067]/40 text-[#094067] font-semibold"
+                        ? "bg-[#0a0a0a]/10 border-[#0a0a0a]/40 text-[#0a0a0a] font-semibold"
                         : hasContent
-                          ? "border-[#094067]/20 text-[#5f6c7b] hover:text-[#094067]"
-                          : "border-[#094067]/10 text-[#5f6c7b]/30 cursor-not-allowed"
+                          ? "border-[#0a0a0a]/20 text-[#6b7280] hover:text-[#0a0a0a]"
+                          : "border-[#0a0a0a]/10 text-[#6b7280]/30 cursor-not-allowed"
                     }`}
                   >
                     <span className="inline-block w-2 h-2 rounded-full mr-1.5" style={{ background: pl.color }} />
@@ -303,49 +362,39 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
           </div>
 
           {/* Live preview */}
-          <div className="relative bg-white border-2 border-[#094067] rounded-2xl p-4 mb-4 shadow-[6px_6px_0_0_#094067]">
+          <div className="relative bg-white border-2 border-[#0a0a0a] rounded-2xl p-4 mb-4 shadow-[6px_6px_0_0_#0a0a0a]">
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-[11px] text-[#5f6c7b] uppercase" style={{ fontWeight: 700, letterSpacing: "0.05em" }}>
+              <span className="text-[11px] text-[#6b7280] uppercase" style={{ fontWeight: 700, letterSpacing: "0.05em" }}>
                 {(isVideoPrompt ? videoPlatforms : platforms).find(pl => pl.key === activePlatformKey)?.name ?? activePlatformKey} prompt
               </span>
-              {(p.variables ?? []).length > 0 && (
-                <span className="text-[11px] text-[#094067] px-2 py-0.5 rounded-full bg-[#ffd803]">
-                  {(p.variables ?? []).filter(v => vars[v.name]).length}/{(p.variables ?? []).length} filled
+              {variableFields.length > 0 && (
+                <span className="text-[11px] text-[#0a0a0a] px-2 py-0.5 rounded-full bg-[#4FC3F7]">
+                  {variableFields.filter(v => vars[v.name]?.trim()).length}/{variableFields.length} filled
                 </span>
               )}
             </div>
-            <pre className="whitespace-pre-wrap text-[#094067] font-mono text-[13px] leading-relaxed max-h-64 overflow-y-auto">
-              {highlight(rendered, (p.variables ?? []).map(v => v.name))}
+            <pre className="whitespace-pre-wrap text-[#0a0a0a] font-mono text-[13px] leading-relaxed max-h-64 overflow-y-auto">
+              {highlight(rendered, variableFields.map(v => v.name))}
             </pre>
           </div>
 
           {/* Variable inputs */}
-          {(p.variables ?? []).length > 0 && (
-            <div className="mb-4 bg-gradient-to-br from-[#ffd803]/15 to-[#ef4565]/10 border border-[#094067]/20 rounded-2xl p-4 space-y-3">
-              <div className="flex items-center gap-2 text-[#094067]" style={{ fontWeight: 700 }}>
-                <span className="w-5 h-5 rounded bg-[#ffd803] border border-[#094067] inline-flex items-center justify-center text-[11px]">▶</span>
-                Try it — fill the variables
-              </div>
-              {(p.variables ?? []).map(v => (
-                <div key={v.name}>
-                  <label className="text-[12px] text-[#5f6c7b] mb-1 block" style={{ fontWeight: 600 }}>
-                    <span className="font-mono text-[#094067] bg-[#ffd803]/60 px-1 rounded mr-1">[{v.name}]</span>
-                  </label>
-                  <input
-                    placeholder={v.placeholder}
-                    value={vars[v.name] || ""}
-                    onChange={e => setVars({ ...vars, [v.name]: e.target.value })}
-                    className="w-full h-10 px-3 rounded-lg bg-white border-2 border-[#094067]/20 text-[#094067] placeholder:text-[#5f6c7b] outline-none focus:border-[#ffd803]"
-                  />
-                </div>
-              ))}
+          {variableFields.length > 0 && (
+            <div className="mb-4">
+              <VariablePanel
+                variables={variableFields}
+                values={vars}
+                onChange={(name, value) => setVars(prev => ({ ...prev, [name]: value }))}
+                onRegenerate={handleRegenerate}
+                regenerating={regenerating}
+              />
             </div>
           )}
 
           {/* Actions */}
           <button
             onClick={handleCopyPrompt}
-            className="w-full h-12 rounded-full bg-[#ffd803] text-[#094067] inline-flex items-center justify-center gap-2 mb-3"
+            className="w-full h-12 rounded-full bg-[#4FC3F7] text-[#0a0a0a] inline-flex items-center justify-center gap-2 mb-3"
             style={{ fontWeight: 700, fontSize: "15px" }}
           >
             <Copy className="w-4 h-4" />Copy {(isVideoPrompt ? videoPlatforms : platforms).find(pl => pl.key === activePlatformKey)?.name ?? ""} Prompt
@@ -354,8 +403,8 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
             onClick={handleSave}
             className={`w-full h-11 rounded-full border inline-flex items-center justify-center gap-2 transition-colors ${
               saved
-                ? "bg-[#ef4565]/10 border-[#ef4565]/30 text-[#ef4565]"
-                : "bg-[#094067]/5 border-[#094067]/20 text-[#094067] hover:bg-[#094067]/10"
+                ? "bg-[#4FC3F7]/10 border-[#4FC3F7]/30 text-[#0a0a0a]"
+                : "bg-[#0a0a0a]/5 border-[#0a0a0a]/20 text-[#0a0a0a] hover:bg-[#0a0a0a]/10"
             }`}
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <BookmarkPlus className="w-4 h-4" />}
@@ -364,50 +413,50 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
         </div>
       </div>
 
-      {/* ── Below fold ──────────────────────────────────────────────────── */}
+      {/* â”€â”€ Below fold â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="mt-16 grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <h2 className="text-[#094067] mb-4 inline-flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-[#ef4565]" />Reviews
+          <h2 className="text-[#0a0a0a] mb-4 inline-flex items-center gap-2">
+            <MessageSquare className="w-5 h-5 text-[#0a0a0a]" />Reviews
           </h2>
           {SAMPLE_REVIEWS.map((r, i) => (
-            <div key={i} className="bg-white border border-[#094067]/15 rounded-2xl p-4 mb-3">
+            <div key={i} className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-4 mb-3">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold text-white" style={{ background: r.color }}>{r.initials}</div>
-                <div className="text-[#094067]" style={{ fontWeight: 600 }}>{r.name}</div>
-                <div className="text-[#ffd803] text-[13px]">{"★".repeat(r.stars)}</div>
-                <button className="ml-auto text-[#5f6c7b] hover:text-[#094067] inline-flex items-center gap-1 text-[13px]">
+                <div className="text-[#0a0a0a]" style={{ fontWeight: 600 }}>{r.name}</div>
+                <div className="text-[#4FC3F7] text-[13px]">{"â˜…".repeat(r.stars)}</div>
+                <button className="ml-auto text-[#6b7280] hover:text-[#0a0a0a] inline-flex items-center gap-1 text-[13px]">
                   <ThumbsUp className="w-3 h-3" />Helpful ({r.helpful})
                 </button>
               </div>
-              <p className="text-[#5f6c7b]">{r.body}</p>
+              <p className="text-[#6b7280]">{r.body}</p>
             </div>
           ))}
         </div>
         <div>
           {(p.tags ?? []).length > 0 && (
             <>
-              <h2 className="text-[#094067] mb-4">Tags</h2>
+              <h2 className="text-[#0a0a0a] mb-4">Tags</h2>
               <div className="flex flex-wrap gap-2 mb-8">
                 {(p.tags ?? []).map(t => (
-                  <span key={t} className="px-2 py-1 rounded-full bg-[#094067]/5 border border-[#094067]/20 text-[#5f6c7b] text-[13px]">#{t}</span>
+                  <span key={t} className="px-2 py-1 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#6b7280] text-[13px]">#{t}</span>
                 ))}
               </div>
             </>
           )}
-          <h2 className="text-[#094067] mb-4">Author</h2>
-          <div className="bg-white border border-[#094067]/15 rounded-2xl p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ffd803] to-[#ef4565]" />
+          <h2 className="text-[#0a0a0a] mb-4">Author</h2>
+          <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-4 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#4FC3F7] to-[#4FC3F7]" />
             <div>
-              <div className="text-[#094067]" style={{ fontWeight: 600 }}>{p.author}</div>
-              <div className="text-[#5f6c7b]" style={{ fontSize: "13px" }}>Contributor</div>
+              <div className="text-[#0a0a0a]" style={{ fontWeight: 600 }}>{p.author}</div>
+              <div className="text-[#6b7280]" style={{ fontSize: "13px" }}>Contributor</div>
             </div>
           </div>
         </div>
       </section>
 
       <section className="mt-16">
-        <h2 className="text-[#094067] mb-4">Related prompts</h2>
+        <h2 className="text-[#0a0a0a] mb-4">Related prompts</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {(isVideoPrompt ? videoLibraryPrompts : imageLibraryPrompts)
             .filter(x => x.category === p.category && x.id !== p.id)
@@ -421,11 +470,11 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
   );
 }
 
-// ─── Shared Guide helpers ────────────────────────────────────────────────────
+// â”€â”€â”€ Shared Guide helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function GLink({ href, label }: { href: string; label: string }) {
   return (
-    <a href={href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[#ffd803] hover:underline text-[13px] font-semibold">
+    <a href={href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[#4FC3F7] hover:underline text-[13px] font-semibold">
       {label} <ExternalLink className="w-3 h-3 opacity-60" />
     </a>
   );
@@ -435,7 +484,7 @@ function GBadge({ children }: { children: React.ReactNode }) {
   return <span className="px-2.5 py-1 rounded-full bg-white/10 border border-white/10 text-[#e6edf3] text-[12px] font-semibold">{children}</span>;
 }
 
-// ─── Image Build Guide ───────────────────────────────────────────────────────
+// â”€â”€â”€ Image Build Guide â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const IMAGE_GUIDE_STEPS = [
   "Choose an AI Image Tool",
@@ -462,7 +511,7 @@ function ImageStepContent({ idx, promptText, platformName }: { idx: number; prom
             { name: "FLUX", href: "https://flux.ai" },
             { name: "Gemini", href: "https://gemini.google.com" },
           ].map(t => (
-            <a key={t.name} href={t.href} target="_blank" rel="noreferrer" className="px-3 py-1.5 rounded-full border border-white/15 text-[#e6edf3] text-[12px] font-bold hover:border-[#ffd803]/60 hover:text-[#ffd803] transition-colors flex items-center gap-1">
+            <a key={t.name} href={t.href} target="_blank" rel="noreferrer" className="px-3 py-1.5 rounded-full border border-white/15 text-[#e6edf3] text-[12px] font-bold hover:border-[#4FC3F7]/60 hover:text-[#4FC3F7] transition-colors flex items-center gap-1">
               {t.name} <ExternalLink className="w-3 h-3 opacity-50" />
             </a>
           ))}
@@ -479,7 +528,7 @@ function ImageStepContent({ idx, promptText, platformName }: { idx: number; prom
     );
     case 2: return (
       <div className="space-y-3">
-        <p>Review the prompt below. Notice the structure — subject, style, lighting, composition, and technical details all work together.</p>
+        <p>Review the prompt below. Notice the structure â€” subject, style, lighting, composition, and technical details all work together.</p>
         <div className="flex flex-wrap gap-2">
           {["Subject", "Style", "Lighting", "Composition", "Camera", "Mood"].map(b => <GBadge key={b}>{b}</GBadge>)}
         </div>
@@ -489,10 +538,10 @@ function ImageStepContent({ idx, promptText, platformName }: { idx: number; prom
     case 3: return (
       <div className="space-y-3">
         <p>Copy the prompt and paste it into your chosen AI tool's input field.</p>
-        <div className="border border-[#ffd803]/30 rounded-xl overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-2 bg-[#ffd803]/8 border-b border-[#ffd803]/20">
-            <span className="text-[11px] text-[#ffd803]/70 uppercase font-bold tracking-widest">{platformName} prompt</span>
-            <button onClick={copyPrompt} className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffd803] text-[#094067] text-[11px] font-bold hover:bg-[#ffd803]/80 transition-colors">
+        <div className="border border-[#4FC3F7]/30 rounded-xl overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2 bg-[#4FC3F7]/8 border-b border-[#4FC3F7]/20">
+            <span className="text-[11px] text-[#4FC3F7]/70 uppercase font-bold tracking-widest">{platformName} prompt</span>
+            <button onClick={copyPrompt} className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#4FC3F7] text-[#0a0a0a] text-[11px] font-bold hover:bg-[#4FC3F7]/80 transition-colors">
               <Copy className="w-3 h-3" /> Copy
             </button>
           </div>
@@ -513,13 +562,13 @@ function ImageStepContent({ idx, promptText, platformName }: { idx: number; prom
         <p>Not perfect on the first try? That's normal. Try these refinement strategies:</p>
         <div className="space-y-2">
           {[
-            "Adjust specific words — swap 'cinematic' for 'editorial' or 'dramatic'",
-            "Add more detail — specify exact camera, lens, or lighting setup",
-            "Use variations — most tools let you create variations of a result you like",
-            "Change aspect ratio — portrait (2:3), landscape (16:9), or square (1:1)",
+            "Adjust specific words â€” swap 'cinematic' for 'editorial' or 'dramatic'",
+            "Add more detail â€” specify exact camera, lens, or lighting setup",
+            "Use variations â€” most tools let you create variations of a result you like",
+            "Change aspect ratio â€” portrait (2:3), landscape (16:9), or square (1:1)",
           ].map((tip, i) => (
             <div key={i} className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-[#ffd803] text-[#0d1117] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">{i + 1}</span>
+              <span className="w-5 h-5 rounded-full bg-[#4FC3F7] text-[#0d1117] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">{i + 1}</span>
               <span className="text-[13px]">{tip}</span>
             </div>
           ))}
@@ -532,17 +581,17 @@ function ImageStepContent({ idx, promptText, platformName }: { idx: number; prom
         <div className="flex flex-wrap gap-2">
           {["PNG for transparency", "JPG for photos", "Upscale for print", "Save originals"].map(b => <GBadge key={b}>{b}</GBadge>)}
         </div>
-        <p className="text-[13px]">Most platforms offer upscaling options — always upscale before using in professional work.</p>
+        <p className="text-[13px]">Most platforms offer upscaling options â€” always upscale before using in professional work.</p>
       </div>
     );
     case 7: return (
       <div className="space-y-3">
-        <p className="text-[#ffd803] font-semibold">Your image is ready to use!</p>
+        <p className="text-[#4FC3F7] font-semibold">Your image is ready to use!</p>
         <div className="flex flex-wrap items-center gap-2 text-[12px]">
           {["Social Media", "Marketing", "Product Shots", "Presentations", "Websites", "Print"].map((use, i, arr) => (
             <span key={use} className="flex items-center gap-2">
-              <span className="px-2.5 py-1 rounded-full bg-[#094067] text-white font-semibold">{use}</span>
-              {i < arr.length - 1 && <span className="text-[#094067]/30 font-bold">·</span>}
+              <span className="px-2.5 py-1 rounded-full bg-[#0a0a0a] text-white font-semibold">{use}</span>
+              {i < arr.length - 1 && <span className="text-[#0a0a0a]/30 font-bold">Â·</span>}
             </span>
           ))}
         </div>
@@ -558,12 +607,12 @@ function ImageBuildGuide({ promptText, platformName }: { promptText: string; pla
       steps={IMAGE_GUIDE_STEPS}
       renderContent={(idx) => <ImageStepContent idx={idx} promptText={promptText} platformName={platformName} />}
       doneMessage="Your AI image is ready to use!"
-      doneEmoji="🎨"
+      doneEmoji="ðŸŽ¨"
     />
   );
 }
 
-// ─── Video Build Guide ───────────────────────────────────────────────────────
+// â”€â”€â”€ Video Build Guide â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const VIDEO_GUIDE_STEPS = [
   "Choose an AI Video Tool",
@@ -590,7 +639,7 @@ function VideoStepContent({ idx, promptText, platformName }: { idx: number; prom
             { name: "Pika", href: "https://pika.art" },
             { name: "Runway", href: "https://runwayml.com" },
           ].map(t => (
-            <a key={t.name} href={t.href} target="_blank" rel="noreferrer" className="px-3 py-1.5 rounded-full border border-white/15 text-[#e6edf3] text-[12px] font-bold hover:border-[#ffd803]/60 hover:text-[#ffd803] transition-colors flex items-center gap-1">
+            <a key={t.name} href={t.href} target="_blank" rel="noreferrer" className="px-3 py-1.5 rounded-full border border-white/15 text-[#e6edf3] text-[12px] font-bold hover:border-[#4FC3F7]/60 hover:text-[#4FC3F7] transition-colors flex items-center gap-1">
               {t.name} <ExternalLink className="w-3 h-3 opacity-50" />
             </a>
           ))}
@@ -617,10 +666,10 @@ function VideoStepContent({ idx, promptText, platformName }: { idx: number; prom
     case 3: return (
       <div className="space-y-3">
         <p>Copy the prompt and paste it into your AI video tool.</p>
-        <div className="border border-[#ffd803]/30 rounded-xl overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-2 bg-[#ffd803]/8 border-b border-[#ffd803]/20">
-            <span className="text-[11px] text-[#ffd803]/70 uppercase font-bold tracking-widest">{platformName} prompt</span>
-            <button onClick={copyPrompt} className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffd803] text-[#094067] text-[11px] font-bold hover:bg-[#ffd803]/80 transition-colors">
+        <div className="border border-[#4FC3F7]/30 rounded-xl overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2 bg-[#4FC3F7]/8 border-b border-[#4FC3F7]/20">
+            <span className="text-[11px] text-[#4FC3F7]/70 uppercase font-bold tracking-widest">{platformName} prompt</span>
+            <button onClick={copyPrompt} className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#4FC3F7] text-[#0a0a0a] text-[11px] font-bold hover:bg-[#4FC3F7]/80 transition-colors">
               <Copy className="w-3 h-3" /> Copy
             </button>
           </div>
@@ -641,13 +690,13 @@ function VideoStepContent({ idx, promptText, platformName }: { idx: number; prom
         <p>Improve your video with these refinement techniques:</p>
         <div className="space-y-2">
           {[
-            "Adjust camera movement — slow pan, zoom, tracking shot, static",
-            "Change pacing — add 'slow motion' or 'time-lapse' keywords",
-            "Specify lighting — golden hour, dramatic shadows, neon, studio",
-            "Control duration — shorter clips are usually higher quality",
+            "Adjust camera movement â€” slow pan, zoom, tracking shot, static",
+            "Change pacing â€” add 'slow motion' or 'time-lapse' keywords",
+            "Specify lighting â€” golden hour, dramatic shadows, neon, studio",
+            "Control duration â€” shorter clips are usually higher quality",
           ].map((tip, i) => (
             <div key={i} className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-[#ffd803] text-[#0d1117] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">{i + 1}</span>
+              <span className="w-5 h-5 rounded-full bg-[#4FC3F7] text-[#0d1117] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">{i + 1}</span>
               <span className="text-[13px]">{tip}</span>
             </div>
           ))}
@@ -665,12 +714,12 @@ function VideoStepContent({ idx, promptText, platformName }: { idx: number; prom
     );
     case 7: return (
       <div className="space-y-3">
-        <p className="text-[#ffd803] font-semibold">Your AI video is ready to share!</p>
+        <p className="text-[#4FC3F7] font-semibold">Your AI video is ready to share!</p>
         <div className="flex flex-wrap items-center gap-2 text-[12px]">
           {["Instagram Reels", "TikTok", "YouTube Shorts", "Ads", "Presentations", "Website Hero"].map((use, i, arr) => (
             <span key={use} className="flex items-center gap-2">
-              <span className="px-2.5 py-1 rounded-full bg-[#094067] text-white font-semibold">{use}</span>
-              {i < arr.length - 1 && <span className="text-[#094067]/30 font-bold">·</span>}
+              <span className="px-2.5 py-1 rounded-full bg-[#0a0a0a] text-white font-semibold">{use}</span>
+              {i < arr.length - 1 && <span className="text-[#0a0a0a]/30 font-bold">Â·</span>}
             </span>
           ))}
         </div>
@@ -686,12 +735,12 @@ function VideoBuildGuide({ promptText, platformName }: { promptText: string; pla
       steps={VIDEO_GUIDE_STEPS}
       renderContent={(idx) => <VideoStepContent idx={idx} promptText={promptText} platformName={platformName} />}
       doneMessage="Your AI video is ready to share!"
-      doneEmoji="🎬"
+      doneEmoji="ðŸŽ¬"
     />
   );
 }
 
-// ─── Shared Build Guide Component ────────────────────────────────────────────
+// â”€â”€â”€ Shared Build Guide Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
   steps: string[];
@@ -740,7 +789,7 @@ function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
               )}
               <button
                 onClick={() => { setProgress(0); setReviewStep(null); }}
-                className="text-[11px] text-[#8b949e] hover:text-[#ef4565] transition-colors"
+                className="text-[11px] text-[#8b949e] hover:text-[#0a0a0a] transition-colors"
               >
                 Reset
               </button>
@@ -754,7 +803,7 @@ function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
           <div className="absolute bg-white/10" style={{ left: 14, top: 14, bottom: 14, width: 2 }} />
           <motion.div
             className="absolute origin-top"
-            style={{ left: 14, top: 14, bottom: 14, width: 2, background: "linear-gradient(180deg, #3fb950, #ffd803)" }}
+            style={{ left: 14, top: 14, bottom: 14, width: 2, background: "linear-gradient(180deg, #3fb950, #4FC3F7)" }}
             animate={{ scaleY: fillFraction }}
             transition={{ duration: 0.55, ease: "easeOut" }}
           />
@@ -773,14 +822,14 @@ function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
                 >
                   <motion.div
                     animate={status === "active" ? {
-                      boxShadow: ["0 0 0px #ffd803", "0 0 12px #ffd803, 0 0 24px rgba(255,216,3,0.4)", "0 0 0px #ffd803"],
+                      boxShadow: ["0 0 0px #4FC3F7", "0 0 12px #4FC3F7, 0 0 24px rgba(255,216,3,0.4)", "0 0 0px #4FC3F7"],
                     } : isReviewing ? { boxShadow: "0 0 0 3px rgba(63,185,80,0.4)" } : {}}
                     transition={{ duration: 1.8, repeat: status === "active" ? Infinity : 0, ease: "easeInOut" }}
                     className={`w-[28px] h-[28px] rounded-full flex items-center justify-center text-[10px] font-bold border-2 shrink-0 transition-all duration-300 ${
                       status === "completed"
                         ? "bg-[#3fb950] border-[#3fb950] text-white"
                         : status === "active"
-                        ? "bg-[#ffd803] border-[#ffd803] text-[#0d1117]"
+                        ? "bg-[#4FC3F7] border-[#4FC3F7] text-[#0d1117]"
                         : "bg-[#161b22] border-white/10 text-white/20"
                     }`}
                   >
@@ -790,7 +839,7 @@ function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
                   <span
                     className="text-[12px] font-semibold leading-tight select-none"
                     style={{
-                      color: status === "completed" ? "rgba(63,185,80,0.65)" : status === "active" ? "#ffd803" : "rgba(255,255,255,0.18)",
+                      color: status === "completed" ? "rgba(63,185,80,0.65)" : status === "active" ? "#4FC3F7" : "rgba(255,255,255,0.18)",
                       textDecoration: status === "completed" ? "line-through" : "none",
                       textDecorationColor: "rgba(63,185,80,0.45)",
                     }}
@@ -821,7 +870,7 @@ function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
                 <div className="text-[#8b949e] text-[13px]">You've completed all {TOTAL} steps.</div>
                 <button
                   onClick={() => { setProgress(0); setReviewStep(null); }}
-                  className="mt-5 text-[12px] text-[#8b949e] hover:text-[#ef4565] transition-colors underline"
+                  className="mt-5 text-[12px] text-[#8b949e] hover:text-[#0a0a0a] transition-colors underline"
                 >
                   Start over
                 </button>
@@ -846,7 +895,7 @@ function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
                   <div className="flex items-center gap-2 min-w-0">
                     <span
                       className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0"
-                      style={{ background: reviewStep !== null ? "#3fb950" : "#ffd803", color: reviewStep !== null ? "#fff" : "#0d1117" }}
+                      style={{ background: reviewStep !== null ? "#3fb950" : "#4FC3F7", color: reviewStep !== null ? "#fff" : "#0d1117" }}
                     >
                       {reviewStep !== null ? <span className="w-2 h-2 rounded-full bg-current" /> : activeStep + 1}
                     </span>
@@ -877,17 +926,17 @@ function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
                       whileTap={{ scale: 0.97 }}
                       onClick={advance}
                       className="mt-4 flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold"
-                      style={{ background: "#ffd803", color: "#0d1117" }}
+                      style={{ background: "#4FC3F7", color: "#0d1117" }}
                     >
-                      {activeStep < TOTAL - 1 ? "Done — Unlock Next →" : "Complete! 🎉"}
+                      {activeStep < TOTAL - 1 ? "Done â€” Unlock Next â†’" : "Complete! ðŸŽ‰"}
                     </motion.button>
                   )}
                   {reviewStep !== null && (
                     <button
                       onClick={() => setReviewStep(null)}
-                      className="mt-4 text-[12px] text-[#8b949e] hover:text-[#ffd803] transition-colors flex items-center gap-1"
+                      className="mt-4 text-[12px] text-[#8b949e] hover:text-[#4FC3F7] transition-colors flex items-center gap-1"
                     >
-                      ← Back to current step
+                      â† Back to current step
                     </button>
                   )}
                 </div>
@@ -900,30 +949,3 @@ function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
   );
 }
 
-// ─── Highlight ───────────────────────────────────────────────────────────────
-
-function highlight(text: string, varNames: string[]) {
-  if (!text) return text;
-  const parts: (string | JSX.Element)[] = [];
-  const regex = /\[([^\]]+)\]/g;
-  let last = 0;
-  let m: RegExpExecArray | null;
-  let i = 0;
-  while ((m = regex.exec(text)) !== null) {
-    const before = text.slice(last, m.index);
-    if (before) parts.push(before);
-    const isUnfilled = varNames.includes(m[1]);
-    parts.push(
-      <span
-        key={`v-${i++}`}
-        className={isUnfilled ? "bg-[#ffd803] px-1 rounded" : "bg-[#90b4ce]/30 px-1 rounded"}
-      >
-        {m[0]}
-      </span>
-    );
-    last = regex.lastIndex;
-  }
-  const rest = text.slice(last);
-  if (rest) parts.push(rest);
-  return parts;
-}

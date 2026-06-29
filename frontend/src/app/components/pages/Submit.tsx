@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Check, ChevronRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { categories, platforms } from "../theme";
@@ -48,18 +48,18 @@ export function Submit() {
   }
 
   return (
-    <div className="max-w-[900px] mx-auto px-6 py-10 text-[#094067]">
+    <div className="max-w-[900px] mx-auto px-6 py-10 text-[#0a0a0a]">
       <h1 className="text-3xl mb-2">Submit a prompt</h1>
-      <p className="text-[#5f6c7b] mb-6">A guided 6-step wizard. Our editors review before publishing.</p>
+      <p className="text-[#6b7280] mb-6">A guided 6-step wizard. Our editors review before publishing.</p>
 
       {submitted && (
         <div className="mb-6 flex items-center gap-3 bg-[#bce4d8]/30 border border-[#bce4d8] rounded-2xl p-5">
-          <div className="w-9 h-9 rounded-full bg-[#ffd803] border-2 border-[#094067] flex items-center justify-center shrink-0">
-            <Check className="w-5 h-5 text-[#094067]" />
+          <div className="w-9 h-9 rounded-full bg-[#4FC3F7] border-2 border-[#0a0a0a] flex items-center justify-center shrink-0">
+            <Check className="w-5 h-5 text-[#0a0a0a]" />
           </div>
           <div>
-            <div className="font-bold text-[#094067]">Submitted successfully!</div>
-            <div className="text-[#5f6c7b] text-[13px]">Our editors will review your prompt. You'll be notified on approval.</div>
+            <div className="font-bold text-[#0a0a0a]">Submitted successfully!</div>
+            <div className="text-[#6b7280] text-[13px]">Our editors will review your prompt. You'll be notified on approval.</div>
           </div>
         </div>
       )}
@@ -68,28 +68,28 @@ export function Submit() {
         {steps.map((s, i) => (
           <div key={s} className="flex items-center gap-2">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] ${
-              i < step ? "bg-[#ffd803] text-[#094067]" :
-              i === step ? "bg-[#094067]/10 text-[#094067] border border-[#ffd803]" :
-              "bg-[#094067]/5 text-[#5f6c7b]"
+              i < step ? "bg-[#4FC3F7] text-[#0a0a0a]" :
+              i === step ? "bg-[#0a0a0a]/10 text-[#0a0a0a] border border-[#4FC3F7]" :
+              "bg-[#0a0a0a]/5 text-[#6b7280]"
             }`}>
               {i < step ? <Check className="w-4 h-4" /> : i + 1}
             </div>
-            <div className={`${i===step?"text-[#094067]":"text-[#5f6c7b]"} hidden sm:block text-[13px]`}>{s}</div>
-            {i < steps.length - 1 && <ChevronRight className="w-4 h-4 text-[#5f6c7b]" />}
+            <div className={`${i===step?"text-[#0a0a0a]":"text-[#6b7280]"} hidden sm:block text-[13px]`}>{s}</div>
+            {i < steps.length - 1 && <ChevronRight className="w-4 h-4 text-[#6b7280]" />}
           </div>
         ))}
       </div>
 
-      <div className="bg-white border border-[#094067]/15 rounded-2xl p-6 min-h-[320px]">
+      <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-6 min-h-[320px]">
         {step === 0 && (
           <div>
-            <div className="text-[#094067] mb-3" style={{ fontWeight: 600 }}>Pick a category</div>
+            <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 600 }}>Pick a category</div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
               {all.map(c => (
                 <button
                   key={c.name}
                   onClick={() => update("category", c.name)}
-                  className={`p-3 rounded-xl border text-left text-[13px] ${data.category===c.name?"bg-[#ffd803]/10 border-[#ffd803] text-[#094067]":"border-[#094067]/20 text-[#5f6c7b] hover:text-[#094067]"}`}
+                  className={`p-3 rounded-xl border text-left text-[13px] ${data.category===c.name?"bg-[#4FC3F7]/10 border-[#4FC3F7] text-[#0a0a0a]":"border-[#0a0a0a]/20 text-[#6b7280] hover:text-[#0a0a0a]"}`}
                 >
                   {c.name}
                 </button>
@@ -99,13 +99,13 @@ export function Submit() {
         )}
         {step === 1 && (
           <div>
-            <div className="text-[#094067] mb-3" style={{ fontWeight: 600 }}>Pick a primary platform</div>
+            <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 600 }}>Pick a primary platform</div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
               {platforms.map(p => (
                 <button
                   key={p.key}
                   onClick={() => update("platform", p.key)}
-                  className={`p-3 rounded-xl border flex items-center gap-2 text-[13px] ${data.platform===p.key?"bg-[#094067]/10 border-[#094067]/40 text-[#094067]":"border-[#094067]/20 text-[#5f6c7b] hover:text-[#094067]"}`}
+                  className={`p-3 rounded-xl border flex items-center gap-2 text-[13px] ${data.platform===p.key?"bg-[#0a0a0a]/10 border-[#0a0a0a]/40 text-[#0a0a0a]":"border-[#0a0a0a]/20 text-[#6b7280] hover:text-[#0a0a0a]"}`}
                 >
                   <span className="w-3 h-3 rounded-full" style={{background:p.color}} />{p.name}
                 </button>
@@ -115,45 +115,45 @@ export function Submit() {
         )}
         {step === 2 && (
           <div>
-            <div className="text-[#094067] mb-3" style={{ fontWeight: 600 }}>Prompt text</div>
+            <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 600 }}>Prompt text</div>
             <textarea
               rows={8}
               value={data.prompt}
               onChange={e => update("prompt", e.target.value)}
               placeholder="Paste your prompt. Use [bracketed] placeholders for variables."
-              className="w-full p-3 rounded-lg bg-[#f5f5f5] border border-[#094067]/20 text-[#094067] font-mono text-[13px] outline-none focus:border-[#ffd803]"
+              className="w-full p-3 rounded-lg bg-[#f5f5f5] border border-[#0a0a0a]/20 text-[#0a0a0a] font-mono text-[13px] outline-none focus:border-[#4FC3F7]"
             />
           </div>
         )}
         {step === 3 && (
           <div>
-            <div className="text-[#094067] mb-3" style={{ fontWeight: 600 }}>Variables</div>
+            <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 600 }}>Variables</div>
             <input
               value={data.vars}
               onChange={e => update("vars", e.target.value)}
               placeholder="Comma-separated: subject, mood, style"
-              className="w-full h-10 px-3 rounded-lg bg-[#094067]/5 border border-[#094067]/20 text-[#094067] placeholder:text-[#5f6c7b] outline-none focus:border-[#ffd803]"
+              className="w-full h-10 px-3 rounded-lg bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#0a0a0a] placeholder:text-[#6b7280] outline-none focus:border-[#4FC3F7]"
             />
           </div>
         )}
         {step === 4 && (
           <div>
-            <div className="text-[#094067] mb-3" style={{ fontWeight: 600 }}>Example output (optional)</div>
+            <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 600 }}>Example output (optional)</div>
             <input
               value={data.example}
               onChange={e => update("example", e.target.value)}
               placeholder="Image URL or short text sample"
-              className="w-full h-10 px-3 rounded-lg bg-[#094067]/5 border border-[#094067]/20 text-[#094067] placeholder:text-[#5f6c7b] outline-none focus:border-[#ffd803]"
+              className="w-full h-10 px-3 rounded-lg bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#0a0a0a] placeholder:text-[#6b7280] outline-none focus:border-[#4FC3F7]"
             />
           </div>
         )}
         {step === 5 && (
           <div className="space-y-3">
-            <div className="text-[#094067]" style={{ fontWeight: 700 }}>Review & submit</div>
-            <div><span className="text-[#5f6c7b]">Category:</span> <span className="text-[#094067]">{data.category || "—"}</span></div>
-            <div><span className="text-[#5f6c7b]">Platform:</span> <span className="text-[#094067]">{data.platform}</span></div>
-            <div><span className="text-[#5f6c7b]">Variables:</span> <span className="text-[#094067]">{data.vars || "—"}</span></div>
-            <div className="bg-[#f5f5f5] border border-[#094067]/20 rounded-lg p-3 font-mono text-[13px] text-[#094067] whitespace-pre-wrap">{data.prompt || "—"}</div>
+            <div className="text-[#0a0a0a]" style={{ fontWeight: 700 }}>Review & submit</div>
+            <div><span className="text-[#6b7280]">Category:</span> <span className="text-[#0a0a0a]">{data.category || "â€”"}</span></div>
+            <div><span className="text-[#6b7280]">Platform:</span> <span className="text-[#0a0a0a]">{data.platform}</span></div>
+            <div><span className="text-[#6b7280]">Variables:</span> <span className="text-[#0a0a0a]">{data.vars || "â€”"}</span></div>
+            <div className="bg-[#f5f5f5] border border-[#0a0a0a]/20 rounded-lg p-3 font-mono text-[13px] text-[#0a0a0a] whitespace-pre-wrap">{data.prompt || "â€”"}</div>
           </div>
         )}
       </div>
@@ -162,7 +162,7 @@ export function Submit() {
         <button
           disabled={step === 0}
           onClick={() => setStep(s => s - 1)}
-          className="h-10 px-5 rounded-full bg-[#094067]/5 border border-[#094067]/20 text-[#094067] disabled:opacity-40"
+          className="h-10 px-5 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#0a0a0a] disabled:opacity-40"
         >
           Back
         </button>
@@ -173,7 +173,7 @@ export function Submit() {
               if (err) { toast.error(err); return; }
               setStep(s => s + 1);
             }}
-            className="h-10 px-5 rounded-full bg-[#ffd803] text-[#094067]"
+            className="h-10 px-5 rounded-full bg-[#4FC3F7] text-[#0a0a0a]"
             style={{ fontWeight: 700 }}
           >
             Next
@@ -182,10 +182,10 @@ export function Submit() {
           <button
             onClick={handleSubmit}
             disabled={submitting || submitted || !data.prompt.trim()}
-            className="h-10 px-5 rounded-full bg-[#ef4565] text-[#bce4d8] inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-10 px-5 rounded-full bg-[#4FC3F7] text-[#bce4d8] inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ fontWeight: 700 }}
           >
-            {submitting ? <><Loader2 className="w-4 h-4 animate-spin" />Submitting…</> : "Submit for review"}
+            {submitting ? <><Loader2 className="w-4 h-4 animate-spin" />Submittingâ€¦</> : "Submit for review"}
           </button>
         )}
       </div>
