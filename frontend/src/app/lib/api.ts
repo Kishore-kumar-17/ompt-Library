@@ -219,11 +219,27 @@ export interface EngineValidation {
   missingRequiredFields: string[];
 }
 
+export type VariableType = "text" | "color" | "image" | "select";
+
+export interface VariableField {
+  name: string;
+  label: string;
+  type: VariableType;
+  placeholder?: string;
+  options?: string[];
+  // Original phrase this token replaced — pre-fills the input so the prompt reads
+  // complete out-of-the-box (the "Variable Brief" default).
+  default?: string;
+}
+
 export interface EngineLockFields {
   categoryId: string | null;
   categoryLabel: string | null;
   lockSection: LockSectionItem[];
   negativeLocks: string[];
+  // Variable layer: `[TOKEN]` placeholders the user can fill to personalize the
+  // descriptive prompt (locks stay invariant). Empty when none.
+  variables: VariableField[];
   validation: EngineValidation | null;
   // Full canonical output: descriptive prompt + LOCK LAYER + NEGATIVE LOCKS.
   // Falls back to the plain prompt for non-image families.
@@ -273,6 +289,23 @@ export interface ImproverResult extends EngineLockFields {
 export const improverApi = {
   improve: (payload: { prompt: string; platform: string; family?: string }) =>
     apiFetch<ImproverResult>("/api/improver/improve", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+};
+
+// ─── Variable layer — Regenerate with my values (Option B) ───────────────────
+
+export interface ExpandResult extends EngineLockFields {
+  prompt: string;
+  platform: string;
+  family: string;
+  tokensUsed: number;
+}
+
+export const variablesApi = {
+  expand: (payload: { category: string; platform: string; brief: Record<string, string>; title?: string }) =>
+    apiFetch<ExpandResult>("/api/variables/expand", {
       method: "POST",
       body: JSON.stringify(payload),
     }),

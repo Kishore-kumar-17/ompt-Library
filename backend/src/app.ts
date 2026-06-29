@@ -12,6 +12,7 @@ import promptLibraryRouter from "./routes/prompt-library.js";
 import builderRouter from "./routes/builder.js";
 import improverRouter from "./routes/improver.js";
 import engineRouter from "./routes/engine.js";
+import variablesRouter from "./routes/variables.js";
 
 const app = new Hono();
 
@@ -36,6 +37,7 @@ app.route("/api/library", promptLibraryRouter);
 app.route("/api/builder", builderRouter);
 app.route("/api/improver", improverRouter);
 app.route("/api/engine", engineRouter);
+app.route("/api/variables", variablesRouter);
 
 app.get("/health", (c) => c.json({ status: "ok", ts: new Date().toISOString() }));
 

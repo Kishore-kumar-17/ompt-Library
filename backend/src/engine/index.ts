@@ -12,6 +12,7 @@
 import { resolveCategoryId, getCategoryLabel } from "./categories.js";
 import { getCategoryEngine } from "./registry.js";
 import { assemblePromptResult } from "./assembler.js";
+import { extractVariables } from "./variables.js";
 import { validateExtractedFields } from "./validator.js";
 import { getEnginePromptById, searchEnginePrompts } from "./db-source.js";
 import { PLATFORM_IDS } from "./types.js";
@@ -143,6 +144,7 @@ export function assembleFromRecord(
     platformPromptText,
     lockSection: [],
     negativeLockSection: [],
+    variables: extractVariables(platformPromptText),
     validation: {
       valid: true,
       warnings: [

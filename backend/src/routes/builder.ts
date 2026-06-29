@@ -92,6 +92,8 @@ CORE RULES:
 
 CRITICAL — DO NOT output any lock block. No "**LOCKS — …**", no "**GEOMETRY/ORIENTATION/FRAMING/LIGHT/MATERIAL:**" headers, no ":: GEOMETRY/ORIENTATION" segments, no "X LOCK:" lines. Write ONLY the descriptive prompt (shot, subject, composition, camera, grade, palette, references, exclude). A standardized lock layer + negative locks are appended automatically by the system afterward.
 
+VARIABLE LAYER (image prompts) — mark genuinely swappable content with [TOKEN] placeholders in UPPER_SNAKE brackets so the user can personalize the prompt. Use these canonical tokens when they apply: [BRAND], [PRODUCT], [COLOR], [TAGLINE], [SUBJECT], [MODEL], [LOCATION], [GARMENT], [STYLE], [THEME], [TEXT]. Only bracket nouns the user would realistically change (the brand, the product, the accent color, the subject) — never bracket structural or compositional wording, camera specs, or palette hex values. Use at most ~4 tokens. If nothing is swappable, use none.
+
 For VIDEO prompts, write rich cinematic descriptions with:
 - Camera movement (dolly, crane, steadicam, etc.)
 - Lighting setup and mood
@@ -174,6 +176,7 @@ IMPORTANT: Output ONLY the final prompt text. No explanations, no markdown code 
       categoryLabel: locks?.categoryLabel ?? null,
       lockSection: locks?.lockSection ?? [],
       negativeLocks: locks?.negativeLockSection ?? [],
+      variables: locks?.variables ?? [],
       validation: locks?.validation ?? null,
       finalAssembledText: locks?.finalAssembledText ?? text.trim(),
     });

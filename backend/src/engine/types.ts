@@ -33,6 +33,24 @@ export interface PromptVariable {
   placeholder?: string;
 }
 
+// ─── Variable layer ──────────────────────────────────────────────────────────
+export type VariableType = "text" | "color" | "image" | "select";
+
+export interface VariableField {
+  /** Token name without brackets, e.g. "BRAND" (matches `[BRAND]` in the text). */
+  name: string;
+  /** Human label for the input, e.g. "Brand". */
+  label: string;
+  type: VariableType;
+  /** Input placeholder / example value. */
+  placeholder?: string;
+  /** Allowed options for `select` type. */
+  options?: string[];
+  /** Original phrase this token replaced — pre-fills the input so the prompt reads
+   *  complete out-of-the-box (the "Variable Brief" default). */
+  default?: string;
+}
+
 export interface PromptRecord {
   id: string;
   slug?: string;
@@ -147,6 +165,9 @@ export interface AssembledPromptResult {
   platformPromptText: string;
   lockSection: LockSectionItem[];
   negativeLockSection: string[];
+  // Variable layer: `[TOKEN]` placeholders detected in the descriptive prompt that
+  // the user can fill in to personalize it (locks stay invariant). Empty when none.
+  variables: VariableField[];
   validation: ValidationResult;
   finalAssembledText: string;
 }
