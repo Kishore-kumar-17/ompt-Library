@@ -38,3 +38,6 @@ frontend/public/previews/**/*
 /Prompt library/
 /DISTRICTS/
 /WhatsApp Image*.jpeg
+
+# Frontend is pnpm-only; avoid npm lockfile ambiguity on Vercel
+frontend/package-lock.json
