@@ -22,7 +22,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image1.jpeg",
+    "image": "/images/image1.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -47,7 +47,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image2.jpeg",
+    "image": "/images/image2.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -72,7 +72,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image3.jpeg",
+    "image": "/images/image3.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -97,7 +97,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image4.jpeg",
+    "image": "/images/image4.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -122,7 +122,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image5.jpeg",
+    "image": "/images/image5.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -147,7 +147,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image6.jpeg",
+    "image": "/images/image6.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -172,7 +172,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image7.jpeg",
+    "image": "/images/image7.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -197,7 +197,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image8.jpeg",
+    "image": "/images/image8.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -222,7 +222,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image9.jpeg",
+    "image": "/images/image9.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -247,7 +247,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image10.jpeg",
+    "image": "/images/image10.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -272,7 +272,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image11.jpeg",
+    "image": "/images/image11.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -297,7 +297,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image12.jpeg",
+    "image": "/images/image12.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -322,7 +322,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image13.jpeg",
+    "image": "/images/image13.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -347,7 +347,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image14.jpeg",
+    "image": "/images/image14.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -372,7 +372,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image15.jpeg",
+    "image": "/images/image15.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -397,7 +397,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image16.jpeg",
+    "image": "/images/image16.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -422,7 +422,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image17.jpeg",
+    "image": "/images/image17.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -447,7 +447,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image18.jpeg",
+    "image": "/images/image18.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -472,7 +472,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image19.jpeg",
+    "image": "/images/image19.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -497,7 +497,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image20.jpeg",
+    "image": "/images/image20.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -522,7 +522,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image21.jpeg",
+    "image": "/images/image21.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -547,7 +547,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image22.jpeg",
+    "image": "/images/image22.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -572,7 +572,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image23.jpeg",
+    "image": "/images/image23.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -597,7 +597,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image24.jpeg",
+    "image": "/images/image24.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -647,7 +647,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image26.jpeg",
+    "image": "/images/image26.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -672,7 +672,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image27.jpeg",
+    "image": "/images/image27.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -697,7 +697,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image28.jpeg",
+    "image": "/images/image28.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -747,7 +747,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image30.jpeg",
+    "image": "/images/image30.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -772,7 +772,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image31.jpeg",
+    "image": "/images/image31.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -797,7 +797,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image32.jpeg",
+    "image": "/images/image32.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -822,7 +822,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image33.jpeg",
+    "image": "/images/image33.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -847,7 +847,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image34.jpeg",
+    "image": "/images/image34.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -872,7 +872,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image35.jpeg",
+    "image": "/images/image35.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -897,7 +897,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image36.jpeg",
+    "image": "/images/image36.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -922,7 +922,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image37.jpeg",
+    "image": "/images/image37.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -947,7 +947,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image38.jpeg",
+    "image": "/images/image38.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -972,7 +972,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image39.jpeg",
+    "image": "/images/image39.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -997,7 +997,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image40.jpeg",
+    "image": "/images/image40.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1022,7 +1022,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image41.jpeg",
+    "image": "/images/image41.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1047,7 +1047,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image42.jpeg",
+    "image": "/images/image42.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1072,7 +1072,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image43.jpeg",
+    "image": "/images/image43.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1097,7 +1097,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image44.jpeg",
+    "image": "/images/image44.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1122,7 +1122,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image45.jpeg",
+    "image": "/images/image45.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1147,7 +1147,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image46.jpeg",
+    "image": "/images/image46.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1172,7 +1172,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image47.jpeg",
+    "image": "/images/image47.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1197,7 +1197,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image48.jpeg",
+    "image": "/images/image48.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1222,7 +1222,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image49.jpeg",
+    "image": "/images/image49.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1247,7 +1247,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image50.jpeg",
+    "image": "/images/image50.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1272,7 +1272,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image51.jpeg",
+    "image": "/images/image51.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1297,7 +1297,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image52.jpeg",
+    "image": "/images/image52.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1322,7 +1322,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image53.jpeg",
+    "image": "/images/image53.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1347,7 +1347,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image54.jpeg",
+    "image": "/images/image54.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1372,7 +1372,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image55.jpeg",
+    "image": "/images/image55.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1397,7 +1397,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image56.jpeg",
+    "image": "/images/image56.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1422,7 +1422,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image57.jpeg",
+    "image": "/images/image57.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1447,7 +1447,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image58.jpeg",
+    "image": "/images/image58.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1472,7 +1472,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image59.jpeg",
+    "image": "/images/image59.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1497,7 +1497,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image60.jpeg",
+    "image": "/images/image60.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1522,7 +1522,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image61.jpeg",
+    "image": "/images/image61.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1547,7 +1547,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image62.jpeg",
+    "image": "/images/image62.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1572,7 +1572,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image63.jpeg",
+    "image": "/images/image63.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1597,7 +1597,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image64.jpeg",
+    "image": "/images/image64.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1622,7 +1622,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image65.jpeg",
+    "image": "/images/image65.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1647,7 +1647,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image66.jpeg",
+    "image": "/images/image66.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1672,7 +1672,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image67.jpeg",
+    "image": "/images/image67.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1697,7 +1697,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image68.jpeg",
+    "image": "/images/image68.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1722,7 +1722,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image69.jpeg",
+    "image": "/images/image69.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1747,7 +1747,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image70.jpeg",
+    "image": "/images/image70.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1772,7 +1772,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image71.jpeg",
+    "image": "/images/image71.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1797,7 +1797,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image72.jpeg",
+    "image": "/images/image72.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1822,7 +1822,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image73.jpeg",
+    "image": "/images/image73.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1847,7 +1847,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image74.jpeg",
+    "image": "/images/image74.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1872,7 +1872,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image75.jpeg",
+    "image": "/images/image75.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1897,7 +1897,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image76.jpeg",
+    "image": "/images/image76.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1922,7 +1922,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image77.jpeg",
+    "image": "/images/image77.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1947,7 +1947,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image78.jpeg",
+    "image": "/images/image78.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1972,7 +1972,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image79.jpeg",
+    "image": "/images/image79.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -1997,7 +1997,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image80.jpeg",
+    "image": "/images/image80.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2022,7 +2022,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image81.jpeg",
+    "image": "/images/image81.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2047,7 +2047,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image82.jpeg",
+    "image": "/images/image82.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2072,7 +2072,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image83.jpeg",
+    "image": "/images/image83.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2097,7 +2097,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image84.jpeg",
+    "image": "/images/image84.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2122,7 +2122,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image85.jpeg",
+    "image": "/images/image85.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2147,7 +2147,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image86.jpeg",
+    "image": "/images/image86.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2172,7 +2172,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image87.jpeg",
+    "image": "/images/image87.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2197,7 +2197,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image88.jpeg",
+    "image": "/images/image88.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2222,7 +2222,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image89.jpeg",
+    "image": "/images/image89.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2247,7 +2247,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image90.jpeg",
+    "image": "/images/image90.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2272,7 +2272,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image91.jpeg",
+    "image": "/images/image91.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2297,7 +2297,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image92.jpeg",
+    "image": "/images/image92.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2322,7 +2322,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image93.jpeg",
+    "image": "/images/image93.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2347,7 +2347,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image94.jpeg",
+    "image": "/images/image94.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2372,7 +2372,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image95.jpeg",
+    "image": "/images/image95.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2397,7 +2397,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image96.jpeg",
+    "image": "/images/image96.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2422,7 +2422,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image97.jpeg",
+    "image": "/images/image97.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2447,7 +2447,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image98.jpeg",
+    "image": "/images/image98.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2472,7 +2472,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image99.jpeg",
+    "image": "/images/image99.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2497,7 +2497,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image100.jpeg",
+    "image": "/images/image100.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2522,7 +2522,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image101.jpeg",
+    "image": "/images/image101.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2547,7 +2547,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image102.jpeg",
+    "image": "/images/image102.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2572,7 +2572,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image103.jpeg",
+    "image": "/images/image103.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2597,7 +2597,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image104.jpeg",
+    "image": "/images/image104.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2622,7 +2622,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image105.jpeg",
+    "image": "/images/image105.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2647,7 +2647,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image106.jpeg",
+    "image": "/images/image106.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2672,7 +2672,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image107.jpeg",
+    "image": "/images/image107.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2697,7 +2697,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image108.jpeg",
+    "image": "/images/image108.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2722,7 +2722,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image109.jpeg",
+    "image": "/images/image109.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2747,7 +2747,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image110.jpeg",
+    "image": "/images/image110.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2772,7 +2772,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image111.jpeg",
+    "image": "/images/image111.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2797,7 +2797,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image112.jpeg",
+    "image": "/images/image112.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2822,7 +2822,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image113.jpeg",
+    "image": "/images/image113.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2847,7 +2847,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image114.jpeg",
+    "image": "/images/image114.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2872,7 +2872,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image115.jpeg",
+    "image": "/images/image115.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2897,7 +2897,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image116.jpeg",
+    "image": "/images/image116.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2922,7 +2922,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image117.jpeg",
+    "image": "/images/image117.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2947,7 +2947,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image118.jpeg",
+    "image": "/images/image118.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2972,7 +2972,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image119.jpeg",
+    "image": "/images/image119.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -2997,7 +2997,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image120.jpeg",
+    "image": "/images/image120.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3022,7 +3022,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image121.jpeg",
+    "image": "/images/image121.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3047,7 +3047,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image122.jpeg",
+    "image": "/images/image122.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3072,7 +3072,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image123.jpeg",
+    "image": "/images/image123.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3097,7 +3097,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image124.jpeg",
+    "image": "/images/image124.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3122,7 +3122,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image125.jpeg",
+    "image": "/images/image125.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3147,7 +3147,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image126.jpeg",
+    "image": "/images/image126.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3172,7 +3172,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image127.jpeg",
+    "image": "/images/image127.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3197,7 +3197,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image128.jpeg",
+    "image": "/images/image128.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3222,7 +3222,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image129.jpeg",
+    "image": "/images/image129.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3247,7 +3247,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image130.jpeg",
+    "image": "/images/image130.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3272,7 +3272,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image131.jpeg",
+    "image": "/images/image131.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3297,7 +3297,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image132.jpeg",
+    "image": "/images/image132.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3322,7 +3322,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image133.jpeg",
+    "image": "/images/image133.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3347,7 +3347,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image134.jpeg",
+    "image": "/images/image134.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3372,7 +3372,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image135.jpeg",
+    "image": "/images/image135.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3397,7 +3397,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image136.jpeg",
+    "image": "/images/image136.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3422,7 +3422,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image137.jpeg",
+    "image": "/images/image137.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3447,7 +3447,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image138.jpeg",
+    "image": "/images/image138.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3472,7 +3472,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image139.jpeg",
+    "image": "/images/image139.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3497,7 +3497,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image140.jpeg",
+    "image": "/images/image140.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3522,7 +3522,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image141.jpeg",
+    "image": "/images/image141.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3547,7 +3547,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image142.jpeg",
+    "image": "/images/image142.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3572,7 +3572,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image143.jpeg",
+    "image": "/images/image143.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3597,7 +3597,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image144.jpeg",
+    "image": "/images/image144.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3622,7 +3622,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image145.jpeg",
+    "image": "/images/image145.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3647,7 +3647,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image146.jpeg",
+    "image": "/images/image146.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3672,7 +3672,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image147.jpeg",
+    "image": "/images/image147.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3697,7 +3697,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image148.jpeg",
+    "image": "/images/image148.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3722,7 +3722,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image149.jpeg",
+    "image": "/images/image149.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3747,7 +3747,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image150.jpeg",
+    "image": "/images/image150.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3772,7 +3772,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image151.jpeg",
+    "image": "/images/image151.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3797,7 +3797,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image152.jpeg",
+    "image": "/images/image152.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3822,7 +3822,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image153.jpeg",
+    "image": "/images/image153.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3847,7 +3847,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image154.jpeg",
+    "image": "/images/image154.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3872,7 +3872,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image155.jpeg",
+    "image": "/images/image155.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3897,7 +3897,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image156.jpeg",
+    "image": "/images/image156.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3922,7 +3922,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image157.jpeg",
+    "image": "/images/image157.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3947,7 +3947,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image158.jpeg",
+    "image": "/images/image158.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3972,7 +3972,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image159.jpeg",
+    "image": "/images/image159.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -3997,7 +3997,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image160.jpeg",
+    "image": "/images/image160.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4022,7 +4022,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image161.jpeg",
+    "image": "/images/image161.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4047,7 +4047,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image162.jpeg",
+    "image": "/images/image162.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4072,7 +4072,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image163.jpeg",
+    "image": "/images/image163.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4097,7 +4097,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image164.jpeg",
+    "image": "/images/image164.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4122,7 +4122,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image165.jpeg",
+    "image": "/images/image165.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4147,7 +4147,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image166.jpeg",
+    "image": "/images/image166.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4172,7 +4172,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image167.jpeg",
+    "image": "/images/image167.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4247,7 +4247,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image168.jpeg",
+    "image": "/images/image168.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4272,7 +4272,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image169.jpeg",
+    "image": "/images/image169.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4297,7 +4297,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image170.jpeg",
+    "image": "/images/image170.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4322,7 +4322,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image171.jpeg",
+    "image": "/images/image171.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4347,7 +4347,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image172.jpeg",
+    "image": "/images/image172.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4372,7 +4372,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image173.jpeg",
+    "image": "/images/image173.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4397,7 +4397,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image174.jpeg",
+    "image": "/images/image174.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4422,7 +4422,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image175.jpeg",
+    "image": "/images/image175.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4447,7 +4447,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image176.jpeg",
+    "image": "/images/image176.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4472,7 +4472,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image177.jpeg",
+    "image": "/images/image177.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4497,7 +4497,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image178.jpeg",
+    "image": "/images/image178.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4522,7 +4522,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image179.jpeg",
+    "image": "/images/image179.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4547,7 +4547,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image180.jpeg",
+    "image": "/images/image180.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4572,7 +4572,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image181.jpeg",
+    "image": "/images/image181.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4597,7 +4597,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image182.jpeg",
+    "image": "/images/image182.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4622,7 +4622,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image183.jpeg",
+    "image": "/images/image183.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4647,7 +4647,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image184.jpeg",
+    "image": "/images/image184.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4672,7 +4672,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image185.jpeg",
+    "image": "/images/image185.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4697,7 +4697,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image186.jpeg",
+    "image": "/images/image186.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4722,7 +4722,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image187.jpeg",
+    "image": "/images/image187.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4747,7 +4747,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image188.jpeg",
+    "image": "/images/image188.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4772,7 +4772,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image189.jpeg",
+    "image": "/images/image189.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4797,7 +4797,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image190.jpeg",
+    "image": "/images/image190.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4822,7 +4822,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image191.jpeg",
+    "image": "/images/image191.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4847,7 +4847,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image192.jpeg",
+    "image": "/images/image192.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4872,7 +4872,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image193.jpeg",
+    "image": "/images/image193.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4897,7 +4897,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image194.jpeg",
+    "image": "/images/image194.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4922,7 +4922,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image195.jpeg",
+    "image": "/images/image195.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4947,7 +4947,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image196.jpeg",
+    "image": "/images/image196.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4972,7 +4972,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image197.jpeg",
+    "image": "/images/image197.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4997,7 +4997,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image198.jpeg",
+    "image": "/images/image198.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5022,7 +5022,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image299.jpeg",
+    "image": "/images/image299.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5047,7 +5047,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image300.jpeg",
+    "image": "/images/image300.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5072,7 +5072,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image301.jpeg",
+    "image": "/images/image301.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5097,7 +5097,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image302.jpeg",
+    "image": "/images/image302.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5122,7 +5122,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image303.jpeg",
+    "image": "/images/image303.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5147,7 +5147,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image304.jpeg",
+    "image": "/images/image304.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5172,7 +5172,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image305.jpeg",
+    "image": "/images/image305.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5197,7 +5197,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image306.jpeg",
+    "image": "/images/image306.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5222,7 +5222,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image307.jpeg",
+    "image": "/images/image307.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5247,7 +5247,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image308.jpeg",
+    "image": "/images/image308.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5272,7 +5272,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image309.jpeg",
+    "image": "/images/image309.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5297,7 +5297,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image310.jpeg",
+    "image": "/images/image310.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5322,7 +5322,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image311.jpeg",
+    "image": "/images/image311.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5347,7 +5347,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image312.jpeg",
+    "image": "/images/image312.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5372,7 +5372,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image313.jpeg",
+    "image": "/images/image313.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5397,7 +5397,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image314.jpeg",
+    "image": "/images/image314.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5422,7 +5422,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image315.jpeg",
+    "image": "/images/image315.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5447,7 +5447,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image316.jpeg",
+    "image": "/images/image316.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5472,7 +5472,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image317.jpeg",
+    "image": "/images/image317.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5497,7 +5497,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image318.jpeg",
+    "image": "/images/image318.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5522,7 +5522,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image319.jpeg",
+    "image": "/images/image319.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5547,7 +5547,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image320.jpeg",
+    "image": "/images/image320.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5572,7 +5572,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image321.jpeg",
+    "image": "/images/image321.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5597,7 +5597,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image322.jpeg",
+    "image": "/images/image322.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5622,7 +5622,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image323.jpeg",
+    "image": "/images/image323.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5647,7 +5647,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image324.jpeg",
+    "image": "/images/image324.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5672,7 +5672,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image325.jpeg",
+    "image": "/images/image325.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5697,7 +5697,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image326.jpeg",
+    "image": "/images/image326.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5722,7 +5722,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image327.jpeg",
+    "image": "/images/image327.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5747,7 +5747,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image328.jpeg",
+    "image": "/images/image328.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5772,7 +5772,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image329.jpeg",
+    "image": "/images/image329.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5797,7 +5797,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image330.jpeg",
+    "image": "/images/image330.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5822,7 +5822,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image331.jpeg",
+    "image": "/images/image331.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5847,7 +5847,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image332.jpeg",
+    "image": "/images/image332.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5872,7 +5872,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image333.jpeg",
+    "image": "/images/image333.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5897,7 +5897,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image334.jpeg",
+    "image": "/images/image334.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5922,7 +5922,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image335.jpeg",
+    "image": "/images/image335.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5947,7 +5947,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image336.jpeg",
+    "image": "/images/image336.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5972,7 +5972,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image337.jpeg",
+    "image": "/images/image337.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -5997,7 +5997,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image338.jpeg",
+    "image": "/images/image338.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6022,7 +6022,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image339.jpeg",
+    "image": "/images/image339.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6072,7 +6072,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image341.jpeg",
+    "image": "/images/image341.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6097,7 +6097,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image342.jpeg",
+    "image": "/images/image342.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6122,7 +6122,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image343.jpeg",
+    "image": "/images/image343.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6272,7 +6272,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image199.jpeg",
+    "image": "/images/image199.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6297,7 +6297,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image200.jpeg",
+    "image": "/images/image200.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6322,7 +6322,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image201.jpeg",
+    "image": "/images/image201.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6347,7 +6347,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image202.jpeg",
+    "image": "/images/image202.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6372,7 +6372,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image203.jpeg",
+    "image": "/images/image203.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6397,7 +6397,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image204.jpeg",
+    "image": "/images/image204.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6422,7 +6422,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image205.jpeg",
+    "image": "/images/image205.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6447,7 +6447,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image206.jpeg",
+    "image": "/images/image206.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6472,7 +6472,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image207.jpeg",
+    "image": "/images/image207.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6497,7 +6497,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image208.jpeg",
+    "image": "/images/image208.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6522,7 +6522,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image209.jpeg",
+    "image": "/images/image209.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6547,7 +6547,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image210.jpeg",
+    "image": "/images/image210.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6572,7 +6572,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image211.jpeg",
+    "image": "/images/image211.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6597,7 +6597,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image212.jpeg",
+    "image": "/images/image212.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6622,7 +6622,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image213.jpeg",
+    "image": "/images/image213.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6647,7 +6647,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image214.jpeg",
+    "image": "/images/image214.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6672,7 +6672,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image215.jpeg",
+    "image": "/images/image215.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6697,7 +6697,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image216.jpeg",
+    "image": "/images/image216.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6722,7 +6722,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image217.jpeg",
+    "image": "/images/image217.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6747,7 +6747,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image218.jpeg",
+    "image": "/images/image218.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6772,7 +6772,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image219.jpeg",
+    "image": "/images/image219.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6797,7 +6797,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image220.jpeg",
+    "image": "/images/image220.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6822,7 +6822,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image221.jpeg",
+    "image": "/images/image221.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6847,7 +6847,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image222.jpeg",
+    "image": "/images/image222.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6872,7 +6872,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image223.jpeg",
+    "image": "/images/image223.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6897,7 +6897,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image224.jpeg",
+    "image": "/images/image224.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6922,7 +6922,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image225.jpeg",
+    "image": "/images/image225.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6947,7 +6947,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image226.jpeg",
+    "image": "/images/image226.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6972,7 +6972,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image227.jpeg",
+    "image": "/images/image227.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6997,7 +6997,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image228.jpeg",
+    "image": "/images/image228.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7022,7 +7022,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image229.jpeg",
+    "image": "/images/image229.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7047,7 +7047,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image230.jpeg",
+    "image": "/images/image230.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7072,7 +7072,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image231.jpeg",
+    "image": "/images/image231.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7097,7 +7097,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image232.jpeg",
+    "image": "/images/image232.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7122,7 +7122,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image233.jpeg",
+    "image": "/images/image233.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7147,7 +7147,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image234.jpeg",
+    "image": "/images/image234.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7172,7 +7172,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image235.jpeg",
+    "image": "/images/image235.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7197,7 +7197,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image236.jpeg",
+    "image": "/images/image236.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7222,7 +7222,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image237.jpeg",
+    "image": "/images/image237.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7247,7 +7247,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image238.jpeg",
+    "image": "/images/image238.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7272,7 +7272,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image239.jpeg",
+    "image": "/images/image239.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7297,7 +7297,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image240.jpeg",
+    "image": "/images/image240.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7322,7 +7322,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image241.jpeg",
+    "image": "/images/image241.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7347,7 +7347,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image242.jpeg",
+    "image": "/images/image242.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7372,7 +7372,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image243.jpeg",
+    "image": "/images/image243.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7397,7 +7397,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image244.jpeg",
+    "image": "/images/image244.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7422,7 +7422,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image245.jpeg",
+    "image": "/images/image245.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7447,7 +7447,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image246.jpeg",
+    "image": "/images/image246.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7472,7 +7472,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image247.jpeg",
+    "image": "/images/image247.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7497,7 +7497,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image248.jpeg",
+    "image": "/images/image248.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7522,7 +7522,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image249.jpeg",
+    "image": "/images/image249.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7547,7 +7547,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image250.jpeg",
+    "image": "/images/image250.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7572,7 +7572,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image251.jpeg",
+    "image": "/images/image251.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7597,7 +7597,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image252.jpeg",
+    "image": "/images/image252.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7622,7 +7622,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image253.jpeg",
+    "image": "/images/image253.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7647,7 +7647,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image254.jpeg",
+    "image": "/images/image254.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7672,7 +7672,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image255.jpeg",
+    "image": "/images/image255.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7697,7 +7697,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image256.jpeg",
+    "image": "/images/image256.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7722,7 +7722,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image257.jpeg",
+    "image": "/images/image257.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7747,7 +7747,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image258.jpeg",
+    "image": "/images/image258.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7772,7 +7772,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image259.jpeg",
+    "image": "/images/image259.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7797,7 +7797,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image260.jpeg",
+    "image": "/images/image260.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7822,7 +7822,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image261.jpeg",
+    "image": "/images/image261.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7847,7 +7847,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image262.jpeg",
+    "image": "/images/image262.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7872,7 +7872,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image263.jpeg",
+    "image": "/images/image263.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7897,7 +7897,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image264.jpeg",
+    "image": "/images/image264.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7922,7 +7922,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image265.jpeg",
+    "image": "/images/image265.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7947,7 +7947,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image266.jpeg",
+    "image": "/images/image266.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7972,7 +7972,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image267.jpeg",
+    "image": "/images/image267.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -7997,7 +7997,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image268.jpeg",
+    "image": "/images/image268.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8022,7 +8022,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image269.jpeg",
+    "image": "/images/image269.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8047,7 +8047,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image270.jpeg",
+    "image": "/images/image270.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8072,7 +8072,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image271.jpeg",
+    "image": "/images/image271.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8097,7 +8097,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image272.jpeg",
+    "image": "/images/image272.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8122,7 +8122,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image273.jpeg",
+    "image": "/images/image273.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8147,7 +8147,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image274.jpeg",
+    "image": "/images/image274.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8172,7 +8172,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image275.jpeg",
+    "image": "/images/image275.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8197,7 +8197,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image276.jpeg",
+    "image": "/images/image276.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8222,7 +8222,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image277.jpeg",
+    "image": "/images/image277.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8247,7 +8247,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image278.jpeg",
+    "image": "/images/image278.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8272,7 +8272,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image279.jpeg",
+    "image": "/images/image279.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8297,7 +8297,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image280.jpeg",
+    "image": "/images/image280.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8322,7 +8322,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image281.jpeg",
+    "image": "/images/image281.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8347,7 +8347,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image282.jpeg",
+    "image": "/images/image282.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8372,7 +8372,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image283.jpeg",
+    "image": "/images/image283.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8397,7 +8397,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image284.jpeg",
+    "image": "/images/image284.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8422,7 +8422,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image285.jpeg",
+    "image": "/images/image285.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8447,7 +8447,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image286.jpeg",
+    "image": "/images/image286.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8472,7 +8472,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image287.jpeg",
+    "image": "/images/image287.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8497,7 +8497,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image288.jpeg",
+    "image": "/images/image288.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8522,7 +8522,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image289.jpeg",
+    "image": "/images/image289.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8547,7 +8547,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image290.jpeg",
+    "image": "/images/image290.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8572,7 +8572,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image291.jpeg",
+    "image": "/images/image291.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8597,7 +8597,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image292.jpeg",
+    "image": "/images/image292.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8622,7 +8622,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image293.jpeg",
+    "image": "/images/image293.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8647,7 +8647,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image294.jpeg",
+    "image": "/images/image294.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8672,7 +8672,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image295.jpeg",
+    "image": "/images/image295.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8697,7 +8697,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image296.jpeg",
+    "image": "/images/image296.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8722,7 +8722,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image297.jpeg",
+    "image": "/images/image297.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -8747,7 +8747,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "/images/image298.jpeg",
+    "image": "/images/image298.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}

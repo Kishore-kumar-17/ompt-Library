@@ -33,3 +33,8 @@ generated_website_platforms.ts
 # Only keep the thumbnail screenshots
 frontend/public/previews/**/*
 !frontend/public/previews/**/thumb.jpg
+
+# Local scratch source assets (not for repo)
+/Prompt library/
+/DISTRICTS/
+/WhatsApp Image*.jpeg
