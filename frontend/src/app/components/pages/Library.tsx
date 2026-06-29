@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+﻿import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   LayoutGrid, List, Star, Copy, X,
@@ -23,7 +23,7 @@ const FEATURED_IMAGE_IDS = [
   "1","205","20","60","280","110","45","300",
 ];
 
-// ─── Featured Thumbnail ──────────────────────────────────────────────────────
+// â”€â”€â”€ Featured Thumbnail â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function FeaturedThumb({ design, onClick }: { design: typeof websiteDesigns[0]; onClick: () => void }) {
   const [thumbErr, setThumbErr] = useState(false);
@@ -34,7 +34,7 @@ function FeaturedThumb({ design, onClick }: { design: typeof websiteDesigns[0]; 
       onClick={onClick}
       whileHover={{ y: -3, scale: 1.02 }}
       transition={{ type: "spring", stiffness: 300, damping: 24 }}
-      className="rounded-xl overflow-hidden border border-[#094067]/10 bg-white text-left group"
+      className="rounded-xl overflow-hidden border border-[#0a0a0a]/10 bg-white text-left group"
     >
       <div className="w-full aspect-[16/10] bg-[#f5f5f5] overflow-hidden relative">
         {!thumbErr ? (
@@ -54,19 +54,19 @@ function FeaturedThumb({ design, onClick }: { design: typeof websiteDesigns[0]; 
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2.5">
           <span className="text-white text-[11px] flex items-center gap-1" style={{ fontWeight: 600 }}>
-            View Details →
+            View Details â†’
           </span>
         </div>
       </div>
       <div className="px-2.5 py-2">
-        <div className="text-[#094067] text-[12px] truncate" style={{ fontWeight: 700 }}>{design.title}</div>
-        <div className="text-[#5f6c7b] text-[10px] truncate mt-0.5">{design.category}</div>
+        <div className="text-[#0a0a0a] text-[12px] truncate" style={{ fontWeight: 700 }}>{design.title}</div>
+        <div className="text-[#6b7280] text-[10px] truncate mt-0.5">{design.category}</div>
       </div>
     </motion.button>
   );
 }
 
-// ─── Masonry Image Card (Pinterest-style) ────────────────────────────────────
+// â”€â”€â”€ Masonry Image Card (Pinterest-style) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
   const [loaded, setLoaded] = useState(false);
@@ -83,7 +83,7 @@ function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
       whileHover={{ y: -6 }}
       whileTap={{ scale: 0.97 }}
       transition={{ type: "spring", stiffness: 300, damping: 24 }}
-      className="break-inside-avoid rounded-[20px] overflow-hidden cursor-pointer relative group"
+      className="break-inside-avoid mb-4 rounded-[20px] overflow-hidden cursor-pointer relative group"
       style={{
         background: "#fff",
         boxShadow: hovered
@@ -108,7 +108,7 @@ function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
           </div>
         )}
 
-        {/* Hover overlay — smooth gradient reveal */}
+        {/* Hover overlay â€” smooth gradient reveal */}
         <motion.div
           className="absolute inset-0 flex flex-col justify-end"
           initial={false}
@@ -122,7 +122,7 @@ function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
           </div>
         </motion.div>
 
-        {/* Save button — top right on hover */}
+        {/* Save button â€” top right on hover */}
         <motion.div
           className="absolute top-2.5 right-2.5"
           initial={false}
@@ -139,27 +139,21 @@ function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
           </button>
         </motion.div>
       </div>
-
-      {/* Title + category below */}
-      <div className="px-3.5 py-3">
-        <div className="text-[#0a0a0a] text-[13px] line-clamp-1" style={{ fontWeight: 600 }}>{p.title}</div>
-        <div className="text-[#94a3b8] text-[11px] mt-0.5">{p.subCategory || p.category}</div>
-      </div>
     </motion.div>
   );
 }
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface CategoryRow { category: string; count: number }
 
-// Map API prompt → PromptCard-compatible shape
+// Map API prompt â†’ PromptCard-compatible shape
 function toCardItem(p: LibraryPrompt) {
   return {
     id:       String(p.id),
     slug:     p.slug,
     title:    p.title,
-    description: p.base_prompt.slice(0, 120) + (p.base_prompt.length > 120 ? "…" : ""),
+    description: p.base_prompt.slice(0, 120) + (p.base_prompt.length > 120 ? "â€¦" : ""),
     category: p.category,
     family:   "image" as const,
     tags:     p.tags,
@@ -174,7 +168,7 @@ function toCardItem(p: LibraryPrompt) {
   };
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function Library({ go, family }: { go: (p: string) => void; family?: Family | null }) {
   const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
@@ -196,17 +190,17 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
 
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ── Load categories once ──────────────────────────────────────────────────
+  // â”€â”€ Load categories once â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     libraryApi.categories()
       .then(setCategories)
       .catch(() => setUseFallback(true));
   }, []);
 
-  // ── Reset filters when family changes ────────────────────────────────────
+  // â”€â”€ Reset filters when family changes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => { setCat(null); setPlatform(null); setPage(1); setQuery(""); setInputVal(""); }, [family]);
 
-  // ── Debounce search input ────────────────────────────────────────────────
+  // â”€â”€ Debounce search input â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleInput = (val: string) => {
     setInputVal(val);
     if (searchTimer.current) clearTimeout(searchTimer.current);
@@ -216,11 +210,11 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
     }, 350);
   };
 
-  // ── Fetch prompts when deps change ───────────────────────────────────────
+  // â”€â”€ Fetch prompts when deps change â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const isStaticFamily = !family || family === "image" || family === "video" || family === "website";
 
   const fetchPrompts = useCallback(async () => {
-    // Static families (image, video, website) use local data — skip API call
+    // Static families (image, video, website) use local data â€” skip API call
     if (isStaticFamily) { setLoading(false); return; }
 
     setLoading(true);
@@ -255,7 +249,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
 
   useEffect(() => { fetchPrompts(); }, [fetchPrompts]);
 
-  // ── Reset page when filter changes ──────────────────────────────────────
+  // â”€â”€ Reset page when filter changes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleCatChange = (c: string | null) => { setCat(c); setPage(1); };
 
   const meta = family ? familyMeta[family] : null;
@@ -265,7 +259,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
   const isWebsiteFamily = family === "website";
   const activePlatforms = isWebsiteFamily ? websitePlatforms : isVideoFamily ? videoPlatforms : platforms;
 
-  // ── Fallback: filter static prompts locally ───────────────────────────────
+  // â”€â”€ Fallback: filter static prompts locally â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const videoWithPlatforms = videoLibraryPrompts.map(p => ({
     ...p,
     platforms: videoPlatformVersions[p.slug ?? ""] ?? {},
@@ -280,13 +274,13 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
   const fallbackPage   = fallbackFiltered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const fallbackPages  = Math.ceil(fallbackFiltered.length / PAGE_SIZE);
 
-  // ── Determine items to render ────────────────────────────────────────────
+  // â”€â”€ Determine items to render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const useFallbackForFamily = isImageFamily || isVideoFamily;
   const displayItems  = (useFallback || useFallbackForFamily) ? fallbackPage : prompts.map(toCardItem);
   const displayTotal  = (useFallback || useFallbackForFamily) ? fallbackFiltered.length : total;
   const displayPages  = (useFallback || useFallbackForFamily) ? fallbackPages : pages;
 
-  // ── Sort client-side for both sources (memoized) ────────────────────────
+  // â”€â”€ Sort client-side for both sources (memoized) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const sorted = useMemo(() => [...displayItems].sort((a, b) => {
     if (isImageFamily && !query) {
       const aIdx = FEATURED_IMAGE_IDS.indexOf(a.id);
@@ -299,7 +293,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
     return 0;
   }), [displayItems, isImageFamily, query, sortBy]);
 
-  // ── Category list (memoized) ───────────────────────────────────────────
+  // â”€â”€ Category list (memoized) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const catList = useMemo(() => {
     if (isImageFamily) {
       return Array.from(
@@ -316,19 +310,19 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
 
   return (
   <>
-    <div className="max-w-[1400px] mx-auto px-6 py-8 text-[#094067]">
-      {/* ── Header ─────────────────────────────────────────────────────── */}
-      <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#5f6c7b] hover:text-[#094067] text-[13px] mb-3 transition-colors">
+    <div className="max-w-[1400px] mx-auto px-6 py-8 text-[#0a0a0a]">
+      {/* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 transition-colors">
         <ArrowLeft className="w-3.5 h-3.5" /> Back to Library
       </button>
       <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-[#094067] text-3xl">{meta ? meta.title : "Prompt Library"}</h1>
+            <h1 className="text-[#0a0a0a] text-3xl">{meta ? meta.title : "Prompt Library"}</h1>
             {meta && (
               <button
                 onClick={() => go("library")}
-                className="inline-flex items-center gap-1 h-8 px-3 rounded-full border-2 border-[#094067] bg-white text-[#094067] text-[13px]"
+                className="inline-flex items-center gap-1 h-8 px-3 rounded-full border-2 border-[#0a0a0a] bg-white text-[#0a0a0a] text-[13px]"
                 style={{ fontWeight: 600 }}
               >
                 <X className="w-3.5 h-3.5" /> All prompts
@@ -337,7 +331,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
             {isImageFamily && (
               <button
                 onClick={() => go("guide:image-gen")}
-                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-[#094067]/20 bg-[#094067]/5 text-[#094067] text-[13px] hover:bg-[#094067]/10 transition-colors"
+                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-[#0a0a0a]/20 bg-[#0a0a0a]/5 text-[#0a0a0a] text-[13px] hover:bg-[#0a0a0a]/10 transition-colors"
                 style={{ fontWeight: 600 }}
               >
                 <svg viewBox="0 0 16 16" fill="none" width={14} height={14}><path d="M2 3h12M2 7h8M2 11h10" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round"/></svg>
@@ -347,7 +341,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
             {isVideoFamily && (
               <button
                 onClick={() => go("guide:video-gen")}
-                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-[#094067]/20 bg-[#094067]/5 text-[#094067] text-[13px] hover:bg-[#094067]/10 transition-colors"
+                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-[#0a0a0a]/20 bg-[#0a0a0a]/5 text-[#0a0a0a] text-[13px] hover:bg-[#0a0a0a]/10 transition-colors"
                 style={{ fontWeight: 600 }}
               >
                 <svg viewBox="0 0 16 16" fill="none" width={14} height={14}><path d="M2 3h12M2 7h8M2 11h10" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round"/></svg>
@@ -357,7 +351,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
             {isWebsiteFamily && (
               <button
                 onClick={() => go("guide:web-gen")}
-                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-[#094067]/20 bg-[#094067]/5 text-[#094067] text-[13px] hover:bg-[#094067]/10 transition-colors"
+                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-[#0a0a0a]/20 bg-[#0a0a0a]/5 text-[#0a0a0a] text-[13px] hover:bg-[#0a0a0a]/10 transition-colors"
                 style={{ fontWeight: 600 }}
               >
                 <svg viewBox="0 0 16 16" fill="none" width={14} height={14}><path d="M2 3h12M2 7h8M2 11h10" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round"/></svg>
@@ -365,12 +359,12 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
               </button>
             )}
           </div>
-          <p className="text-[#5f6c7b] mt-0.5">
+          <p className="text-[#6b7280] mt-0.5">
             {loading
-              ? "Loading…"
-              : `${displayTotal.toLocaleString()} prompt${displayTotal !== 1 ? "s" : ""}${cat ? ` in ${cat}` : ""}${platform ? ` · ${activePlatforms.find(p => p.key === platform)?.name ?? platform}` : ""}`}
+              ? "Loadingâ€¦"
+              : `${displayTotal.toLocaleString()} prompt${displayTotal !== 1 ? "s" : ""}${cat ? ` in ${cat}` : ""}${platform ? ` Â· ${activePlatforms.find(p => p.key === platform)?.name ?? platform}` : ""}`}
             {searchMode === "fuzzy" && (
-              <span className="ml-2 text-[11px] px-2 py-0.5 bg-[#ffd803]/40 text-[#094067] rounded-full">fuzzy match</span>
+              <span className="ml-2 text-[11px] px-2 py-0.5 bg-[#4FC3F7]/40 text-[#0a0a0a] rounded-full">fuzzy match</span>
             )}
           </p>
         </div>
@@ -378,32 +372,32 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as "latest" | "score")}
-            className="h-9 px-3 rounded-lg bg-[#094067]/5 border border-[#094067]/20 text-[#094067]"
+            className="h-9 px-3 rounded-lg bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#0a0a0a]"
           >
             <option value="latest">Latest</option>
             <option value="score">Highest score</option>
           </select>
-          <div className="flex rounded-lg border border-[#094067]/20 overflow-hidden">
-            <button onClick={() => setView("grid")} className={`p-2 ${view==="grid"?"bg-[#094067]/10":"bg-transparent"}`}><LayoutGrid className="w-4 h-4" /></button>
-            <button onClick={() => setView("list")} className={`p-2 ${view==="list"?"bg-[#094067]/10":"bg-transparent"}`}><List className="w-4 h-4" /></button>
+          <div className="flex rounded-lg border border-[#0a0a0a]/20 overflow-hidden">
+            <button onClick={() => setView("grid")} className={`p-2 ${view==="grid"?"bg-[#0a0a0a]/10":"bg-transparent"}`}><LayoutGrid className="w-4 h-4" /></button>
+            <button onClick={() => setView("list")} className={`p-2 ${view==="list"?"bg-[#0a0a0a]/10":"bg-transparent"}`}><List className="w-4 h-4" /></button>
           </div>
         </div>
       </div>
 
-      {/* ── Search bar ─────────────────────────────────────────────────── */}
+      {/* â”€â”€ Search bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5f6c7b]" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b7280]" />
         <input
           type="text"
-          placeholder="Search prompts…"
+          placeholder="Search promptsâ€¦"
           value={inputVal}
           onChange={(e) => handleInput(e.target.value)}
-          className="w-full pl-9 pr-10 py-2.5 rounded-xl border border-[#094067]/20 bg-white text-[#094067] placeholder:text-[#5f6c7b]/60 focus:outline-none focus:border-[#094067]/50"
+          className="w-full pl-9 pr-10 py-2.5 rounded-xl border border-[#0a0a0a]/20 bg-white text-[#0a0a0a] placeholder:text-[#6b7280]/60 focus:outline-none focus:border-[#0a0a0a]/50"
         />
         {inputVal && (
           <button
             onClick={() => { setInputVal(""); setQuery(""); setPage(1); }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5f6c7b] hover:text-[#094067]"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6b7280] hover:text-[#0a0a0a]"
           >
             <X className="w-4 h-4" />
           </button>
@@ -411,7 +405,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-6">
-        {/* ── Sidebar filters ──────────────────────────────────────────── */}
+        {/* â”€â”€ Sidebar filters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <aside className="space-y-6">
           <FilterGroup title="Category">
             <FilterPill active={cat===null} onClick={() => handleCatChange(null)}>All</FilterPill>
@@ -435,7 +429,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
           )}
         </aside>
 
-        {/* ── Prompt grid / list ───────────────────────────────────────── */}
+        {/* â”€â”€ Prompt grid / list â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <main>
           {/* Website Generation */}
           {isWebsiteFamily ? (() => {
@@ -458,10 +452,10 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
 
             return sorted.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-24 gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-[#094067]/10 flex items-center justify-center">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#094067" strokeWidth="1.5" strokeLinecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M8 16h8"/></svg>
+                <div className="w-16 h-16 rounded-2xl bg-[#0a0a0a]/10 flex items-center justify-center">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="1.5" strokeLinecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M8 16h8"/></svg>
                 </div>
-                <p className="text-[#5f6c7b]">No website prompts in this category yet.</p>
+                <p className="text-[#6b7280]">No website prompts in this category yet.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -481,33 +475,33 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
             );
           })() :!loading && !isImageFamily && !isVideoFamily && !isWebsiteFamily && sorted.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#ffd803]/30 to-[#094067]/10 flex items-center justify-center text-4xl">
-                ✦
+              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#4FC3F7]/30 to-[#0a0a0a]/10 flex items-center justify-center text-4xl">
+                âœ¦
               </div>
-              <h3 className="text-[#094067] text-xl" style={{ fontWeight: 700 }}>
+              <h3 className="text-[#0a0a0a] text-xl" style={{ fontWeight: 700 }}>
                 {meta?.title ?? "Prompts"} coming soon
               </h3>
-              <p className="text-[#5f6c7b] text-center max-w-sm">
+              <p className="text-[#6b7280] text-center max-w-sm">
                 We're curating a hand-picked collection of {meta?.title?.toLowerCase() ?? "prompts"}.
-                Check back soon — or{" "}
-                <button onClick={() => go("submit")} className="text-[#ef4565] underline">
+                Check back soon â€” or{" "}
+                <button onClick={() => go("submit")} className="text-[#0a0a0a] underline">
                   submit your own
                 </button>
                 .
               </p>
             </div>
           ) : (loading && !isImageFamily && !isVideoFamily) ? (
-            <div className="flex items-center justify-center py-24 text-[#5f6c7b]">
-              <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading prompts…
+            <div className="flex items-center justify-center py-24 text-[#6b7280]">
+              <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading promptsâ€¦
             </div>
           ) : sorted.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 text-[#5f6c7b] gap-3">
+            <div className="flex flex-col items-center justify-center py-24 text-[#6b7280] gap-3">
               <Search className="w-10 h-10 opacity-30" />
               <p>No prompts found{query ? ` for "${query}"` : ""}.</p>
               {query && (
                 <button
                   onClick={() => { setInputVal(""); setQuery(""); }}
-                  className="text-[#ef4565] underline text-sm"
+                  className="text-[#0a0a0a] underline text-sm"
                 >
                   Clear search
                 </button>
@@ -515,7 +509,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
             </div>
           ) : view === "grid" ? (
             isImageFamily ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+              <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">
                 {sorted.map(p => (
                   <MasonryImageCard key={p.id} p={p as any} onClick={() => go("detail:" + p.id + (platform ? ":" + platform : ""))} />
                 ))}
@@ -528,9 +522,9 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
               </div>
             )
           ) : (
-            <div className="bg-white border border-[#094067]/15 rounded-2xl overflow-hidden">
+            <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl overflow-hidden">
               <table className="w-full">
-                <thead className="bg-[#094067]/5 text-[#5f6c7b]">
+                <thead className="bg-[#0a0a0a]/5 text-[#6b7280]">
                   <tr>
                     <th className="text-left p-3">Title</th>
                     <th className="text-left p-3">Category</th>
@@ -541,12 +535,12 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
                 </thead>
                 <tbody>
                   {sorted.map(p => (
-                    <tr key={p.id} className="border-t border-[#094067]/15 hover:bg-[#094067]/5 cursor-pointer" onClick={() => go("detail:" + p.id + (platform ? ":" + platform : ""))}>
-                      <td className="p-3 text-[#094067]" style={{ fontWeight: 600 }}>{p.title}</td>
-                      <td className="p-3 text-[#5f6c7b]">{p.category}</td>
-                      <td className="p-3"><span className="inline-flex items-center gap-1 text-[#094067]"><Star className="w-4 h-4 fill-[#ffd803] text-[#ef4565]" />{p.rating}</span></td>
-                      <td className="p-3">{(p as any).tested && <span className="inline-flex items-center gap-1 text-[#ef4565]"><span className="w-1.5 h-1.5 rounded-full bg-[#ef4565]" />tested</span>}</td>
-                      <td className="p-3 text-right"><Copy className="w-4 h-4 text-[#ef4565] inline" /></td>
+                    <tr key={p.id} className="border-t border-[#0a0a0a]/15 hover:bg-[#0a0a0a]/5 cursor-pointer" onClick={() => go("detail:" + p.id + (platform ? ":" + platform : ""))}>
+                      <td className="p-3 text-[#0a0a0a]" style={{ fontWeight: 600 }}>{p.title}</td>
+                      <td className="p-3 text-[#6b7280]">{p.category}</td>
+                      <td className="p-3"><span className="inline-flex items-center gap-1 text-[#0a0a0a]"><Star className="w-4 h-4 fill-[#4FC3F7] text-[#0a0a0a]" />{p.rating}</span></td>
+                      <td className="p-3">{(p as any).tested && <span className="inline-flex items-center gap-1 text-[#0a0a0a]"><span className="w-1.5 h-1.5 rounded-full bg-[#4FC3F7]" />tested</span>}</td>
+                      <td className="p-3 text-right"><Copy className="w-4 h-4 text-[#0a0a0a] inline" /></td>
                     </tr>
                   ))}
                 </tbody>
@@ -554,13 +548,13 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
             </div>
           )}
 
-          {/* ── Pagination ─────────────────────────────────────────────── */}
+          {/* â”€â”€ Pagination â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           {displayPages > 1 && (
             <div className="flex items-center justify-center gap-2 mt-8">
               <button
                 disabled={page <= 1}
                 onClick={() => setPage(p => p - 1)}
-                className="p-2 rounded-lg border border-[#094067]/20 disabled:opacity-30 hover:bg-[#094067]/5"
+                className="p-2 rounded-lg border border-[#0a0a0a]/20 disabled:opacity-30 hover:bg-[#0a0a0a]/5"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -572,7 +566,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
                   <button
                     key={n}
                     onClick={() => setPage(n)}
-                    className={`w-9 h-9 rounded-lg border text-sm ${n === page ? "bg-[#094067] text-white border-[#094067]" : "border-[#094067]/20 text-[#094067] hover:bg-[#094067]/5"}`}
+                    className={`w-9 h-9 rounded-lg border text-sm ${n === page ? "bg-[#0a0a0a] text-white border-[#0a0a0a]" : "border-[#0a0a0a]/20 text-[#0a0a0a] hover:bg-[#0a0a0a]/5"}`}
                   >
                     {n}
                   </button>
@@ -582,7 +576,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
               <button
                 disabled={page >= displayPages}
                 onClick={() => setPage(p => p + 1)}
-                className="p-2 rounded-lg border border-[#094067]/20 disabled:opacity-30 hover:bg-[#094067]/5"
+                className="p-2 rounded-lg border border-[#0a0a0a]/20 disabled:opacity-30 hover:bg-[#0a0a0a]/5"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -592,7 +586,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
       </div>
     </div>
 
-    {/* ── Website preview modal ─────────────────────────────────────── */}
+    {/* â”€â”€ Website preview modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
     <AnimatePresence>
       {expandedSlug && (() => {
         const d = websiteDesigns.find(x => x.slug === expandedSlug);
@@ -610,7 +604,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
   );
 }
 
-// ─── Library Landing ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Library Landing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const FAMILY_CARDS = [
   {
@@ -620,16 +614,18 @@ const FAMILY_CARDS = [
     count: "420+",
     label: "prompts",
     chips: ["Midjourney", "Firefly", "FLUX", "ChatGPT", "Gemini"],
+    cover: "/images/image5.png",
+    comingSoon: false,
     bg: "bg-white",
-    border: "border-[#ffd803]/60",
-    accentBg: "bg-[#ffd803]",
-    accentText: "text-[#094067]",
-    taglineColor: "text-[#5f6c7b]",
-    countColor: "text-[#094067]",
-    chipClass: "bg-[#094067]/8 border border-[#094067]/15 text-[#5f6c7b]",
+    border: "border-[#4FC3F7]/60",
+    accentBg: "bg-[#4FC3F7]",
+    accentText: "text-[#0a0a0a]",
+    taglineColor: "text-[#6b7280]",
+    countColor: "text-[#0a0a0a]",
+    chipClass: "bg-[#0a0a0a]/8 border border-[#0a0a0a]/15 text-[#6b7280]",
     visual: (
       <div className="flex gap-2 flex-wrap">
-        {["#ffd803","#ef4565","#094067","#90b4ce"].map((c, i) => (
+        {["#4FC3F7","#4FC3F7","#0a0a0a","#90b4ce"].map((c, i) => (
           <div key={i} className="w-10 h-10 rounded-xl border-2 border-white shadow-sm" style={{ background: c }} />
         ))}
       </div>
@@ -642,6 +638,8 @@ const FAMILY_CARDS = [
     count: "30",
     label: "prompts",
     chips: ["Veo", "Kling", "Seedance", "Higgsfield", "Pika"],
+    cover: "/images/image175.png",
+    comingSoon: false,
     bg: "bg-gradient-to-br from-[#1a1a2e] to-[#4c1d95]",
     border: "border-[#7c3aed]/40",
     accentBg: "bg-[#7c3aed]",
@@ -662,16 +660,18 @@ const FAMILY_CARDS = [
     count: "90+",
     label: "designs",
     chips: ["Lovable", "Bolt", "Claude Code", "Codex", "Replit"],
-    bg: "bg-[#094067]",
-    border: "border-[#094067]/20",
-    accentBg: "bg-[#ffd803]",
-    accentText: "text-[#094067]",
+    cover: "/images/image260.png",
+    comingSoon: false,
+    bg: "bg-[#0a0a0a]",
+    border: "border-[#0a0a0a]/20",
+    accentBg: "bg-[#4FC3F7]",
+    accentText: "text-[#0a0a0a]",
     taglineColor: "text-white/60",
     countColor: "text-white",
     chipClass: "border border-white/20 text-white/60",
     visual: (
       <div className="flex gap-1">
-        {["#ef4565","#ffd803","#10a37f"].map((c,i) => (
+        {["#4FC3F7","#4FC3F7","#10a37f"].map((c,i) => (
           <div key={i} className="w-3 h-3 rounded-full" style={{ background: c }} />
         ))}
       </div>
@@ -684,18 +684,20 @@ const FAMILY_CARDS = [
     count: "Coming",
     label: "soon",
     chips: ["ChatGPT", "Gemini", "Grok", "Claude"],
+    cover: "/images/image40.png",
+    comingSoon: true,
     bg: "bg-[#0d1b2a]",
-    border: "border-[#094067]/30",
-    accentBg: "bg-[#ef4565]",
+    border: "border-[#0a0a0a]/30",
+    accentBg: "bg-[#4FC3F7]",
     accentText: "text-white",
     taglineColor: "text-white/50",
     countColor: "text-white",
     chipClass: "border border-white/15 text-white/50",
     visual: (
       <div className="font-mono text-[10px] text-[#bce4d8]/60 leading-4 space-y-0.5">
-        <div>const prompt = <span className="text-[#ffd803]">`</span></div>
-        <div className="pl-2 text-[#90b4ce]">You are an expert…</div>
-        <div><span className="text-[#ffd803]">`</span>;</div>
+        <div>const prompt = <span className="text-[#4FC3F7]">`</span></div>
+        <div className="pl-2 text-[#90b4ce]">You are an expertâ€¦</div>
+        <div><span className="text-[#4FC3F7]">`</span>;</div>
       </div>
     ),
   },
@@ -706,73 +708,107 @@ const FAMILY_CARDS = [
     count: "Coming",
     label: "soon",
     chips: ["ChatGPT", "Gemini", "Claude", "Grok"],
-    bg: "bg-gradient-to-br from-[#ef4565]/10 to-white",
-    border: "border-[#ef4565]/20",
-    accentBg: "bg-[#ef4565]",
+    cover: "/images/image120.png",
+    comingSoon: true,
+    bg: "bg-gradient-to-br from-[#4FC3F7]/10 to-white",
+    border: "border-[#4FC3F7]/20",
+    accentBg: "bg-[#4FC3F7]",
     accentText: "text-white",
-    taglineColor: "text-[#5f6c7b]",
-    countColor: "text-[#094067]",
-    chipClass: "bg-[#ef4565]/10 border border-[#ef4565]/20 text-[#ef4565]",
+    taglineColor: "text-[#6b7280]",
+    countColor: "text-[#0a0a0a]",
+    chipClass: "bg-[#4FC3F7]/10 border border-[#4FC3F7]/20 text-[#0a0a0a]",
     visual: (
       <div className="flex flex-wrap gap-1">
         {["Blog", "Email", "Ad Copy", "Social"].map(t => (
-          <span key={t} className="px-2 py-0.5 rounded-full bg-[#ef4565]/20 text-[#ef4565] text-[10px] font-semibold">{t}</span>
+          <span key={t} className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/20 text-[#0a0a0a] text-[10px] font-semibold">{t}</span>
         ))}
       </div>
     ),
   },
 ];
 
-export function LibraryLanding({ go }: { go: (p: string) => void }) {
+function LandingCard({ card, go }: { card: typeof FAMILY_CARDS[number]; go: (p: string) => void }) {
+  const [hovered, setHovered] = useState(false);
+  const [loaded, setLoaded]   = useState(false);
+
   return (
-    <div className="max-w-[1200px] mx-auto px-6 py-12 text-[#094067]">
-      <div className="mb-10">
-        <h1 className="text-4xl font-bold text-[#094067] mb-2">Prompt Library</h1>
-        <p className="text-[#5f6c7b] text-lg">Choose a category to explore curated, tested prompts.</p>
+    <motion.div
+      onClick={() => go("library:" + card.key)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === "Enter") go("library:" + card.key); }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      whileHover={{ y: -4 }}
+      whileTap={{ scale: 0.99 }}
+      transition={{ type: "spring", stiffness: 300, damping: 24 }}
+      className="break-inside-avoid mb-5 bg-white rounded-2xl border p-3 cursor-pointer group"
+      style={{
+        borderColor: hovered ? "#4FC3F7" : "rgba(10,10,10,0.10)",
+        boxShadow: hovered
+          ? "0 18px 40px -16px rgba(10,10,10,0.20)"
+          : "0 1px 2px rgba(10,10,10,0.04)",
+        transition: "border-color 0.25s ease, box-shadow 0.25s ease",
+      }}
+    >
+      {/* Meta row */}
+      <div className="flex items-center justify-between px-1 pt-0.5 pb-2.5">
+        <span className="text-[12px] text-[#6b7280]">
+          <span className="text-[#0a0a0a] font-bold">{card.count}</span> {card.label}
+        </span>
+        <span className="w-6 h-6 rounded-full border border-[#0a0a0a]/10 flex items-center justify-center text-[#6b7280] transition-colors group-hover:bg-[#4FC3F7] group-hover:text-[#0a0a0a] group-hover:border-[#4FC3F7]">
+          <ArrowRight className="w-3.5 h-3.5" />
+        </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {FAMILY_CARDS.map((card) => (
-          <motion.div
-            key={card.key}
-            onClick={() => go("library:" + card.key)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => { if (e.key === "Enter") go("library:" + card.key); }}
-            whileHover={{ y: -6, boxShadow: "6px 10px 0 0 #094067" }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 280, damping: 22 }}
-            className={`${card.bg} border-2 ${card.border} rounded-2xl p-6 cursor-pointer flex flex-col gap-4 group relative overflow-hidden`}
-          >
-            {/* Visual accent */}
-            <div className="h-12 flex items-center">{card.visual}</div>
+      {/* Cover image */}
+      <div className="relative rounded-xl overflow-hidden bg-[#f4f4f5]">
+        <img
+          src={card.cover}
+          alt={card.title}
+          className="w-full block transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+          style={{
+            opacity: loaded ? 1 : 0,
+            filter: card.comingSoon ? "grayscale(0.45)" : "none",
+            transition: "opacity 0.4s ease",
+          }}
+          onLoad={() => setLoaded(true)}
+        />
+        {card.comingSoon && (
+          <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full bg-[#4FC3F7] text-[#0a0a0a] text-[11px] font-bold">
+            Coming soon
+          </span>
+        )}
+      </div>
 
-            {/* Count badge */}
-            <div className="flex items-baseline gap-1.5">
-              <span className={`text-3xl font-black ${card.countColor}`}>{card.count}</span>
-              <span className={`text-sm font-semibold ${card.taglineColor}`}>{card.label}</span>
-            </div>
+      {/* Title + tagline + chips */}
+      <div className="px-1 pt-3 pb-1">
+        <h3 className="text-[#0a0a0a] text-[17px] font-bold leading-tight">{card.title}</h3>
+        <p className="text-[#6b7280] text-[13px] leading-relaxed mt-1.5">{card.tagline}</p>
 
-            {/* Title + tagline */}
-            <div>
-              <div className={`text-lg font-bold ${card.countColor} mb-1`}>{card.title}</div>
-              <p className={`text-[13px] leading-relaxed ${card.taglineColor}`}>{card.tagline}</p>
-            </div>
+        <div className="flex flex-wrap gap-1.5 mt-3">
+          {card.chips.map(chip => (
+            <span key={chip} className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#0a0a0a]/[0.05] text-[#6b7280]">
+              {chip}
+            </span>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
-            {/* Platform chips */}
-            <div className="flex flex-wrap gap-1 mt-auto">
-              {card.chips.map(chip => (
-                <span key={chip} className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${card.chipClass}`}>
-                  {chip}
-                </span>
-              ))}
-            </div>
+export function LibraryLanding({ go }: { go: (p: string) => void }) {
+  return (
+    <div className="max-w-[1180px] mx-auto px-6 py-12 text-[#0a0a0a]">
+      <div className="mb-9">
+        <h1 className="text-4xl font-bold text-[#0a0a0a] mb-2">Prompt Library</h1>
+        <p className="text-[#6b7280] text-lg">Choose a category to explore curated, tested prompts.</p>
+      </div>
 
-            {/* Arrow */}
-            <div className={`absolute bottom-5 right-5 w-8 h-8 rounded-full ${card.accentBg} ${card.accentText} flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity`}>
-              <ArrowRight className="w-4 h-4" />
-            </div>
-          </motion.div>
+      <div className="columns-1 sm:columns-2 lg:columns-3 gap-5">
+        {FAMILY_CARDS.map(card => (
+          <LandingCard key={card.key} card={card} go={go} />
         ))}
       </div>
     </div>
@@ -782,7 +818,7 @@ export function LibraryLanding({ go }: { go: (p: string) => void }) {
 function FilterGroup({ title, children }: any) {
   return (
     <div>
-      <div className="text-[#094067] mb-3" style={{ fontWeight: 600 }}>{title}</div>
+      <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 600 }}>{title}</div>
       <div className="flex flex-wrap gap-2">{children}</div>
     </div>
   );
@@ -792,7 +828,7 @@ function FilterPill({ active, onClick, children }: any) {
   return (
     <button
       onClick={onClick}
-      className={`px-3 py-1 rounded-full border text-[13px] ${active ? "bg-[#ffd803] text-[#094067] border-[#ffd803]" : "border-[#094067]/20 text-[#5f6c7b] hover:text-[#094067] hover:border-[#094067]/30"}`}
+      className={`px-3 py-1 rounded-full border text-[13px] ${active ? "bg-[#4FC3F7] text-[#0a0a0a] border-[#4FC3F7]" : "border-[#0a0a0a]/20 text-[#6b7280] hover:text-[#0a0a0a] hover:border-[#0a0a0a]/30"}`}
     >
       {children}
     </button>
