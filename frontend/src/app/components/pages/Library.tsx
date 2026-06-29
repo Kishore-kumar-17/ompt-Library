@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   LayoutGrid, List, Star, Copy, X,
@@ -23,7 +23,7 @@ const FEATURED_IMAGE_IDS = [
   "1","205","20","60","280","110","45","300",
 ];
 
-// â”€â”€â”€ Featured Thumbnail â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Featured Thumbnail ──────────────────────────────────────────────────────
 
 function FeaturedThumb({ design, onClick }: { design: typeof websiteDesigns[0]; onClick: () => void }) {
   const [thumbErr, setThumbErr] = useState(false);
@@ -54,7 +54,7 @@ function FeaturedThumb({ design, onClick }: { design: typeof websiteDesigns[0]; 
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2.5">
           <span className="text-white text-[11px] flex items-center gap-1" style={{ fontWeight: 600 }}>
-            View Details â†’
+            View Details →
           </span>
         </div>
       </div>
@@ -66,7 +66,7 @@ function FeaturedThumb({ design, onClick }: { design: typeof websiteDesigns[0]; 
   );
 }
 
-// â”€â”€â”€ Masonry Image Card (Pinterest-style) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Masonry Image Card (Pinterest-style) ────────────────────────────────────
 
 function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
   const [loaded, setLoaded] = useState(false);
@@ -108,7 +108,7 @@ function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
           </div>
         )}
 
-        {/* Hover overlay â€” smooth gradient reveal */}
+        {/* Hover overlay — smooth gradient reveal */}
         <motion.div
           className="absolute inset-0 flex flex-col justify-end"
           initial={false}
@@ -122,7 +122,7 @@ function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
           </div>
         </motion.div>
 
-        {/* Save button â€” top right on hover */}
+        {/* Save button — top right on hover */}
         <motion.div
           className="absolute top-2.5 right-2.5"
           initial={false}
@@ -143,17 +143,17 @@ function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
   );
 }
 
-// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface CategoryRow { category: string; count: number }
 
-// Map API prompt â†’ PromptCard-compatible shape
+// Map API prompt → PromptCard-compatible shape
 function toCardItem(p: LibraryPrompt) {
   return {
     id:       String(p.id),
     slug:     p.slug,
     title:    p.title,
-    description: p.base_prompt.slice(0, 120) + (p.base_prompt.length > 120 ? "â€¦" : ""),
+    description: p.base_prompt.slice(0, 120) + (p.base_prompt.length > 120 ? "…" : ""),
     category: p.category,
     family:   "image" as const,
     tags:     p.tags,
@@ -168,7 +168,7 @@ function toCardItem(p: LibraryPrompt) {
   };
 }
 
-// â”€â”€â”€ Main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Main ─────────────────────────────────────────────────────────────────────
 
 export function Library({ go, family }: { go: (p: string) => void; family?: Family | null }) {
   const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
@@ -190,17 +190,17 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
 
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // â”€â”€ Load categories once â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Load categories once ──────────────────────────────────────────────────
   useEffect(() => {
     libraryApi.categories()
       .then(setCategories)
       .catch(() => setUseFallback(true));
   }, []);
 
-  // â”€â”€ Reset filters when family changes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Reset filters when family changes ────────────────────────────────────
   useEffect(() => { setCat(null); setPlatform(null); setPage(1); setQuery(""); setInputVal(""); }, [family]);
 
-  // â”€â”€ Debounce search input â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Debounce search input ────────────────────────────────────────────────
   const handleInput = (val: string) => {
     setInputVal(val);
     if (searchTimer.current) clearTimeout(searchTimer.current);
@@ -210,11 +210,11 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
     }, 350);
   };
 
-  // â”€â”€ Fetch prompts when deps change â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Fetch prompts when deps change ───────────────────────────────────────
   const isStaticFamily = !family || family === "image" || family === "video" || family === "website";
 
   const fetchPrompts = useCallback(async () => {
-    // Static families (image, video, website) use local data â€” skip API call
+    // Static families (image, video, website) use local data — skip API call
     if (isStaticFamily) { setLoading(false); return; }
 
     setLoading(true);
@@ -249,7 +249,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
 
   useEffect(() => { fetchPrompts(); }, [fetchPrompts]);
 
-  // â”€â”€ Reset page when filter changes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Reset page when filter changes ──────────────────────────────────────
   const handleCatChange = (c: string | null) => { setCat(c); setPage(1); };
 
   const meta = family ? familyMeta[family] : null;
@@ -259,7 +259,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
   const isWebsiteFamily = family === "website";
   const activePlatforms = isWebsiteFamily ? websitePlatforms : isVideoFamily ? videoPlatforms : platforms;
 
-  // â”€â”€ Fallback: filter static prompts locally â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Fallback: filter static prompts locally ───────────────────────────────
   const videoWithPlatforms = videoLibraryPrompts.map(p => ({
     ...p,
     platforms: videoPlatformVersions[p.slug ?? ""] ?? {},
@@ -274,13 +274,13 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
   const fallbackPage   = fallbackFiltered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const fallbackPages  = Math.ceil(fallbackFiltered.length / PAGE_SIZE);
 
-  // â”€â”€ Determine items to render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Determine items to render ────────────────────────────────────────────
   const useFallbackForFamily = isImageFamily || isVideoFamily;
   const displayItems  = (useFallback || useFallbackForFamily) ? fallbackPage : prompts.map(toCardItem);
   const displayTotal  = (useFallback || useFallbackForFamily) ? fallbackFiltered.length : total;
   const displayPages  = (useFallback || useFallbackForFamily) ? fallbackPages : pages;
 
-  // â”€â”€ Sort client-side for both sources (memoized) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Sort client-side for both sources (memoized) ────────────────────────
   const sorted = useMemo(() => [...displayItems].sort((a, b) => {
     if (isImageFamily && !query) {
       const aIdx = FEATURED_IMAGE_IDS.indexOf(a.id);
@@ -293,7 +293,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
     return 0;
   }), [displayItems, isImageFamily, query, sortBy]);
 
-  // â”€â”€ Category list (memoized) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Category list (memoized) ───────────────────────────────────────────
   const catList = useMemo(() => {
     if (isImageFamily) {
       return Array.from(
@@ -311,7 +311,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
   return (
   <>
     <div className="max-w-[1400px] mx-auto px-6 py-8 text-[#0a0a0a]">
-      {/* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Header ─────────────────────────────────────────────────────── */}
       <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 transition-colors">
         <ArrowLeft className="w-3.5 h-3.5" /> Back to Library
       </button>
@@ -361,8 +361,8 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
           </div>
           <p className="text-[#6b7280] mt-0.5">
             {loading
-              ? "Loadingâ€¦"
-              : `${displayTotal.toLocaleString()} prompt${displayTotal !== 1 ? "s" : ""}${cat ? ` in ${cat}` : ""}${platform ? ` Â· ${activePlatforms.find(p => p.key === platform)?.name ?? platform}` : ""}`}
+              ? "Loading…"
+              : `${displayTotal.toLocaleString()} prompt${displayTotal !== 1 ? "s" : ""}${cat ? ` in ${cat}` : ""}${platform ? ` · ${activePlatforms.find(p => p.key === platform)?.name ?? platform}` : ""}`}
             {searchMode === "fuzzy" && (
               <span className="ml-2 text-[11px] px-2 py-0.5 bg-[#4FC3F7]/40 text-[#0a0a0a] rounded-full">fuzzy match</span>
             )}
@@ -384,12 +384,12 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
         </div>
       </div>
 
-      {/* â”€â”€ Search bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Search bar ─────────────────────────────────────────────────── */}
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b7280]" />
         <input
           type="text"
-          placeholder="Search promptsâ€¦"
+          placeholder="Search prompts…"
           value={inputVal}
           onChange={(e) => handleInput(e.target.value)}
           className="w-full pl-9 pr-10 py-2.5 rounded-xl border border-[#0a0a0a]/20 bg-white text-[#0a0a0a] placeholder:text-[#6b7280]/60 focus:outline-none focus:border-[#0a0a0a]/50"
@@ -405,7 +405,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-6">
-        {/* â”€â”€ Sidebar filters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* ── Sidebar filters ──────────────────────────────────────────── */}
         <aside className="space-y-6">
           <FilterGroup title="Category">
             <FilterPill active={cat===null} onClick={() => handleCatChange(null)}>All</FilterPill>
@@ -429,7 +429,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
           )}
         </aside>
 
-        {/* â”€â”€ Prompt grid / list â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* ── Prompt grid / list ───────────────────────────────────────── */}
         <main>
           {/* Website Generation */}
           {isWebsiteFamily ? (() => {
@@ -476,14 +476,14 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
           })() :!loading && !isImageFamily && !isVideoFamily && !isWebsiteFamily && sorted.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
               <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#4FC3F7]/30 to-[#0a0a0a]/10 flex items-center justify-center text-4xl">
-                âœ¦
+                ✦
               </div>
               <h3 className="text-[#0a0a0a] text-xl" style={{ fontWeight: 700 }}>
                 {meta?.title ?? "Prompts"} coming soon
               </h3>
               <p className="text-[#6b7280] text-center max-w-sm">
                 We're curating a hand-picked collection of {meta?.title?.toLowerCase() ?? "prompts"}.
-                Check back soon â€” or{" "}
+                Check back soon — or{" "}
                 <button onClick={() => go("submit")} className="text-[#0a0a0a] underline">
                   submit your own
                 </button>
@@ -492,7 +492,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
             </div>
           ) : (loading && !isImageFamily && !isVideoFamily) ? (
             <div className="flex items-center justify-center py-24 text-[#6b7280]">
-              <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading promptsâ€¦
+              <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading prompts…
             </div>
           ) : sorted.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-[#6b7280] gap-3">
@@ -548,7 +548,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
             </div>
           )}
 
-          {/* â”€â”€ Pagination â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ── Pagination ─────────────────────────────────────────────── */}
           {displayPages > 1 && (
             <div className="flex items-center justify-center gap-2 mt-8">
               <button
@@ -586,7 +586,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
       </div>
     </div>
 
-    {/* â”€â”€ Website preview modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+    {/* ── Website preview modal ─────────────────────────────────────── */}
     <AnimatePresence>
       {expandedSlug && (() => {
         const d = websiteDesigns.find(x => x.slug === expandedSlug);
@@ -604,7 +604,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
   );
 }
 
-// â”€â”€â”€ Library Landing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Library Landing ─────────────────────────────────────────────────────────
 
 const FAMILY_CARDS = [
   {
@@ -696,7 +696,7 @@ const FAMILY_CARDS = [
     visual: (
       <div className="font-mono text-[10px] text-[#bce4d8]/60 leading-4 space-y-0.5">
         <div>const prompt = <span className="text-[#4FC3F7]">`</span></div>
-        <div className="pl-2 text-[#90b4ce]">You are an expertâ€¦</div>
+        <div className="pl-2 text-[#90b4ce]">You are an expert…</div>
         <div><span className="text-[#4FC3F7]">`</span>;</div>
       </div>
     ),

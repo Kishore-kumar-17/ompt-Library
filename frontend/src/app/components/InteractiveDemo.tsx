@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Image as ImageIcon, Film, Type, FileText, Code2, BarChart3, Play, ArrowRight, Copy, Sparkles } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
@@ -23,7 +23,7 @@ const tabs: Tab[] = [
     Icon: ImageIcon,
     accent: "#4FC3F7",
     verb: "design",
-    prompt: "A cinematic event poster, dramatic rim lighting, bold typography â€”ar 2:3",
+    prompt: "A cinematic event poster, dramatic rim lighting, bold typography —ar 2:3",
     output: { kind: "image", src: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1000" },
     route: "library:image",
   },
@@ -47,11 +47,11 @@ const tabs: Tab[] = [
     output: {
       kind: "text",
       lines: [
-        "â€¢ Platform migrates to an event-driven core â€” removes 3 legacy services.",
-        "â€¢ Latency p99 drops from 840ms to 210ms on the read path.",
-        "â€¢ Cost profile shifts from fixed capacity to per-request billing.",
-        "â€¢ Rollout is gated by a feature flag; rollback takes under 60 seconds.",
-        "â€¢ Compliance: tokens move to a vaulted store; meets the new SOC-2 control.",
+        "• Platform migrates to an event-driven core — removes 3 legacy services.",
+        "• Latency p99 drops from 840ms to 210ms on the read path.",
+        "• Cost profile shifts from fixed capacity to per-request billing.",
+        "• Rollout is gated by a feature flag; rollback takes under 60 seconds.",
+        "• Compliance: tokens move to a vaulted store; meets the new SOC-2 control.",
       ],
     },
     route: "library:text",
@@ -67,8 +67,8 @@ const tabs: Tab[] = [
       kind: "text",
       lines: [
         "Stop rewriting the same prompt ten different ways.",
-        "A shared library turns every junior designer into a senior one â€”",
-        "because the best prompt in the team becomes the default. ðŸ§µ",
+        "A shared library turns every junior designer into a senior one —",
+        "because the best prompt in the team becomes the default. 🧵",
       ],
     },
     route: "library:content",
@@ -113,7 +113,7 @@ export function InteractiveDemo({ go }: { go: (r: string) => void }) {
       <h2 className="text-[#0a0a0a] mb-2" style={{ fontSize: "clamp(24px,2.6vw,36px)", fontWeight: 800 }}>
         See how prompts become products.
       </h2>
-      <p className="text-[#6b7280] mb-6">Pick a discipline â€” we'll run a real prompt through it.</p>
+      <p className="text-[#6b7280] mb-6">Pick a discipline — we'll run a real prompt through it.</p>
 
       {/* The frame */}
       <div className="relative rounded-3xl border-2 border-[#0a0a0a] shadow-[8px_8px_0_0_#0a0a0a] overflow-hidden bg-white">
@@ -336,7 +336,7 @@ function OutputView({ tab }: { tab: Tab }) {
               style={{ background: p.c }}
             />
           </div>
-          <div className="mt-2 text-white/60 text-[11px]">quality Â· {(3.8 + (i % 5) * 0.2).toFixed(1)}</div>
+          <div className="mt-2 text-white/60 text-[11px]">quality · {(3.8 + (i % 5) * 0.2).toFixed(1)}</div>
         </motion.div>
       ))}
     </div>

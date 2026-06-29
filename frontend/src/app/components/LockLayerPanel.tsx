@@ -1,4 +1,4 @@
-﻿import { Lock, ShieldOff, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Lock, ShieldOff, CheckCircle2, AlertTriangle } from "lucide-react";
 import type { LockSectionItem, EngineValidation } from "../lib/api";
 
 /**
@@ -23,7 +23,7 @@ export function LockLayerPanel({
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <h2 className="text-[#0a0a0a] font-bold inline-flex items-center gap-2">
           <Lock className="w-4 h-4 text-[#0a0a0a]" />
-          Lock layer{categoryLabel ? <span className="text-[#6b7280] font-medium"> Â· {categoryLabel}</span> : null}
+          Lock layer{categoryLabel ? <span className="text-[#6b7280] font-medium"> · {categoryLabel}</span> : null}
         </h2>
         {validation && (
           <span
@@ -46,7 +46,7 @@ export function LockLayerPanel({
         <ul className="space-y-1.5 mb-5">
           {lockSection.map((l, i) => (
             <li key={l.key} className="font-mono text-[13px] text-[#0a0a0a] leading-relaxed">
-              <span className="text-[#6b7280]">LOCK {String(i + 1).padStart(2, "0")} â€” </span>
+              <span className="text-[#6b7280]">LOCK {String(i + 1).padStart(2, "0")} — </span>
               <span className="font-bold">{l.label.toUpperCase()}:</span> {l.value}
             </li>
           ))}

@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, Command, CornerDownLeft, FileText, Library as LibraryIcon, Wand2, Sparkles, BarChart3, User, BookOpen, Upload } from "lucide-react";
 import { imageLibraryPrompts } from "../lib/library-data";
@@ -127,8 +127,8 @@ export function CommandPalette({ open, onClose, go }: { open: boolean; onClose: 
               })}
             </div>
             <div className="flex items-center gap-4 px-4 h-10 border-t-2 border-[#0a0a0a]/10 bg-[#0a0a0a]/5 text-[11px] text-[#6b7280]">
-              <span className="inline-flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-white border border-[#0a0a0a]/20">â†‘â†“</kbd> navigate</span>
-              <span className="inline-flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-white border border-[#0a0a0a]/20">â†µ</kbd> open</span>
+              <span className="inline-flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-white border border-[#0a0a0a]/20">↑↓</kbd> navigate</span>
+              <span className="inline-flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-white border border-[#0a0a0a]/20">↵</kbd> open</span>
               <span className="ml-auto inline-flex items-center gap-1"><Command className="w-3 h-3" /> K to toggle</span>
             </div>
           </motion.div>

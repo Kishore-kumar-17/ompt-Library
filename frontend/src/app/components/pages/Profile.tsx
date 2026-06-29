@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Settings, Heart, Clock, Upload, Sparkles } from "lucide-react";
 import { imageLibraryPrompts } from "../../lib/library-data";
 import { PromptCard } from "../PromptCard";
@@ -17,7 +17,7 @@ export function Profile({ go }: { go: (p: string) => void }) {
     if (!user) return;
     profileApi.stats()
       .then(setStats)
-      .catch(() => {/* backend not running â€” keep zeros */})
+      .catch(() => {/* backend not running — keep zeros */})
       .finally(() => setStatsLoaded(true));
     submissionsApi.mine()
       .then(setSubmissions)
@@ -40,7 +40,7 @@ export function Profile({ go }: { go: (p: string) => void }) {
         </div>
         <div>
           <h1 className="text-2xl text-[#0a0a0a] font-bold">Hi, {displayName}</h1>
-          <p className="text-[#6b7280]">{user ? `${user.email} Â· Joined 2026` : "Sign in to see your activity"}</p>
+          <p className="text-[#6b7280]">{user ? `${user.email} · Joined 2026` : "Sign in to see your activity"}</p>
         </div>
         <button className="ml-auto inline-flex items-center gap-2 px-4 h-10 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#0a0a0a] hover:bg-[#0a0a0a]/10 transition-colors">
           <Settings className="w-4 h-4" />Settings

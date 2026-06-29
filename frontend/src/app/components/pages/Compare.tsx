@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Star, Copy, Loader2, ArrowLeft } from "lucide-react";
 import { platforms } from "../theme";
@@ -48,7 +48,7 @@ export function Compare({ go }: { go: (p: string) => void }) {
 
       {loading ? (
         <div className="flex items-center justify-center py-24 text-[#6b7280]">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading platform versionsâ€¦
+          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading platform versions…
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -62,7 +62,7 @@ export function Compare({ go }: { go: (p: string) => void }) {
                   {prompt.image ? (
                     <img src={prompt.image} alt={pl.name} className="w-full h-full object-cover opacity-90" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-4xl opacity-10">âœ¦</div>
+                    <div className="w-full h-full flex items-center justify-center text-4xl opacity-10">✦</div>
                   )}
                 </div>
                 <div className="p-4">

@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { X, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { authApi } from "../lib/api";
@@ -108,7 +108,7 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
             disabled={loading}
             className="w-full h-10 rounded-lg bg-[#4FC3F7] text-[#0a0a0a] font-bold hover:brightness-105 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-[14px]"
           >
-            {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Please waitâ€¦</> : (mode === "login" ? "Log in" : "Create account")}
+            {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Please wait…</> : (mode === "login" ? "Log in" : "Create account")}
           </button>
         </form>
 

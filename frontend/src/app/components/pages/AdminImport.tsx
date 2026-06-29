@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Upload, Check, ChevronRight, FileSpreadsheet, AlertTriangle } from "lucide-react";
 
 const steps = ["Upload", "Map columns", "Preview", "Validate", "Commit"];
@@ -8,7 +8,7 @@ export function AdminImport() {
 
   return (
     <div className="max-w-[1100px] mx-auto px-6 py-10 text-[#0a0a0a]">
-      <h1 className="text-3xl mb-2">Admin Â· Bulk Import</h1>
+      <h1 className="text-3xl mb-2">Admin · Bulk Import</h1>
       <p className="text-[#6b7280] mb-6">Upload a CSV/XLSX of prompts, map fields, validate, commit.</p>
 
       <div className="flex items-center gap-2 mb-8 flex-wrap">
@@ -41,19 +41,19 @@ export function AdminImport() {
             <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 600 }}>Map CSV columns to database fields</div>
             <div className="space-y-2">
               {[
-                "prompt_id â†’ id",
-                "title â†’ title",
-                "category â†’ category",
-                "chatgpt_version â†’ platforms.chatgpt",
-                "midjourney_version â†’ platforms.midjourney",
-                "tags â†’ tags",
-                "quality_score â†’ quality",
-                "tested â†’ tested",
+                "prompt_id → id",
+                "title → title",
+                "category → category",
+                "chatgpt_version → platforms.chatgpt",
+                "midjourney_version → platforms.midjourney",
+                "tags → tags",
+                "quality_score → quality",
+                "tested → tested",
               ].map(m => (
                 <div key={m} className="bg-[#f5f5f5] border border-[#0a0a0a]/15 rounded-lg p-3 flex items-center gap-3">
                   <FileSpreadsheet className="w-4 h-4 text-[#0a0a0a]" />
                   <div className="text-[#0a0a0a] font-mono text-[13px]">{m}</div>
-                  <div className="ml-auto text-[#0a0a0a] text-[13px]">âœ“ matched</div>
+                  <div className="ml-auto text-[#0a0a0a] text-[13px]">✓ matched</div>
                 </div>
               ))}
             </div>
@@ -61,7 +61,7 @@ export function AdminImport() {
         )}
         {step === 2 && (
           <div className="overflow-auto">
-            <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 600 }}>Preview Â· first 10 rows</div>
+            <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 600 }}>Preview · first 10 rows</div>
             <table className="w-full">
               <thead className="text-[#6b7280] bg-[#0a0a0a]/5">
                 <tr>

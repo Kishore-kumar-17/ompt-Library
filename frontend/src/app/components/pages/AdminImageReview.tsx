@@ -1,13 +1,13 @@
-﻿import { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Download, Check, AlertCircle, ChevronDown, ChevronRight } from "lucide-react";
 import { imageLibraryPrompts } from "../../lib/library-data";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 
-// Only include the original 350 prompts (id 1â€“350), not the viral ones
+// Only include the original 350 prompts (id 1–350), not the viral ones
 const BASE_PROMPTS = imageLibraryPrompts.filter(p => Number(p.id) <= 350);
 
 export function AdminImageReview() {
-  // corrections: slug â†’ new image path
+  // corrections: slug → new image path
   const [corrections, setCorrections] = useState<Record<string, string>>({});
   const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({});
   const [exported, setExported] = useState(false);
@@ -72,7 +72,7 @@ export function AdminImageReview() {
         <div>
           <h1 className="text-2xl font-bold text-[#0a0a0a]">Image Review Tool</h1>
           <p className="text-[#6b7280] text-sm mt-0.5">
-            {BASE_PROMPTS.length} prompts Â· {totalCorrections} correction{totalCorrections !== 1 ? "s" : ""} pending
+            {BASE_PROMPTS.length} prompts · {totalCorrections} correction{totalCorrections !== 1 ? "s" : ""} pending
           </p>
         </div>
         <button

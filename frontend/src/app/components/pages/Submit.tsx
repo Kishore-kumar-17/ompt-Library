@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Check, ChevronRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { categories, platforms } from "../theme";
@@ -150,10 +150,10 @@ export function Submit() {
         {step === 5 && (
           <div className="space-y-3">
             <div className="text-[#0a0a0a]" style={{ fontWeight: 700 }}>Review & submit</div>
-            <div><span className="text-[#6b7280]">Category:</span> <span className="text-[#0a0a0a]">{data.category || "â€”"}</span></div>
+            <div><span className="text-[#6b7280]">Category:</span> <span className="text-[#0a0a0a]">{data.category || "—"}</span></div>
             <div><span className="text-[#6b7280]">Platform:</span> <span className="text-[#0a0a0a]">{data.platform}</span></div>
-            <div><span className="text-[#6b7280]">Variables:</span> <span className="text-[#0a0a0a]">{data.vars || "â€”"}</span></div>
-            <div className="bg-[#f5f5f5] border border-[#0a0a0a]/20 rounded-lg p-3 font-mono text-[13px] text-[#0a0a0a] whitespace-pre-wrap">{data.prompt || "â€”"}</div>
+            <div><span className="text-[#6b7280]">Variables:</span> <span className="text-[#0a0a0a]">{data.vars || "—"}</span></div>
+            <div className="bg-[#f5f5f5] border border-[#0a0a0a]/20 rounded-lg p-3 font-mono text-[13px] text-[#0a0a0a] whitespace-pre-wrap">{data.prompt || "—"}</div>
           </div>
         )}
       </div>
@@ -185,7 +185,7 @@ export function Submit() {
             className="h-10 px-5 rounded-full bg-[#4FC3F7] text-[#bce4d8] inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ fontWeight: 700 }}
           >
-            {submitting ? <><Loader2 className="w-4 h-4 animate-spin" />Submittingâ€¦</> : "Submit for review"}
+            {submitting ? <><Loader2 className="w-4 h-4 animate-spin" />Submitting…</> : "Submit for review"}
           </button>
         )}
       </div>

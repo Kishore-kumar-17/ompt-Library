@@ -1,11 +1,11 @@
-﻿import { Check, Zap, Star, Building2, ArrowLeft } from "lucide-react";
+import { Check, Zap, Star, Building2, ArrowLeft } from "lucide-react";
 
 const plans = [
   {
     id: "free",
     icon: <Zap className="w-5 h-5" />,
     name: "Free",
-    price: "â‚¹0",
+    price: "₹0",
     period: "forever",
     description: "Explore, copy, and build with the full library.",
     color: "#bce4d8",
@@ -24,7 +24,7 @@ const plans = [
     id: "pro",
     icon: <Star className="w-5 h-5" />,
     name: "Pro",
-    price: "â‚¹499",
+    price: "₹499",
     period: "per month",
     description: "For power users who want unlimited access and saves.",
     color: "#4FC3F7",
@@ -65,10 +65,10 @@ const plans = [
 ];
 
 const faqs = [
-  { q: "Can I switch plans?", a: "Yes â€” upgrade or downgrade any time. Changes take effect at the next billing cycle." },
+  { q: "Can I switch plans?", a: "Yes — upgrade or downgrade any time. Changes take effect at the next billing cycle." },
   { q: "Is the free plan really free?", a: "Yes, forever. No credit card required to sign up." },
   { q: "What counts as a 'copy'?", a: "Every time you copy a prompt text to your clipboard, that counts as one copy." },
-  { q: "Do submitted prompts get reviewed?", a: "Yes â€” all submissions go through editorial review before going live. Pro users get priority review (usually within 24 hours)." },
+  { q: "Do submitted prompts get reviewed?", a: "Yes — all submissions go through editorial review before going live. Pro users get priority review (usually within 24 hours)." },
 ];
 
 export function Pricing({ go, onAuth }: { go: (p: string) => void; onAuth?: () => void }) {

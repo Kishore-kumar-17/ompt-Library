@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Wand2, Copy, Check, RefreshCw, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { platforms } from "../theme";
@@ -8,7 +8,7 @@ import { VariablePanel } from "../VariablePanel";
 import { applyVariables } from "../../lib/variables";
 import { highlight } from "../../lib/highlight";
 
-// â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export function Improver({ go }: { go: (p: string) => void }) {
   const [input, setInput]     = useState("");
@@ -77,7 +77,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
         <div className="inline-flex items-center gap-2 text-[#0a0a0a] mb-2 text-[13px] font-semibold">
           <Wand2 className="w-4 h-4" />Prompt Improver
         </div>
-        <h1 className="text-3xl font-bold">Paste a weak prompt â€” AI upgrades it to pro quality.</h1>
+        <h1 className="text-3xl font-bold">Paste a weak prompt — AI upgrades it to pro quality.</h1>
         <p className="text-[#6b7280] mt-1">Applies the v4.2 Pro Formula with lock blocks, camera rigs, and platform-native formatting.</p>
       </div>
 

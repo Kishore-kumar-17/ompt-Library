@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import laptopImg from "../../imports/ChatGPT_Image_Apr_25,_2026,_02_32_36_PM.png";
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/* ─────────────────────────────────────────────────────────────────────────────
   EXACT screen-corner coordinates from promptvault001.html
-  (as fractions of the scene's rendered width Ã— height)
+  (as fractions of the scene's rendered width × height)
   tl = top-left, tr = top-right, bl = bottom-left, br = bottom-right
-â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+────────────────────────────────────────────────────────────────────────────── */
 const QUAD = {
   tl: [0.1472, 0.1191] as [number, number],
   tr: [0.8150, 0.1572] as [number, number],
@@ -14,7 +14,7 @@ const QUAD = {
   br: [0.9068, 0.8154] as [number, number],
 };
 
-/* â”€â”€ Homography math (ported 1-to-1 from the HTML's JS) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Homography math (ported 1-to-1 from the HTML's JS) ──────────────────── */
 function gaussSolve(A: number[][], b: number[]): number[] {
   const n = A.length;
   const M = A.map((r, i) => [...r, b[i]]);
@@ -57,7 +57,7 @@ function toMatrix3d(H: number[]): string {
     .map(v => v.toFixed(8)).join(",");
 }
 
-/* â”€â”€ Types & data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Types & data ─────────────────────────────────────────────────────────── */
 type Mode = "image" | "video" | "text" | "content" | "code" | "compare";
 
 interface TabCfg {
@@ -74,41 +74,41 @@ interface TabCfg {
 const TAB_DATA: Record<Mode, TabCfg> = {
   image: {
     id: "image", label: "Image", url: "image",
-    prompt: "A cinematic event poster, dramatic rim lighting, bold typography â€” ar 2:3",
+    prompt: "A cinematic event poster, dramatic rim lighting, bold typography — ar 2:3",
     type: "image",
     src: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200&q=80",
     badge: "Playing preview",
   },
   video: {
     id: "video", label: "Video", url: "video",
-    prompt: "A 5-second cinematic loop of a stadium crowd at golden hour, slow motion, lens flare â€” 24fps, ar 16:9",
+    prompt: "A 5-second cinematic loop of a stadium crowd at golden hour, slow motion, lens flare — 24fps, ar 16:9",
     type: "image",
     src: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&q=80",
     badge: "Playing preview",
   },
   text: {
     id: "text", label: "Text", url: "text",
-    prompt: "Write a launch announcement for a sold-out festival â€” punchy, cinematic, under 80 words",
+    prompt: "Write a launch announcement for a sold-out festival — punchy, cinematic, under 80 words",
     type: "text",
     content: `<strong style="color:#fff;font-size:1.4cqw;display:block;margin-bottom:3%">Generated copy</strong>
-<p style="margin:0 0 3% 0">Under a sky split open by sound, ten thousand voices became one. The lights weren't a show â€” they were a verdict.</p>
+<p style="margin:0 0 3% 0">Under a sky split open by sound, ten thousand voices became one. The lights weren't a show — they were a verdict.</p>
 <p style="margin:0 0 3% 0">Confetti fell like punctuation on a sentence the night had been writing for hours.</p>
-<p style="margin:0;opacity:0.7">â€” 3 variations generated Â· cinematic tone Â· 64 words</p>`,
+<p style="margin:0;opacity:0.7">— 3 variations generated · cinematic tone · 64 words</p>`,
   },
   content: {
     id: "content", label: "Content", url: "content",
-    prompt: "Generate a campaign brief for a festival poster â€” headline, subhead, CTA, tone, format",
+    prompt: "Generate a campaign brief for a festival poster — headline, subhead, CTA, tone, format",
     type: "text",
     content: `<strong style="color:#fff;font-size:1.4cqw;display:block;margin-bottom:3%">Content brief</strong>
 <p style="margin:0 0 2% 0"><strong style="color:#fff">Headline:</strong> The Night Was Always Going To Be This Loud</p>
 <p style="margin:0 0 2% 0"><strong style="color:#fff">Subhead:</strong> One stage. Ten thousand reasons.</p>
 <p style="margin:0 0 2% 0"><strong style="color:#fff">CTA:</strong> Get tickets before the lights go up</p>
 <p style="margin:0 0 2% 0"><strong style="color:#fff">Tone:</strong> Cinematic, urgent, communal</p>
-<p style="margin:0;opacity:0.7"><strong style="color:#fff">Format:</strong> 2:3 poster Â· social cut-down available</p>`,
+<p style="margin:0;opacity:0.7"><strong style="color:#fff">Format:</strong> 2:3 poster · social cut-down available</p>`,
   },
   code: {
     id: "code", label: "Code", url: "code",
-    prompt: "Generate the API call to create this prompt programmatically â€” JSON schema + fetch example",
+    prompt: "Generate the API call to create this prompt programmatically — JSON schema + fetch example",
     type: "code",
     content: `// Generated prompt schema
 {
@@ -132,7 +132,7 @@ fetch("https://api.promptvault.app/v1/generate", {
   },
   compare: {
     id: "compare", label: "Compare", url: "compare",
-    prompt: "Compare two poster variations â€” one warm orange, one cool blue â€” ar 2:3, side by side",
+    prompt: "Compare two poster variations — one warm orange, one cool blue — ar 2:3, side by side",
     type: "image",
     src: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=1200&q=80",
     badge: "A / B preview",
@@ -141,7 +141,7 @@ fetch("https://api.promptvault.app/v1/generate", {
 
 const MODES: Mode[] = ["image", "video", "text", "content", "code", "compare"];
 
-/* â”€â”€ Tab SVG icons (from the HTML) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Tab SVG icons (from the HTML) ───────────────────────────────────────── */
 const TAB_ICONS: Record<Mode, React.ReactNode> = {
   image: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ width: "1.3cqw", height: "1.3cqw", minWidth: 12, minHeight: 12, flexShrink: 0 }}>
@@ -183,9 +183,9 @@ const TAB_ICONS: Record<Mode, React.ReactNode> = {
   ),
 };
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/* ─────────────────────────────────────────────────────────────────────────────
   MAIN COMPONENT
-â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+────────────────────────────────────────────────────────────────────────────── */
 export function LaptopHero() {
   const [activeTab, setActiveTab] = useState<Mode>("image");
   const [hoveredTab, setHoveredTab] = useState<Mode>("image");
@@ -200,7 +200,7 @@ export function LaptopHero() {
   const displayTab = hoveredTab; // what the UI is currently showing
   const cfg = TAB_DATA[displayTab];
 
-  /* â”€â”€ Compute + apply homographic projection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* ── Compute + apply homographic projection ─────────────────────────────── */
   const updateProjection = useCallback(() => {
     const scene = sceneRef.current;
     if (!scene) return;
@@ -254,7 +254,7 @@ export function LaptopHero() {
     };
   }, [updateProjection]);
 
-  /* â”€â”€ Card flash animation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* ── Card flash animation ────────────────────────────────────────────────── */
   const triggerFlash = () => {
     setFlash(false);
     requestAnimationFrame(() => {
@@ -293,7 +293,7 @@ export function LaptopHero() {
     setTimeout(() => setCopied(false), 1600);
   };
 
-  /* â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* ── Render ──────────────────────────────────────────────────────────────── */
   return (
     <section style={{
       background: "#FFFFFF",
@@ -302,7 +302,7 @@ export function LaptopHero() {
       WebkitFontSmoothing: "antialiased",
       overflow: "hidden",
     }}>
-      {/* â”€â”€ Page header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Page header ───────────────────────────────────────────────────── */}
       <div style={{ textAlign: "center", maxWidth: 900, margin: "0 auto 12px" }}>
         <h1 style={{
           fontSize: "clamp(20px, 3vw, 38px)",
@@ -324,15 +324,15 @@ export function LaptopHero() {
           margin: 0,
           fontWeight: 500,
         }}>
-          Pick a discipline â€” we&rsquo;ll run a real prompt through it.
+          Pick a discipline — we&rsquo;ll run a real prompt through it.
         </p>
       </div>
 
-      {/* â”€â”€ Stage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Stage ─────────────────────────────────────────────────────────── */}
       <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
         {/*
           Scene: the laptop image fills this div via backgroundSize 100% 100%.
-          Aspect ratio matches the original image dimensions from the HTML (1535Ã—1024).
+          Aspect ratio matches the original image dimensions from the HTML (1535×1024).
           width = min(full container, height-constrained width) ensures the scene
           never exceeds the remaining viewport height.
         */}
@@ -349,7 +349,7 @@ export function LaptopHero() {
             mixBlendMode: "multiply",
           }}
         >
-          {/* â”€â”€ Screen projection â”€â”€ homography-warped flat UI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ── Screen projection ── homography-warped flat UI ───────────── */}
           <div style={projStyle}>
             {/*
               screen-canvas: the flat, rectangular UI that gets matrix3d-warped
@@ -363,11 +363,11 @@ export function LaptopHero() {
               overflow: "hidden",
               display: "flex",
               flexDirection: "column",
-              // @ts-ignore â€” container-type is a modern CSS prop
+              // @ts-ignore — container-type is a modern CSS prop
               containerType: "inline-size",
             }}>
 
-              {/* â”€â”€ Browser chrome â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ── Browser chrome ──────────────────────────────────────── */}
               <div style={{
                 flex: "0 0 auto",
                 height: "6.5%",
@@ -414,7 +414,7 @@ export function LaptopHero() {
                         fontWeight: 500,
                         whiteSpace: "nowrap",
                       }}>
-                      <span style={{ color: "#4FC3F7", lineHeight: 1 }}>â˜…</span>
+                      <span style={{ color: "#4FC3F7", lineHeight: 1 }}>★</span>
                       <span style={{ color: "#0F0F12", fontWeight: 600 }}>promptvault.app</span>
                       <span style={{ color: "#9A9AA3" }}>/</span>
                       <span>{cfg.url}</span>
@@ -436,7 +436,7 @@ export function LaptopHero() {
                 </div>
               </div>
 
-              {/* â”€â”€ Body (left + right + tabs) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ── Body (left + right + tabs) ────────────────────────────── */}
               <div style={{
                 flex: 1,
                 display: "grid",
@@ -445,7 +445,7 @@ export function LaptopHero() {
                 minHeight: 0,
               }}>
 
-                {/* â”€â”€ LEFT: PROMPT + card + actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                {/* ── LEFT: PROMPT + card + actions ─────────────────────── */}
                 <div style={{
                   gridRow: 1, gridColumn: 1,
                   padding: "3% 2.5% 0 2.5%",
@@ -522,7 +522,7 @@ export function LaptopHero() {
 
                   {/* Action buttons */}
                   <div style={{ display: "flex", gap: "0.9cqw", marginTop: "2cqw" }}>
-                    {/* Run button â€” yellow */}
+                    {/* Run button — yellow */}
                     <button
                       onClick={handleRun}
                       disabled={running}
@@ -559,10 +559,10 @@ export function LaptopHero() {
                           <path d="M8 5v14l11-7z" />
                         </svg>
                       )}
-                      {running ? "Runningâ€¦" : "Run"}
+                      {running ? "Running…" : "Run"}
                     </button>
 
-                    {/* Copy button â€” white / outlined */}
+                    {/* Copy button — white / outlined */}
                     <button
                       onClick={handleCopy}
                       style={{
@@ -592,7 +592,7 @@ export function LaptopHero() {
                   </div>
                 </div>
 
-                {/* â”€â”€ RIGHT: Preview panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                {/* ── RIGHT: Preview panel ───────────────────────────────── */}
                 <div style={{
                   gridRow: 1, gridColumn: 2,
                   padding: "3% 3% 0 0",
@@ -702,7 +702,7 @@ export function LaptopHero() {
                   </div>
                 </div>
 
-                {/* â”€â”€ TAB BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                {/* ── TAB BAR ───────────────────────────────────────────── */}
                 <div
                   onMouseLeave={handleTabLeave}
                   style={{

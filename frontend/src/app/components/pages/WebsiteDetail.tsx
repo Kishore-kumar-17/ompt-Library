@@ -1,4 +1,4 @@
-﻿import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Copy, Star, ExternalLink, ChevronDown, ChevronUp, Loader2, Maximize2, X, Lock, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
@@ -54,7 +54,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(promptText);
-      toast.success("Prompt copied", { description: `${design.title} â€” ${activePl?.name}` });
+      toast.success("Prompt copied", { description: `${design.title} — ${activePl?.name}` });
     } catch {
       toast.error("Failed to copy to clipboard");
     }
@@ -68,7 +68,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
 
       <div className="grid lg:grid-cols-2 gap-10 items-start">
 
-        {/* â”€â”€ Left: Preview + Guide (scrolls) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* ── Left: Preview + Guide (scrolls) ──────────────────────────── */}
         <div>
           {/* Browser mockup */}
           <div className="rounded-2xl overflow-hidden border border-[#0a0a0a]/15 shadow-[0_8px_40px_rgba(10, 10, 10,0.12)]">
@@ -100,7 +100,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
               {!iframeLoaded && !iframeError && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 z-10">
                   <Loader2 className="w-7 h-7 text-[#0a0a0a]/40 animate-spin" />
-                  <span className="text-[12px] text-[#6b7280]">Loading previewâ€¦</span>
+                  <span className="text-[12px] text-[#6b7280]">Loading preview…</span>
                 </div>
               )}
               {iframeLoaded && !iframeError && (
@@ -132,7 +132,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                     title={design.title}
                     sandbox="allow-scripts allow-same-origin"
                   />
-                  {/* Transparent overlay â€” blocks iframe link clicks, opens fullscreen on click */}
+                  {/* Transparent overlay — blocks iframe link clicks, opens fullscreen on click */}
                   <div
                     className="absolute inset-0 z-20 cursor-pointer"
                     onClick={() => iframeLoaded && setFullscreen(true)}
@@ -152,25 +152,25 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
             ))}
           </div>
 
-          {/* â”€â”€ Build Guide â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ── Build Guide ───────────────────────────────────────────── */}
           <div className="rounded-2xl overflow-hidden border border-[#0a0a0a]/15">
             <div className="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-[#0a0a0a]/5 to-[#4FC3F7]/10 border-b border-[#0a0a0a]/10">
-              <span className="w-8 h-8 rounded-full bg-[#4FC3F7] border-2 border-[#0a0a0a] flex items-center justify-center text-lg shrink-0">ðŸš€</span>
+              <span className="w-8 h-8 rounded-full bg-[#4FC3F7] border-2 border-[#0a0a0a] flex items-center justify-center text-lg shrink-0">🚀</span>
               <div>
-                <div className="text-[#0a0a0a] font-bold text-[15px]">How to Build This â€” From Prompt to Live Website</div>
-                <div className="text-[#6b7280] text-[12px]">14 steps Â· Beginner friendly Â· Prompt to deployment</div>
+                <div className="text-[#0a0a0a] font-bold text-[15px]">How to Build This — From Prompt to Live Website</div>
+                <div className="text-[#6b7280] text-[12px]">14 steps · Beginner friendly · Prompt to deployment</div>
               </div>
             </div>
             <WebsiteBuildGuide promptText={promptText} platformName={activePl?.name ?? "Lovable"} />
           </div>
         </div>
 
-        {/* â”€â”€ Right: Prompt panel (STICKY for entire page) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* ── Right: Prompt panel (STICKY for entire page) ─────────────── */}
         <div className="lg:sticky lg:top-8 self-start">
           {/* Header */}
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             <span className="px-2 py-0.5 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#6b7280] text-[12px]">{design.category}</span>
-            <span className="text-[#6b7280]">Â·</span>
+            <span className="text-[#6b7280]">·</span>
             <span className="text-[#6b7280] text-[12px]">{design.subCategory}</span>
             {design.tested && (
               <span className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/20 text-[#0a0a0a] text-[11px] inline-flex items-center gap-1">
@@ -263,7 +263,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
         </div>
       </div>
 
-      {/* â”€â”€ Fullscreen modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Fullscreen modal ──────────────────────────────────────────── */}
       <AnimatePresence>
         {fullscreen && (
           <motion.div
@@ -315,7 +315,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                 <iframe
                   src={previewUrl}
                   className="w-full h-full border-0"
-                  title={`${design.title} â€” fullscreen`}
+                  title={`${design.title} — fullscreen`}
                   sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
                   onLoad={(e) => {
                     const el = e.currentTarget;
@@ -332,9 +332,9 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
   );
 }
 
-// â”€â”€â”€ Build Guide â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Build Guide ──────────────────────────────────────────────────────────────
 
-// â”€â”€â”€ Guide helpers (shared) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Guide helpers (shared) ───────────────────────────────────────────────────
 
 function GCode({ children }: { children: string }) {
   const copy = () => { navigator.clipboard?.writeText(children); toast.success("Copied"); };
@@ -375,7 +375,7 @@ const GUIDE_STEPS = [
   "Upload to GitHub",
   "Deploy on Vercel",
   "Connect a Custom Domain",
-  "Launch Your Website ðŸš€",
+  "Launch Your Website 🚀",
 ];
 
 function StepContent({ idx, promptText, platformName }: { idx: number; promptText: string; platformName: string }) {
@@ -433,14 +433,14 @@ function StepContent({ idx, promptText, platformName }: { idx: number; promptTex
     case 4: return (
       <div className="space-y-3">
         <p>Once generation is complete, download the project as a ZIP and extract it to a folder.</p>
-        <GCode>{`YourWebsite/\nâ”œâ”€â”€ src/\nâ”œâ”€â”€ public/\nâ”œâ”€â”€ package.json\nâ””â”€â”€ next.config.js`}</GCode>
+        <GCode>{`YourWebsite/\n├── src/\n├── public/\n├── package.json\n└── next.config.js`}</GCode>
       </div>
     );
     case 5: return (
       <div className="space-y-3">
         <p>Open your IDE, then navigate to:</p>
         <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 font-mono text-[13px] text-[#e6edf3]">
-          File â†’ Open Folder â†’ Select the extracted folder
+          File → Open Folder → Select the extracted folder
         </div>
       </div>
     );
@@ -455,7 +455,7 @@ function StepContent({ idx, promptText, platformName }: { idx: number; promptTex
     );
     case 7: return (
       <div className="space-y-3">
-        <p>Open the terminal inside VS Code (Terminal â†’ New Terminal) and run:</p>
+        <p>Open the terminal inside VS Code (Terminal → New Terminal) and run:</p>
         <GCode>{`npm install`}</GCode>
         <p className="text-[13px]">Wait until installation completes. This installs all required packages.</p>
       </div>
@@ -464,7 +464,7 @@ function StepContent({ idx, promptText, platformName }: { idx: number; promptTex
       <div className="space-y-3">
         <p>Start the development server:</p>
         <GCode>{`npm run dev`}</GCode>
-        <p className="text-[13px]">Open <span className="font-mono text-[#0a0a0a] bg-[#0a0a0a]/8 px-1.5 py-0.5 rounded">http://localhost:3000</span> in your browser â€” your website is running locally.</p>
+        <p className="text-[13px]">Open <span className="font-mono text-[#0a0a0a] bg-[#0a0a0a]/8 px-1.5 py-0.5 rounded">http://localhost:3000</span> in your browser — your website is running locally.</p>
       </div>
     );
     case 9: return (
@@ -506,17 +506,17 @@ function StepContent({ idx, promptText, platformName }: { idx: number; promptTex
             </a>
           ))}
         </div>
-        <p className="text-[13px]">After purchasing, add the domain in Vercel â†’ Project â†’ Settings â†’ Domains, then configure DNS as instructed.</p>
+        <p className="text-[13px]">After purchasing, add the domain in Vercel → Project → Settings → Domains, then configure DNS as instructed.</p>
       </div>
     );
     case 13: return (
       <div className="space-y-3">
-        <p className="text-[#4FC3F7] font-semibold">Congratulations â€” your website is live on the internet!</p>
+        <p className="text-[#4FC3F7] font-semibold">Congratulations — your website is live on the internet!</p>
         <div className="flex flex-wrap items-center gap-2 text-[12px]">
-          {["Idea", "Prompt", "Generate", "Download", "Open in IDE", "Install deps", "Customise", "GitHub", "Vercel", "Domain", "Live ðŸš€"].map((step, i, arr) => (
+          {["Idea", "Prompt", "Generate", "Download", "Open in IDE", "Install deps", "Customise", "GitHub", "Vercel", "Domain", "Live 🚀"].map((step, i, arr) => (
             <span key={step} className="flex items-center gap-2">
               <span className="px-2.5 py-1 rounded-full bg-[#0a0a0a] text-white font-semibold">{step}</span>
-              {i < arr.length - 1 && <span className="text-[#0a0a0a]/30 font-bold">â†’</span>}
+              {i < arr.length - 1 && <span className="text-[#0a0a0a]/30 font-bold">→</span>}
             </span>
           ))}
         </div>
@@ -557,7 +557,7 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
         </span>
         {allDone
           ? <span className="text-[#3fb950] font-bold text-[13px] flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-[#3fb950]" /> All done â€” website is live!
+              <span className="w-2 h-2 rounded-full bg-[#3fb950]" /> All done — website is live!
             </span>
           : <div className="flex items-center gap-3">
               {progress > 0 && (
@@ -580,7 +580,7 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
 
       <div className="flex gap-5">
 
-        {/* â”€â”€ Left: vertical dot timeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* ── Left: vertical dot timeline ────────────────────────────── */}
         <div className="relative shrink-0 w-[190px]">
           {/* Track line: from center of dot 0 to center of dot 13 */}
           <div
@@ -648,7 +648,7 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
           </div>
         </div>
 
-        {/* â”€â”€ Right: content card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* ── Right: content card ─────────────────────────────────────── */}
         <div className="flex-1 min-w-0">
           <AnimatePresence mode="wait">
             {allDone ? (
@@ -661,7 +661,7 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
                 className="border border-[#3fb950]/30 rounded-2xl p-6 text-center h-full flex flex-col items-center justify-center"
                 style={{ background: "rgba(63,185,80,0.05)" }}
               >
-                <div className="text-4xl mb-3">ðŸš€</div>
+                <div className="text-4xl mb-3">🚀</div>
                 <div className="text-[#3fb950] font-bold text-[16px] mb-1">Your website is live!</div>
                 <div className="text-[#8b949e] text-[13px] leading-relaxed">You've completed all 14 steps. Share your new website with the world.</div>
                 <button
@@ -726,7 +726,7 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
                       className="mt-4 flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold"
                       style={{ background: "#4FC3F7", color: "#0d1117" }}
                     >
-                      {activeStep < TOTAL - 1 ? "Done â€” Unlock Next â†’" : "Complete â€” Launch! ðŸš€"}
+                      {activeStep < TOTAL - 1 ? "Done — Unlock Next →" : "Complete — Launch! 🚀"}
                     </motion.button>
                   )}
                   {reviewStep !== null && (
@@ -734,7 +734,7 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
                       onClick={() => setReviewStep(null)}
                       className="mt-4 text-[12px] text-[#8b949e] hover:text-[#4FC3F7] transition-colors flex items-center gap-1"
                     >
-                      â† Back to current step
+                      ← Back to current step
                     </button>
                   )}
                 </div>
@@ -747,7 +747,7 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
   );
 }
 
-// â”€â”€â”€ Large detail placeholder â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Large detail placeholder ─────────────────────────────────────────────────
 
 function WebsiteDetailPlaceholder({ design }: { design: { accentColor: string; bgColor: string } }) {
   return (
@@ -785,9 +785,9 @@ function WebsiteDetailPlaceholder({ design }: { design: { accentColor: string; b
         <div style={{ fontSize: "13px", fontWeight: 700, color: "#1A1A1A" }} className="mb-3">Our Menu</div>
         <div className="space-y-3">
           {[
-            { name: "Pork Ribs Vindaloo", desc: "A slow-braise of spare ribs, Goan vinegar spice, pickled shallots, roti.", veg: false, price: "â‚¹ 1,450" },
-            { name: "Mumbai Masala Chips", desc: "Fried potatoes, spiced compound butter, tamarind chutney, peanuts.", veg: true, price: "â‚¹ 450" },
-            { name: "Bombay Sour", desc: "House whisky, kokum shrub, cardamom bitters, curry leaf salt rim.", veg: true, price: "â‚¹ 750" },
+            { name: "Pork Ribs Vindaloo", desc: "A slow-braise of spare ribs, Goan vinegar spice, pickled shallots, roti.", veg: false, price: "₹ 1,450" },
+            { name: "Mumbai Masala Chips", desc: "Fried potatoes, spiced compound butter, tamarind chutney, peanuts.", veg: true, price: "₹ 450" },
+            { name: "Bombay Sour", desc: "House whisky, kokum shrub, cardamom bitters, curry leaf salt rim.", veg: true, price: "₹ 750" },
           ].map(dish => (
             <div key={dish.name} className="flex items-center justify-between border-b pb-2" style={{ borderColor: "#E5E7EB" }}>
               <div className="flex items-center gap-2">
@@ -815,7 +815,7 @@ function WebsiteDetailPlaceholder({ design }: { design: { accentColor: string; b
           ].map(story => (
             <div key={story} style={{ background: "#EAB308", padding: "10px 12px", borderRadius: "8px" }}>
               <div style={{ fontSize: "8px", fontWeight: 700, color: "#1A1A1A", lineHeight: 1.4 }}>{story}</div>
-              <div style={{ fontSize: "7px", color: "#92400E", marginTop: "4px" }}>Read More â†’</div>
+              <div style={{ fontSize: "7px", color: "#92400E", marginTop: "4px" }}>Read More →</div>
             </div>
           ))}
         </div>
@@ -824,7 +824,7 @@ function WebsiteDetailPlaceholder({ design }: { design: { accentColor: string; b
       {/* Footer */}
       <div className="px-5 py-6" style={{ background: "#0D0D0D" }}>
         <div style={{ fontSize: "13px", fontWeight: 700, color: "#FFFDF6" }} className="mb-1">CulinaryNarrative</div>
-        <div style={{ fontSize: "8px", color: "rgba(255,255,255,0.4)" }} className="mb-3">Mumbai Â· London Â· Singapore</div>
+        <div style={{ fontSize: "8px", color: "rgba(255,255,255,0.4)" }} className="mb-3">Mumbai · London · Singapore</div>
         <div className="flex gap-4">
           {["Menu", "Stories", "Shop", "Careers"].map(l => (
             <span key={l} style={{ fontSize: "8px", color: design.accentColor }}>{l}</span>

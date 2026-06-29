@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Copy, Save, Sparkles, Wand2, ChevronDown, ChevronUp,
   RefreshCw, Check, ArrowRight, Layers, ArrowLeft,
@@ -11,7 +11,7 @@ import { VariablePanel } from "../VariablePanel";
 import { applyVariables } from "../../lib/variables";
 import { highlight } from "../../lib/highlight";
 
-// â”€â”€â”€ Enhancement options â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Enhancement options ──────────────────────────────────────────────────────
 
 const STYLES  = ["Cinematic", "Minimalist", "Vintage", "Dark Moody", "Vibrant", "Hyperrealistic", "Anime", "Watercolor", "3D Render", "Sketch", "Oil Painting", "Neon"];
 const MOODS   = ["Dramatic", "Peaceful", "Energetic", "Mysterious", "Nostalgic", "Futuristic", "Romantic", "Eerie", "Epic", "Intimate"];
@@ -35,7 +35,7 @@ const CATEGORIES = [
   { key: "social-media",      label: "Social Media" },
 ];
 
-// â”€â”€â”€ Chip selector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Chip selector ────────────────────────────────────────────────────────────
 
 function ChipGroup({ label, options, value, onChange }: {
   label: string; options: string[]; value: string; onChange: (v: string) => void;
@@ -62,7 +62,7 @@ function ChipGroup({ label, options, value, onChange }: {
   );
 }
 
-// â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export function Builder({ go }: { go: (p: string) => void }) {
   const [idea, setIdea]         = useState("");
@@ -191,7 +191,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
         <div className="inline-flex items-center gap-2 text-[#0a0a0a] mb-2">
           <Sparkles className="w-4 h-4" /> Prompt Builder
         </div>
-        <h1 className="text-3xl font-bold">Describe your idea â€” AI generates a pro prompt</h1>
+        <h1 className="text-3xl font-bold">Describe your idea — AI generates a pro prompt</h1>
         <p className="text-[#6b7280] mt-1">
           Powered by the v4.2 Pro Formula with geometry locks, camera rigs, and platform-native formatting.
         </p>
@@ -199,7 +199,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
 
       <div className="grid lg:grid-cols-[1fr_1fr] gap-6 items-start">
 
-        {/* â”€â”€ Left: Input panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* ── Left: Input panel ──────────────────────────────────────────── */}
         <div className="space-y-4 min-w-0">
 
           {/* Idea input */}
@@ -333,7 +333,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
           </button>
         </div>
 
-        {/* â”€â”€ Right: Output panel (sticky) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* ── Right: Output panel (sticky) ─────────────────────────────── */}
         <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-6 flex flex-col gap-4 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
 
           {/* View toggle */}
@@ -428,7 +428,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
                       </button>
                     </div>
                     <pre className="font-mono text-[11px] text-[#6b7280] leading-relaxed whitespace-pre-wrap max-h-[200px] overflow-y-auto">
-                      {allPlatformResults[pl.key] ?? "â€”"}
+                      {allPlatformResults[pl.key] ?? "—"}
                     </pre>
                   </div>
                 ))
@@ -485,7 +485,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
             <button
               onClick={() => {
                 if (!authStore.getUser()) { toast.error("Sign in to save prompts"); return; }
-                toast.success("Saved to library", { description: `${platform} Â· ${family}` });
+                toast.success("Saved to library", { description: `${platform} · ${family}` });
               }}
               disabled={!hasGenerated || isLoading}
               className="h-11 rounded-xl border border-[#0a0a0a]/20 text-[#0a0a0a] text-[13px] font-semibold flex items-center justify-center gap-2 hover:bg-[#0a0a0a]/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all col-span-2"

@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import { BookOpen, Target, Layers, Wand2, Sparkles, Scale, ListChecks, Lightbulb, Copy, ChevronRight, Play, Image, Globe, Video, Code2, FileText, ArrowLeft } from "lucide-react";
@@ -165,8 +165,8 @@ function Pill({ color, label }: { color: string; label: string }) {
 
 function Anatomy() {
   const parts = [
-    { color: "#4FC3F7", name: "Role",        desc: "Who the AI should act as.",                     ex: "You are a senior copywriterâ€¦" },
-    { color: "#0a0a0a", name: "Task",        desc: "What to produce, clearly.",                     ex: "Write a 3-line LinkedIn hookâ€¦" },
+    { color: "#4FC3F7", name: "Role",        desc: "Who the AI should act as.",                     ex: "You are a senior copywriter…" },
+    { color: "#0a0a0a", name: "Task",        desc: "What to produce, clearly.",                     ex: "Write a 3-line LinkedIn hook…" },
     { color: "#90b4ce", name: "Context",     desc: "Relevant background or audience.",              ex: "Audience: early-stage founders." },
     { color: "#4FC3F7", name: "Constraints", desc: "Length, tone, format rules.",                   ex: "Max 60 words. No emojis." },
     { color: "#6b7280", name: "Format",      desc: "How output should be shaped.",                  ex: "Return as JSON with 3 fields." },
@@ -177,7 +177,7 @@ function Anatomy() {
     <Section title="Anatomy of a prompt" icon={Layers}>
       <Card>
         <p className="text-[#6b7280] mb-5" style={{ lineHeight: 1.6 }}>
-          Most high-quality prompts are made of six repeatable parts. You don't need all of them every time â€”
+          Most high-quality prompts are made of six repeatable parts. You don't need all of them every time —
           but naming them helps you debug when output is off.
         </p>
         <div className="grid md:grid-cols-2 gap-3">
@@ -199,7 +199,7 @@ Write a 3-line LinkedIn hook announcing a new AI tool.
 Audience: early-stage founders who skim feeds fast.
 Max 60 words. Punchy, no emojis, no hashtags.
 Return as a markdown list.
-Example tone: "Shipping beats perfection. Here's whyâ€¦"`}</PromptBlock>
+Example tone: "Shipping beats perfection. Here's why…"`}</PromptBlock>
       </Card>
     </Section>
   );
@@ -232,9 +232,9 @@ background: [environment].`}</PromptBlock>
       <Card>
         <div className="text-[#0a0a0a] mb-2" style={{ fontWeight: 700 }}>Why this matters</div>
         <ul className="space-y-2 text-[#6b7280]" style={{ lineHeight: 1.7 }}>
-          <li>â€¢ Test one variable at a time â€” isolate what changes output.</li>
-          <li>â€¢ Name variables meaningfully (<span className="font-mono text-[#0a0a0a]">[audience]</span>, not <span className="font-mono text-[#0a0a0a]">[x]</span>).</li>
-          <li>â€¢ Default values help teammates fill them in faster.</li>
+          <li>• Test one variable at a time — isolate what changes output.</li>
+          <li>• Name variables meaningfully (<span className="font-mono text-[#0a0a0a]">[audience]</span>, not <span className="font-mono text-[#0a0a0a]">[x]</span>).</li>
+          <li>• Default values help teammates fill them in faster.</li>
         </ul>
       </Card>
     </Section>
@@ -290,10 +290,10 @@ function Patterns() {
   const items = [
     { name: "Role + Task",        desc: "Set a persona, then give a single clear task.",                            ex: "You are a strict code reviewer. Review the function below for edge cases." },
     { name: "Chain-of-thought",   desc: "Ask the model to reason step by step before answering.",                  ex: "Think step by step. First list assumptions, then derive the answer." },
-    { name: "Few-shot",           desc: "Show 2â€“3 examples so the model imitates the shape you want.",             ex: "Input: apple â†’ Output: fruit.\nInput: carrot â†’ Output: vegetable.\nInput: banana â†’" },
+    { name: "Few-shot",           desc: "Show 2–3 examples so the model imitates the shape you want.",             ex: "Input: apple → Output: fruit.\nInput: carrot → Output: vegetable.\nInput: banana →" },
     { name: "Structured output",  desc: "Demand JSON/markdown so results are parseable.",                         ex: `Return strict JSON: { "title": string, "score": number }` },
     { name: "Self-critique",      desc: "Ask the model to critique & revise its own draft.",                      ex: "Write the answer, then list 3 weaknesses, then rewrite." },
-    { name: "Negative prompting", desc: "State what NOT to include.",                                              ex: "â€¦minimal, clean. Avoid: text, watermarks, extra fingers." },
+    { name: "Negative prompting", desc: "State what NOT to include.",                                              ex: "…minimal, clean. Avoid: text, watermarks, extra fingers." },
   ];
   return (
     <Section title="Prompt patterns" icon={Sparkles}>
@@ -341,10 +341,10 @@ function Checklist() {
 
 function Tips() {
   const tips = [
-    { t: "Start broad, narrow fast",         d: "First prompt gets you a draft; 2â€“3 refinements beat one 'perfect' prompt." },
+    { t: "Start broad, narrow fast",         d: "First prompt gets you a draft; 2–3 refinements beat one 'perfect' prompt." },
     { t: "Show, don't just tell",            d: "One example is worth three adjectives. Few-shot wins on tone." },
     { t: "Separate instructions from content", d: "Use clear delimiters (---, ```). Models follow structure." },
-    { t: "Name the failure mode",            d: "Tell it what NOT to do. 'Avoid clichÃ©s.' 'No bullet points.'" },
+    { t: "Name the failure mode",            d: "Tell it what NOT to do. 'Avoid clichés.' 'No bullet points.'" },
     { t: "Version your prompts",             d: "Save what works. Track the change + the output improvement." },
     { t: "Temperature matters",              d: "Lower for code/JSON, higher for creative. If the app lets you set it." },
   ];
@@ -365,7 +365,7 @@ function Tips() {
   );
 }
 
-// â”€â”€â”€ Playground â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Playground ─────────────────────────────────────────────────────────────
 
 type PartKey = "role" | "task" | "context" | "constraints" | "format" | "examples";
 
@@ -398,7 +398,7 @@ function Playground() {
     <Section title="Playground" icon={Play}>
       <Card>
         <p className="text-[#6b7280] mb-5" style={{ lineHeight: 1.6 }}>
-          Toggle prompt parts on and off â€” watch the prompt rebuild itself in real time.
+          Toggle prompt parts on and off — watch the prompt rebuild itself in real time.
           The more complete the anatomy, the higher the quality score.
         </p>
 
@@ -496,7 +496,7 @@ function Playground() {
               {count}/6 parts included
             </div>
             <div className="text-[#6b7280] text-[12px] mt-2" style={{ lineHeight: 1.5 }}>
-              {count < 3 && "Add more parts â€” prompts work best with role, task, and context at minimum."}
+              {count < 3 && "Add more parts — prompts work best with role, task, and context at minimum."}
               {count >= 3 && count < 5 && "Good start. Add constraints or format for more predictable output."}
               {count >= 5 && "Strong prompt. This is the structure pros reach for."}
             </div>
@@ -507,7 +507,7 @@ function Playground() {
   );
 }
 
-// â”€â”€â”€ How-To Guide helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── How-To Guide helpers ────────────────────────────────────────────────────
 
 function HowToStep({ n, text }: { n: number; text: string }) {
   return (
@@ -592,13 +592,13 @@ function ToolBadge({ name, color }: { name: string; color: string }) {
 function ProTip({ text }: { text: string }) {
   return (
     <div className="flex items-start gap-2">
-      <span className="text-[#10a37f] text-[15px]">âœ…</span>
+      <span className="text-[#10a37f] text-[15px]">✅</span>
       <span className="text-[#0a0a0a]" style={{ lineHeight: 1.6 }}>{text}</span>
     </div>
   );
 }
 
-// â”€â”€â”€ Image Generation Guide â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Image Generation Guide ──────────────────────────────────────────────────
 
 function ImageGenGuide() {
   const { done, toggle } = useStepDone(8);
@@ -606,7 +606,7 @@ function ImageGenGuide() {
   return (
     <Section title="Image Generation Guide" icon={Image}>
       <StepCard stepIndex={0} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 1 â€” Choose an AI Tool</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 1 — Choose an AI Tool</div>
         <p className="text-[#6b7280] mb-4" style={{ lineHeight: 1.6 }}>Download or open one of these image generation tools:</p>
         <div className="flex flex-wrap gap-2">
           <ToolBadge name="ChatGPT"        color="#10a37f" />
@@ -619,7 +619,7 @@ function ImageGenGuide() {
       </StepCard>
 
       <StepCard stepIndex={1} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 2 â€” Create an Account</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 2 — Create an Account</div>
         <div className="space-y-3">
           <HowToStep n={1} text="Sign Up" />
           <HowToStep n={2} text="Verify Email" />
@@ -628,7 +628,7 @@ function ImageGenGuide() {
       </StepCard>
 
       <StepCard stepIndex={2} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 3 â€” Understand What You Want</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 3 — Understand What You Want</div>
         <p className="text-[#6b7280] mb-3" style={{ lineHeight: 1.6 }}>Ask yourself: What image do I want?</p>
         <div className="flex flex-wrap gap-2">
           {["Poster", "Product", "Advertisement", "Social Media Post", "Portrait", "Logo"].map(t => (
@@ -638,7 +638,7 @@ function ImageGenGuide() {
       </StepCard>
 
       <StepCard stepIndex={3} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 4 â€” Learn Prompt Structure</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 4 — Learn Prompt Structure</div>
         <p className="text-[#6b7280] mb-3" style={{ lineHeight: 1.6 }}>Simple formula:</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
           {["Subject", "Style", "Background", "Quality"].map((s, i) => (
@@ -656,7 +656,7 @@ ultra realistic`}</PromptBlock>
       </StepCard>
 
       <StepCard stepIndex={4} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 5 â€” Generate First Image</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 5 — Generate First Image</div>
         <div className="space-y-3">
           <HowToStep n={1} text="Paste your prompt into the tool." />
           <HowToStep n={2} text="Click Generate." />
@@ -665,7 +665,7 @@ ultra realistic`}</PromptBlock>
       </StepCard>
 
       <StepCard stepIndex={5} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 6 â€” Improve Your Prompt</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 6 — Improve Your Prompt</div>
         <p className="text-[#6b7280] mb-3" style={{ lineHeight: 1.6 }}>Add more details to refine your output:</p>
         <div className="flex flex-wrap gap-2">
           {["Lighting", "Camera Angle", "Colors", "Mood"].map(t => (
@@ -675,7 +675,7 @@ ultra realistic`}</PromptBlock>
       </StepCard>
 
       <StepCard stepIndex={6} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 7 â€” Download Image</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 7 — Download Image</div>
         <p className="text-[#6b7280] mb-3" style={{ lineHeight: 1.6 }}>Available formats:</p>
         <div className="flex flex-wrap gap-2">
           {["PNG", "JPG", "WebP"].map(t => (
@@ -685,7 +685,7 @@ ultra realistic`}</PromptBlock>
       </StepCard>
 
       <StepCard stepIndex={7} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 8 â€” Use in Your Projects</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 8 — Use in Your Projects</div>
         <div className="flex flex-wrap gap-2">
           {["Website", "Instagram", "Marketing", "Presentations", "Posters"].map(t => (
             <span key={t} className="px-2.5 py-1 rounded-full bg-[#4FC3F7]/10 text-[#0a0a0a] text-[12px] border border-[#4FC3F7]/30" style={{ fontWeight: 600 }}>{t}</span>
@@ -696,7 +696,7 @@ ultra realistic`}</PromptBlock>
   );
 }
 
-// â”€â”€â”€ Website Generation Guide â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Website Generation Guide ────────────────────────────────────────────────
 
 const FEATURED_WEBSITE_IDS = [
   "bw_01", "bw_04", "bw_05", "bw_07",
@@ -738,7 +738,7 @@ function FeaturedWebsiteCard({ design, onClick }: { design: WebsiteDesign; onCli
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
           <span className="text-white text-[11px] flex items-center gap-1" style={{ fontWeight: 600 }}>
-            View Details â†’
+            View Details →
           </span>
         </div>
       </div>
@@ -763,14 +763,14 @@ function WebGenGuide({ go }: { go: (p: string) => void }) {
         <div className="flex items-center justify-between mb-4">
           <div>
             <div className="text-[#0a0a0a] text-[15px]" style={{ fontWeight: 800 }}>Top Website Designs</div>
-            <div className="text-[#6b7280] text-[12px] mt-0.5">Hand-picked from our library â€” click to explore</div>
+            <div className="text-[#6b7280] text-[12px] mt-0.5">Hand-picked from our library — click to explore</div>
           </div>
           <button
             onClick={() => go("library:website")}
             className="text-[#0a0a0a] hover:text-[#0a0a0a] transition-colors text-[12px]"
             style={{ fontWeight: 600 }}
           >
-            View all â†’
+            View all →
           </button>
         </div>
         <div
@@ -813,7 +813,7 @@ function WebGenGuide({ go }: { go: (p: string) => void }) {
         <div className="text-[#0a0a0a] mb-2" style={{ fontWeight: 700 }}>What is Website Generation?</div>
         <p className="text-[#6b7280]" style={{ lineHeight: 1.6 }}>
           Website prompts help AI generate full landing pages, SaaS interfaces, portfolio sites, e-commerce
-          stores, and agency websites â€” complete with layout, components, and styling.
+          stores, and agency websites — complete with layout, components, and styling.
         </p>
         <div className="flex flex-wrap gap-2 mt-4">
           {["Landing pages", "SaaS websites", "Portfolio websites", "E-commerce stores", "Agency websites"].map(t => (
@@ -871,17 +871,17 @@ Make the CTA button 48px height.`}</PromptBlock>
       <Card>
         <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Pro Tips</div>
         <div className="space-y-3">
-          <ProTip text="Always specify layout â€” '3-column feature section', 'full-width hero'." />
-          <ProTip text="Name every component â€” Navbar, Hero, Features, Pricing, Footer." />
-          <ProTip text="Reference real design systems â€” 'Inspired by Linear and Figma'." />
-          <ProTip text="Iterate in small steps â€” one refinement prompt per change is easier to track." />
+          <ProTip text="Always specify layout — '3-column feature section', 'full-width hero'." />
+          <ProTip text="Name every component — Navbar, Hero, Features, Pricing, Footer." />
+          <ProTip text="Reference real design systems — 'Inspired by Linear and Figma'." />
+          <ProTip text="Iterate in small steps — one refinement prompt per change is easier to track." />
         </div>
       </Card>
     </Section>
   );
 }
 
-// â”€â”€â”€ Video Generation Guide â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Video Generation Guide ──────────────────────────────────────────────────
 
 function VideoGenGuide() {
   const { done, toggle } = useStepDone(8);
@@ -889,7 +889,7 @@ function VideoGenGuide() {
   return (
     <Section title="Video Generation Guide" icon={Video}>
       <StepCard stepIndex={0} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 1 â€” Choose a Video AI Tool</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 1 — Choose a Video AI Tool</div>
         <div className="flex flex-wrap gap-2">
           <ToolBadge name="Seedance"  color="#0a0a0a" />
           <ToolBadge name="Kling"     color="#4FC3F7" />
@@ -901,7 +901,7 @@ function VideoGenGuide() {
       </StepCard>
 
       <StepCard stepIndex={1} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 2 â€” Create an Account</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 2 — Create an Account</div>
         <div className="space-y-3">
           <HowToStep n={1} text="Register" />
           <HowToStep n={2} text="Verify Email" />
@@ -910,7 +910,7 @@ function VideoGenGuide() {
       </StepCard>
 
       <StepCard stepIndex={2} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 3 â€” Decide Your Video Type</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 3 — Decide Your Video Type</div>
         <div className="flex flex-wrap gap-2">
           {["Advertisement", "Product Demo", "Short Film", "Anime", "Reel", "Commercial"].map(t => (
             <span key={t} className="px-2.5 py-1 rounded-full bg-[#0a0a0a]/8 text-[#0a0a0a] text-[12px]" style={{ fontWeight: 600 }}>{t}</span>
@@ -919,7 +919,7 @@ function VideoGenGuide() {
       </StepCard>
 
       <StepCard stepIndex={3} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 4 â€” Learn Video Prompt Formula</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 4 — Learn Video Prompt Formula</div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
           {["Subject", "Action", "Camera Movement", "Environment"].map((s, i) => (
             <div key={s} className="border border-[#0a0a0a]/15 rounded-xl p-3 text-center">
@@ -936,7 +936,7 @@ night atmosphere`}</PromptBlock>
       </StepCard>
 
       <StepCard stepIndex={4} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 5 â€” Generate Video</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 5 — Generate Video</div>
         <div className="space-y-3">
           <HowToStep n={1} text="Paste your prompt into the tool." />
           <HowToStep n={2} text="Click Generate." />
@@ -945,7 +945,7 @@ night atmosphere`}</PromptBlock>
       </StepCard>
 
       <StepCard stepIndex={5} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 6 â€” Improve Motion</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 6 — Improve Motion</div>
         <p className="text-[#6b7280] mb-3" style={{ lineHeight: 1.6 }}>Add camera movements to enhance your video:</p>
         <div className="flex flex-wrap gap-2">
           {["Zoom In", "Tracking Shot", "Orbit Shot", "Slow Motion"].map(t => (
@@ -955,7 +955,7 @@ night atmosphere`}</PromptBlock>
       </StepCard>
 
       <StepCard stepIndex={6} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 7 â€” Export Video</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 7 — Export Video</div>
         <div className="flex flex-wrap gap-2">
           {["MP4", "MOV"].map(t => (
             <span key={t} className="px-3 py-1 rounded-full bg-[#0a0a0a]/8 text-[#0a0a0a] text-[12px]" style={{ fontWeight: 700 }}>{t}</span>
@@ -964,7 +964,7 @@ night atmosphere`}</PromptBlock>
       </StepCard>
 
       <StepCard stepIndex={7} totalSteps={8} done={done} onToggle={toggle}>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 8 â€” Publish</div>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 8 — Publish</div>
         <div className="flex flex-wrap gap-2">
           {["Instagram", "YouTube", "Website", "Marketing Campaign"].map(t => (
             <span key={t} className="px-2.5 py-1 rounded-full bg-[#4FC3F7]/10 text-[#0a0a0a] text-[12px] border border-[#4FC3F7]/30" style={{ fontWeight: 600 }}>{t}</span>
@@ -975,7 +975,7 @@ night atmosphere`}</PromptBlock>
   );
 }
 
-// â”€â”€â”€ Code Generation Guide â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Code Generation Guide ───────────────────────────────────────────────────
 
 function CodeGenGuide() {
   return (
@@ -984,7 +984,7 @@ function CodeGenGuide() {
         <div className="text-[#0a0a0a] mb-2" style={{ fontWeight: 700 }}>What is Code Generation?</div>
         <p className="text-[#6b7280]" style={{ lineHeight: 1.6 }}>
           Code generation prompts produce React components, full landing pages, dashboards,
-          SaaS interfaces, and utility functions â€” ready to drop into your project.
+          SaaS interfaces, and utility functions — ready to drop into your project.
         </p>
         <div className="flex flex-wrap gap-2 mt-4">
           {["React components", "Landing pages", "Dashboards", "SaaS interfaces", "Utility functions"].map(t => (
@@ -1019,9 +1019,9 @@ Requirements:
       <Card>
         <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Pro Tips</div>
         <div className="space-y-3">
-          <ProTip text="Specify the exact stack â€” React, Tailwind, TypeScript, shadcn/ui." />
-          <ProTip text="State constraints upfront â€” 'no external dependencies', 'single file'." />
-          <ProTip text="Ask for TypeScript interfaces â€” better output and easier to refine." />
+          <ProTip text="Specify the exact stack — React, Tailwind, TypeScript, shadcn/ui." />
+          <ProTip text="State constraints upfront — 'no external dependencies', 'single file'." />
+          <ProTip text="Ask for TypeScript interfaces — better output and easier to refine." />
           <ProTip text="Use follow-up prompts to add features one at a time, not all at once." />
         </div>
       </Card>
@@ -1029,7 +1029,7 @@ Requirements:
   );
 }
 
-// â”€â”€â”€ Content Generation Guide â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Content Generation Guide ────────────────────────────────────────────────
 
 function ContentGenGuide() {
   return (
@@ -1038,7 +1038,7 @@ function ContentGenGuide() {
         <div className="text-[#0a0a0a] mb-2" style={{ fontWeight: 700 }}>What is Content Generation?</div>
         <p className="text-[#6b7280]" style={{ lineHeight: 1.6 }}>
           Content generation prompts produce blog posts, social media captions, marketing copy,
-          email sequences, and scripts â€” on-brand and ready to publish or edit.
+          email sequences, and scripts — on-brand and ready to publish or edit.
         </p>
         <div className="flex flex-wrap gap-2 mt-4">
           {["Blog posts", "Social captions", "Marketing copy", "Email sequences", "Ad copy"].map(t => (
@@ -1061,12 +1061,12 @@ function ContentGenGuide() {
         <PromptBlock>{`Write a LinkedIn post announcing an AI startup launch.
 
 Tone: Professional but approachable
-Length: 150â€“200 words
+Length: 150–200 words
 Audience: Startup founders and early adopters
 
 Include:
 - A hook in the first line
-- 2â€“3 key benefits
+- 2–3 key benefits
 - A clear call to action
 
 Avoid: Buzzwords, excessive emojis, passive voice`}</PromptBlock>
@@ -1075,10 +1075,10 @@ Avoid: Buzzwords, excessive emojis, passive voice`}</PromptBlock>
       <Card>
         <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Pro Tips</div>
         <div className="space-y-3">
-          <ProTip text="Always define tone â€” professional, casual, witty, authoritative." />
-          <ProTip text="Set an exact word count â€” 'under 150 words' prevents over-generation." />
-          <ProTip text="Include a negative constraint â€” 'avoid clichÃ©s', 'no bullet points'." />
-          <ProTip text="Provide an example of ideal output â€” one sample beats three adjectives." />
+          <ProTip text="Always define tone — professional, casual, witty, authoritative." />
+          <ProTip text="Set an exact word count — 'under 150 words' prevents over-generation." />
+          <ProTip text="Include a negative constraint — 'avoid clichés', 'no bullet points'." />
+          <ProTip text="Provide an example of ideal output — one sample beats three adjectives." />
         </div>
       </Card>
     </Section>
