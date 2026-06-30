@@ -9,6 +9,18 @@ html, body, #root {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+/* Mobile: prevent sideways drift/scroll. `clip` (not `hidden`) so it does
+   not break the home hero's position: sticky. max-width pins the page to
+   the device width even if a child briefly overflows. */
+html, body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+#root {
+  overflow-x: clip;
+  max-width: 100vw;
+}
+
 /* Hide scrollbar on carousel tracks */
 .carousel-track::-webkit-scrollbar { display: none; }
 .carousel-track { scrollbar-width: none; -ms-overflow-style: none; }
