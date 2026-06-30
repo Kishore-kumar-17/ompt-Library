@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000">
+  <rect width="800" height="1000" fill="#C8C8B0"/>
+  <rect x="200" y="150" width="400" height="500" fill="#A0A090" opacity="0.6"/>
+  <circle cx="400" cy="320" r="120" fill="#888878"/>
+  <rect x="220" y="480" width="360" height="280" rx="0" fill="#909080"/>
+  <text x="400" y="900" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="#444434" letter-spacing="4">PLACEHOLDER PHOTO</text>
+  <text x="400" y="940" font-family="Helvetica, Arial, sans-serif" font-size="18" text-anchor="middle" fill="#666656" letter-spacing="2">Replace with photo.jpg</text>
+</svg>

@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Fauthors\u002F[id]","\u002Fbeats\u002F[beat]","\u002Fstories\u002F[slug]","\u002Fvisual-stories\u002F[slug]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#E4E4D5"/>
+  <rect x="0" y="0" width="8" height="630" fill="#D55349"/>
+  <text x="80" y="220" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="96" font-weight="800" fill="#000000" letter-spacing="-2">ARJUN</text>
+  <text x="80" y="330" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="96" font-weight="800" fill="#D55349" letter-spacing="-2">MEHTA</text>
+  <text x="82" y="400" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="22" font-weight="800" fill="rgba(0,0,0,0.5)" letter-spacing="6">DESIGNER &amp; DEVELOPER</text>
+</svg>

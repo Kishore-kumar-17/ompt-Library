@@ -1,0 +1,2 @@
+Public assets directory.
+Add recipe images, logo SVG, and other static assets here.
