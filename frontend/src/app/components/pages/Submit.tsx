@@ -182,7 +182,7 @@ export function Submit() {
           <button
             onClick={handleSubmit}
             disabled={submitting || submitted || !data.prompt.trim()}
-            className="h-10 px-5 rounded-full bg-[#4FC3F7] text-[#bce4d8] inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-10 px-5 rounded-full bg-[#4FC3F7] text-[#0a0a0a] inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ fontWeight: 700 }}
           >
             {submitting ? <><Loader2 className="w-4 h-4 animate-spin" />Submitting…</> : "Submit for review"}

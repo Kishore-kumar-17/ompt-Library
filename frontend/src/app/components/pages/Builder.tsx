@@ -137,10 +137,6 @@ export function Builder({ go }: { go: (p: string) => void }) {
     }
   }
 
-  async function handleRegenerate() {
-    await handleGenerate();
-  }
-
   async function handleGenerateAll() {
     if (!canGenerate || isLoading) return;
     setIsLoading(true);
@@ -334,7 +330,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
         </div>
 
         {/* ── Right: Output panel (sticky) ─────────────────────────────── */}
-        <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-6 flex flex-col gap-4 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
+        <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-6 flex flex-col gap-4 min-w-0 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
 
           {/* View toggle */}
           <div className="flex items-center justify-between">
@@ -387,7 +383,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
                   <span className="text-[13px] text-[#6b7280]">AI is crafting your v4.2 prompt...</span>
                 </div>
               ) : hasGenerated ? (
-                <pre className="whitespace-pre-wrap font-mono text-[13px] leading-relaxed text-[#0a0a0a]">
+                <pre className="whitespace-pre-wrap break-words font-mono text-[13px] leading-relaxed text-[#0a0a0a]">
                   {variableFields.length > 0 ? highlight(displayPrompt, variableFields.map(v => v.name)) : generated}
                 </pre>
               ) : (
@@ -427,7 +423,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
                         <Copy className="w-3 h-3" /> Copy
                       </button>
                     </div>
-                    <pre className="font-mono text-[11px] text-[#6b7280] leading-relaxed whitespace-pre-wrap max-h-[200px] overflow-y-auto">
+                    <pre className="font-mono text-[11px] text-[#6b7280] leading-relaxed whitespace-pre-wrap break-words max-h-[200px] overflow-y-auto">
                       {allPlatformResults[pl.key] ?? "—"}
                     </pre>
                   </div>

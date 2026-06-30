@@ -789,7 +789,7 @@ function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
               )}
               <button
                 onClick={() => { setProgress(0); setReviewStep(null); }}
-                className="text-[11px] text-[#8b949e] hover:text-[#0a0a0a] transition-colors"
+                className="text-[11px] text-[#8b949e] hover:text-[#e6edf3] transition-colors"
               >
                 Reset
               </button>
@@ -797,9 +797,9 @@ function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
         }
       </div>
 
-      <div className="flex gap-5">
+      <div className="flex flex-col gap-5 lg:flex-row">
         {/* Left: vertical dot timeline */}
-        <div className="relative shrink-0 w-[190px]">
+        <div className="relative shrink-0 w-full lg:w-[190px]">
           <div className="absolute bg-white/10" style={{ left: 14, top: 14, bottom: 14, width: 2 }} />
           <motion.div
             className="absolute origin-top"
@@ -822,7 +822,7 @@ function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
                 >
                   <motion.div
                     animate={status === "active" ? {
-                      boxShadow: ["0 0 0px #4FC3F7", "0 0 12px #4FC3F7, 0 0 24px rgba(255,216,3,0.4)", "0 0 0px #4FC3F7"],
+                      boxShadow: ["0 0 0px #4FC3F7", "0 0 12px #4FC3F7, 0 0 24px rgba(79,195,247,0.4)", "0 0 0px #4FC3F7"],
                     } : isReviewing ? { boxShadow: "0 0 0 3px rgba(63,185,80,0.4)" } : {}}
                     transition={{ duration: 1.8, repeat: status === "active" ? Infinity : 0, ease: "easeInOut" }}
                     className={`w-[28px] h-[28px] rounded-full flex items-center justify-center text-[10px] font-bold border-2 shrink-0 transition-all duration-300 ${
@@ -870,7 +870,7 @@ function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
                 <div className="text-[#8b949e] text-[13px]">You've completed all {TOTAL} steps.</div>
                 <button
                   onClick={() => { setProgress(0); setReviewStep(null); }}
-                  className="mt-5 text-[12px] text-[#8b949e] hover:text-[#0a0a0a] transition-colors underline"
+                  className="mt-5 text-[12px] text-[#8b949e] hover:text-[#e6edf3] transition-colors underline"
                 >
                   Start over
                 </button>
@@ -883,13 +883,13 @@ function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
                 exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.22 }}
                 className="border rounded-2xl overflow-hidden"
-                style={{ borderColor: reviewStep !== null ? "rgba(63,185,80,0.25)" : "rgba(255,216,3,0.25)" }}
+                style={{ borderColor: reviewStep !== null ? "rgba(63,185,80,0.25)" : "rgba(79,195,247,0.25)" }}
               >
                 <div
                   className="flex items-center justify-between px-4 py-3 border-b"
                   style={{
-                    background: reviewStep !== null ? "rgba(63,185,80,0.06)" : "rgba(255,216,3,0.06)",
-                    borderColor: reviewStep !== null ? "rgba(63,185,80,0.15)" : "rgba(255,216,3,0.15)",
+                    background: reviewStep !== null ? "rgba(63,185,80,0.06)" : "rgba(79,195,247,0.06)",
+                    borderColor: reviewStep !== null ? "rgba(63,185,80,0.15)" : "rgba(79,195,247,0.15)",
                   }}
                 >
                   <div className="flex items-center gap-2 min-w-0">
@@ -912,7 +912,7 @@ function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
                   </div>
                   <span
                     className="text-[9px] font-bold uppercase tracking-widest shrink-0 ml-2"
-                    style={{ color: reviewStep !== null ? "#3fb950" : "rgba(255,216,3,0.7)" }}
+                    style={{ color: reviewStep !== null ? "#3fb950" : "rgba(79,195,247,0.7)" }}
                   >
                     {reviewStep !== null ? "Review" : "Active"}
                   </span>

@@ -25,18 +25,6 @@ html, body {
 .carousel-track::-webkit-scrollbar { display: none; }
 .carousel-track { scrollbar-width: none; -ms-overflow-style: none; }
 
-/* Infinite marquee for Browse by Category */
-@keyframes categoryMarquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-.category-marquee {
-  animation: categoryMarquee 32s linear infinite;
-}
-.category-marquee-outer:hover .category-marquee {
-  animation-play-state: paused;
-}
-
 /* Happy Hues button treatment — chunky offset shadow, lift on hover */
 button {
   transition:

@@ -106,7 +106,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
         </div>
 
         {/* Output (sticky) */}
-        <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-6 flex flex-col lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
+        <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-6 flex flex-col min-w-0 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
           {/* Platform tabs */}
           <div className="flex flex-wrap gap-2 mb-4">
             {platforms.map(pl => (
@@ -147,7 +147,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
                 <span className="text-[13px] text-[#6b7280]">AI is improving your prompt...</span>
               </div>
             ) : result ? (
-              <pre className="whitespace-pre-wrap text-[#0a0a0a] font-mono text-[13px] leading-relaxed">
+              <pre className="whitespace-pre-wrap break-words text-[#0a0a0a] font-mono text-[13px] leading-relaxed">
                 {regenText
                   ? regenText
                   : variableFields.length > 0

@@ -11,7 +11,7 @@ export function Dashboard() {
   const untested = samplePrompts.length - tested;
   const testedData = [
     { name: "Tested",   value: tested,   color: "#4FC3F7" },
-    { name: "Untested", value: untested, color: "#4FC3F7" },
+    { name: "Untested", value: untested, color: "#e5e7eb" },
   ];
   const catData = [...categories.image, ...categories.text].slice(0, 6).map((c, i) => ({
     name: c.name,
@@ -130,7 +130,7 @@ function PromptList({ title, items }: any) {
           <li key={p.id} className="flex items-center gap-3 p-2 rounded hover:bg-[#0a0a0a]/5">
             <div className="text-[#6b7280] w-14 text-[12px]">{p.id.slice(0, 6)}</div>
             <div className="text-[#0a0a0a] flex-1 line-clamp-1" style={{ fontSize: "13px" }}>{p.title}</div>
-            <div className="text-[#0a0a0a]" style={{ fontWeight: 700 }}>â˜… {p.rating}</div>
+            <div className="text-[#0a0a0a]" style={{ fontWeight: 700 }}>★ {p.rating}</div>
           </li>
         ))}
       </ul>

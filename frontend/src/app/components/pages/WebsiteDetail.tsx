@@ -71,7 +71,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
         {/* ── Left: Preview + Guide (scrolls) ──────────────────────────── */}
         <div>
           {/* Browser mockup */}
-          <div className="rounded-2xl overflow-hidden border border-[#0a0a0a]/15 shadow-[0_8px_40px_rgba(10, 10, 10,0.12)]">
+          <div className="rounded-2xl overflow-hidden border border-[#0a0a0a]/15 shadow-[0_8px_40px_rgba(10,10,10,0.12)]">
             {/* Browser chrome */}
             <div className="flex items-center gap-2 px-3 py-2.5 bg-[#f0f0f0] border-b border-[#d8d8d8]">
               <div className="flex gap-1.5">
@@ -570,7 +570,7 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
               )}
               <button
                 onClick={() => { setProgress(0); setReviewStep(null); }}
-                className="text-[11px] text-[#8b949e] hover:text-[#0a0a0a] transition-colors"
+                className="text-[11px] text-[#8b949e] hover:text-[#e6edf3] transition-colors"
               >
                 Reset
               </button>
@@ -578,10 +578,10 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
         }
       </div>
 
-      <div className="flex gap-5">
+      <div className="flex flex-col gap-5 lg:flex-row">
 
         {/* ── Left: vertical dot timeline ────────────────────────────── */}
-        <div className="relative shrink-0 w-[190px]">
+        <div className="relative shrink-0 w-full lg:w-[190px]">
           {/* Track line: from center of dot 0 to center of dot 13 */}
           <div
             className="absolute bg-white/10"
@@ -613,7 +613,7 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
                     animate={status === "active" ? {
                       boxShadow: [
                         "0 0 0px #4FC3F7",
-                        "0 0 12px #4FC3F7, 0 0 24px rgba(255,216,3,0.4)",
+                        "0 0 12px #4FC3F7, 0 0 24px rgba(79,195,247,0.4)",
                         "0 0 0px #4FC3F7",
                       ],
                     } : isReviewing ? {
@@ -666,7 +666,7 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
                 <div className="text-[#8b949e] text-[13px] leading-relaxed">You've completed all 14 steps. Share your new website with the world.</div>
                 <button
                   onClick={() => { setProgress(0); setReviewStep(null); }}
-                  className="mt-5 text-[12px] text-[#8b949e] hover:text-[#0a0a0a] transition-colors underline"
+                  className="mt-5 text-[12px] text-[#8b949e] hover:text-[#e6edf3] transition-colors underline"
                 >
                   Start over
                 </button>
@@ -679,14 +679,14 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
                 exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.22 }}
                 className="border rounded-2xl overflow-hidden"
-                style={{ borderColor: reviewStep !== null ? "rgba(63,185,80,0.25)" : "rgba(255,216,3,0.25)" }}
+                style={{ borderColor: reviewStep !== null ? "rgba(63,185,80,0.25)" : "rgba(79,195,247,0.25)" }}
               >
                 {/* Card header */}
                 <div
                   className="flex items-center justify-between px-4 py-3 border-b"
                   style={{
-                    background: reviewStep !== null ? "rgba(63,185,80,0.06)" : "rgba(255,216,3,0.06)",
-                    borderColor: reviewStep !== null ? "rgba(63,185,80,0.15)" : "rgba(255,216,3,0.15)",
+                    background: reviewStep !== null ? "rgba(63,185,80,0.06)" : "rgba(79,195,247,0.06)",
+                    borderColor: reviewStep !== null ? "rgba(63,185,80,0.15)" : "rgba(79,195,247,0.15)",
                   }}
                 >
                   <div className="flex items-center gap-2 min-w-0">
@@ -709,7 +709,7 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
                   </div>
                   <span
                     className="text-[9px] font-bold uppercase tracking-widest shrink-0 ml-2"
-                    style={{ color: reviewStep !== null ? "#3fb950" : "rgba(255,216,3,0.7)" }}
+                    style={{ color: reviewStep !== null ? "#3fb950" : "rgba(79,195,247,0.7)" }}
                   >
                     {reviewStep !== null ? "Review" : "Active"}
                   </span>

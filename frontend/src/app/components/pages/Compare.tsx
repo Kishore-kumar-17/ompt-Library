@@ -75,7 +75,7 @@ export function Compare({ go }: { go: (p: string) => void }) {
                       </span>
                     )}
                   </div>
-                  <pre className={`whitespace-pre-wrap font-mono text-[12px] min-h-[80px] mb-3 leading-relaxed ${isNA ? "text-[#6b7280]/40 italic" : "text-[#6b7280]"}`}>
+                  <pre className={`whitespace-pre-wrap break-words font-mono text-[12px] min-h-[80px] mb-3 leading-relaxed ${isNA ? "text-[#6b7280]/40 italic" : "text-[#6b7280]"}`}>
                     {text}
                   </pre>
                   {!isNA && (

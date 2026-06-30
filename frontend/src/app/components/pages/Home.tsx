@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Users, Sparkles, ArrowRight } from "lucide-react";
-import { motion, AnimatePresence, useInView, useMotionValue, useSpring, useTransform, useScroll, type MotionValue } from "motion/react";
+import { Users } from "lucide-react";
+import { motion, useInView, useTransform, useScroll, type MotionValue } from "motion/react";
 import frame1Video from "../../../imports/Frame_1.mp4";
 import frame2Video from "../../../imports/Frame_2.mp4";
 import frame3Video from "../../../imports/Frame_3.mp4";
@@ -19,6 +19,52 @@ import imgApparel       from "../../../imports/WhatsApp_Image_2026-04-27_at_2.04
 import imgFashion       from "../../../imports/WhatsApp_Image_2026-04-27_at_2.07.53_PM.jpeg";
 import imgIllustration  from "../../../imports/WhatsApp_Image_2026-04-27_at_2.29.43_PM-2.jpeg";
 
+// ─── Scroll-reveal — fills heading + paragraph word-by-word as it scrolls in ──
+function RevealWord({ progress, range, children }: { progress: MotionValue<number>; range: [number, number]; children: React.ReactNode }) {
+  const opacity = useTransform(progress, range, [0.12, 1]);
+  return <motion.span style={{ opacity, display: "inline-block" }}>{children}</motion.span>;
+}
+
+function countRevealWords(node: React.ReactNode): number {
+  if (typeof node === "string") return node.split(/\s+/).filter(Boolean).length;
+  if (Array.isArray(node)) return node.reduce<number>((sum, n) => sum + countRevealWords(n), 0);
+  if (React.isValidElement(node)) return countRevealWords((node.props as { children?: React.ReactNode }).children);
+  return 0;
+}
+
+function buildRevealNodes(node: React.ReactNode, progress: MotionValue<number>, total: number, counter: { i: number }, keyPrefix: string): React.ReactNode {
+  if (typeof node === "string") {
+    return node.split(/(\s+)/).map((tok, k) => {
+      if (!tok.trim()) return tok;
+      const idx = counter.i++;
+      const start = idx / total;
+      const end = Math.min(1, (idx + 1) / total);
+      return <RevealWord key={`${keyPrefix}-${k}`} progress={progress} range={[start, end]}>{tok}</RevealWord>;
+    });
+  }
+  if (Array.isArray(node)) {
+    return node.map((n, k) => <React.Fragment key={`${keyPrefix}-${k}`}>{buildRevealNodes(n, progress, total, counter, `${keyPrefix}-${k}`)}</React.Fragment>);
+  }
+  if (React.isValidElement(node)) {
+    const kids = (node.props as { children?: React.ReactNode }).children;
+    if (kids == null) return node;
+    return React.cloneElement(node, undefined, buildRevealNodes(kids, progress, total, counter, keyPrefix));
+  }
+  return node;
+}
+
+function ScrollReveal({ children, className, style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.82", "start 0.32"] });
+  const total = Math.max(1, countRevealWords(children));
+  const counter = { i: 0 };
+  return (
+    <div ref={ref} className={className} style={style}>
+      {buildRevealNodes(children, scrollYProgress, total, counter, "rv")}
+    </div>
+  );
+}
+
 export function Home({ go }: { go: (p: string) => void }) {
   return (
     <div className="text-[#0a0a0a]">
@@ -32,15 +78,17 @@ export function Home({ go }: { go: (p: string) => void }) {
             <span className="text-[#94a3b8] font-mono" style={{ fontSize: "12px" }}>1.0</span>
             <span>Philosophy</span>
           </div>
-          <h2
-            className="text-[#0a0a0a] mb-6 whitespace-nowrap"
-            style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 400, lineHeight: 1.08, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
-          >
-            <span style={{ fontWeight: 800 }}>Prompting</span> is the <span style={{ fontWeight: 800 }}>New Coding.</span>
-          </h2>
-          <p className="text-[#6b7280] max-w-[620px] mx-auto" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
-            The best AI outputs don't come from better models — they come from better prompts. Master the craft of prompting and unlock the full potential of every AI tool.
-          </p>
+          <ScrollReveal>
+            <h2
+              className="text-[#0a0a0a] mb-6"
+              style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 400, lineHeight: 1.08, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+            >
+              <span style={{ fontWeight: 800 }}>Prompting</span> is the <span style={{ fontWeight: 800 }}>New Coding.</span>
+            </h2>
+            <p className="text-[#6b7280] max-w-[620px] mx-auto" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
+              The best AI outputs don't come from better models — they come from better prompts. Master the craft of prompting and unlock the full potential of every AI tool.
+            </p>
+          </ScrollReveal>
         </div>
       </div>
 
@@ -54,6 +102,7 @@ export function Home({ go }: { go: (p: string) => void }) {
             <span className="text-[#94a3b8] font-mono" style={{ fontSize: "12px" }}>2.0</span>
             <span>Possibilities</span>
           </div>
+          <ScrollReveal>
           <h2
             className="text-[#0a0a0a] flex flex-wrap items-center justify-center gap-3 md:gap-4 mb-6"
             style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 400, lineHeight: 1.08, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
@@ -78,22 +127,23 @@ export function Home({ go }: { go: (p: string) => void }) {
           <p className="text-[#6b7280]" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
             From stunning images to production code, from viral videos to full websites — one prompt is all it takes. Browse what works, copy it, make it yours.
           </p>
+          </ScrollReveal>
         </div>
       </div>
 
-      {/* Four doors — BounceCard layout */}
-
+      {/* Browse by category — auto-scrolling marquee */}
       <BrowseByCategory go={go} />
 
       {/* Breathing space — Mastery */}
       <div className="py-28 md:py-40 border-t border-[#0a0a0a]/8">
         <div className="max-w-[1100px] mx-auto px-6 text-center">
           <div className="flex items-center justify-center gap-2 text-[#0a0a0a] mb-6" style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "0.02em" }}>
-            <span className="text-[#94a3b8] font-mono" style={{ fontSize: "12px" }}>4.0</span>
+            <span className="text-[#94a3b8] font-mono" style={{ fontSize: "12px" }}>3.0</span>
             <span>Mastery</span>
           </div>
+          <ScrollReveal>
           <h2
-            className="text-[#0a0a0a] mb-6 whitespace-nowrap"
+            className="text-[#0a0a0a] mb-6"
             style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 400, lineHeight: 1.08, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
           >
             Don't just use <span style={{ fontWeight: 800 }}>AI</span> — <em style={{ fontWeight: 400, fontStyle: "italic" }}>Master it.</em>
@@ -101,6 +151,7 @@ export function Home({ go }: { go: (p: string) => void }) {
           <p className="text-[#6b7280] max-w-[620px] mx-auto" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
             The gap between average and exceptional AI output is the prompt. Our curated library gives you the exact words that produce professional-grade results, every time.
           </p>
+          </ScrollReveal>
         </div>
       </div>
 
@@ -166,90 +217,6 @@ function HeroCard({ id }: { id: number }) {
 }
 
 const CARD_IDS = [0, 1, 2, 3, 4, 5, 6];
-
-// ── (legacy heroCategories stub kept for type safety) ──────────────────────────
-const heroCategories = [
-  {
-    id: "marketing", name: "Marketing",
-    description: "Drive growth and reach your audience.",
-    cardGradient: "linear-gradient(to bottom, rgba(109,40,217,0.28) 0%, rgba(0,0,0,0.78) 100%)",
-    accentColor: "#8b5cf6",
-    icon: "",
-    img: "https://images.unsplash.com/photo-1658062117791-18cae7ff46c1?w=500&q=80",
-    prompt: {
-      badge: "Marketing", badgeBg: "#f3e8ff", badgeText: "#7c3aed", emoji: "",
-      title: "Brand Campaign Brief",
-      subtitle: "Create compelling marketing campaigns that reach and convert your target audience.",
-      tags: ["Marketing", "Ads", "Campaign", "Brand"],
-      text: "Write a comprehensive marketing campaign for [brand] targeting [audience]. Include messaging for [channel 1], [channel 2], and [channel 3]. Focus on [key message] and drive [goal].",
-      vars: ["[brand]","[audience]","[channel 1]","[channel 2]","[channel 3]","[key message]","[goal]"],
-    },
-  },
-  {
-    id: "social", name: "Social Media",
-    description: "Engage your followers and build your brand.",
-    cardGradient: "linear-gradient(to bottom, rgba(29,78,216,0.28) 0%, rgba(0,0,0,0.78) 100%)",
-    accentColor: "#3b82f6",
-    icon: "",
-    img: "https://images.unsplash.com/photo-1600096194534-95cf5ece04cf?w=500&q=80",
-    prompt: {
-      badge: "Social Media", badgeBg: "#dbeafe", badgeText: "#1d4ed8", emoji: "",
-      title: "Instagram Caption Pack",
-      subtitle: "Create engaging captions that boost social media presence and drive real engagement.",
-      tags: ["Instagram", "Caption", "Hashtags", "Engagement"],
-      text: "Write 5 Instagram captions for [product] in a [tone] voice. Include relevant hashtags for [niche] and a call-to-action that drives [goal]. Target audience: [audience].",
-      vars: ["[product]","[tone]","[niche]","[goal]","[audience]"],
-    },
-  },
-  {
-    id: "ecommerce", name: "E-commerce",
-    description: "Boost sales with product descriptions that convert.",
-    cardGradient: "linear-gradient(to bottom, rgba(180,83,9,0.28) 0%, rgba(0,0,0,0.78) 100%)",
-    accentColor: "#f59e0b",
-    icon: "",
-    img: "https://images.unsplash.com/photo-1649013439319-aa7e2dc91267?w=500&q=80",
-    prompt: {
-      badge: "E-commerce", badgeBg: "#fef3c7", badgeText: "#b45309", emoji: "",
-      title: "Product Description",
-      subtitle: "Generate persuasive product descriptions that convert visitors into customers.",
-      tags: ["Sales", "E-commerce", "Product", "Description"],
-      text: "Write a compelling product description for [product] that helps [target audience] solve [problem]. Highlight the key benefits: [benefit 1], [benefit 2], and [benefit 3]. Use a persuasive tone and include a strong call-to-action.",
-      vars: ["[product]","[target audience]","[problem]","[benefit 1]","[benefit 2]","[benefit 3]"],
-    },
-  },
-  {
-    id: "portraits", name: "Portraits",
-    description: "Capture personality and bring portraits to life.",
-    cardGradient: "linear-gradient(to bottom, rgba(55,65,81,0.28) 0%, rgba(0,0,0,0.78) 100%)",
-    accentColor: "#a78bfa",
-    icon: "",
-    img: "https://images.unsplash.com/photo-1689600944138-da3b150d9cb8?w=500&q=80",
-    prompt: {
-      badge: "Portraits", badgeBg: "#ede9fe", badgeText: "#6d28d9", emoji: "",
-      title: "Realistic Portrait",
-      subtitle: "Create detailed portrait prompts for stunning AI-generated headshots.",
-      tags: ["Portrait", "Photography", "Realism", "AI Art"],
-      text: "A hyper-realistic portrait of [subject] with [expression], lit by [lighting style]. Shot on [camera], wearing [outfit]. Background: [setting]. Style: [photography style].",
-      vars: ["[subject]","[expression]","[lighting style]","[camera]","[outfit]","[setting]","[photography style]"],
-    },
-  },
-  {
-    id: "art", name: "Art & Illustration",
-    description: "Create stunning visuals and unique artwork.",
-    cardGradient: "linear-gradient(to bottom, rgba(124,45,18,0.28) 0%, rgba(0,0,0,0.78) 100%)",
-    accentColor: "#f97316",
-    icon: "",
-    img: "https://images.unsplash.com/photo-1591693898234-f2bba7c8beaa?w=500&q=80",
-    prompt: {
-      badge: "Art", badgeBg: "#fff7ed", badgeText: "#c2410c", emoji: "",
-      title: "Digital Illustration",
-      subtitle: "Generate breathtaking illustrations with detailed and evocative style descriptions.",
-      tags: ["Art", "Illustration", "Digital", "Creative"],
-      text: "A [art style] illustration of [subject] with [mood] atmosphere. Color palette: [palette]. Lighting: [lighting]. Details: [details]. Style references: [style ref]. Resolution: ultra-high detail.",
-      vars: ["[art style]","[subject]","[mood]","[palette]","[lighting]","[details]","[style ref]"],
-    },
-  },
-];
 
 function HeroCarousel({ go }: { go: (p: string) => void }) {
   // ── 9:16 card ratio — height drives width ─────────────────────────────────
@@ -351,8 +318,6 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
         height: SECTION_H,
         minHeight: 380,
       }}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
     >
       {/* ── Floating Cards ── */}
       {CARD_IDS.map((id) => {
@@ -408,7 +373,7 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
           fontSize: 34, fontWeight: 500, color: "#0f0f0f",
           letterSpacing: "-0.025em", lineHeight: 1.22, marginBottom: 24,
           minHeight: "1.4em",
-          fontFamily: "'Inter',-apple-system,BlinkMacSystemFont,sans-serif",
+          fontFamily: "'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif",
         }}>
           {twText}
           <span style={{
@@ -438,6 +403,7 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
       {/* ── Nav Controls — bottom-right ── */}
       <div style={{ position: "absolute", bottom: 26, right: 30, display: "flex", alignItems: "center", gap: 10, zIndex: 20 }}>
         <button
+          aria-label="Previous slide"
           onClick={() => manualNav(prev)}
           style={{ width: 40, height: 40, borderRadius: "50%", background: "white", border: "1px solid #e5e7eb", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 2px 10px rgba(0,0,0,0.08)", transition: "box-shadow 0.2s" }}
           onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 4px 18px rgba(0,0,0,0.14)")}
@@ -446,6 +412,7 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
           <svg viewBox="0 0 16 16" fill="none" width={14} height={14}><path d="M10 12L6 8l4-4" stroke="#1a1a1a" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round"/></svg>
         </button>
         <button
+          aria-label="Play or pause slideshow"
           onClick={() => setPaused(pp => !pp)}
           style={{ width: 40, height: 40, borderRadius: "50%", background: "white", border: "1px solid #e5e7eb", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 2px 10px rgba(0,0,0,0.08)", transition: "box-shadow 0.2s" }}
           onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 4px 18px rgba(0,0,0,0.14)")}
@@ -461,6 +428,7 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
           )}
         </button>
         <button
+          aria-label="Next slide"
           onClick={() => manualNav(next)}
           style={{ width: 40, height: 40, borderRadius: "50%", background: "white", border: "1px solid #e5e7eb", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 2px 10px rgba(0,0,0,0.08)", transition: "box-shadow 0.2s" }}
           onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 4px 18px rgba(0,0,0,0.14)")}
@@ -519,17 +487,49 @@ const STORY_VIDEOS = [frame1Video, frame2Video, frame3Video];
 const ACCENT = "#0a0a0a";
 
 function useStoryStepProgress(scrollYProgress: MotionValue<number>, index: number, count: number) {
+  // Overlapping crossfade: as one step fades out, the next fades in over the
+  // SAME range — so there are never blank gaps between steps. The returned
+  // value IS the step's opacity (1 = fully shown). One unconditional
+  // useTransform call; the if/else only builds plain keyframe arrays.
   const w = 1 / count;
-  const start = index * w;
-  const end = start + w;
-  const ramp = w * 0.22;
-  const peakStart = start + ramp;
-  const peakEnd = end - ramp;
-  const isFirst = index === 0;
-  const isLast = index === count - 1;
-  if (isFirst) return useTransform(scrollYProgress, [0, peakEnd, end], [1, 1, 0]);
-  if (isLast) return useTransform(scrollYProgress, [start, peakStart, 1], [0, 1, 1]);
-  return useTransform(scrollYProgress, [start, peakStart, peakEnd, end], [0, 1, 1, 0]);
+  const overlap = 0.06; // half-width of each crossfade handoff
+  const stepStart = index * w;
+  const stepEnd = (index + 1) * w;
+  let input: number[];
+  let output: number[];
+  if (index === 0) {
+    input = [0, stepEnd - overlap, stepEnd + overlap];
+    output = [1, 1, 0];
+  } else if (index === count - 1) {
+    input = [stepStart - overlap, stepStart + overlap, 1];
+    output = [0, 1, 1];
+  } else {
+    input = [stepStart - overlap, stepStart + overlap, stepEnd - overlap, stepEnd + overlap];
+    output = [0, 1, 1, 0];
+  }
+  return useTransform(scrollYProgress, input, output);
+}
+
+// Text opacity: DISJOINT one-at-a-time fade (no two headlines ever overlap).
+// Quick fade at each boundary; only one step's copy is visible at a time.
+function useStoryTextOpacity(scrollYProgress: MotionValue<number>, index: number, count: number) {
+  const w = 1 / count;
+  const fade = 0.03;
+  const stepStart = index * w;
+  const stepEnd = (index + 1) * w;
+  let input: number[];
+  let output: number[];
+  if (index === 0) {
+    input = [0, stepEnd - fade, stepEnd];
+    output = [1, 1, 0];
+  } else if (index === count - 1) {
+    input = [stepStart, stepStart + fade, 1];
+    output = [0, 1, 1];
+  } else {
+    input = [stepStart, stepStart + fade, stepEnd - fade, stepEnd];
+    output = [0, 1, 1, 0];
+  }
+  return useTransform(scrollYProgress, input, output);
 }
 
 function StoryNavItem({ step, progress }: { step: typeof STORY_STEPS[0]; progress: MotionValue<number> }) {
@@ -551,10 +551,9 @@ function StoryNavItem({ step, progress }: { step: typeof STORY_STEPS[0]; progres
 }
 
 function StoryLeftFrame({ step, progress }: { step: typeof STORY_STEPS[0]; progress: MotionValue<number> }) {
-  const opacity = useTransform(progress, [0, 0.4, 0.6, 1], [0, 0, 1, 1]);
-  const y = useTransform(progress, [0.4, 1], [18, 0]);
+  const y = useTransform(progress, [0, 1], [18, 0]);
   return (
-    <motion.div className="absolute inset-x-0 top-0" style={{ opacity, y }}>
+    <motion.div className="absolute inset-x-0 top-0" style={{ opacity: progress, y }}>
       <h3 className="text-[#0a0a0a]" style={{ fontSize: "clamp(26px, 2.6vw, 38px)", lineHeight: 1.12, letterSpacing: -1, fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif", fontWeight: 800 }}>
         <span style={{ fontStyle: "italic", fontWeight: 400 }}>{step.headline.split(" ")[0]}</span>{" "}
         {step.headline.split(" ").slice(1).join(" ")}
@@ -575,11 +574,10 @@ function StoryLeftFrame({ step, progress }: { step: typeof STORY_STEPS[0]; progr
 }
 
 function StoryFrameShell({ progress, children }: { progress: MotionValue<number>; children: React.ReactNode }) {
-  const opacity = useTransform(progress, [0, 0.45, 0.55, 1], [0, 0, 1, 1]);
-  const y = useTransform(progress, [0.45, 1], [28, 0]);
-  const scale = useTransform(progress, [0.45, 1], [0.97, 1]);
+  const y = useTransform(progress, [0, 1], [24, 0]);
+  const scale = useTransform(progress, [0, 1], [0.97, 1]);
   return (
-    <motion.div className="absolute inset-0 flex items-center justify-center" style={{ opacity, y, scale }}>
+    <motion.div className="absolute inset-0 flex items-center justify-center" style={{ opacity: progress, y, scale }}>
       {children}
     </motion.div>
   );
@@ -591,7 +589,7 @@ function StoryFramedVideo({ src, path, progress, widthClass = "max-w-full" }: { 
     const apply = (v: number) => {
       const el = videoRef.current;
       if (!el) return;
-      if (v > 0.5) el.play().catch(() => {});
+      if (v > 0.35) el.play().catch(() => {});
       else el.pause();
     };
     apply(progress.get());
@@ -631,101 +629,88 @@ function StoryShowcase({ go }: { go: (p: string) => void }) {
   const p2 = useStoryStepProgress(scrollYProgress, 2, STORY_STEPS.length);
   const progresses = [p0, p1, p2];
 
+  // Separate disjoint curve for the left text so two headlines never overlap.
+  const t0 = useStoryTextOpacity(scrollYProgress, 0, STORY_STEPS.length);
+  const t1 = useStoryTextOpacity(scrollYProgress, 1, STORY_STEPS.length);
+  const t2 = useStoryTextOpacity(scrollYProgress, 2, STORY_STEPS.length);
+  const textProgresses = [t0, t1, t2];
+
   return (
-    <section
-      ref={sectionRef}
-      className="relative w-full"
-      style={{ height: "320vh", background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 45%, #ffffff 100%)" }}
-    >
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {/* Ambient blobs */}
-        <div aria-hidden className="pointer-events-none absolute -right-40 top-10 w-[520px] h-[520px] rounded-full" style={{ background: "radial-gradient(circle, rgba(10, 10, 10,0.06) 0%, transparent 70%)" }} />
-        <div aria-hidden className="pointer-events-none absolute -left-40 bottom-0 w-[480px] h-[480px] rounded-full" style={{ background: "radial-gradient(circle, rgba(255,216,3,0.12) 0%, transparent 70%)" }} />
+    <>
+      {/* ── Desktop: scroll-driven crossfade (shortened to ~one screen of scroll) ── */}
+      <section
+        ref={sectionRef}
+        className="relative hidden w-full lg:block"
+        style={{ height: "240vh", background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 45%, #ffffff 100%)" }}
+      >
+        <div className="sticky top-0 h-screen w-full overflow-hidden">
+          {/* Ambient blobs */}
+          <div aria-hidden className="pointer-events-none absolute -right-40 top-10 w-[520px] h-[520px] rounded-full" style={{ background: "radial-gradient(circle, rgba(10, 10, 10,0.06) 0%, transparent 70%)" }} />
+          <div aria-hidden className="pointer-events-none absolute -left-40 bottom-0 w-[480px] h-[480px] rounded-full" style={{ background: "radial-gradient(circle, rgba(79,195,247,0.10) 0%, transparent 70%)" }} />
 
-        <div className="relative mx-auto flex h-full max-w-[1500px] items-center gap-12 px-8">
-          {/* LEFT — nav + copy (38%) */}
-          <div className="relative hidden lg:flex flex-col justify-center" style={{ flexBasis: "38%", minWidth: 340 }}>
-            <div className="mb-9 flex flex-col gap-4">
-              {STORY_STEPS.map((s, i) => (
-                <StoryNavItem key={s.key} step={s} progress={progresses[i]} />
-              ))}
+          <div className="relative mx-auto flex h-full max-w-[1500px] items-center gap-12 px-8">
+            {/* LEFT — nav + copy (38%) */}
+            <div className="relative flex flex-col justify-center" style={{ flexBasis: "38%", minWidth: 340 }}>
+              <div className="mb-9 flex flex-col gap-4">
+                {STORY_STEPS.map((s, i) => (
+                  <StoryNavItem key={s.key} step={s} progress={progresses[i]} />
+                ))}
+              </div>
+              <div className="relative min-h-[280px]">
+                {STORY_STEPS.map((s, i) => (
+                  <StoryLeftFrame key={s.key} step={s} progress={textProgresses[i]} />
+                ))}
+              </div>
             </div>
-            <div className="relative min-h-[280px]">
-              {STORY_STEPS.map((s, i) => (
-                <StoryLeftFrame key={s.key} step={s} progress={progresses[i]} />
-              ))}
-            </div>
-          </div>
 
-          {/* RIGHT — scroll-activated video frames (62%) */}
-          <div className="relative h-full flex-1" style={{ flexBasis: "62%" }}>
-            <StoryFrameShell progress={p0}>
-              <StoryFramedVideo src={frame1Video} path="promptvault.app/discover" progress={p0} />
-            </StoryFrameShell>
-            <StoryFrameShell progress={p1}>
-              <StoryFramedVideo src={frame2Video} path="promptvault.app/learn" progress={p1} />
-            </StoryFrameShell>
-            <StoryFrameShell progress={p2}>
-              <StoryFramedVideo src={frame3Video} path="promptvault.app/create" progress={p2} />
-            </StoryFrameShell>
+            {/* RIGHT — scroll-activated video frames (62%) */}
+            <div className="relative h-full flex-1" style={{ flexBasis: "62%" }}>
+              <StoryFrameShell progress={p0}>
+                <StoryFramedVideo src={frame1Video} path="promptvault.app/discover" progress={p0} />
+              </StoryFrameShell>
+              <StoryFrameShell progress={p1}>
+                <StoryFramedVideo src={frame2Video} path="promptvault.app/learn" progress={p1} />
+              </StoryFrameShell>
+              <StoryFrameShell progress={p2}>
+                <StoryFramedVideo src={frame3Video} path="promptvault.app/create" progress={p2} />
+              </StoryFrameShell>
+            </div>
           </div>
         </div>
+      </section>
+
+      {/* ── Mobile/tablet: simple stacked steps so all the copy is visible ── */}
+      <div className="lg:hidden px-5 py-20 space-y-16" style={{ background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)" }}>
+        {STORY_STEPS.map((s, i) => (
+          <div key={s.key}>
+            <div className="mb-3 flex items-center gap-3">
+              <span className="font-mono text-[12px] text-[#94a3b8]">{s.num}</span>
+              <span className="text-xl font-semibold italic text-[#0a0a0a]" style={{ fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}>{s.name}</span>
+            </div>
+            <h3 className="mb-3 text-[#0a0a0a]" style={{ fontSize: "clamp(24px, 7vw, 32px)", lineHeight: 1.12, letterSpacing: -1, fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif", fontWeight: 800 }}>
+              <span style={{ fontStyle: "italic", fontWeight: 400 }}>{s.headline.split(" ")[0]}</span>{" "}
+              {s.headline.split(" ").slice(1).join(" ")}
+            </h3>
+            {s.description.map((d) => (
+              <p key={d} className="mt-2 text-[#6b7280]" style={{ fontSize: 15, lineHeight: 1.6 }}>{d}</p>
+            ))}
+            <div className="mb-6 mt-5 grid grid-cols-2 gap-x-5 gap-y-3">
+              {s.benefits.map((b) => (
+                <div key={b} className="flex items-center gap-2.5">
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#0a0a0a]" />
+                  <span className="text-[#0a0a0a]" style={{ fontSize: 13.5 }}>{b}</span>
+                </div>
+              ))}
+            </div>
+            <div className="overflow-hidden rounded-2xl border-2 border-[#0a0a0a]/15 bg-white" style={{ boxShadow: "0 24px 60px -30px rgba(10,10,10,0.3)" }}>
+              <div className="relative aspect-video w-full bg-[#f8fafc]">
+                <AutoplayVideo src={STORY_VIDEOS[i]} className="absolute inset-0 h-full w-full object-cover" />
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
-    </section>
-  );
-}
-
-// ─── Counters ─────────────────────────────────────────────────────────────────
-
-function Counter({ to }: { to: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
-  const mv = useMotionValue(0);
-  const spring = useSpring(mv, { damping: 30, stiffness: 80 });
-  const display = useTransform(spring, (v) => Math.round(v).toLocaleString());
-  useEffect(() => { if (inView) mv.set(to); }, [inView, to, mv]);
-  return <motion.span ref={ref}>{display}</motion.span>;
-}
-
-// ─── Typewriter (cycling items) ────────────────────────────────────────────────
-
-function Typewriter({ items }: { items: string[] }) {
-  const [idx, setIdx] = useState(0);
-  const [text, setText] = useState("");
-  const [deleting, setDeleting] = useState(false);
-
-  useEffect(() => {
-    const full = items[idx];
-    if (!deleting) {
-      if (text.length < full.length) {
-        const t = setTimeout(() => setText(full.slice(0, text.length + 1)), 40);
-        return () => clearTimeout(t);
-      } else {
-        const t = setTimeout(() => setDeleting(true), 1800);
-        return () => clearTimeout(t);
-      }
-    } else {
-      if (text.length > 0) {
-        const t = setTimeout(() => setText(text.slice(0, -1)), 22);
-        return () => clearTimeout(t);
-      } else {
-        setDeleting(false);
-        setIdx((i) => (i + 1) % items.length);
-      }
-    }
-  }, [text, deleting, idx, items]);
-
-  return <>{text}<span className="inline-block w-[1px] h-3 bg-[#0a0a0a] ml-px align-middle animate-pulse" /></>;
-}
-
-
-
-// ─── Cursor Arrow Icon ────────────────────────────────────────────────────────
-function CursorArrow() {
-  return (
-    <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4" xmlns="http://www.w3.org/2000/svg">
-      <path d="M2 2L2 14.5L6 10.5L9.5 18L11.5 17L8 9.5L13.5 9.5L2 2Z" />
-    </svg>
+    </>
   );
 }
 
@@ -768,300 +753,6 @@ function AutoplayVideo({ src, className }: { src: string; className?: string }) 
 
   return (
     <video ref={ref} src={src} muted playsInline loop preload="auto" className={className} />
-  );
-}
-
-// ─── BounceCard primitives ─────────────────────────────────────────────────────
-function BounceCard({
-  children,
-  className,
-  onClick,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onClick?: () => void;
-}) {
-  return (
-    <motion.div
-      onClick={onClick}
-      whileHover={{ scale: 0.95, rotate: "-1deg" }}
-      whileTap={{ scale: 0.97 }}
-      className={`group relative min-h-[340px] cursor-pointer overflow-hidden rounded-2xl border-2 border-[#0a0a0a] bg-white p-6 ${className ?? ""}`}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-function CardBadge({ children }: { children: React.ReactNode }) {
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[#0a0a0a]/25 bg-[#0a0a0a]/6 text-[#0a0a0a] mb-3"
-      style={{ fontSize: "11px", fontWeight: 700 }}
-    >
-      {children}
-    </span>
-  );
-}
-
-function CardHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <h3 className="text-[#0a0a0a] mb-2" style={{ fontSize: "22px", fontWeight: 700 }}>
-      {children}
-    </h3>
-  );
-}
-
-function CardDesc({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-[#6b7280] leading-relaxed" style={{ fontSize: "13px" }}>
-      {children}
-    </p>
-  );
-}
-
-// ─── Where do you want to go? — Bento grid ───────────────────────────────────
-function WhereToGoSection({ go }: { go: (p: string) => void }) {
-  const [hovered, setHovered] = useState<string | null>(null);
-
-  // Film strip speed: always scrolling, faster on hover
-  const filmDuration = hovered === "video" ? 1.8 : 5;
-
-  const FILM_COLORS = ["#5b21b6","#4c1d95","#6d28d9","#7c3aed","#8b5cf6","#5b21b6","#4c1d95","#6d28d9","#7c3aed","#8b5cf6"];
-
-  return (
-    <section className="max-w-[1200px] mx-auto px-6 mt-40">
-      {/* Header */}
-      <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
-        <h2 className="text-[#0a0a0a]">Where do you want to go?</h2>
-        <motion.button
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => go("library")}
-          className="whitespace-nowrap rounded-xl bg-[#0a0a0a] px-5 py-2 text-white"
-          style={{ fontWeight: 600, fontSize: "14px" }}
-        >
-          Browse all →
-        </motion.button>
-      </div>
-
-      {/* Bento grid */}
-      <div className="grid grid-cols-12 grid-rows-[minmax(300px,auto)_minmax(300px,auto)] gap-4">
-
-        {/* ── Card 1: Image Generation — tall, spans 2 rows ── */}
-        <motion.button
-          onClick={() => go("library:image")}
-          onHoverStart={() => setHovered("image")}
-          onHoverEnd={() => setHovered(null)}
-          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #0a0a0a" }}
-          whileTap={{ scale: 0.98 }}
-          className="col-span-12 md:col-span-4 row-span-2 rounded-3xl bg-[#4FC3F7] p-6 text-left flex flex-col justify-between overflow-hidden relative"
-          style={{ border: "2.5px solid #0a0a0a", boxShadow: "5px 5px 0 0 #0a0a0a" }}
-        >
-          <div>
-            <motion.div
-              className="inline-block px-3 py-1 rounded-full bg-[#0a0a0a] text-[#4FC3F7] text-[11px] font-bold mb-4"
-              animate={hovered === "image" ? { scale: [1, 1.08, 1] } : {}}
-              transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 0.8 }}
-            >
-              420+ prompts
-            </motion.div>
-            <div className="text-[#0a0a0a] text-3xl font-black leading-tight mb-2">Image<br/>Generation</div>
-            <div className="text-[#0a0a0a]/70 text-sm">Midjourney · Firefly · FLUX · ChatGPT</div>
-          </div>
-
-          {/* Staggered image grid — each image tilts on hover */}
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            {["/images/image1.png","/images/image41.png","/images/image111.png","/images/image196.png"].map((src, i) => (
-              <motion.div
-                key={i}
-                className="aspect-square rounded-xl overflow-hidden border-2 border-[#0a0a0a]/20"
-                animate={hovered === "image"
-                  ? { scale: 1.07, rotate: i % 2 === 0 ? 3 : -3, y: -4 }
-                  : { scale: 1, rotate: 0, y: 0 }}
-                transition={{ delay: i * 0.07, duration: 0.35, ease: "easeOut" }}
-              >
-                <img src={src} alt="" className="w-full h-full object-cover" />
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div
-            className="mt-4 inline-flex items-center gap-1 text-[#0a0a0a] text-sm font-bold"
-            animate={hovered === "image" ? { x: 6 } : { x: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            Explore →
-          </motion.div>
-        </motion.button>
-
-        {/* ── Card 2: Video Generation — scrolling film strip ── */}
-        <motion.button
-          onClick={() => go("library:video")}
-          onHoverStart={() => setHovered("video")}
-          onHoverEnd={() => setHovered(null)}
-          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #0a0a0a" }}
-          whileTap={{ scale: 0.98 }}
-          className="col-span-12 md:col-span-5 rounded-3xl bg-[#7c3aed] p-6 text-left flex flex-col justify-between overflow-hidden relative"
-          style={{ border: "2.5px solid #0a0a0a", boxShadow: "5px 5px 0 0 #0a0a0a" }}
-        >
-          <div>
-            <div className="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-bold mb-4">30 prompts</div>
-            <div className="text-white text-3xl font-black leading-tight mb-2">Video<br/>Generation</div>
-            <div className="text-white/70 text-sm">Veo · Kling · Seedance · Pika</div>
-          </div>
-
-          {/* Continuously scrolling film strip */}
-          <div className="overflow-hidden mt-4 rounded-xl" style={{ maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)" }}>
-            <motion.div
-              className="flex gap-2"
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{ duration: filmDuration, repeat: Infinity, ease: "linear" }}
-            >
-              {FILM_COLORS.map((c, i) => (
-                <div
-                  key={i}
-                  className="flex-shrink-0 w-[72px] h-[44px] rounded-lg flex items-center justify-center"
-                  style={{ background: c, border: "2px solid rgba(255,255,255,0.15)" }}
-                >
-                  {i % 5 === 2 && (
-                    <motion.div
-                      className="w-5 h-5 rounded-full bg-white/40 flex items-center justify-center"
-                      animate={{ scale: [1, 1.25, 1], opacity: [0.7, 1, 0.7] }}
-                      transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
-                    >
-                      <div className="w-0 h-0 border-t-[4px] border-t-transparent border-l-[7px] border-l-white border-b-[4px] border-b-transparent ml-0.5" />
-                    </motion.div>
-                  )}
-                </div>
-              ))}
-            </motion.div>
-          </div>
-        </motion.button>
-
-        {/* ── Card 3: Website Generation — browser types on hover ── */}
-        <motion.button
-          onClick={() => go("library:website")}
-          onHoverStart={() => setHovered("website")}
-          onHoverEnd={() => setHovered(null)}
-          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #0a0a0a" }}
-          whileTap={{ scale: 0.98 }}
-          className="col-span-12 md:col-span-3 rounded-3xl bg-[#3b82f6] p-6 text-left flex flex-col justify-between overflow-hidden relative"
-          style={{ border: "2.5px solid #0a0a0a", boxShadow: "5px 5px 0 0 #0a0a0a" }}
-        >
-          <div>
-            <div className="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-bold mb-4">90+ designs</div>
-            <div className="text-white text-3xl font-black leading-tight mb-2">Website<br/>Gen</div>
-            <div className="text-white/70 text-sm">Bolt · Lovable · Replit · Codex</div>
-          </div>
-
-          {/* Browser mockup — lines retype on hover */}
-          <div className="mt-4 rounded-xl bg-white/15 p-3 backdrop-blur">
-            <div className="flex gap-1.5 mb-2.5">
-              {[["bg-red-400","bg-red-300"],["bg-yellow-400","bg-yellow-300"],["bg-green-400","bg-green-300"]].map(([base, hover], i) => (
-                <motion.div
-                  key={i}
-                  className={`w-2.5 h-2.5 rounded-full ${hovered === "website" ? hover : base}`}
-                  animate={hovered === "website" ? { scale: [1, 1.4, 1] } : { scale: 1 }}
-                  transition={{ delay: i * 0.1, duration: 0.35 }}
-                />
-              ))}
-            </div>
-            {/* Re-typing bars — key forces remount on hover */}
-            <div key={hovered === "website" ? "typing" : "idle"} className="space-y-1.5">
-              {[1, 0.75, 0.9].map((w, i) => (
-                <motion.div
-                  key={i}
-                  className="h-2 bg-white/40 rounded-full"
-                  initial={{ width: "0%" }}
-                  animate={{ width: `${w * 100}%` }}
-                  transition={{ delay: i * 0.18 + 0.1, duration: 0.55, ease: "easeOut" }}
-                />
-              ))}
-            </div>
-          </div>
-        </motion.button>
-
-        {/* ── Card 4: Text Generation — typewriter code ── */}
-        <motion.button
-          onClick={() => go("library:text")}
-          onHoverStart={() => setHovered("text")}
-          onHoverEnd={() => setHovered(null)}
-          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #4FC3F7" }}
-          whileTap={{ scale: 0.98 }}
-          className="col-span-12 md:col-span-5 rounded-3xl bg-[#0a0a0a] p-6 text-left flex flex-col justify-between overflow-hidden relative h-full min-h-[300px]"
-          style={{ border: "2.5px solid #0a0a0a", boxShadow: "5px 5px 0 0 #4FC3F7" }}
-        >
-          <div>
-            <div className="inline-block px-3 py-1 rounded-full bg-[#4FC3F7] text-[#0a0a0a] text-[11px] font-bold mb-4">Coming soon</div>
-            <div className="text-white text-3xl font-black leading-tight mb-2">Text<br/>Generation</div>
-            <div className="text-white/60 text-sm">ChatGPT · Gemini · Grok · Claude</div>
-          </div>
-
-          {/* Code block — lines slide in on hover */}
-          <div className="mt-4 rounded-xl bg-white/10 p-3 font-mono text-[11px] space-y-1.5 overflow-hidden">
-            {/* key trick: remount on hover to replay stagger */}
-            <React.Fragment key={hovered === "text" ? "hover" : "idle"}>
-              {[
-                <><span className="text-[#4FC3F7]">const</span> <span className="text-[#90b4ce]">prompt</span> <span className="text-white/50">=</span> <span className="text-[#0a0a0a]">"Act as a senior dev…"</span></>,
-                <><span className="text-[#4FC3F7]">function</span> <span className="text-[#bce4d8]">generate</span><span className="text-white/50">(input) {"{"}</span></>,
-                <span className="pl-4 block"><span className="text-[#90b4ce]">return</span> <span className="text-white/50">ai.complete(prompt)</span></span>,
-                <><span className="text-white/50">{"}"}</span></>,
-              ].map((line, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1, duration: 0.3, ease: "easeOut" }}
-                >
-                  {line}
-                </motion.div>
-              ))}
-            </React.Fragment>
-            {/* Always-on blinking cursor */}
-            <motion.span
-              className="inline-block w-[7px] h-[13px] bg-[#4FC3F7] align-middle ml-1 rounded-sm"
-              animate={{ opacity: [1, 0, 1] }}
-              transition={{ duration: 1, repeat: Infinity, ease: "steps(1)" }}
-            />
-          </div>
-        </motion.button>
-
-        {/* ── Card 5: Content Generation — pills float on hover ── */}
-        <motion.button
-          onClick={() => go("library:content")}
-          onHoverStart={() => setHovered("content")}
-          onHoverEnd={() => setHovered(null)}
-          whileHover={{ scale: 1.02, boxShadow: "8px 8px 0 0 #0a0a0a" }}
-          whileTap={{ scale: 0.98 }}
-          className="col-span-12 md:col-span-3 rounded-3xl bg-[#4FC3F7] p-6 text-left flex flex-col justify-between overflow-hidden relative h-full min-h-[300px]"
-          style={{ border: "2.5px solid #0a0a0a", boxShadow: "5px 5px 0 0 #0a0a0a" }}
-        >
-          <div>
-            <div className="inline-block px-3 py-1 rounded-full bg-white/25 text-white text-[11px] font-bold mb-4">Coming soon</div>
-            <div className="text-white text-3xl font-black leading-tight mb-2">Content<br/>Gen</div>
-            <div className="text-white/70 text-sm">Claude · ChatGPT · Gemini</div>
-          </div>
-
-          {/* Floating pills */}
-          <div className="mt-4 space-y-2">
-            {["Email copy", "Social posts", "Blog articles"].map((label, i) => (
-              <motion.div
-                key={label}
-                className="px-3 py-1.5 rounded-full bg-white/20 text-white text-[12px] font-semibold w-fit backdrop-blur-sm"
-                animate={hovered === "content"
-                  ? { y: -6, scale: 1.06, backgroundColor: "rgba(255,255,255,0.30)" }
-                  : { y: 0, scale: 1, backgroundColor: "rgba(255,255,255,0.20)" }}
-                transition={{ delay: i * 0.08, duration: 0.25, ease: "easeOut" }}
-              >
-                {label}
-              </motion.div>
-            ))}
-          </div>
-        </motion.button>
-
-      </div>
-    </section>
   );
 }
 

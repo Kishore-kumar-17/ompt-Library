@@ -132,7 +132,7 @@ export function Pricing({ go, onAuth }: { go: (p: string) => void; onAuth?: () =
             </ul>
 
             <button
-              onClick={plan.id !== "enterprise" ? () => onAuth?.() : undefined}
+              onClick={plan.id !== "enterprise" ? () => onAuth?.() : () => { window.location.href = "mailto:inaicommunity@gmail.com"; }}
               className={`w-full h-11 rounded-full font-bold text-[14px] border-2 border-[#0a0a0a] transition-all hover:shadow-[3px_3px_0_0_#0a0a0a] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] ${
                 plan.highlighted
                   ? "bg-[#0a0a0a] text-white"

@@ -21,6 +21,8 @@ const sections = [
 
 export function Guide({ go, initialSection }: { go: (p: string) => void; initialSection?: string }) {
   const [active, setActive] = useState(initialSection || "playground");
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const activeSection = sections.find(s => s.key === active);
 
   return (
     <div className="max-w-[1200px] mx-auto px-6 py-12 text-[#0a0a0a]">
@@ -39,55 +41,68 @@ export function Guide({ go, initialSection }: { go: (p: string) => void; initial
 
       <div className="grid lg:grid-cols-[260px_1fr] gap-8">
         <aside className="lg:sticky lg:top-6 self-start">
-          <div className="bg-[#bce4d8] border border-[#0a0a0a]/15 rounded-2xl p-2">
-            <div className="px-3 pt-1 pb-2 text-[10px] uppercase tracking-widest text-[#6b7280]" style={{ fontWeight: 700 }}>
-              Prompt Craft
-            </div>
-            {sections.filter(s => s.group === "craft").map((s) => {
-              const Icon = s.icon;
-              const on = active === s.key;
-              return (
-                <button
-                  key={s.key}
-                  onClick={() => setActive(s.key)}
-                  className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition ${
-                    on ? "bg-[#4FC3F7] text-[#0a0a0a]" : "text-[#6b7280] hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/5"
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span style={{ fontWeight: on ? 700 : 500 }}>{s.label}</span>
-                  <ChevronRight className={`w-4 h-4 ml-auto ${on ? "opacity-100" : "opacity-40"}`} />
-                </button>
-              );
-            })}
-            <div className="px-3 pt-3 pb-2 text-[10px] uppercase tracking-widest text-[#6b7280]" style={{ fontWeight: 700 }}>
-              How-To Guides
-            </div>
-            {sections.filter(s => s.group === "how-to").map((s) => {
-              const Icon = s.icon;
-              const on = active === s.key;
-              return (
-                <button
-                  key={s.key}
-                  onClick={() => setActive(s.key)}
-                  className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition ${
-                    on ? "bg-[#4FC3F7] text-[#0a0a0a]" : "text-[#6b7280] hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/5"
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span style={{ fontWeight: on ? 700 : 500 }}>{s.label}</span>
-                  <ChevronRight className={`w-4 h-4 ml-auto ${on ? "opacity-100" : "opacity-40"}`} />
-                </button>
-              );
-            })}
-          </div>
+          {/* Mobile: compact toggle showing the active section name */}
+          <button
+            className="lg:hidden w-full flex items-center justify-between px-4 py-3 mb-2 bg-[#bce4d8] border border-[#0a0a0a]/15 rounded-2xl"
+            onClick={() => setMobileNavOpen(v => !v)}
+          >
+            <span className="text-[#0a0a0a] text-[14px]" style={{ fontWeight: 600 }}>
+              {activeSection?.label ?? "Select section"}
+            </span>
+            <ChevronRight className={`w-4 h-4 text-[#6b7280] transition-transform ${mobileNavOpen ? "rotate-90" : ""}`} />
+          </button>
 
-          <div className="mt-5 bg-gradient-to-br from-[#4FC3F7]/15 to-[#4FC3F7]/10 border border-[#0a0a0a]/15 rounded-2xl p-5">
-            <div className="text-[#0a0a0a] mb-1" style={{ fontWeight: 700 }}>Ready to try?</div>
-            <p className="text-[#6b7280] mb-3" style={{ fontSize: "14px" }}>Jump into the library and copy a tested prompt.</p>
-            <button onClick={() => go("library")} className="h-9 px-4 rounded-full bg-[#4FC3F7] text-[#0a0a0a]" style={{ fontWeight: 700 }}>
-              Browse prompts
-            </button>
+          <div className={`lg:block ${mobileNavOpen ? "" : "hidden"}`}>
+            <div className="bg-[#bce4d8] border border-[#0a0a0a]/15 rounded-2xl p-2">
+              <div className="px-3 pt-1 pb-2 text-[10px] uppercase tracking-widest text-[#6b7280]" style={{ fontWeight: 700 }}>
+                Prompt Craft
+              </div>
+              {sections.filter(s => s.group === "craft").map((s) => {
+                const Icon = s.icon;
+                const on = active === s.key;
+                return (
+                  <button
+                    key={s.key}
+                    onClick={() => { setActive(s.key); setMobileNavOpen(false); }}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition ${
+                      on ? "bg-[#4FC3F7] text-[#0a0a0a]" : "text-[#6b7280] hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/5"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span style={{ fontWeight: on ? 700 : 500 }}>{s.label}</span>
+                    <ChevronRight className={`w-4 h-4 ml-auto ${on ? "opacity-100" : "opacity-40"}`} />
+                  </button>
+                );
+              })}
+              <div className="px-3 pt-3 pb-2 text-[10px] uppercase tracking-widest text-[#6b7280]" style={{ fontWeight: 700 }}>
+                How-To Guides
+              </div>
+              {sections.filter(s => s.group === "how-to").map((s) => {
+                const Icon = s.icon;
+                const on = active === s.key;
+                return (
+                  <button
+                    key={s.key}
+                    onClick={() => { setActive(s.key); setMobileNavOpen(false); }}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition ${
+                      on ? "bg-[#4FC3F7] text-[#0a0a0a]" : "text-[#6b7280] hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/5"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span style={{ fontWeight: on ? 700 : 500 }}>{s.label}</span>
+                    <ChevronRight className={`w-4 h-4 ml-auto ${on ? "opacity-100" : "opacity-40"}`} />
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mt-5 bg-gradient-to-br from-[#4FC3F7]/15 to-[#4FC3F7]/10 border border-[#0a0a0a]/15 rounded-2xl p-5">
+              <div className="text-[#0a0a0a] mb-1" style={{ fontWeight: 700 }}>Ready to try?</div>
+              <p className="text-[#6b7280] mb-3" style={{ fontSize: "14px" }}>Jump into the library and copy a tested prompt.</p>
+              <button onClick={() => go("library")} className="h-9 px-4 rounded-full bg-[#4FC3F7] text-[#0a0a0a]" style={{ fontWeight: 700 }}>
+                Browse prompts
+              </button>
+            </div>
           </div>
         </aside>
 

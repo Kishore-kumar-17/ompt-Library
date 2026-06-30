@@ -523,7 +523,8 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
             )
           ) : (
             <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl overflow-hidden">
-              <table className="w-full">
+              <div className="overflow-x-auto">
+              <table className="w-full min-w-[500px]">
                 <thead className="bg-[#0a0a0a]/5 text-[#6b7280]">
                   <tr>
                     <th className="text-left p-3">Title</th>
@@ -545,6 +546,7 @@ export function Library({ go, family }: { go: (p: string) => void; family?: Fami
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
 

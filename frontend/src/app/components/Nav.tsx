@@ -79,7 +79,7 @@ export function Nav({ current, onNavigate, onAuth }: Props) {
 
           <button
             onClick={() => nav("library")}
-            className="px-4 py-2 rounded-lg bg-[#0f0f0f] text-white hover:bg-[#2a2a2a] transition-colors"
+            className="hidden md:block px-4 py-2 rounded-lg bg-[#0f0f0f] text-white hover:bg-[#2a2a2a] transition-colors"
             style={{ fontSize: "14px", fontWeight: 600 }}
           >
             Get started for free
