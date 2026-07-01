@@ -1,10 +1,11 @@
 ﻿import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
+import { ArrowLeft } from "lucide-react";
 import { samplePrompts, platforms, categories } from "../theme";
 
 const tabs = ["Overview", "Categories", "Platforms", "Prompts"];
 
-export function Dashboard() {
+export function Dashboard({ go }: { go: (p: string) => void }) {
   const [tab, setTab] = useState("Overview");
 
   const tested = samplePrompts.filter(p => p.tested).length;
@@ -25,12 +26,15 @@ export function Dashboard() {
 
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-10 text-[#0a0a0a]">
-      <h1 className="text-3xl mb-1">Analytics Dashboard</h1>
+      <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 transition-colors">
+        <ArrowLeft className="w-3.5 h-3.5" /> Back
+      </button>
+      <h1 className="text-3xl font-bold mb-1">Analytics <span className="font-extrabold">Dashboard</span></h1>
       <p className="text-[#6b7280] mb-6">Quality, coverage, and performance across your prompt library.</p>
 
       <div className="flex gap-1 mb-8 bg-[#0a0a0a]/5 p-1 rounded-xl w-fit">
         {tabs.map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-1.5 rounded-lg text-[14px] ${tab===t?"bg-[#4FC3F7] text-[#0a0a0a]":"text-[#6b7280] hover:text-[#0a0a0a]"}`}>
+          <button key={t} onClick={() => setTab(t)} className={`px-4 py-1.5 rounded-lg text-[14px] ${tab===t?"bg-[#4FC3F7] text-white":"text-[#6b7280] hover:text-[#0a0a0a]"}`}>
             {t}
           </button>
         ))}
@@ -58,7 +62,7 @@ export function Dashboard() {
                   <Pie data={testedData} dataKey="value" innerRadius={60} outerRadius={90} paddingAngle={4}>
                     {testedData.map((d) => <Cell key={`tested-${d.name}`} fill={d.color} />)}
                   </Pie>
-                  <Tooltip contentStyle={{ background: "#bce4d8", border: "1px solid rgba(10, 10, 10,0.15)" }} />
+                  <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid rgba(10, 10, 10,0.15)" }} />
                 </PieChart>
               </ResponsiveContainer>
             </Chart>
@@ -81,7 +85,7 @@ export function Dashboard() {
           <ResponsiveContainer width="100%" height={360}>
             <BarChart data={catData} layout="vertical">
               <XAxis type="number" stroke="#94a1b2" domain={[0, 5]} />
-              <YAxis type="category" dataKey="name" stroke="#94a1b2" width={160} />
+              <YAxis type="category" dataKey="name" stroke="#94a1b2" width={100} />
               <Bar dataKey="score" fill="#4FC3F7" radius={[0, 6, 6, 0]} />
             </BarChart>
           </ResponsiveContainer>

@@ -6,6 +6,7 @@ import frame2Video from "../../../imports/Frame_2.mp4";
 import frame3Video from "../../../imports/Frame_3.mp4";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 import RotatingText from "../RotatingText";
+import ScrollReveal from "../ScrollReveal";
 
 // ── Category images (user-supplied) ──────────────────────────────────────────
 import imgSocialMedia   from "../../../imports/WhatsApp_Image_2026-04-27_at_1.12.44_PM.jpeg";
@@ -18,52 +19,6 @@ import imgAdvertising   from "../../../imports/WhatsApp_Image_2026-04-27_at_1.56
 import imgApparel       from "../../../imports/WhatsApp_Image_2026-04-27_at_2.04.05_PM.jpeg";
 import imgFashion       from "../../../imports/WhatsApp_Image_2026-04-27_at_2.07.53_PM.jpeg";
 import imgIllustration  from "../../../imports/WhatsApp_Image_2026-04-27_at_2.29.43_PM-2.jpeg";
-
-// ─── Scroll-reveal — fills heading + paragraph word-by-word as it scrolls in ──
-function RevealWord({ progress, range, children }: { progress: MotionValue<number>; range: [number, number]; children: React.ReactNode }) {
-  const opacity = useTransform(progress, range, [0.12, 1]);
-  return <motion.span style={{ opacity, display: "inline-block" }}>{children}</motion.span>;
-}
-
-function countRevealWords(node: React.ReactNode): number {
-  if (typeof node === "string") return node.split(/\s+/).filter(Boolean).length;
-  if (Array.isArray(node)) return node.reduce<number>((sum, n) => sum + countRevealWords(n), 0);
-  if (React.isValidElement(node)) return countRevealWords((node.props as { children?: React.ReactNode }).children);
-  return 0;
-}
-
-function buildRevealNodes(node: React.ReactNode, progress: MotionValue<number>, total: number, counter: { i: number }, keyPrefix: string): React.ReactNode {
-  if (typeof node === "string") {
-    return node.split(/(\s+)/).map((tok, k) => {
-      if (!tok.trim()) return tok;
-      const idx = counter.i++;
-      const start = idx / total;
-      const end = Math.min(1, (idx + 1) / total);
-      return <RevealWord key={`${keyPrefix}-${k}`} progress={progress} range={[start, end]}>{tok}</RevealWord>;
-    });
-  }
-  if (Array.isArray(node)) {
-    return node.map((n, k) => <React.Fragment key={`${keyPrefix}-${k}`}>{buildRevealNodes(n, progress, total, counter, `${keyPrefix}-${k}`)}</React.Fragment>);
-  }
-  if (React.isValidElement(node)) {
-    const kids = (node.props as { children?: React.ReactNode }).children;
-    if (kids == null) return node;
-    return React.cloneElement(node, undefined, buildRevealNodes(kids, progress, total, counter, keyPrefix));
-  }
-  return node;
-}
-
-function ScrollReveal({ children, className, style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.82", "start 0.32"] });
-  const total = Math.max(1, countRevealWords(children));
-  const counter = { i: 0 };
-  return (
-    <div ref={ref} className={className} style={style}>
-      {buildRevealNodes(children, scrollYProgress, total, counter, "rv")}
-    </div>
-  );
-}
 
 export function Home({ go }: { go: (p: string) => void }) {
   return (
@@ -86,13 +41,13 @@ export function Home({ go }: { go: (p: string) => void }) {
               <span style={{ fontWeight: 800 }}>Prompting</span> is the <span style={{ fontWeight: 800 }}>New Coding.</span>
             </h2>
             <p className="text-[#6b7280] max-w-[620px] mx-auto" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
-              The best AI outputs don't come from better models — they come from better prompts. Master the craft of prompting and unlock the full potential of every AI tool.
+              The best AI outputs don't come from better models - they come from better prompts. Master the craft of prompting and unlock the full potential of every AI tool.
             </p>
           </ScrollReveal>
         </div>
       </div>
 
-      {/* Story Showcase — Discover / Learn / Create */}
+      {/* Story Showcase - Discover / Learn / Create */}
       <StoryShowcase go={go} />
 
       {/* Breathing space 2 */}
@@ -125,16 +80,16 @@ export function Home({ go }: { go: (p: string) => void }) {
             />
           </h2>
           <p className="text-[#6b7280]" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
-            From stunning images to production code, from viral videos to full websites — one prompt is all it takes. Browse what works, copy it, make it yours.
+            From stunning images to production code, from viral videos to full websites - one prompt is all it takes. Browse what works, copy it, make it yours.
           </p>
           </ScrollReveal>
         </div>
       </div>
 
-      {/* Browse by category — auto-scrolling marquee */}
+      {/* Browse by category - auto-scrolling marquee */}
       <BrowseByCategory go={go} />
 
-      {/* Breathing space — Mastery */}
+      {/* Breathing space - Mastery */}
       <div className="py-28 md:py-40 border-t border-[#0a0a0a]/8">
         <div className="max-w-[1100px] mx-auto px-6 text-center">
           <div className="flex items-center justify-center gap-2 text-[#0a0a0a] mb-6" style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "0.02em" }}>
@@ -146,7 +101,7 @@ export function Home({ go }: { go: (p: string) => void }) {
             className="text-[#0a0a0a] mb-6"
             style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 400, lineHeight: 1.08, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
           >
-            Don't just use <span style={{ fontWeight: 800 }}>AI</span> — <em style={{ fontWeight: 400, fontStyle: "italic" }}>Master it.</em>
+            Don't just use <span style={{ fontWeight: 800 }}>AI</span> - <em style={{ fontWeight: 400, fontStyle: "italic" }}>Master it.</em>
           </h2>
           <p className="text-[#6b7280] max-w-[620px] mx-auto" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
             The gap between average and exceptional AI output is the prompt. Our curated library gives you the exact words that produce professional-grade results, every time.
@@ -162,7 +117,7 @@ export function Home({ go }: { go: (p: string) => void }) {
 
 // ─── Hero Section ─────────────────────────────────────────────────────────────
 
-// Base card size — all cards share these intrinsic dimensions; scale transforms resize them per slot
+// Base card size - all cards share these intrinsic dimensions; scale transforms resize them per slot
 const TYPEWRITER_TEXTS = [
   "Write Instagram captions",
   "Design a landing page",
@@ -219,7 +174,7 @@ function HeroCard({ id }: { id: number }) {
 const CARD_IDS = [0, 1, 2, 3, 4, 5, 6];
 
 function HeroCarousel({ go }: { go: (p: string) => void }) {
-  // ── 9:16 card ratio — height drives width ─────────────────────────────────
+  // ── 9:16 card ratio - height drives width ─────────────────────────────────
   // CARD_H is capped to keep the section within the viewport.
   // BASE_W = CARD_H × (9/16) → every card is exactly 9:16 portrait.
   useViewportWidth();  // kept to trigger re-render on resize (min-width guard)
@@ -353,7 +308,7 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
         );
       })}
 
-      {/* ── Floating Prompt Box — true center, larger diagonally ── */}
+      {/* ── Floating Prompt Box - true center, larger diagonally ── */}
       <div
         style={{
           position: "absolute",
@@ -400,7 +355,7 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
         </div>
       </div>
 
-      {/* ── Nav Controls — bottom-right ── */}
+      {/* ── Nav Controls - bottom-right ── */}
       <div style={{ position: "absolute", bottom: 26, right: 30, display: "flex", alignItems: "center", gap: 10, zIndex: 20 }}>
         <button
           aria-label="Previous slide"
@@ -445,7 +400,7 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
 
 // ─── How It Works ─────────────────────────────────────────────────────────────
 
-// ─── Story Showcase — scroll-driven Discover / Learn / Create ─────────────────
+// ─── Story Showcase - scroll-driven Discover / Learn / Create ─────────────────
 
 const STORY_STEPS = [
   {
@@ -488,7 +443,7 @@ const ACCENT = "#0a0a0a";
 
 function useStoryStepProgress(scrollYProgress: MotionValue<number>, index: number, count: number) {
   // Overlapping crossfade: as one step fades out, the next fades in over the
-  // SAME range — so there are never blank gaps between steps. The returned
+  // SAME range - so there are never blank gaps between steps. The returned
   // value IS the step's opacity (1 = fully shown). One unconditional
   // useTransform call; the if/else only builds plain keyframe arrays.
   const w = 1 / count;
@@ -649,7 +604,7 @@ function StoryShowcase({ go }: { go: (p: string) => void }) {
           <div aria-hidden className="pointer-events-none absolute -left-40 bottom-0 w-[480px] h-[480px] rounded-full" style={{ background: "radial-gradient(circle, rgba(79,195,247,0.10) 0%, transparent 70%)" }} />
 
           <div className="relative mx-auto flex h-full max-w-[1500px] items-center gap-12 px-8">
-            {/* LEFT — nav + copy (38%) */}
+            {/* LEFT - nav + copy (38%) */}
             <div className="relative flex flex-col justify-center" style={{ flexBasis: "38%", minWidth: 340 }}>
               <div className="mb-9 flex flex-col gap-4">
                 {STORY_STEPS.map((s, i) => (
@@ -663,7 +618,7 @@ function StoryShowcase({ go }: { go: (p: string) => void }) {
               </div>
             </div>
 
-            {/* RIGHT — scroll-activated video frames (62%) */}
+            {/* RIGHT - scroll-activated video frames (62%) */}
             <div className="relative h-full flex-1" style={{ flexBasis: "62%" }}>
               <StoryFrameShell progress={p0}>
                 <StoryFramedVideo src={frame1Video} path="promptvault.app/discover" progress={p0} />
@@ -714,7 +669,7 @@ function StoryShowcase({ go }: { go: (p: string) => void }) {
   );
 }
 
-// ─── AutoplayVideo — reliably plays in iframes / sandboxes ───────────────────
+// ─── AutoplayVideo - reliably plays in iframes / sandboxes ───────────────────
 function AutoplayVideo({ src, className }: { src: string; className?: string }) {
   const ref = useRef<HTMLVideoElement>(null);
   const visible = useRef(false);
@@ -759,17 +714,17 @@ function AutoplayVideo({ src, className }: { src: string; className?: string }) 
 // ─── BrowseByCategory ────────────────────────────────────────────────────────
 
 const browseCategories = [
-  { name: "Illustration",  img: imgIllustration, desc: "Hand-drawn styles, vector art, and digital illustrations for any project." },
-  { name: "Fashion",       img: imgFashion,      desc: "High-fashion editorials, runway looks, and trendsetting style imagery." },
-  { name: "Apparel",       img: imgApparel,      desc: "Clothing mockups, fabric textures, and product shots for apparel brands." },
-  { name: "Advertising",   img: imgAdvertising,  desc: "Campaign-ready visuals, ad creatives, and attention-grabbing brand imagery." },
-  { name: "People",        img: imgPeople,       desc: "Lifestyle scenes, candid moments, and diverse human subjects for any context." },
-  { name: "Portraits",     img: imgPortraits,    desc: "Studio-quality headshots, creative portraits, and expressive character shots." },
-  { name: "Marketing",     img: imgMarketing,    desc: "Social ads, banners, and promotional visuals that convert." },
-  { name: "Product",       img: imgProduct,      desc: "Clean product photography, lifestyle placements, and commercial compositions." },
-  { name: "E-commerce",    img: imgEcommerce,    desc: "Storefront imagery, catalog shots, and conversion-optimized product visuals." },
-  { name: "Social Media",  img: imgSocialMedia,  desc: "Scroll-stopping content for Instagram, TikTok, Pinterest, and beyond." },
-  { name: "Art",           img: "https://images.unsplash.com/photo-1762865417591-e9d09a06de32?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", desc: "Fine art, abstract, and experimental AI-generated artwork." },
+  { name: "Illustration",  img: imgIllustration, desc: "Hand-drawn styles, vector art, and digital illustrations for any project.", libraryCategory: "Art & Illustration" },
+  { name: "Fashion",       img: imgFashion,      desc: "High-fashion editorials, runway looks, and trendsetting style imagery.", libraryCategory: "Fashion & Apparel" },
+  { name: "Apparel",       img: imgApparel,      desc: "Clothing mockups, fabric textures, and product shots for apparel brands.", libraryCategory: "Fashion & Apparel" },
+  { name: "Advertising",   img: imgAdvertising,  desc: "Campaign-ready visuals, ad creatives, and attention-grabbing brand imagery.", libraryCategory: "Marketing & Ads" },
+  { name: "People",        img: imgPeople,       desc: "Lifestyle scenes, candid moments, and diverse human subjects for any context.", libraryCategory: "People & Portraits" },
+  { name: "Portraits",     img: imgPortraits,    desc: "Studio-quality headshots, creative portraits, and expressive character shots.", libraryCategory: "People & Portraits" },
+  { name: "Marketing",     img: imgMarketing,    desc: "Social ads, banners, and promotional visuals that convert.", libraryCategory: "Marketing & Ads" },
+  { name: "Product",       img: imgProduct,      desc: "Clean product photography, lifestyle placements, and commercial compositions.", libraryCategory: "Product & E-com" },
+  { name: "E-commerce",    img: imgEcommerce,    desc: "Storefront imagery, catalog shots, and conversion-optimized product visuals.", libraryCategory: "Product & E-com" },
+  { name: "Social Media",  img: imgSocialMedia,  desc: "Scroll-stopping content for Instagram, TikTok, Pinterest, and beyond.", libraryCategory: "Social Media" },
+  { name: "Art",           img: "https://images.unsplash.com/photo-1762865417591-e9d09a06de32?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", desc: "Fine art, abstract, and experimental AI-generated artwork.", libraryCategory: "Art & Illustration" },
 ];
 
 function BrowseByCategory({ go }: { go: (p: string) => void }) {
@@ -805,7 +760,7 @@ function BrowseByCategory({ go }: { go: (p: string) => void }) {
 
       {/* Header */}
       <div className="max-w-[1200px] mx-auto px-6 mb-8 flex items-end justify-between relative z-10">
-        <div>
+        <ScrollReveal baseRotation={0} blurStrength={3}>
           <h2
             className="text-[#0a0a0a] mb-2"
             style={{ fontSize: "clamp(28px, 4vw, 40px)", fontWeight: 400, letterSpacing: "-0.03em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
@@ -815,7 +770,7 @@ function BrowseByCategory({ go }: { go: (p: string) => void }) {
           <p className="text-[#6b7280]" style={{ fontSize: "15px" }}>
             Explore curated prompts across every creative discipline.
           </p>
-        </div>
+        </ScrollReveal>
         <button
           onClick={() => go("library")}
           className="text-[#0a0a0a] hover:text-[#555] transition-colors"
@@ -845,7 +800,7 @@ function BrowseByCategory({ go }: { go: (p: string) => void }) {
           {doubled.map((cat, i) => (
             <motion.button
               key={`${cat.name}-${i}`}
-              onClick={() => go("library:image")}
+              onClick={() => go("library:image:" + encodeURIComponent(cat.libraryCategory))}
               whileHover={{ y: -8, scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300, damping: 24 }}
               className="flex-shrink-0 rounded-[24px] p-4 pb-5 text-center flex flex-col items-center gap-1 group"
@@ -996,15 +951,17 @@ function CommunityPrizes({ go }: { go: (p: string) => void }) {
         >
           <Users className="w-3.5 h-3.5" /> Community
         </div>
-        <h2
-          className="text-[#0a0a0a] mb-3"
-          style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-0.03em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
-        >
-          <span style={{ fontWeight: 400 }}>Submit a prompt.</span> <span style={{ fontWeight: 800, color: "#0a0a0a" }}>Win prizes.</span>
-        </h2>
-        <p className="text-[#6b7280] max-w-lg mx-auto mb-8" style={{ fontSize: "16px", lineHeight: 1.6 }}>
-          Share your best prompts with the community and get rewarded.
-        </p>
+        <ScrollReveal baseRotation={0} blurStrength={3}>
+          <h2
+            className="text-[#0a0a0a] mb-3"
+            style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-0.03em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+          >
+            <span style={{ fontWeight: 400 }}>Submit a prompt.</span> <span style={{ fontWeight: 800, color: "#0a0a0a" }}>Win prizes.</span>
+          </h2>
+          <p className="text-[#6b7280] max-w-lg mx-auto mb-8" style={{ fontSize: "16px", lineHeight: 1.6 }}>
+            Share your best prompts with the community and get rewarded.
+          </p>
+        </ScrollReveal>
         <motion.button
           onClick={() => go("submit")}
           whileHover={{ scale: 1.04, y: -2 }}

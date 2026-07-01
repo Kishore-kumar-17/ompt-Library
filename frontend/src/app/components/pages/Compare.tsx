@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Star, Copy, Loader2, ArrowLeft } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Copy, Loader2, ArrowLeft } from "lucide-react";
 import { platforms } from "../theme";
 import { imageLibraryPrompts } from "../../lib/library-data";
 
@@ -21,16 +21,17 @@ export function Compare({ go }: { go: (p: string) => void }) {
     }).finally(() => setLoading(false));
   }, [prompt.slug]);
 
-  const fakeScore = (i: number) => (3.8 + ((i * 0.27) % 1.2)).toFixed(1);
+  const [votes, setVotes] = useState<Record<string, "up" | "down" | null>>({});
+  const vote = (key: string, dir: "up" | "down") => setVotes(v => ({ ...v, [key]: v[key] === dir ? null : dir }));
 
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-10 text-[#0a0a0a]">
       <div className="mb-8">
-        <button onClick={() => go("home")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 transition-colors">
+        <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" /> Back
         </button>
-        <h1 className="text-3xl">Compare across platforms</h1>
-        <p className="text-[#6b7280]">See how the same prompt performs on ChatGPT, Gemini, Grok, Midjourney, Firefly, and FLUX.</p>
+        <h1 className="text-3xl font-bold">Compare <span className="font-extrabold">Platforms</span></h1>
+        <p className="text-[#6b7280] mt-1">See how the same prompt performs on ChatGPT, Gemini, Grok, Midjourney, Firefly, and FLUX.</p>
       </div>
 
       <div className="mb-6">
@@ -38,7 +39,7 @@ export function Compare({ go }: { go: (p: string) => void }) {
         <select
           value={promptId}
           onChange={e => setPromptId(e.target.value)}
-          className="h-10 px-3 rounded-lg bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#0a0a0a] w-full max-w-md"
+          className="h-10 px-3 rounded-lg bg-[#0a0a0a]/5 border border-[#0a0a0a]/15 text-[#0a0a0a] w-full max-w-md"
         >
           {imageLibraryPrompts.map(x => (
             <option key={x.id} value={x.id}>{x.title}</option>
@@ -70,8 +71,9 @@ export function Compare({ go }: { go: (p: string) => void }) {
                     <span className="w-3 h-3 rounded-full shrink-0" style={{ background: pl.color }} />
                     <div className="text-[#0a0a0a] font-semibold">{pl.name}</div>
                     {!isNA && (
-                      <span className="ml-auto inline-flex items-center gap-1 text-[#0a0a0a]">
-                        <Star className="w-4 h-4 fill-[#4FC3F7] text-[#0a0a0a]" />{fakeScore(i)}
+                      <span className="ml-auto inline-flex items-center gap-1.5">
+                        <button onClick={() => vote(pl.key, "up")} className={`p-1 rounded-md transition-colors ${votes[pl.key] === "up" ? "bg-[#4FC3F7]/20 text-[#4FC3F7]" : "text-[#6b7280] hover:text-[#0a0a0a]"}`}><ThumbsUp className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => vote(pl.key, "down")} className={`p-1 rounded-md transition-colors ${votes[pl.key] === "down" ? "bg-red-100 text-red-500" : "text-[#6b7280] hover:text-[#0a0a0a]"}`}><ThumbsDown className="w-3.5 h-3.5" /></button>
                       </span>
                     )}
                   </div>
@@ -79,8 +81,7 @@ export function Compare({ go }: { go: (p: string) => void }) {
                     {text}
                   </pre>
                   {!isNA && (
-                    <div className="flex items-center justify-between">
-                      <Bar value={Number(fakeScore(i))} />
+                    <div className="flex items-center justify-end">
                       <button
                         onClick={() => { navigator.clipboard?.writeText(text); toast.success(`Copied ${pl.name} version`); }}
                         className="text-[#0a0a0a] inline-flex items-center gap-1 text-[13px]"
@@ -99,10 +100,3 @@ export function Compare({ go }: { go: (p: string) => void }) {
   );
 }
 
-function Bar({ value }: { value: number }) {
-  return (
-    <div className="w-24 h-2 rounded-full bg-[#0a0a0a]/5 overflow-hidden">
-      <div className="h-full bg-gradient-to-r from-[#4FC3F7] to-[#4FC3F7]" style={{ width: `${(value / 5) * 100}%` }} />
-    </div>
-  );
-}

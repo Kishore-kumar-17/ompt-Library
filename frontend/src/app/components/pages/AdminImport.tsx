@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { Upload, Check, ChevronRight, FileSpreadsheet, AlertTriangle } from "lucide-react";
+import { Upload, Check, ChevronRight, FileSpreadsheet, AlertTriangle, ArrowLeft } from "lucide-react";
 
 const steps = ["Upload", "Map columns", "Preview", "Validate", "Commit"];
 
-export function AdminImport() {
+export function AdminImport({ go }: { go: (p: string) => void }) {
   const [step, setStep] = useState(0);
 
   return (
     <div className="max-w-[1100px] mx-auto px-6 py-10 text-[#0a0a0a]">
+      <button onClick={() => go("home")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 transition-colors">
+        <ArrowLeft className="w-3.5 h-3.5" /> Back
+      </button>
       <h1 className="text-3xl mb-2">Admin · Bulk Import</h1>
       <p className="text-[#6b7280] mb-6">Upload a CSV/XLSX of prompts, map fields, validate, commit.</p>
 
@@ -86,7 +89,7 @@ export function AdminImport() {
         )}
         {step === 3 && (
           <div>
-            <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
               <Stat label="Valid"    value="78" color="#4FC3F7" />
               <Stat label="Warnings" value="3"  color="#a7a9be" />
               <Stat label="Errors"   value="5"  color="#4FC3F7" />

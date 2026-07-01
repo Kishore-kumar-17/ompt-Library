@@ -46,7 +46,7 @@ export function LockLayerPanel({
         <ul className="space-y-1.5 mb-5">
           {lockSection.map((l, i) => (
             <li key={l.key} className="font-mono text-[13px] text-[#0a0a0a] leading-relaxed">
-              <span className="text-[#6b7280]">LOCK {String(i + 1).padStart(2, "0")} — </span>
+              <span className="text-[#6b7280]">LOCK {String(i + 1).padStart(2, "0")} - </span>
               <span className="font-bold">{l.label.toUpperCase()}:</span> {l.value}
             </li>
           ))}

@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Settings, Heart, Clock, Upload, Sparkles } from "lucide-react";
+import { Settings, Heart, Clock, Upload, Sparkles, ArrowLeft } from "lucide-react";
 import { imageLibraryPrompts } from "../../lib/library-data";
 import { PromptCard } from "../PromptCard";
 import { profileApi, authStore, submissionsApi, type ProfileStats, type Submission } from "../../lib/api";
@@ -17,7 +17,7 @@ export function Profile({ go }: { go: (p: string) => void }) {
     if (!user) return;
     profileApi.stats()
       .then(setStats)
-      .catch(() => {/* backend not running — keep zeros */})
+      .catch(() => {/* backend not running - keep zeros */})
       .finally(() => setStatsLoaded(true));
     submissionsApi.mine()
       .then(setSubmissions)
@@ -34,6 +34,9 @@ export function Profile({ go }: { go: (p: string) => void }) {
 
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-10 text-[#0a0a0a]">
+      <button onClick={() => go("home")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 transition-colors">
+        <ArrowLeft className="w-3.5 h-3.5" /> Back
+      </button>
       <div className="flex items-center gap-4 mb-8">
         <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#4FC3F7] to-[#4FC3F7] flex items-center justify-center text-[#0a0a0a] text-xl font-bold border-2 border-[#0a0a0a]">
           {displayName[0].toUpperCase()}

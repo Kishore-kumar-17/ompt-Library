@@ -1,17 +1,44 @@
 import { useState, useEffect } from "react";
-import { Wand2, Copy, Check, RefreshCw, ArrowLeft } from "lucide-react";
+import { Wand2, Copy, Check, RefreshCw, ArrowLeft, Image, Video, FileText, PenTool, Globe } from "lucide-react";
 import { toast } from "sonner";
-import { platforms } from "../theme";
+import { platforms, videoPlatforms, websitePlatforms } from "../theme";
 import { improverApi, variablesApi, type ImproverResult } from "../../lib/api";
 import { LockLayerPanel } from "../LockLayerPanel";
 import { VariablePanel } from "../VariablePanel";
 import { applyVariables } from "../../lib/variables";
 import { highlight } from "../../lib/highlight";
 
+// ─── Family definitions ──────────────────────────────────────────────────────
+
+const FAMILIES = [
+  { key: "image",   label: "Image",   icon: Image,    desc: "Midjourney, FLUX, Firefly..." },
+  { key: "video",   label: "Video",   icon: Video,    desc: "Veo, Kling, Pika..." },
+  { key: "website", label: "Website", icon: Globe,     desc: "Lovable, Bolt, v0..." },
+  { key: "text",    label: "Text",    icon: FileText,  desc: "ChatGPT, Gemini, Grok..." },
+  { key: "content", label: "Content", icon: PenTool,   desc: "Ads, posts, copy..." },
+] as const;
+
+function getPlatformsForFamily(family: string) {
+  switch (family) {
+    case "video":   return videoPlatforms;
+    case "website": return websitePlatforms;
+    default:        return platforms;
+  }
+}
+
+function getDefaultPlatform(family: string) {
+  switch (family) {
+    case "video":   return "veo";
+    case "website": return "lovable";
+    default:        return "chatgpt";
+  }
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function Improver({ go }: { go: (p: string) => void }) {
   const [input, setInput]     = useState("");
+  const [family, setFamily]   = useState("image");
   const [platform, setPlatform] = useState("chatgpt");
   const [result, setResult]   = useState<ImproverResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -21,6 +48,14 @@ export function Improver({ go }: { go: (p: string) => void }) {
   const [regenText, setRegenText] = useState<string | null>(null);
   const [regenerating, setRegen]  = useState(false);
   useEffect(() => { setRegenText(null); }, [platform]);
+
+  // Reset platform when family changes
+  useEffect(() => {
+    setPlatform(getDefaultPlatform(family));
+    setResult(null);
+  }, [family]);
+
+  const activePlatforms = getPlatformsForFamily(family);
 
   const variableFields = result?.variables ?? [];
 
@@ -71,14 +106,46 @@ export function Improver({ go }: { go: (p: string) => void }) {
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-10 text-[#0a0a0a]">
       <div className="mb-8">
-        <button onClick={() => go("home")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 transition-colors">
+        <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" /> Back
         </button>
-        <div className="inline-flex items-center gap-2 text-[#0a0a0a] mb-2 text-[13px] font-semibold">
-          <Wand2 className="w-4 h-4" />Prompt Improver
-        </div>
-        <h1 className="text-3xl font-bold">Paste a weak prompt — AI upgrades it to pro quality.</h1>
-        <p className="text-[#6b7280] mt-1">Applies the v4.2 Pro Formula with lock blocks, camera rigs, and platform-native formatting.</p>
+        <h1 className="text-3xl font-bold">Prompt <span className="font-extrabold">Improver</span></h1>
+        <p className="text-[#6b7280] mt-1">Paste a weak prompt - AI upgrades it to pro quality with lock blocks, camera rigs, and platform-native formatting.</p>
+      </div>
+
+      {/* Family selector */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {FAMILIES.map(f => {
+          const Icon = f.icon;
+          const on = family === f.key;
+          const locked = f.key === "text" || f.key === "content";
+          return (
+            <button
+              key={f.key}
+              onClick={() => {
+                if (locked) { toast("Coming Soon", { description: `${f.label} prompts will be available soon.` }); return; }
+                setFamily(f.key);
+              }}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-[13px] transition-all relative ${
+                locked
+                  ? "bg-[#0a0a0a]/5 border-[#0a0a0a]/10 text-[#6b7280]/50 cursor-not-allowed"
+                  : on
+                  ? "bg-[#4FC3F7] text-white border-[#4FC3F7]"
+                  : "bg-white border-[#0a0a0a]/15 text-[#6b7280] hover:border-[#0a0a0a]/30 hover:text-[#0a0a0a]"
+              }`}
+              style={on && !locked ? { fontWeight: 600 } : {}}
+            >
+              <Icon className="w-4 h-4" />
+              <div className="text-left">
+                <div className="flex items-center gap-1.5">
+                  {f.label}
+                  {locked && <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#4FC3F7]/15 text-[#4FC3F7]">SOON</span>}
+                </div>
+                <div className={`text-[10px] ${locked ? "text-[#6b7280]/40" : on ? "text-white/70" : "text-[#6b7280]/60"}`}>{f.desc}</div>
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6 items-start">
@@ -87,11 +154,10 @@ export function Improver({ go }: { go: (p: string) => void }) {
         <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-6 flex flex-col">
           <div className="text-[#6b7280] text-[13px] mb-2 font-semibold">Original prompt</div>
           <textarea
-            rows={10}
             value={input}
             onChange={e => { setInput(e.target.value); setResult(null); setError(""); }}
             placeholder={"Paste your prompt here.\n\nExamples:\n\u2022 \"a cat sitting on a windowsill, golden hour\"\n\u2022 \"create a photo of a luxury watch on dark background\"\n\u2022 \"write a blog post about AI trends\""}
-            className="flex-1 w-full p-3 rounded-lg bg-[#f5f5f5] border border-[#0a0a0a]/20 text-[#0a0a0a] outline-none focus:border-[#4FC3F7] font-mono text-[13px] resize-none"
+            className="flex-1 w-full p-4 rounded-xl bg-[#f5f5f5] border border-[#0a0a0a]/15 text-[#0a0a0a] outline-none focus:border-[#4FC3F7] font-mono text-[13px] resize-none min-h-[340px]"
           />
           <div className="mt-4 flex items-center gap-3">
             <button
@@ -106,17 +172,17 @@ export function Improver({ go }: { go: (p: string) => void }) {
         </div>
 
         {/* Output (sticky) */}
-        <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-6 flex flex-col min-w-0 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
+        <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-6 flex flex-col min-w-0">
           {/* Platform tabs */}
           <div className="flex flex-wrap gap-2 mb-4">
-            {platforms.map(pl => (
+            {activePlatforms.map(pl => (
               <button
                 key={pl.key}
                 onClick={() => { setPlatform(pl.key); setResult(null); }}
                 className={`px-3 py-1.5 rounded-full border text-[13px] transition-all ${
                   platform === pl.key
-                    ? "bg-[#0a0a0a] text-white border-[#0a0a0a]"
-                    : "border-[#0a0a0a]/20 text-[#6b7280] hover:text-[#0a0a0a]"
+                    ? "bg-[#4FC3F7] text-white border-[#4FC3F7]"
+                    : "border-[#0a0a0a]/15 text-[#6b7280] hover:text-[#0a0a0a]"
                 }`}
               >
                 <span className="inline-block w-2 h-2 rounded-full mr-1.5" style={{ background: pl.color }} />
@@ -134,8 +200,8 @@ export function Improver({ go }: { go: (p: string) => void }) {
             </div>
           )}
 
-          <div className={`flex-1 rounded-xl border p-3 min-h-[200px] relative transition-all ${
-            result ? "bg-[#f8f9ff] border-[#0a0a0a]/20" : "bg-[#f5f5f5] border-[#0a0a0a]/10"
+          <div className={`flex-1 rounded-xl border p-4 min-h-[340px] relative transition-all ${
+            result ? "bg-[#fafafa] border-[#0a0a0a]/15" : "bg-[#f5f5f5] border-[#0a0a0a]/10"
           }`}>
             {loading ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
@@ -166,7 +232,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
           {result && (
             <button
               onClick={handleCopy}
-              className="mt-4 h-10 px-5 rounded-full bg-[#4FC3F7] text-[#0a0a0a] font-bold inline-flex items-center gap-2 self-start hover:bg-[#4FC3F7]/90 transition-colors"
+              className="mt-4 h-10 px-5 rounded-full bg-[#4FC3F7] text-white font-bold inline-flex items-center gap-2 self-start hover:bg-[#4FC3F7]/90 transition-colors"
             >
               {copied ? <><Check className="w-4 h-4" />Copied!</> : <><Copy className="w-4 h-4" />Copy</>}
             </button>
@@ -179,7 +245,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
         <section className="mt-6 bg-white border border-[#0a0a0a]/15 rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-[#0a0a0a] font-bold">What changed</h2>
-            <span className="px-2.5 py-0.5 rounded-full bg-[#4FC3F7] text-[#0a0a0a] text-[12px] font-bold border border-[#0a0a0a]">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#4FC3F7]/15 text-[#4FC3F7] text-[12px] font-bold">
               {appliedCount} improvement{appliedCount !== 1 ? "s" : ""} applied
             </span>
           </div>

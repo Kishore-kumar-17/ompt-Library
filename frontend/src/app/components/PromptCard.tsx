@@ -6,7 +6,7 @@ import { PromptItem } from "./theme";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { authStore, libraryApi } from "../lib/api";
 
-export function PromptCard({ p, onClick }: { p: PromptItem; onClick?: () => void }) {
+export function PromptCard({ p, onClick, hideActions }: { p: PromptItem; onClick?: () => void; hideActions?: boolean }) {
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -85,14 +85,16 @@ export function PromptCard({ p, onClick }: { p: PromptItem; onClick?: () => void
         <p className="text-[#6b7280] line-clamp-2 mb-3" style={{ fontSize: "13px" }}>{p.description}</p>
         <div className="flex items-center justify-between text-[#6b7280]">
           <span className="text-[12px]">{p.category}</span>
-          <button
-            type="button"
-            onClick={handleCopy}
-            className="flex items-center gap-1 text-[#0a0a0a] hover:text-[#0a0a0a]/80 transition-colors"
-            style={{ fontSize: "13px" }}
-          >
-            <Copy className="w-4 h-4" /> {copied ? "Copied!" : "Copy"}
-          </button>
+          {!hideActions && (
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="flex items-center gap-1 text-[#0a0a0a] hover:text-[#0a0a0a]/80 transition-colors"
+              style={{ fontSize: "13px" }}
+            >
+              <Copy className="w-4 h-4" /> {copied ? "Copied!" : "Copy"}
+            </button>
+          )}
         </div>
       </div>
     </motion.div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Copy, Star } from "lucide-react";
+import { X, Copy, ThumbsUp, ThumbsDown } from "lucide-react";
 import { toast } from "sonner";
 import { type WebsiteDesign } from "../lib/website-data";
 import { websitePlatformVersions } from "../lib/website-platforms";
@@ -257,7 +257,7 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(promptText);
-      toast.success("Prompt copied", { description: `${design.title} — ${activePl?.name}` });
+      toast.success("Prompt copied", { description: `${design.title} - ${activePl?.name}` });
     } catch {
       toast.error("Failed to copy to clipboard");
     }
@@ -329,9 +329,9 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
                   <p className="text-[#6b7280] text-[12px]">{design.style}</p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
-                  <Star className="w-3.5 h-3.5 fill-[#4FC3F7] text-[#4FC3F7]" />
-                  <span className="text-[13px] font-bold text-[#0a0a0a]">{design.rating}</span>
-                  {design.tested && <span className="w-1.5 h-1.5 rounded-full bg-[#28c840]" />}
+                  <ThumbsUp className="w-3.5 h-3.5 text-[#6b7280] hover:text-[#4FC3F7] cursor-pointer transition-colors" />
+                  <ThumbsDown className="w-3.5 h-3.5 text-[#6b7280] hover:text-red-500 cursor-pointer transition-colors" />
+                  {design.tested && <span className="w-1.5 h-1.5 rounded-full bg-[#28c840] ml-1" />}
                 </div>
               </div>
               {/* Stack */}

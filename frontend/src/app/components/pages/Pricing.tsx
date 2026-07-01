@@ -65,10 +65,10 @@ const plans = [
 ];
 
 const faqs = [
-  { q: "Can I switch plans?", a: "Yes — upgrade or downgrade any time. Changes take effect at the next billing cycle." },
+  { q: "Can I switch plans?", a: "Yes - upgrade or downgrade any time. Changes take effect at the next billing cycle." },
   { q: "Is the free plan really free?", a: "Yes, forever. No credit card required to sign up." },
   { q: "What counts as a 'copy'?", a: "Every time you copy a prompt text to your clipboard, that counts as one copy." },
-  { q: "Do submitted prompts get reviewed?", a: "Yes — all submissions go through editorial review before going live. Pro users get priority review (usually within 24 hours)." },
+  { q: "Do submitted prompts get reviewed?", a: "Yes - all submissions go through editorial review before going live. Pro users get priority review (usually within 24 hours)." },
 ];
 
 export function Pricing({ go, onAuth }: { go: (p: string) => void; onAuth?: () => void }) {
@@ -77,13 +77,10 @@ export function Pricing({ go, onAuth }: { go: (p: string) => void; onAuth?: () =
 
       {/* Header */}
       <div className="text-center mb-14">
-        <button onClick={() => go("home")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 mx-auto transition-colors">
+        <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 mx-auto transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" /> Back
         </button>
-        <div className="inline-flex items-center gap-2 text-[#0a0a0a] mb-3 text-[13px] font-semibold">
-          <Zap className="w-4 h-4" /> Pricing
-        </div>
-        <h1 className="text-4xl font-bold mb-3">Simple, honest pricing</h1>
+        <h1 className="text-4xl font-bold mb-3">Simple, <span className="font-extrabold">Honest Pricing</span></h1>
         <p className="text-[#6b7280] text-lg max-w-xl mx-auto">
           Start free. Upgrade when you need more. No hidden fees, no lock-in.
         </p>
@@ -97,11 +94,11 @@ export function Pricing({ go, onAuth }: { go: (p: string) => void; onAuth?: () =
             className={`rounded-2xl border-2 p-7 flex flex-col relative ${
               plan.highlighted
                 ? "border-[#0a0a0a] shadow-[6px_6px_0_0_#0a0a0a]"
-                : "border-[#0a0a0a]/20"
+                : "border-[#0a0a0a]/15"
             }`}
           >
             {plan.highlighted && (
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#4FC3F7] border-2 border-[#0a0a0a] text-[#0a0a0a] text-[11px] font-bold px-3 py-0.5 rounded-full whitespace-nowrap">
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#4FC3F7] text-white text-[11px] font-bold px-3 py-0.5 rounded-full whitespace-nowrap">
                 Most popular
               </div>
             )}
@@ -138,7 +135,7 @@ export function Pricing({ go, onAuth }: { go: (p: string) => void; onAuth?: () =
                   ? "bg-[#0a0a0a] text-white"
                   : plan.id === "enterprise"
                   ? "bg-white text-[#0a0a0a]"
-                  : "bg-[#4FC3F7] text-[#0a0a0a]"
+                  : "bg-[#4FC3F7] text-white"
               }`}
             >
               {plan.cta}

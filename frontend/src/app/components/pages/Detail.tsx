@@ -2,8 +2,8 @@ import { useMemo, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  Heart, Copy, Star, Share2, BookmarkPlus,
-  MessageSquare, ThumbsUp, Loader2, Lock, ExternalLink, ArrowLeft,
+  Heart, Copy, ThumbsUp, ThumbsDown, Share2, BookmarkPlus,
+  MessageSquare, Loader2, Lock, ExternalLink, ArrowLeft,
 } from "lucide-react";
 import { platforms, videoPlatforms, type PromptItem } from "../theme";
 import { authStore, libraryApi, variablesApi, type LibraryPrompt, type VariableField } from "../../lib/api";
@@ -18,7 +18,7 @@ import { ImageWithFallback } from "../figma/ImageWithFallback";
 import { PromptCard } from "../PromptCard";
 
 const SAMPLE_REVIEWS = [
-  { name: "Arjun S.",   initials: "AS", color: "#0a0a0a", stars: 5, helpful: 34, body: "Produced exactly what I needed — sharp, editorial output on the first try. Saved me 20 minutes of prompt tweaking." },
+  { name: "Arjun S.",   initials: "AS", color: "#0a0a0a", stars: 5, helpful: 34, body: "Produced exactly what I needed - sharp, editorial output on the first try. Saved me 20 minutes of prompt tweaking." },
   { name: "Priya M.",  initials: "PM", color: "#4FC3F7", stars: 5, helpful: 21, body: "Love how the variables work. Dropped in my project details and got a production-ready prompt immediately." },
   { name: "Thomas W.", initials: "TW", color: "#4FC3F7", stars: 4, helpful: 17, body: "Works great on ChatGPT and Gemini. Midjourney output needed a small tweak for my style, but overall solid." },
 ];
@@ -48,7 +48,7 @@ function fromApi(p: LibraryPrompt & { platforms?: Record<string, string>; image_
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string) => void; defaultPlatform?: string | null }) {
-  // Check local static data first — image then video
+  // Check local static data first - image then video
   const staticPrompt =
     imageLibraryPrompts.find(x => x.id === id) ??
     videoLibraryPrompts.find(x => x.id === id) ??
@@ -207,7 +207,7 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
       const res = await libraryApi.save(p.id);
       setSaved(res.saved);
       toast(res.saved ? "Saved to library" : "Removed from library", { description: p.title });
-    } catch { toast.error("Could not save — is the backend running?"); }
+    } catch { toast.error("Could not save - is the backend running?"); }
     finally { setSaving(false); }
   };
 
@@ -273,8 +273,8 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
               <div>
                 <div className="text-[#0a0a0a] font-bold text-[15px]">
                   {isVideoPrompt
-                    ? "How to Create This — From Prompt to Video"
-                    : "How to Create This — From Prompt to Image"}
+                    ? "How to Create This - From Prompt to Video"
+                    : "How to Create This - From Prompt to Image"}
                 </div>
                 <div className="text-[#6b7280] text-[12px]">
                   8 steps · Beginner friendly · Prompt to output
@@ -309,10 +309,9 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
           <p className="text-[#6b7280] mb-4 line-clamp-3">{p.description}</p>
 
           <div className="flex items-center gap-4 mb-6 text-[#6b7280]">
-            <span className="inline-flex items-center gap-1 text-[#0a0a0a]">
-              <Star className="w-4 h-4 fill-[#4FC3F7] text-[#0a0a0a]" />
-              {p.rating}
-              {p.reviews > 0 && <span>({p.reviews})</span>}
+            <span className="inline-flex items-center gap-1.5">
+              <button className="p-1 rounded-md text-[#6b7280] hover:text-[#4FC3F7] hover:bg-[#4FC3F7]/10 transition-colors"><ThumbsUp className="w-4 h-4" /></button>
+              <button className="p-1 rounded-md text-[#6b7280] hover:text-red-500 hover:bg-red-50 transition-colors"><ThumbsDown className="w-4 h-4" /></button>
             </span>
             <button
               onClick={handleSave}
@@ -373,6 +372,9 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
                 </span>
               )}
             </div>
+            <button onClick={handleCopyPrompt} className="absolute top-3 right-3 p-1.5 rounded-lg bg-[#0a0a0a]/5 hover:bg-[#0a0a0a]/10 text-[#6b7280] hover:text-[#0a0a0a] transition-colors" title="Copy prompt">
+              <Copy className="w-4 h-4" />
+            </button>
             <pre className="whitespace-pre-wrap text-[#0a0a0a] font-mono text-[13px] leading-relaxed max-h-64 overflow-y-auto">
               {highlight(rendered, variableFields.map(v => v.name))}
             </pre>
@@ -439,14 +441,14 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
               <h2 className="text-[#0a0a0a] mb-4">Tags</h2>
               <div className="flex flex-wrap gap-2 mb-8">
                 {(p.tags ?? []).map(t => (
-                  <span key={t} className="px-2 py-1 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#6b7280] text-[13px]">#{t}</span>
+                  <button key={t} onClick={() => go("library:image:#" + t)} className="px-2 py-1 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#6b7280] text-[13px] hover:bg-[#0a0a0a]/10 hover:text-[#0a0a0a] transition-colors cursor-pointer">#{t}</button>
                 ))}
               </div>
             </>
           )}
           <h2 className="text-[#0a0a0a] mb-4">Author</h2>
           <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#4FC3F7] to-[#4FC3F7]" />
+            <div className="w-10 h-10 rounded-full bg-[#4FC3F7]" />
             <div>
               <div className="text-[#0a0a0a]" style={{ fontWeight: 600 }}>{p.author}</div>
               <div className="text-[#6b7280]" style={{ fontSize: "13px" }}>Contributor</div>
@@ -462,7 +464,7 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
             .filter(x => x.category === p.category && x.id !== p.id)
             .slice(0, 4)
             .map(x => (
-              <PromptCard key={x.id} p={x} onClick={() => go("detail:" + x.id)} />
+              <PromptCard key={x.id} p={x} onClick={() => go("detail:" + x.id)} hideActions />
             ))}
         </div>
       </section>
@@ -528,7 +530,7 @@ function ImageStepContent({ idx, promptText, platformName }: { idx: number; prom
     );
     case 2: return (
       <div className="space-y-3">
-        <p>Review the prompt below. Notice the structure — subject, style, lighting, composition, and technical details all work together.</p>
+        <p>Review the prompt below. Notice the structure - subject, style, lighting, composition, and technical details all work together.</p>
         <div className="flex flex-wrap gap-2">
           {["Subject", "Style", "Lighting", "Composition", "Camera", "Mood"].map(b => <GBadge key={b}>{b}</GBadge>)}
         </div>
@@ -562,10 +564,10 @@ function ImageStepContent({ idx, promptText, platformName }: { idx: number; prom
         <p>Not perfect on the first try? That's normal. Try these refinement strategies:</p>
         <div className="space-y-2">
           {[
-            "Adjust specific words — swap 'cinematic' for 'editorial' or 'dramatic'",
-            "Add more detail — specify exact camera, lens, or lighting setup",
-            "Use variations — most tools let you create variations of a result you like",
-            "Change aspect ratio — portrait (2:3), landscape (16:9), or square (1:1)",
+            "Adjust specific words - swap 'cinematic' for 'editorial' or 'dramatic'",
+            "Add more detail - specify exact camera, lens, or lighting setup",
+            "Use variations - most tools let you create variations of a result you like",
+            "Change aspect ratio - portrait (2:3), landscape (16:9), or square (1:1)",
           ].map((tip, i) => (
             <div key={i} className="flex items-start gap-2">
               <span className="w-5 h-5 rounded-full bg-[#4FC3F7] text-[#0d1117] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">{i + 1}</span>
@@ -581,7 +583,7 @@ function ImageStepContent({ idx, promptText, platformName }: { idx: number; prom
         <div className="flex flex-wrap gap-2">
           {["PNG for transparency", "JPG for photos", "Upscale for print", "Save originals"].map(b => <GBadge key={b}>{b}</GBadge>)}
         </div>
-        <p className="text-[13px]">Most platforms offer upscaling options — always upscale before using in professional work.</p>
+        <p className="text-[13px]">Most platforms offer upscaling options - always upscale before using in professional work.</p>
       </div>
     );
     case 7: return (
@@ -690,10 +692,10 @@ function VideoStepContent({ idx, promptText, platformName }: { idx: number; prom
         <p>Improve your video with these refinement techniques:</p>
         <div className="space-y-2">
           {[
-            "Adjust camera movement — slow pan, zoom, tracking shot, static",
-            "Change pacing — add 'slow motion' or 'time-lapse' keywords",
-            "Specify lighting — golden hour, dramatic shadows, neon, studio",
-            "Control duration — shorter clips are usually higher quality",
+            "Adjust camera movement - slow pan, zoom, tracking shot, static",
+            "Change pacing - add 'slow motion' or 'time-lapse' keywords",
+            "Specify lighting - golden hour, dramatic shadows, neon, studio",
+            "Control duration - shorter clips are usually higher quality",
           ].map((tip, i) => (
             <div key={i} className="flex items-start gap-2">
               <span className="w-5 h-5 rounded-full bg-[#4FC3F7] text-[#0d1117] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">{i + 1}</span>
@@ -928,7 +930,7 @@ function BuildGuide({ steps, renderContent, doneMessage, doneEmoji }: {
                       className="mt-4 flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold"
                       style={{ background: "#4FC3F7", color: "#0d1117" }}
                     >
-                      {activeStep < TOTAL - 1 ? "Done — Unlock Next →" : "Complete! 🎉"}
+                      {activeStep < TOTAL - 1 ? "Done - Unlock Next →" : "Complete! 🎉"}
                     </motion.button>
                   )}
                   {reviewStep !== null && (

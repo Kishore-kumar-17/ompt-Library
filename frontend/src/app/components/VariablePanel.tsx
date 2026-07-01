@@ -5,7 +5,7 @@ import type { VariableField } from "../lib/api";
 /**
  * Variable layer input panel. Renders one typed input per `[TOKEN]` placeholder so
  * the user can personalize the descriptive prompt (text / color / image / select).
- * Substitution + the locks are handled by the caller — this is purely the form.
+ * Substitution + the locks are handled by the caller - this is purely the form.
  */
 export function VariablePanel({
   variables,

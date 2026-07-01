@@ -264,6 +264,14 @@ export const builderApi = {
     mood?: string;
     aspect?: string;
     category?: string;
+    subCategory?: string;
+    audience?: string;
+    palette?: string;
+    pages?: string[];
+    duration?: string;
+    cameraMovement?: string;
+    pacing?: string;
+    soundDesign?: string;
   }) =>
     apiFetch<BuilderResult>("/api/builder/generate", {
       method: "POST",

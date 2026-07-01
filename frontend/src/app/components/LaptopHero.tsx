@@ -74,30 +74,30 @@ interface TabCfg {
 const TAB_DATA: Record<Mode, TabCfg> = {
   image: {
     id: "image", label: "Image", url: "image",
-    prompt: "A cinematic event poster, dramatic rim lighting, bold typography — ar 2:3",
+    prompt: "A cinematic event poster, dramatic rim lighting, bold typography - ar 2:3",
     type: "image",
     src: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200&q=80",
     badge: "Playing preview",
   },
   video: {
     id: "video", label: "Video", url: "video",
-    prompt: "A 5-second cinematic loop of a stadium crowd at golden hour, slow motion, lens flare — 24fps, ar 16:9",
+    prompt: "A 5-second cinematic loop of a stadium crowd at golden hour, slow motion, lens flare - 24fps, ar 16:9",
     type: "image",
     src: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&q=80",
     badge: "Playing preview",
   },
   text: {
     id: "text", label: "Text", url: "text",
-    prompt: "Write a launch announcement for a sold-out festival — punchy, cinematic, under 80 words",
+    prompt: "Write a launch announcement for a sold-out festival - punchy, cinematic, under 80 words",
     type: "text",
     content: `<strong style="color:#fff;font-size:1.4cqw;display:block;margin-bottom:3%">Generated copy</strong>
-<p style="margin:0 0 3% 0">Under a sky split open by sound, ten thousand voices became one. The lights weren't a show — they were a verdict.</p>
+<p style="margin:0 0 3% 0">Under a sky split open by sound, ten thousand voices became one. The lights weren't a show - they were a verdict.</p>
 <p style="margin:0 0 3% 0">Confetti fell like punctuation on a sentence the night had been writing for hours.</p>
-<p style="margin:0;opacity:0.7">— 3 variations generated · cinematic tone · 64 words</p>`,
+<p style="margin:0;opacity:0.7">- 3 variations generated · cinematic tone · 64 words</p>`,
   },
   content: {
     id: "content", label: "Content", url: "content",
-    prompt: "Generate a campaign brief for a festival poster — headline, subhead, CTA, tone, format",
+    prompt: "Generate a campaign brief for a festival poster - headline, subhead, CTA, tone, format",
     type: "text",
     content: `<strong style="color:#fff;font-size:1.4cqw;display:block;margin-bottom:3%">Content brief</strong>
 <p style="margin:0 0 2% 0"><strong style="color:#fff">Headline:</strong> The Night Was Always Going To Be This Loud</p>
@@ -108,7 +108,7 @@ const TAB_DATA: Record<Mode, TabCfg> = {
   },
   code: {
     id: "code", label: "Code", url: "code",
-    prompt: "Generate the API call to create this prompt programmatically — JSON schema + fetch example",
+    prompt: "Generate the API call to create this prompt programmatically - JSON schema + fetch example",
     type: "code",
     content: `// Generated prompt schema
 {
@@ -132,7 +132,7 @@ fetch("https://api.promptvault.app/v1/generate", {
   },
   compare: {
     id: "compare", label: "Compare", url: "compare",
-    prompt: "Compare two poster variations — one warm orange, one cool blue — ar 2:3, side by side",
+    prompt: "Compare two poster variations - one warm orange, one cool blue - ar 2:3, side by side",
     type: "image",
     src: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=1200&q=80",
     badge: "A / B preview",
@@ -324,7 +324,7 @@ export function LaptopHero() {
           margin: 0,
           fontWeight: 500,
         }}>
-          Pick a discipline — we&rsquo;ll run a real prompt through it.
+          Pick a discipline - we&rsquo;ll run a real prompt through it.
         </p>
       </div>
 
@@ -363,7 +363,7 @@ export function LaptopHero() {
               overflow: "hidden",
               display: "flex",
               flexDirection: "column",
-              // @ts-ignore — container-type is a modern CSS prop
+              // @ts-ignore - container-type is a modern CSS prop
               containerType: "inline-size",
             }}>
 
@@ -522,7 +522,7 @@ export function LaptopHero() {
 
                   {/* Action buttons */}
                   <div style={{ display: "flex", gap: "0.9cqw", marginTop: "2cqw" }}>
-                    {/* Run button — yellow */}
+                    {/* Run button - yellow */}
                     <button
                       onClick={handleRun}
                       disabled={running}
@@ -562,7 +562,7 @@ export function LaptopHero() {
                       {running ? "Running…" : "Run"}
                     </button>
 
-                    {/* Copy button — white / outlined */}
+                    {/* Copy button - white / outlined */}
                     <button
                       onClick={handleCopy}
                       style={{

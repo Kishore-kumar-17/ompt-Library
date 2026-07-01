@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Check, ChevronRight, Loader2 } from "lucide-react";
+import { Check, ChevronRight, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { categories, platforms } from "../theme";
 import { submissionsApi, authStore } from "../../lib/api";
 
 const steps = ["Category", "Platform", "Prompt", "Variables", "Example", "Review"];
 
-export function Submit() {
+export function Submit({ go }: { go: (p: string) => void }) {
   const [step, setStep] = useState(0);
   const [data, setData] = useState<any>({ category: "", platform: "chatgpt", prompt: "", vars: "", example: "" });
   const [submitting, setSubmitting] = useState(false);
@@ -49,13 +49,16 @@ export function Submit() {
 
   return (
     <div className="max-w-[900px] mx-auto px-6 py-10 text-[#0a0a0a]">
-      <h1 className="text-3xl mb-2">Submit a prompt</h1>
+      <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 transition-colors">
+        <ArrowLeft className="w-3.5 h-3.5" /> Back
+      </button>
+      <h1 className="text-3xl font-bold mb-2">Submit <span className="font-extrabold">a Prompt</span></h1>
       <p className="text-[#6b7280] mb-6">A guided 6-step wizard. Our editors review before publishing.</p>
 
       {submitted && (
         <div className="mb-6 flex items-center gap-3 bg-[#bce4d8]/30 border border-[#bce4d8] rounded-2xl p-5">
-          <div className="w-9 h-9 rounded-full bg-[#4FC3F7] border-2 border-[#0a0a0a] flex items-center justify-center shrink-0">
-            <Check className="w-5 h-5 text-[#0a0a0a]" />
+          <div className="w-9 h-9 rounded-full bg-[#4FC3F7] flex items-center justify-center shrink-0">
+            <Check className="w-5 h-5 text-white" />
           </div>
           <div>
             <div className="font-bold text-[#0a0a0a]">Submitted successfully!</div>
@@ -68,7 +71,7 @@ export function Submit() {
         {steps.map((s, i) => (
           <div key={s} className="flex items-center gap-2">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] ${
-              i < step ? "bg-[#4FC3F7] text-[#0a0a0a]" :
+              i < step ? "bg-[#4FC3F7] text-white" :
               i === step ? "bg-[#0a0a0a]/10 text-[#0a0a0a] border border-[#4FC3F7]" :
               "bg-[#0a0a0a]/5 text-[#6b7280]"
             }`}>
@@ -89,7 +92,7 @@ export function Submit() {
                 <button
                   key={c.name}
                   onClick={() => update("category", c.name)}
-                  className={`p-3 rounded-xl border text-left text-[13px] ${data.category===c.name?"bg-[#4FC3F7]/10 border-[#4FC3F7] text-[#0a0a0a]":"border-[#0a0a0a]/20 text-[#6b7280] hover:text-[#0a0a0a]"}`}
+                  className={`p-3 rounded-xl border text-left text-[13px] ${data.category===c.name?"bg-[#4FC3F7]/10 border-[#4FC3F7] text-[#0a0a0a]":"border-[#0a0a0a]/15 text-[#6b7280] hover:text-[#0a0a0a]"}`}
                 >
                   {c.name}
                 </button>
@@ -105,7 +108,7 @@ export function Submit() {
                 <button
                   key={p.key}
                   onClick={() => update("platform", p.key)}
-                  className={`p-3 rounded-xl border flex items-center gap-2 text-[13px] ${data.platform===p.key?"bg-[#0a0a0a]/10 border-[#0a0a0a]/40 text-[#0a0a0a]":"border-[#0a0a0a]/20 text-[#6b7280] hover:text-[#0a0a0a]"}`}
+                  className={`p-3 rounded-xl border flex items-center gap-2 text-[13px] ${data.platform===p.key?"bg-[#4FC3F7]/10 border-[#4FC3F7] text-[#0a0a0a]":"border-[#0a0a0a]/15 text-[#6b7280] hover:text-[#0a0a0a]"}`}
                 >
                   <span className="w-3 h-3 rounded-full" style={{background:p.color}} />{p.name}
                 </button>
@@ -121,7 +124,7 @@ export function Submit() {
               value={data.prompt}
               onChange={e => update("prompt", e.target.value)}
               placeholder="Paste your prompt. Use [bracketed] placeholders for variables."
-              className="w-full p-3 rounded-lg bg-[#f5f5f5] border border-[#0a0a0a]/20 text-[#0a0a0a] font-mono text-[13px] outline-none focus:border-[#4FC3F7]"
+              className="w-full p-3 rounded-lg bg-[#f5f5f5] border border-[#0a0a0a]/15 text-[#0a0a0a] font-mono text-[13px] outline-none focus:border-[#4FC3F7]"
             />
           </div>
         )}
@@ -132,7 +135,7 @@ export function Submit() {
               value={data.vars}
               onChange={e => update("vars", e.target.value)}
               placeholder="Comma-separated: subject, mood, style"
-              className="w-full h-10 px-3 rounded-lg bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#0a0a0a] placeholder:text-[#6b7280] outline-none focus:border-[#4FC3F7]"
+              className="w-full h-10 px-3 rounded-lg bg-[#0a0a0a]/5 border border-[#0a0a0a]/15 text-[#0a0a0a] placeholder:text-[#6b7280] outline-none focus:border-[#4FC3F7]"
             />
           </div>
         )}
@@ -143,17 +146,17 @@ export function Submit() {
               value={data.example}
               onChange={e => update("example", e.target.value)}
               placeholder="Image URL or short text sample"
-              className="w-full h-10 px-3 rounded-lg bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#0a0a0a] placeholder:text-[#6b7280] outline-none focus:border-[#4FC3F7]"
+              className="w-full h-10 px-3 rounded-lg bg-[#0a0a0a]/5 border border-[#0a0a0a]/15 text-[#0a0a0a] placeholder:text-[#6b7280] outline-none focus:border-[#4FC3F7]"
             />
           </div>
         )}
         {step === 5 && (
           <div className="space-y-3">
             <div className="text-[#0a0a0a]" style={{ fontWeight: 700 }}>Review & submit</div>
-            <div><span className="text-[#6b7280]">Category:</span> <span className="text-[#0a0a0a]">{data.category || "—"}</span></div>
+            <div><span className="text-[#6b7280]">Category:</span> <span className="text-[#0a0a0a]">{data.category || "-"}</span></div>
             <div><span className="text-[#6b7280]">Platform:</span> <span className="text-[#0a0a0a]">{data.platform}</span></div>
-            <div><span className="text-[#6b7280]">Variables:</span> <span className="text-[#0a0a0a]">{data.vars || "—"}</span></div>
-            <div className="bg-[#f5f5f5] border border-[#0a0a0a]/20 rounded-lg p-3 font-mono text-[13px] text-[#0a0a0a] whitespace-pre-wrap">{data.prompt || "—"}</div>
+            <div><span className="text-[#6b7280]">Variables:</span> <span className="text-[#0a0a0a]">{data.vars || "-"}</span></div>
+            <div className="bg-[#f5f5f5] border border-[#0a0a0a]/20 rounded-lg p-3 font-mono text-[13px] text-[#0a0a0a] whitespace-pre-wrap">{data.prompt || "-"}</div>
           </div>
         )}
       </div>
@@ -162,7 +165,7 @@ export function Submit() {
         <button
           disabled={step === 0}
           onClick={() => setStep(s => s - 1)}
-          className="h-10 px-5 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#0a0a0a] disabled:opacity-40"
+          className="h-10 px-5 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/15 text-[#0a0a0a] font-semibold disabled:opacity-40"
         >
           Back
         </button>
@@ -173,7 +176,7 @@ export function Submit() {
               if (err) { toast.error(err); return; }
               setStep(s => s + 1);
             }}
-            className="h-10 px-5 rounded-full bg-[#4FC3F7] text-[#0a0a0a]"
+            className="h-10 px-5 rounded-full bg-[#4FC3F7] text-white"
             style={{ fontWeight: 700 }}
           >
             Next
@@ -182,7 +185,7 @@ export function Submit() {
           <button
             onClick={handleSubmit}
             disabled={submitting || submitted || !data.prompt.trim()}
-            className="h-10 px-5 rounded-full bg-[#4FC3F7] text-[#0a0a0a] inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-10 px-5 rounded-full bg-[#4FC3F7] text-white inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ fontWeight: 700 }}
           >
             {submitting ? <><Loader2 className="w-4 h-4 animate-spin" />Submitting…</> : "Submit for review"}

@@ -6,11 +6,8 @@ export function Footer({ go }: { go: (route: string) => void }) {
       {/* Footer content */}
       <div className="relative z-10 max-w-[1100px] mx-auto px-6 pt-14 pb-8 grid grid-cols-2 md:grid-cols-4 gap-8">
         <div className="col-span-2 md:col-span-1">
-          <div
-            className="text-white mb-3"
-            style={{ fontSize: "18px", fontWeight: 800, letterSpacing: "-0.02em", fontFamily: "'DM Sans', 'Inter', system-ui, sans-serif" }}
-          >
-            Prompt Bot
+          <div className="mb-3">
+            <img src="/logo-text.png" alt="Prompt Bot" style={{ height: "30px", width: "auto", filter: "brightness(0) invert(1)" }} />
           </div>
           <p className="text-[#8b95a5] leading-relaxed mb-5" style={{ fontSize: "13px" }}>
             The world's largest AI prompt library. Browse, copy, create.

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Copy, Star, ExternalLink, ChevronDown, ChevronUp, Loader2, Maximize2, X, Lock, ArrowLeft } from "lucide-react";
+import { Copy, ThumbsUp, ThumbsDown, ExternalLink, ChevronDown, ChevronUp, Loader2, Maximize2, X, Lock, ArrowLeft, Download } from "lucide-react";
 import { toast } from "sonner";
 import { websiteDesigns } from "../../lib/website-data";
 import { websitePlatformVersions } from "../../lib/website-platforms";
@@ -8,15 +8,58 @@ import { websitePlatforms } from "../theme";
 import { patchIframeLinks, guardIframeNavigation } from "../../lib/patch-iframe-links";
 
 const DOCS = [
-  { key: "orchestrator", label: "00 Orchestrator",    desc: "Step-by-step AI build guide" },
-  { key: "prd",          label: "01 PRD",             desc: "Product requirements & personas" },
-  { key: "architecture", label: "02 Architecture",    desc: "Tech stack & data model" },
-  { key: "design",       label: "03 Design",          desc: "Visual language & tokens" },
-  { key: "plan",         label: "04 Plan",            desc: "Build sequence" },
-  { key: "epics",        label: "05 Epics & Stories", desc: "Feature epics & user stories" },
-  { key: "tasks",        label: "06 Tasks",           desc: "Executable task checklist" },
-  { key: "guide",        label: "07 Guide",           desc: "Accessibility & performance" },
+  { key: "orchestrator", label: "00 Orchestrator",    desc: "Step-by-step AI build guide",    file: "00_Orchestrator.md" },
+  { key: "prd",          label: "01 PRD",             desc: "Product requirements & personas", file: "01_PRD.md" },
+  { key: "architecture", label: "02 Architecture",    desc: "Tech stack & data model",         file: "02_Architecture.md" },
+  { key: "design",       label: "03 Design",          desc: "Visual language & tokens",        file: "03_Design.md" },
+  { key: "plan",         label: "04 Plan",            desc: "Build sequence",                  file: "04_Plan.md" },
+  { key: "epics",        label: "05 Epics & Stories", desc: "Feature epics & user stories",    file: "05_Epics_and_Stories.md" },
+  { key: "tasks",        label: "06 Tasks",           desc: "Executable task checklist",       file: "06_Tasks.md" },
+  { key: "guide",        label: "07 Guide",           desc: "Accessibility & performance",     file: "07_Guide.md" },
 ];
+
+async function downloadScaffoldFile(slug: string, fileName: string, displayLabel: string) {
+  try {
+    const res = await fetch(`/scaffolds/${slug}/${fileName}`);
+    if (!res.ok) throw new Error("Not found");
+    const text = await res.text();
+    const blob = new Blob([text], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Downloaded", { description: fileName });
+  } catch {
+    toast.error("Download failed", { description: `${displayLabel} not available` });
+  }
+}
+
+async function downloadAllScaffoldFiles(slug: string, title: string) {
+  try {
+    const files = [...DOCS.map(d => d.file), `${slug}.md`];
+    const sections: string[] = [];
+    for (const file of files) {
+      const res = await fetch(`/scaffolds/${slug}/${file}`);
+      if (res.ok) {
+        const text = await res.text();
+        sections.push(text);
+      }
+    }
+    const combined = sections.join("\n\n---\n\n");
+    const blob = new Blob([combined], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${slug}-scaffold.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Downloaded", { description: `${slug}-scaffold.md (${files.length} files)` });
+  } catch {
+    toast.error("Download failed");
+  }
+}
 
 export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => void }) {
   const design = websiteDesigns.find(d => d.slug === slug);
@@ -54,7 +97,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(promptText);
-      toast.success("Prompt copied", { description: `${design.title} — ${activePl?.name}` });
+      toast.success("Prompt copied", { description: `${design.title} - ${activePl?.name}` });
     } catch {
       toast.error("Failed to copy to clipboard");
     }
@@ -132,7 +175,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                     title={design.title}
                     sandbox="allow-scripts allow-same-origin"
                   />
-                  {/* Transparent overlay — blocks iframe link clicks, opens fullscreen on click */}
+                  {/* Transparent overlay - blocks iframe link clicks, opens fullscreen on click */}
                   <div
                     className="absolute inset-0 z-20 cursor-pointer"
                     onClick={() => iframeLoaded && setFullscreen(true)}
@@ -157,7 +200,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
             <div className="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-[#0a0a0a]/5 to-[#4FC3F7]/10 border-b border-[#0a0a0a]/10">
               <span className="w-8 h-8 rounded-full bg-[#4FC3F7] border-2 border-[#0a0a0a] flex items-center justify-center text-lg shrink-0">🚀</span>
               <div>
-                <div className="text-[#0a0a0a] font-bold text-[15px]">How to Build This — From Prompt to Live Website</div>
+                <div className="text-[#0a0a0a] font-bold text-[15px]">How to Build This - From Prompt to Live Website</div>
                 <div className="text-[#6b7280] text-[12px]">14 steps · Beginner friendly · Prompt to deployment</div>
               </div>
             </div>
@@ -184,9 +227,9 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
           <p className="text-[#6b7280] mb-5 leading-relaxed">{design.description}</p>
 
           <div className="flex items-center gap-4 mb-6 text-[#6b7280]">
-            <span className="inline-flex items-center gap-1 text-[#0a0a0a]">
-              <Star className="w-4 h-4 fill-[#4FC3F7] text-[#4FC3F7]" />
-              <span className="font-bold">{design.rating}</span>
+            <span className="inline-flex items-center gap-1.5">
+              <button className="p-1 rounded-md text-[#6b7280] hover:text-[#4FC3F7] hover:bg-[#4FC3F7]/10 transition-colors"><ThumbsUp className="w-4 h-4" /></button>
+              <button className="p-1 rounded-md text-[#6b7280] hover:text-red-500 hover:bg-red-50 transition-colors"><ThumbsDown className="w-4 h-4" /></button>
             </span>
           </div>
 
@@ -214,10 +257,9 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
           <div className="relative bg-white border-2 border-[#0a0a0a] rounded-2xl p-4 mb-4 shadow-[6px_6px_0_0_#0a0a0a]">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] text-[#6b7280] uppercase font-bold tracking-widest">{activePl?.name} prompt</span>
-              <span className="inline-flex items-center gap-1 text-[11px] text-[#6b7280]">
-                <span className="inline-block w-2 h-2 rounded-full" style={{ background: activePl?.color }} />
-                Optimised for {activePl?.name}
-              </span>
+              <button onClick={handleCopy} className="p-1.5 rounded-lg bg-[#0a0a0a]/5 hover:bg-[#0a0a0a]/10 text-[#6b7280] hover:text-[#0a0a0a] transition-colors" title="Copy prompt">
+                <Copy className="w-4 h-4" />
+              </button>
             </div>
             <pre className="whitespace-pre-wrap text-[#0a0a0a] font-mono text-[12px] leading-relaxed max-h-72 overflow-y-auto">{promptText}</pre>
           </div>
@@ -225,9 +267,17 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
           {/* Copy button */}
           <button
             onClick={handleCopy}
-            className="w-full h-11 rounded-full bg-[#4FC3F7] text-[#0a0a0a] font-bold flex items-center justify-center gap-2 hover:bg-[#4FC3F7]/90 transition-colors mb-6"
+            className="w-full h-11 rounded-full bg-[#4FC3F7] text-[#0a0a0a] font-bold flex items-center justify-center gap-2 hover:bg-[#4FC3F7]/90 transition-colors mb-3"
           >
             <Copy className="w-4 h-4" /> Copy {activePl?.name} Prompt
+          </button>
+
+          {/* Download button */}
+          <button
+            onClick={() => downloadAllScaffoldFiles(design.slug, design.title)}
+            className="w-full h-11 rounded-full border-2 border-[#0a0a0a] text-[#0a0a0a] font-bold flex items-center justify-center gap-2 hover:bg-[#0a0a0a]/5 transition-colors mb-6"
+          >
+            <Download className="w-4 h-4" /> Download Project Files
           </button>
 
           {/* Supporting docs accordion */}
@@ -247,7 +297,13 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                       <div className="text-[#0a0a0a] text-[13px] font-semibold">{doc.label}</div>
                       <div className="text-[#6b7280] text-[11px]">{doc.desc}</div>
                     </div>
-                    <ExternalLink className="w-3.5 h-3.5 text-[#6b7280]" />
+                    <button
+                      onClick={() => downloadScaffoldFile(design.slug, doc.file, doc.label)}
+                      className="p-1.5 rounded-lg hover:bg-[#0a0a0a]/5 text-[#6b7280] hover:text-[#0a0a0a] transition-colors"
+                      title={`Download ${doc.label}`}
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 ))}
                 <div className="flex items-center justify-between px-4 py-3 bg-[#4FC3F7]/10">
@@ -255,7 +311,13 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                     <div className="text-[#0a0a0a] text-[13px] font-semibold">{design.slug}.md</div>
                     <div className="text-[#6b7280] text-[11px]">Base prompt + all 8 platform versions</div>
                   </div>
-                  <ExternalLink className="w-3.5 h-3.5 text-[#0a0a0a]" />
+                  <button
+                    onClick={() => downloadScaffoldFile(design.slug, `${design.slug}.md`, `${design.slug}.md`)}
+                    className="p-1.5 rounded-lg hover:bg-[#4FC3F7]/20 text-[#0a0a0a] hover:text-[#0a0a0a] transition-colors"
+                    title={`Download ${design.slug}.md`}
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
             )}
@@ -315,7 +377,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                 <iframe
                   src={previewUrl}
                   className="w-full h-full border-0"
-                  title={`${design.title} — fullscreen`}
+                  title={`${design.title} - fullscreen`}
                   sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
                   onLoad={(e) => {
                     const el = e.currentTarget;
@@ -464,7 +526,7 @@ function StepContent({ idx, promptText, platformName }: { idx: number; promptTex
       <div className="space-y-3">
         <p>Start the development server:</p>
         <GCode>{`npm run dev`}</GCode>
-        <p className="text-[13px]">Open <span className="font-mono text-[#0a0a0a] bg-[#0a0a0a]/8 px-1.5 py-0.5 rounded">http://localhost:3000</span> in your browser — your website is running locally.</p>
+        <p className="text-[13px]">Open <span className="font-mono text-[#0a0a0a] bg-[#0a0a0a]/8 px-1.5 py-0.5 rounded">http://localhost:3000</span> in your browser - your website is running locally.</p>
       </div>
     );
     case 9: return (
@@ -511,7 +573,7 @@ function StepContent({ idx, promptText, platformName }: { idx: number; promptTex
     );
     case 13: return (
       <div className="space-y-3">
-        <p className="text-[#4FC3F7] font-semibold">Congratulations — your website is live on the internet!</p>
+        <p className="text-[#4FC3F7] font-semibold">Congratulations - your website is live on the internet!</p>
         <div className="flex flex-wrap items-center gap-2 text-[12px]">
           {["Idea", "Prompt", "Generate", "Download", "Open in IDE", "Install deps", "Customise", "GitHub", "Vercel", "Domain", "Live 🚀"].map((step, i, arr) => (
             <span key={step} className="flex items-center gap-2">
@@ -557,7 +619,7 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
         </span>
         {allDone
           ? <span className="text-[#3fb950] font-bold text-[13px] flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-[#3fb950]" /> All done — website is live!
+              <span className="w-2 h-2 rounded-full bg-[#3fb950]" /> All done - website is live!
             </span>
           : <div className="flex items-center gap-3">
               {progress > 0 && (
@@ -726,7 +788,7 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
                       className="mt-4 flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold"
                       style={{ background: "#4FC3F7", color: "#0d1117" }}
                     >
-                      {activeStep < TOTAL - 1 ? "Done — Unlock Next →" : "Complete — Launch! 🚀"}
+                      {activeStep < TOTAL - 1 ? "Done - Unlock Next →" : "Complete - Launch! 🚀"}
                     </motion.button>
                   )}
                   {reviewStep !== null && (

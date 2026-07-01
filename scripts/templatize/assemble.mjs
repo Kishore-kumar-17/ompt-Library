@@ -1,5 +1,7 @@
 import fs from "fs";
-const ROOT = "C:/Users/bot/Pictures/Prompt Library/prompt-library-backend";
+import path from "path";
+import { fileURLToPath } from "url";
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const LIB = ROOT + "/frontend/src/app/lib";
 const LOCKED_FILE = LIB + "/library-platforms-locked.ts";
 const VARS_FILE = LIB + "/library-variables.ts";
@@ -62,18 +64,27 @@ for (const r of results) {
   const perPlat = {};
   for (const p of platforms) perPlat[p] = new Set((r.platforms[p] || "").match(TOK) || []);
   const allTok = [...new Set(platforms.flatMap((p) => [...perPlat[p]]))];
-  const consistent = allTok.filter((tk) => platforms.every((p) => perPlat[p].has(tk)));
-  const inconsistent = allTok.filter((tk) => !consistent.includes(tk));
+  // Accept tokens present in at least 2/3 of platforms (e.g. 4 of 6)
+  const minPlats = Math.ceil(platforms.length * 0.67);
+  const accepted = allTok.filter((tk) => platforms.filter((p) => perPlat[p].has(tk)).length >= minPlats);
+  const rejected = allTok.filter((tk) => !accepted.includes(tk));
   const defaults = {}; for (const v of r.variables || []) if (v.default) defaults[v.name] = v.default;
 
   const newVersions = {};
   for (const p of platforms) {
     let desc = r.platforms[p];
     if (desc == null) { desc = splitDesc(orig[p])[0]; } // agent dropped a platform -> keep original descriptive
-    // revert inconsistent tokens to their default (so no stray token)
-    for (const tk of inconsistent) {
+    // revert fully rejected tokens to their default
+    for (const tk of rejected) {
       const name = tk.slice(1, -1);
       if (defaults[name]) { desc = desc.split(tk).join(defaults[name]); reverted++; }
+    }
+    // for accepted tokens missing in this specific platform, revert just here
+    for (const tk of accepted) {
+      if (!perPlat[p].has(tk)) {
+        const name = tk.slice(1, -1);
+        if (defaults[name]) { desc = desc.split(tk).join(defaults[name]); reverted++; }
+      }
     }
     const lockPart = splitDesc(orig[p])[1]; // original locks, untouched
     if (TOK.test(lockPart)) { lockGuard++; } // should never happen
@@ -81,7 +92,7 @@ for (const r of results) {
   }
   platformVersions[slug] = newVersions;
 
-  const finalTokens = consistent;
+  const finalTokens = accepted;
   if (finalTokens.length) {
     promptVariables[slug] = finalTokens.map((tk) => fieldForToken(tk.slice(1, -1), defaults[tk.slice(1, -1)]));
     updated++;

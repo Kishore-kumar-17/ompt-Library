@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useAnimation } from "motion/react";
-import { Star, Copy, ExternalLink, Maximize2, X, Loader2 } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Copy, ExternalLink, Maximize2, X, Loader2 } from "lucide-react";
 import { type WebsiteDesign } from "../lib/website-data";
 import { patchIframeLinks, guardIframeNavigation } from "../lib/patch-iframe-links";
 
@@ -414,7 +414,7 @@ export function WebsitePromptCard({
           )}
         </motion.div>
 
-        {/* Scroll hint gradient — fades out when hovering */}
+        {/* Scroll hint gradient - fades out when hovering */}
         <motion.div
           animate={{ opacity: isHovered ? 0 : 1 }}
           transition={{ duration: 0.3 }}
@@ -422,7 +422,7 @@ export function WebsitePromptCard({
           style={{ background: "linear-gradient(to top, rgba(255,255,255,0.9), transparent)" }}
         />
 
-        {/* "Scroll preview" badge — hidden when expand overlay shows */}
+        {/* "Scroll preview" badge - hidden when expand overlay shows */}
         <motion.div
           animate={{ opacity: isHovered ? 0 : 1, y: isHovered ? 4 : 0 }}
           transition={{ duration: 0.2 }}
@@ -431,7 +431,7 @@ export function WebsitePromptCard({
           Hover to preview ↕
         </motion.div>
 
-        {/* Expand overlay — appears on hover */}
+        {/* Expand overlay - appears on hover */}
         {onPreviewExpand && (
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/preview:opacity-100 transition-opacity duration-200 cursor-zoom-in"
             style={{ background: "rgba(10, 10, 10,0.45)" }}
@@ -452,9 +452,9 @@ export function WebsitePromptCard({
             <div className="text-[#6b7280] text-[11px] mt-0.5">{design.style}</div>
           </div>
           <div className="flex items-center gap-1 shrink-0">
-            <Star className="w-3.5 h-3.5 fill-[#4FC3F7] text-[#4FC3F7]" />
-            <span className="text-[13px] font-bold text-[#0a0a0a]">{design.rating}</span>
-            {design.tested && <span className="w-1.5 h-1.5 rounded-full bg-[#28c840]" />}
+            <ThumbsUp className="w-3.5 h-3.5 text-[#6b7280] hover:text-[#4FC3F7] cursor-pointer transition-colors" />
+            <ThumbsDown className="w-3.5 h-3.5 text-[#6b7280] hover:text-red-500 cursor-pointer transition-colors" />
+            {design.tested && <span className="w-1.5 h-1.5 rounded-full bg-[#28c840] ml-1" />}
           </div>
         </div>
 

@@ -23,7 +23,7 @@ const tabs: Tab[] = [
     Icon: ImageIcon,
     accent: "#4FC3F7",
     verb: "design",
-    prompt: "A cinematic event poster, dramatic rim lighting, bold typography —ar 2:3",
+    prompt: "A cinematic event poster, dramatic rim lighting, bold typography -ar 2:3",
     output: { kind: "image", src: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1000" },
     route: "library:image",
   },
@@ -47,7 +47,7 @@ const tabs: Tab[] = [
     output: {
       kind: "text",
       lines: [
-        "• Platform migrates to an event-driven core — removes 3 legacy services.",
+        "• Platform migrates to an event-driven core - removes 3 legacy services.",
         "• Latency p99 drops from 840ms to 210ms on the read path.",
         "• Cost profile shifts from fixed capacity to per-request billing.",
         "• Rollout is gated by a feature flag; rollback takes under 60 seconds.",
@@ -67,7 +67,7 @@ const tabs: Tab[] = [
       kind: "text",
       lines: [
         "Stop rewriting the same prompt ten different ways.",
-        "A shared library turns every junior designer into a senior one —",
+        "A shared library turns every junior designer into a senior one -",
         "because the best prompt in the team becomes the default. 🧵",
       ],
     },
@@ -113,7 +113,7 @@ export function InteractiveDemo({ go }: { go: (r: string) => void }) {
       <h2 className="text-[#0a0a0a] mb-2" style={{ fontSize: "clamp(24px,2.6vw,36px)", fontWeight: 800 }}>
         See how prompts become products.
       </h2>
-      <p className="text-[#6b7280] mb-6">Pick a discipline — we'll run a real prompt through it.</p>
+      <p className="text-[#6b7280] mb-6">Pick a discipline - we'll run a real prompt through it.</p>
 
       {/* The frame */}
       <div className="relative rounded-3xl border-2 border-[#0a0a0a] shadow-[8px_8px_0_0_#0a0a0a] overflow-hidden bg-white">

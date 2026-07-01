@@ -1,5 +1,7 @@
 import fs from "fs";
-const ROOT = "C:/Users/bot/Pictures/Prompt Library/prompt-library-backend";
+import path from "path";
+import { fileURLToPath } from "url";
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const LIB = ROOT + "/frontend/src/app/lib";
 const OUTDIR = process.env.SP + "/inputs";
 fs.mkdirSync(OUTDIR, { recursive: true });
