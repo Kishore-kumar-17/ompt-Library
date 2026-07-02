@@ -630,7 +630,7 @@ const FAMILY_CARDS = [
     count: "420+",
     label: "prompts",
     chips: ["Midjourney", "Firefly", "FLUX", "ChatGPT", "Gemini"],
-    cover: "/images/image5.png",
+    cover: "/images/families/image.png",
     comingSoon: false,
     bg: "bg-white",
     border: "border-[#4FC3F7]/60",
@@ -654,7 +654,7 @@ const FAMILY_CARDS = [
     count: "30",
     label: "prompts",
     chips: ["Veo", "Kling", "Seedance", "Higgsfield", "Pika"],
-    cover: "/images/image175.png",
+    cover: "/images/families/video.png",
     comingSoon: false,
     bg: "bg-gradient-to-br from-[#1a1a2e] to-[#4c1d95]",
     border: "border-[#7c3aed]/40",
@@ -676,7 +676,7 @@ const FAMILY_CARDS = [
     count: "90+",
     label: "designs",
     chips: ["Lovable", "Bolt", "Claude Code", "Codex", "Replit"],
-    cover: "/images/image260.png",
+    cover: "/images/families/website.png",
     comingSoon: false,
     bg: "bg-[#0a0a0a]",
     border: "border-[#0a0a0a]/20",
@@ -700,7 +700,7 @@ const FAMILY_CARDS = [
     count: "Coming",
     label: "soon",
     chips: ["ChatGPT", "Gemini", "Grok", "Claude"],
-    cover: "/images/image40.png",
+    cover: "/images/families/text.png",
     comingSoon: true,
     bg: "bg-[#0d1b2a]",
     border: "border-[#0a0a0a]/30",
@@ -724,7 +724,7 @@ const FAMILY_CARDS = [
     count: "Coming",
     label: "soon",
     chips: ["ChatGPT", "Gemini", "Claude", "Grok"],
-    cover: "/images/image120.png",
+    cover: "/images/families/content.png",
     comingSoon: true,
     bg: "bg-gradient-to-br from-[#4FC3F7]/10 to-white",
     border: "border-[#4FC3F7]/20",
@@ -794,7 +794,7 @@ function LandingCard({ card, go }: { card: typeof FAMILY_CARDS[number]; go: (p: 
           onLoad={() => setLoaded(true)}
         />
         {card.comingSoon && (
-          <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full bg-[#4FC3F7] text-[#0a0a0a] text-[11px] font-bold">
+          <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full bg-[#4FC3F7] text-white text-[11px] font-bold">
             Coming soon
           </span>
         )}
@@ -840,35 +840,35 @@ export function LibraryLanding({ go }: { go: (p: string) => void }) {
           card={FAMILY_CARDS[0]}
           go={go}
           className="md:row-span-2"
-          images={["/images/image6.png", "/images/image72.png", "/images/image144.png", "/images/image286.png"]}
+          images={["/images/families/image.png"]}
         />
         {/* Video Library - top middle (1 col × row 1) */}
         <BentoTile
           card={FAMILY_CARDS[1]}
           go={go}
           className=""
-          images={["/images/image175.png"]}
+          images={["/images/families/video.png"]}
         />
         {/* Content Library - top right (1 col × row 1) */}
         <BentoTile
           card={FAMILY_CARDS[4]}
           go={go}
           className=""
-          images={["/images/image120.png"]}
+          images={["/images/families/content.png"]}
         />
         {/* Website Library - wide right (2 cols × rows 2-3) */}
         <BentoTile
           card={FAMILY_CARDS[2]}
           go={go}
           className="md:col-span-2 md:row-span-2"
-          images={["/images/image260.png"]}
+          images={["/images/families/website.png"]}
         />
         {/* Text Library - bottom left (1 col × row 3) */}
         <BentoTile
           card={FAMILY_CARDS[3]}
           go={go}
           className=""
-          images={["/images/image40.png"]}
+          images={["/images/families/text.png"]}
         />
       </div>
     </div>
@@ -909,29 +909,15 @@ function BentoTile({
         transition: "box-shadow 0.35s ease",
       }}
     >
-      {/* Background image collage */}
+      {/* Background image */}
       <div className="absolute inset-0">
-        {images.length === 1 ? (
-          <img
-            src={images[0]}
-            alt=""
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
-            style={{ filter: card.comingSoon ? "grayscale(0.5) brightness(0.6)" : "brightness(0.55)" }}
-          />
-        ) : (
-          <div className="w-full h-full grid grid-cols-2 grid-rows-2">
-            {images.slice(0, 4).map((src, i) => (
-              <img
-                key={i}
-                src={src}
-                alt=""
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                style={{ filter: "brightness(0.5)" }}
-              />
-            ))}
-          </div>
-        )}
-        {/* Gradient overlay */}
+        <img
+          src={images[0]}
+          alt=""
+          className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+          style={{ filter: card.comingSoon ? "grayscale(0.5) brightness(0.85)" : "none" }}
+        />
+        {/* Gradient overlay - dark for readable light text */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
       </div>
 
@@ -939,7 +925,7 @@ function BentoTile({
       <div className="relative z-10 h-full flex flex-col justify-end p-5 md:p-6">
         {/* Coming soon badge */}
         {card.comingSoon && (
-          <span className="absolute top-4 left-4 px-2.5 py-1 rounded-full bg-[#4FC3F7] text-[#0a0a0a] text-[11px]" style={{ fontWeight: 700 }}>
+          <span className="absolute top-4 left-4 px-2.5 py-1 rounded-full bg-[#4FC3F7] text-white text-[11px]" style={{ fontWeight: 700 }}>
             Coming soon
           </span>
         )}
@@ -949,8 +935,8 @@ function BentoTile({
           <span
             className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px]"
             style={{
-              background: "rgba(79,195,247,0.2)",
-              color: "#4FC3F7",
+              background: "rgba(255,255,255,0.15)",
+              color: "#fff",
               fontWeight: 700,
               backdropFilter: "blur(8px)",
             }}
@@ -977,7 +963,7 @@ function BentoTile({
               key={chip}
               className="px-2 py-0.5 rounded-full text-[10px] text-white/70"
               style={{
-                background: "rgba(255,255,255,0.1)",
+                background: "rgba(255,255,255,0.12)",
                 backdropFilter: "blur(4px)",
                 fontWeight: 600,
               }}
@@ -991,13 +977,13 @@ function BentoTile({
         <motion.div
           className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center"
           style={{
-            background: hovered ? "#4FC3F7" : "rgba(255,255,255,0.15)",
+            background: hovered ? "#4FC3F7" : "rgba(255,255,255,0.12)",
             backdropFilter: "blur(8px)",
             transition: "background 0.25s ease",
           }}
           animate={{ x: hovered ? 2 : 0 }}
         >
-          <ArrowRight className="w-4 h-4" style={{ color: hovered ? "#0a0a0a" : "#fff" }} />
+          <ArrowRight className="w-4 h-4 text-white" />
         </motion.div>
       </div>
     </motion.div>
