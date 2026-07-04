@@ -30,12 +30,7 @@ export function Nav({ current, onNavigate, onAuth }: Props) {
           onClick={() => nav("home")}
           className="flex items-center gap-2 shrink-0 hover:opacity-75 transition-opacity"
         >
-          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-            <polygon points="4,3 23,13 4,23" fill="#1a1a1a" />
-          </svg>
-          <span style={{ fontSize: "15px", fontWeight: 700, color: "#0f0f0f", letterSpacing: "-0.01em" }}>
-            Prompt Bot
-          </span>
+          <img src="/logo-text.png" alt="Prompt Bot" style={{ height: "32px", width: "auto" }} />
         </button>
 
         {/* ── Nav links ── */}
@@ -79,7 +74,7 @@ export function Nav({ current, onNavigate, onAuth }: Props) {
 
           <button
             onClick={() => nav("library")}
-            className="px-4 py-2 rounded-lg bg-[#0f0f0f] text-white hover:bg-[#2a2a2a] transition-colors"
+            className="hidden md:block px-4 py-2 rounded-lg bg-[#0f0f0f] text-white hover:bg-[#2a2a2a] transition-colors"
             style={{ fontSize: "14px", fontWeight: 600 }}
           >
             Get started for free

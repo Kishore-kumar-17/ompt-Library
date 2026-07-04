@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Heart, Copy } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
@@ -6,7 +6,7 @@ import { PromptItem } from "./theme";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { authStore, libraryApi } from "../lib/api";
 
-export function PromptCard({ p, onClick }: { p: PromptItem; onClick?: () => void }) {
+export function PromptCard({ p, onClick, hideActions }: { p: PromptItem; onClick?: () => void; hideActions?: boolean }) {
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -35,12 +35,12 @@ export function PromptCard({ p, onClick }: { p: PromptItem; onClick?: () => void
       tabIndex={0}
       onClick={onClick}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick?.(); } }}
-      whileHover={{ y: -6, boxShadow: "6px 10px 0 0 #094067" }}
+      whileHover={{ y: -6, boxShadow: "6px 10px 0 0 #0a0a0a" }}
       whileTap={{ scale: 0.98 }}
       transition={{ type: "spring", stiffness: 280, damping: 22 }}
-      className="group text-left bg-white border border-[#094067]/15 rounded-2xl overflow-hidden hover:border-[#ffd803]/60 cursor-pointer"
+      className="group text-left bg-white border border-[#0a0a0a]/15 rounded-2xl overflow-hidden hover:border-[#4FC3F7]/60 cursor-pointer"
     >
-      <div className="aspect-[4/3] overflow-hidden relative bg-[#094067]/5 flex items-center justify-center">
+      <div className="aspect-[4/3] overflow-hidden relative bg-[#0a0a0a]/5 flex items-center justify-center">
         {p.image ? (
           <ImageWithFallback
             src={p.image}
@@ -63,36 +63,38 @@ export function PromptCard({ p, onClick }: { p: PromptItem; onClick?: () => void
           </div>
         )}
         <div className="absolute top-2 left-2 flex gap-1 flex-wrap">
-          <span className="px-2 py-0.5 rounded-full bg-[#094067]/50 text-[#bce4d8] backdrop-blur text-[11px]">
+          <span className="px-2 py-0.5 rounded-full bg-[#0a0a0a]/50 text-[#bce4d8] backdrop-blur text-[11px]">
             {p.category}
           </span>
           {p.tested && (
-            <span className="px-2 py-0.5 rounded-full bg-[#ffd803]/90 text-[#094067] text-[11px] flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#094067]" /> tested
+            <span className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/90 text-[#0a0a0a] text-[11px] flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0a0a0a]" /> tested
             </span>
           )}
         </div>
         <button
           type="button"
           onClick={handleSave}
-          className="absolute top-2 right-2 p-1.5 rounded-full bg-[#094067]/50 hover:bg-[#ef4565] text-[#bce4d8] backdrop-blur"
+          className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0a0a0a]/50 hover:bg-[#4FC3F7] text-[#bce4d8] backdrop-blur"
         >
           <Heart className={`w-4 h-4 ${saved ? "fill-current" : ""}`} />
         </button>
       </div>
       <div className="p-4">
-        <div className="text-[#094067] mb-1 line-clamp-1" style={{ fontWeight: 600 }}>{p.title}</div>
-        <p className="text-[#5f6c7b] line-clamp-2 mb-3" style={{ fontSize: "13px" }}>{p.description}</p>
-        <div className="flex items-center justify-between text-[#5f6c7b]">
+        <div className="text-[#0a0a0a] mb-1 line-clamp-1" style={{ fontWeight: 600 }}>{p.title}</div>
+        <p className="text-[#6b7280] line-clamp-2 mb-3" style={{ fontSize: "13px" }}>{p.description}</p>
+        <div className="flex items-center justify-between text-[#6b7280]">
           <span className="text-[12px]">{p.category}</span>
-          <button
-            type="button"
-            onClick={handleCopy}
-            className="flex items-center gap-1 text-[#ef4565] hover:text-[#ef4565]/80 transition-colors"
-            style={{ fontSize: "13px" }}
-          >
-            <Copy className="w-4 h-4" /> {copied ? "Copied!" : "Copy"}
-          </button>
+          {!hideActions && (
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="flex items-center gap-1 text-[#0a0a0a] hover:text-[#0a0a0a]/80 transition-colors"
+              style={{ fontSize: "13px" }}
+            >
+              <Copy className="w-4 h-4" /> {copied ? "Copied!" : "Copy"}
+            </button>
+          )}
         </div>
       </div>
     </motion.div>

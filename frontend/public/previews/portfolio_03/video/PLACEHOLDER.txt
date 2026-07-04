@@ -1,0 +1,13 @@
+Place your hero video file here as:
+  hero.mp4
+
+Recommended specs:
+  - Format: H.264 MP4
+  - Resolution: 1920x1080 (1080p) or 3840x2160 (4K)
+  - Duration: 15–30 seconds looping
+  - File size: < 8 MB for web
+  - No audio track needed (video is muted)
+  - Poster image: add as /public/video/hero-poster.jpg for better LCP
+
+The VideoHero component will fall back to a dark gradient background
+until this file is present.

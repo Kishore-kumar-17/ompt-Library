@@ -1,4 +1,5 @@
 import { buildLockSection, formatLockSection } from "./lock-builder.js";
+import { extractVariables } from "./variables.js";
 import type {
   AssembledPromptResult,
   CategoryId,
@@ -54,6 +55,10 @@ export function assemblePromptResult(input: AssemblePromptInput): AssembledPromp
     negativeLocksText,
   );
 
+  // Variable layer is detected from the DESCRIPTIVE prompt only (locks never carry
+  // tokens). Any authored record-level variables take precedence on metadata.
+  const variables = extractVariables(input.platformPromptText);
+
   return {
     promptId: input.prompt.id,
     title: input.prompt.title,
@@ -63,6 +68,7 @@ export function assemblePromptResult(input: AssemblePromptInput): AssembledPromp
     platformPromptText: input.platformPromptText,
     lockSection,
     negativeLockSection: input.negativeLocks,
+    variables,
     validation: input.validation,
     finalAssembledText,
   };

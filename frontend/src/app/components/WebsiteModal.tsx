@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Copy, Star } from "lucide-react";
+import { X, Copy, ThumbsUp, ThumbsDown } from "lucide-react";
 import { toast } from "sonner";
 import { type WebsiteDesign } from "../lib/website-data";
 import { websitePlatformVersions } from "../lib/website-platforms";
@@ -257,7 +257,7 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(promptText);
-      toast.success("Prompt copied", { description: `${design.title} — ${activePl?.name}` });
+      toast.success("Prompt copied", { description: `${design.title} - ${activePl?.name}` });
     } catch {
       toast.error("Failed to copy to clipboard");
     }
@@ -291,7 +291,7 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
           onClick={e => e.stopPropagation()}
         >
           {/* ── Left: Browser preview ─────────────────────────────────── */}
-          <div className="flex flex-col border-r border-[#094067]/10 min-h-0">
+          <div className="flex flex-col border-r border-[#0a0a0a]/10 min-h-0">
             {/* Browser chrome */}
             <div className="shrink-0 flex items-center gap-2 px-4 py-3 bg-[#f0f0f0] border-b border-[#d8d8d8]">
               <div className="flex gap-1.5">
@@ -301,13 +301,13 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
               </div>
               <div className="flex-1 bg-white rounded-md px-3 py-1 flex items-center gap-2 border border-[#d8d8d8]">
                 <div className="w-2 h-2 rounded-full bg-[#28c840] shrink-0" />
-                <span className="text-[12px] text-[#5f6c7b] truncate">
+                <span className="text-[12px] text-[#6b7280] truncate">
                   {design.slug.replace("_", "-")}.vercel.app
                 </span>
               </div>
               <button
                 onClick={onClose}
-                className="p-1 rounded-lg text-[#5f6c7b] hover:text-[#094067] hover:bg-[#094067]/8 transition-colors"
+                className="p-1 rounded-lg text-[#6b7280] hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/8 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -322,29 +322,29 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
           {/* ── Right: Prompt panel ───────────────────────────────────── */}
           <div className="flex flex-col min-h-0">
             {/* Header */}
-            <div className="shrink-0 px-5 pt-5 pb-4 border-b border-[#094067]/10">
+            <div className="shrink-0 px-5 pt-5 pb-4 border-b border-[#0a0a0a]/10">
               <div className="flex items-start justify-between mb-1">
                 <div>
-                  <h2 className="text-[#094067] text-[18px] font-bold leading-tight">{design.title}</h2>
-                  <p className="text-[#5f6c7b] text-[12px]">{design.style}</p>
+                  <h2 className="text-[#0a0a0a] text-[18px] font-bold leading-tight">{design.title}</h2>
+                  <p className="text-[#6b7280] text-[12px]">{design.style}</p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
-                  <Star className="w-3.5 h-3.5 fill-[#ffd803] text-[#ffd803]" />
-                  <span className="text-[13px] font-bold text-[#094067]">{design.rating}</span>
-                  {design.tested && <span className="w-1.5 h-1.5 rounded-full bg-[#28c840]" />}
+                  <ThumbsUp className="w-3.5 h-3.5 text-[#6b7280] hover:text-[#4FC3F7] cursor-pointer transition-colors" />
+                  <ThumbsDown className="w-3.5 h-3.5 text-[#6b7280] hover:text-red-500 cursor-pointer transition-colors" />
+                  {design.tested && <span className="w-1.5 h-1.5 rounded-full bg-[#28c840] ml-1" />}
                 </div>
               </div>
               {/* Stack */}
               <div className="flex flex-wrap gap-1 mt-2">
                 {design.stack.map(s => (
-                  <span key={s} className="px-1.5 py-0.5 rounded bg-[#094067]/5 text-[#5f6c7b] text-[9px] font-mono">{s}</span>
+                  <span key={s} className="px-1.5 py-0.5 rounded bg-[#0a0a0a]/5 text-[#6b7280] text-[9px] font-mono">{s}</span>
                 ))}
               </div>
             </div>
 
             {/* Platform selector */}
-            <div className="shrink-0 px-5 py-4 border-b border-[#094067]/10">
-              <div className="text-[10px] text-[#5f6c7b] uppercase tracking-widest font-bold mb-2">Choose AI tool</div>
+            <div className="shrink-0 px-5 py-4 border-b border-[#0a0a0a]/10">
+              <div className="text-[10px] text-[#6b7280] uppercase tracking-widest font-bold mb-2">Choose AI tool</div>
               <div className="flex flex-wrap gap-1.5">
                 {websitePlatforms.map(pl => (
                   <button
@@ -354,7 +354,7 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
                     style={
                       platform === pl.key
                         ? { background: pl.color, borderColor: pl.color, color: "#fff" }
-                        : { borderColor: "rgba(9,64,103,0.2)", color: "#5f6c7b" }
+                        : { borderColor: "rgba(10, 10, 10,0.2)", color: "#6b7280" }
                     }
                   >
                     {pl.name}
@@ -365,24 +365,24 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
 
             {/* Prompt text */}
             <div className="flex-1 overflow-y-auto px-5 py-4">
-              <div className="text-[10px] text-[#5f6c7b] uppercase tracking-widest font-bold mb-2">
+              <div className="text-[10px] text-[#6b7280] uppercase tracking-widest font-bold mb-2">
                 {activePl?.name} prompt
               </div>
-              <pre className="whitespace-pre-wrap text-[#094067] font-mono text-[11px] leading-relaxed bg-[#094067]/3 rounded-xl p-3">
+              <pre className="whitespace-pre-wrap text-[#0a0a0a] font-mono text-[11px] leading-relaxed bg-[#0a0a0a]/3 rounded-xl p-3">
                 {promptText}
               </pre>
             </div>
 
             {/* Copy button */}
-            <div className="shrink-0 px-5 py-4 border-t border-[#094067]/10">
+            <div className="shrink-0 px-5 py-4 border-t border-[#0a0a0a]/10">
               <button
                 onClick={handleCopy}
-                className="w-full h-11 rounded-full bg-[#ffd803] text-[#094067] font-bold text-[14px] flex items-center justify-center gap-2 hover:bg-[#ffd803]/90 transition-colors"
+                className="w-full h-11 rounded-full bg-[#4FC3F7] text-[#0a0a0a] font-bold text-[14px] flex items-center justify-center gap-2 hover:bg-[#4FC3F7]/90 transition-colors"
               >
                 <Copy className="w-4 h-4" />
                 Copy {activePl?.name} Prompt
               </button>
-              <p className="text-[10px] text-[#5f6c7b] text-center mt-2">
+              <p className="text-[10px] text-[#6b7280] text-center mt-2">
                 Paste directly into {activePl?.name} to generate this website
               </p>
             </div>

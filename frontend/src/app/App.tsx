@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
+import LoadingScreen from "./components/LoadingScreen";
 import { Nav } from "./components/Nav";
 import { Footer } from "./components/Footer";
 import { AuthModal } from "./components/AuthModal";
@@ -20,6 +21,7 @@ import { Guide } from "./components/pages/Guide";
 import { Pricing } from "./components/pages/Pricing";
 
 export default function App() {
+  const [loading, setLoading] = useState(true);
   const [route, setRouteRaw] = useState("home");
   const [authOpen, setAuthOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
@@ -46,25 +48,28 @@ export default function App() {
   const detailParts    = route.startsWith("detail:") ? route.split(":") : null;
   const detailId       = detailParts ? detailParts[1] : null;
   const detailPlatform = detailParts?.[2] ?? null;
-  const libraryFamily  = route.startsWith("library:") ? (route.split(":")[1] as any) : null;
+  const libraryParts   = route.startsWith("library:") ? route.split(":") : null;
+  const libraryFamily  = libraryParts ? (libraryParts[1] as any) : null;
+  const libraryInitialCategory = libraryParts?.[2] ? decodeURIComponent(libraryParts[2]) : null;
   const websiteSlug    = route.startsWith("website-detail:") ? route.split(":")[1] : null;
   const guideSection   = route.startsWith("guide:") ? route.split(":")[1] : null;
 
   return (
-    <div className="min-h-screen bg-white text-[#094067]">
+    <div className="min-h-screen bg-white text-[#0a0a0a]">
+      {loading && <LoadingScreen onComplete={() => setLoading(false)} />}
       <Nav current={current} onNavigate={setRoute} onAuth={() => setAuthOpen(true)} />
       <main>
         {route === "home"      && <Home go={setRoute} />}
         {route === "library"   && <LibraryLanding go={setRoute} />}
-        {libraryFamily         && <Library go={setRoute} family={libraryFamily} />}
+        {libraryFamily         && <Library key={route} go={setRoute} family={libraryFamily} initialCategory={libraryInitialCategory} />}
         {detailId              && <Detail key={detailId} id={detailId} defaultPlatform={detailPlatform} go={setRoute} />}
         {route === "builder"   && <Builder go={setRoute} />}
         {route === "improver"  && <Improver go={setRoute} />}
         {route === "compare"   && <Compare go={setRoute} />}
-        {route === "dashboard" && <Dashboard />}
+        {route === "dashboard" && <Dashboard go={setRoute} />}
         {route === "profile"   && <Profile go={setRoute} />}
-        {route === "submit"    && <Submit />}
-        {route === "admin"     && <AdminImport />}
+        {route === "submit"    && <Submit go={setRoute} />}
+        {route === "admin"     && <AdminImport go={setRoute} />}
         {route === "image-review" && <AdminImageReview />}
         {websiteSlug && <WebsiteDetail key={websiteSlug} slug={websiteSlug} go={setRoute} />}
         {(route === "guide" || guideSection) && <Guide go={setRoute} initialSection={guideSection ?? undefined} />}
@@ -79,9 +84,9 @@ export default function App() {
         toastOptions={{
           style: {
             background: "#ffffff",
-            color: "#094067",
-            border: "2px solid #094067",
-            boxShadow: "4px 4px 0 0 #094067",
+            color: "#0a0a0a",
+            border: "2px solid #0a0a0a",
+            boxShadow: "4px 4px 0 0 #0a0a0a",
           },
         }}
       />

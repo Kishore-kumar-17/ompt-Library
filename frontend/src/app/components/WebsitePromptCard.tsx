@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useAnimation } from "motion/react";
-import { Star, Copy, ExternalLink, Maximize2, X, Loader2 } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Copy, ExternalLink, Maximize2, X, Loader2 } from "lucide-react";
 import { type WebsiteDesign } from "../lib/website-data";
 import { patchIframeLinks, guardIframeNavigation } from "../lib/patch-iframe-links";
 
@@ -197,7 +197,7 @@ function BrowserChrome({ url }: { url: string }) {
       {/* URL bar */}
       <div className="flex-1 bg-white rounded-md px-2 py-0.5 flex items-center gap-1 border border-[#d8d8d8]">
         <div className="w-1.5 h-1.5 rounded-full bg-[#28c840] shrink-0" />
-        <span className="text-[9px] text-[#5f6c7b] truncate">{url}</span>
+        <span className="text-[9px] text-[#6b7280] truncate">{url}</span>
       </div>
     </div>
   );
@@ -272,8 +272,8 @@ export function WebsitePreviewModal({
         <div className="relative flex-1 bg-white overflow-hidden">
           {!loaded && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-white z-10">
-              <Loader2 className="w-7 h-7 text-[#094067]/40 animate-spin" />
-              <span className="text-[13px] text-[#5f6c7b]">Loading {title}…</span>
+              <Loader2 className="w-7 h-7 text-[#0a0a0a]/40 animate-spin" />
+              <span className="text-[13px] text-[#6b7280]">Loading {title}…</span>
             </div>
           )}
           <iframe
@@ -313,30 +313,51 @@ export function WebsitePromptCard({
 }) {
   const controls = useAnimation();
   const [isHovered, setIsHovered] = useState(false);
-  const [thumbError, setThumbError] = useState(false);
-  const thumbUrl = design.screenshot || `/previews/${design.slug}/thumb.jpg`;
+  const [previewFailed, setPreviewFailed] = useState(false);
+
+  // Live preview: lazily mount a scaled iframe of the real built site once the
+  // card scrolls into view. A static screenshot (design.screenshot), if present,
+  // takes precedence; otherwise we fall back to the simulated placeholder only
+  // if the iframe genuinely fails to load.
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  const [scale, setScale] = useState(0.3);
+  const BASE_W = 1280;
+  const LOGICAL_H = 2200; // tall enough to scroll through on hover
+  const hasScreenshot = !!design.screenshot;
+  const previewSrc = `/previews/${design.slug}/index.html`;
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const measure = () => setScale(el.clientWidth / BASE_W);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) { setInView(true); io.disconnect(); } }),
+      { rootMargin: "300px" },
+    );
+    io.observe(el);
+    return () => { ro.disconnect(); io.disconnect(); };
+  }, []);
 
   const handleHoverStart = async () => {
     setIsHovered(true);
-    // Only scroll when showing the placeholder (real thumbs are already full-page)
-    if (thumbError) {
-      await controls.start({
-        y: [0, -90, -210, -360, -490, -620],
-        transition: {
-          duration: 7,
-          times: [0, 0.15, 0.35, 0.55, 0.75, 1],
-          ease: "easeInOut",
-        },
-      });
-    }
+    await controls.start({
+      y: [0, -90, -210, -360, -490, -620],
+      transition: {
+        duration: 7,
+        times: [0, 0.15, 0.35, 0.55, 0.75, 1],
+        ease: "easeInOut",
+      },
+    });
   };
 
   const handleHoverEnd = () => {
     setIsHovered(false);
     controls.stop();
-    if (thumbError) {
-      controls.start({ y: 0, transition: { duration: 1.2, ease: "easeOut" } });
-    }
+    controls.start({ y: 0, transition: { duration: 1.2, ease: "easeOut" } });
   };
 
   const previewUrl = `${design.slug.replaceAll("_", "-")}.vercel.app`;
@@ -345,9 +366,9 @@ export function WebsitePromptCard({
     <motion.div
       onHoverStart={handleHoverStart}
       onHoverEnd={handleHoverEnd}
-      whileHover={{ y: -8, boxShadow: "0 24px 64px rgba(9,64,103,0.14)" }}
+      whileHover={{ y: -8, boxShadow: "0 24px 64px rgba(10, 10, 10,0.14)" }}
       transition={{ type: "spring", stiffness: 260, damping: 24 }}
-      className="bg-white rounded-2xl overflow-hidden border border-[#094067]/10 cursor-pointer group"
+      className="bg-white rounded-2xl overflow-hidden border border-[#0a0a0a]/10 cursor-pointer group"
       role="button"
       tabIndex={0}
       onClick={onClick}
@@ -358,24 +379,42 @@ export function WebsitePromptCard({
 
       {/* Scrollable preview viewport */}
       <div
-        className="relative overflow-hidden group/preview"
+        ref={containerRef}
+        className="relative overflow-hidden group/preview bg-white"
         style={{ height: 240 }}
         onClick={(e) => { e.stopPropagation(); onPreviewExpand?.(); }}
       >
-        <motion.div animate={controls}>
-          {!thumbError ? (
-            <img
-              src={thumbUrl}
-              alt={design.title}
-              className="w-full"
-              onError={() => setThumbError(true)}
-            />
-          ) : (
+        <motion.div animate={controls} className="origin-top">
+          {hasScreenshot ? (
+            <img src={design.screenshot} alt={design.title} className="w-full" />
+          ) : previewFailed ? (
             <WebsitePreviewPlaceholder design={design} />
+          ) : inView ? (
+            <div
+              style={{
+                width: BASE_W,
+                height: LOGICAL_H,
+                transform: `scale(${scale})`,
+                transformOrigin: "top left",
+                pointerEvents: "none",
+              }}
+            >
+              <iframe
+                src={previewSrc}
+                title={design.title}
+                scrolling="no"
+                className="border-0"
+                style={{ width: BASE_W, height: LOGICAL_H, pointerEvents: "none" }}
+                sandbox="allow-scripts allow-same-origin"
+                onError={() => setPreviewFailed(true)}
+              />
+            </div>
+          ) : (
+            <div style={{ height: 240, background: "#eef2f6" }} />
           )}
         </motion.div>
 
-        {/* Scroll hint gradient — fades out when hovering */}
+        {/* Scroll hint gradient - fades out when hovering */}
         <motion.div
           animate={{ opacity: isHovered ? 0 : 1 }}
           transition={{ duration: 0.3 }}
@@ -383,7 +422,7 @@ export function WebsitePromptCard({
           style={{ background: "linear-gradient(to top, rgba(255,255,255,0.9), transparent)" }}
         />
 
-        {/* "Scroll preview" badge — hidden when expand overlay shows */}
+        {/* "Scroll preview" badge - hidden when expand overlay shows */}
         <motion.div
           animate={{ opacity: isHovered ? 0 : 1, y: isHovered ? 4 : 0 }}
           transition={{ duration: 0.2 }}
@@ -392,12 +431,12 @@ export function WebsitePromptCard({
           Hover to preview ↕
         </motion.div>
 
-        {/* Expand overlay — appears on hover */}
+        {/* Expand overlay - appears on hover */}
         {onPreviewExpand && (
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/preview:opacity-100 transition-opacity duration-200 cursor-zoom-in"
-            style={{ background: "rgba(9,64,103,0.45)" }}
+            style={{ background: "rgba(10, 10, 10,0.45)" }}
           >
-            <div className="bg-white/95 text-[#094067] text-[12px] font-bold px-4 py-2 rounded-full flex items-center gap-2 shadow-lg">
+            <div className="bg-white/95 text-[#0a0a0a] text-[12px] font-bold px-4 py-2 rounded-full flex items-center gap-2 shadow-lg">
               <Maximize2 className="w-3.5 h-3.5" /> Expand preview
             </div>
           </div>
@@ -405,24 +444,24 @@ export function WebsitePromptCard({
       </div>
 
       {/* Card footer */}
-      <div className="p-4 border-t border-[#094067]/8">
+      <div className="p-4 border-t border-[#0a0a0a]/8">
         {/* Title row */}
         <div className="flex items-start justify-between mb-1">
           <div className="flex-1 min-w-0 pr-2">
-            <div className="text-[#094067] font-bold text-[15px] leading-tight">{design.title}</div>
-            <div className="text-[#5f6c7b] text-[11px] mt-0.5">{design.style}</div>
+            <div className="text-[#0a0a0a] font-bold text-[15px] leading-tight">{design.title}</div>
+            <div className="text-[#6b7280] text-[11px] mt-0.5">{design.style}</div>
           </div>
           <div className="flex items-center gap-1 shrink-0">
-            <Star className="w-3.5 h-3.5 fill-[#ffd803] text-[#ffd803]" />
-            <span className="text-[13px] font-bold text-[#094067]">{design.rating}</span>
-            {design.tested && <span className="w-1.5 h-1.5 rounded-full bg-[#28c840]" />}
+            <ThumbsUp className="w-3.5 h-3.5 text-[#6b7280] hover:text-[#4FC3F7] cursor-pointer transition-colors" />
+            <ThumbsDown className="w-3.5 h-3.5 text-[#6b7280] hover:text-red-500 cursor-pointer transition-colors" />
+            {design.tested && <span className="w-1.5 h-1.5 rounded-full bg-[#28c840] ml-1" />}
           </div>
         </div>
 
         {/* Stack badges */}
         <div className="flex flex-wrap gap-1 mb-3">
           {design.stack.map(s => (
-            <span key={s} className="px-1.5 py-0.5 rounded bg-[#094067]/5 text-[#5f6c7b] text-[9px] font-mono">
+            <span key={s} className="px-1.5 py-0.5 rounded bg-[#0a0a0a]/5 text-[#6b7280] text-[9px] font-mono">
               {s}
             </span>
           ))}
@@ -431,7 +470,7 @@ export function WebsitePromptCard({
         {/* Tags */}
         <div className="flex flex-wrap gap-1 mb-3">
           {design.tags.slice(0, 3).map(t => (
-            <span key={t} className="px-2 py-0.5 rounded-full border border-[#094067]/15 text-[#5f6c7b] text-[10px]">
+            <span key={t} className="px-2 py-0.5 rounded-full border border-[#0a0a0a]/15 text-[#6b7280] text-[10px]">
               #{t}
             </span>
           ))}
@@ -441,14 +480,14 @@ export function WebsitePromptCard({
         <div className="flex gap-2">
           <button
             onClick={(e) => { e.stopPropagation(); onClick?.(); }}
-            className="flex-1 h-9 rounded-xl bg-[#094067] text-white text-[12px] font-semibold flex items-center justify-center gap-1.5 hover:bg-[#094067]/90 transition-colors"
+            className="flex-1 h-9 rounded-xl bg-[#0a0a0a] text-white text-[12px] font-semibold flex items-center justify-center gap-1.5 hover:bg-[#0a0a0a]/90 transition-colors"
           >
             <ExternalLink className="w-3.5 h-3.5" />
             View Prompt
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onCopy?.(); }}
-            className="h-9 px-3 rounded-xl border-2 border-[#094067]/20 text-[#094067] text-[12px] font-semibold flex items-center gap-1.5 hover:border-[#ffd803] hover:bg-[#ffd803]/10 transition-colors"
+            className="h-9 px-3 rounded-xl border-2 border-[#0a0a0a]/20 text-[#0a0a0a] text-[12px] font-semibold flex items-center gap-1.5 hover:border-[#4FC3F7] hover:bg-[#4FC3F7]/10 transition-colors"
           >
             <Copy className="w-3.5 h-3.5" />
             Copy

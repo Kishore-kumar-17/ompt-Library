@@ -1,17 +1,18 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
+import { ArrowLeft } from "lucide-react";
 import { samplePrompts, platforms, categories } from "../theme";
 
 const tabs = ["Overview", "Categories", "Platforms", "Prompts"];
 
-export function Dashboard() {
+export function Dashboard({ go }: { go: (p: string) => void }) {
   const [tab, setTab] = useState("Overview");
 
   const tested = samplePrompts.filter(p => p.tested).length;
   const untested = samplePrompts.length - tested;
   const testedData = [
-    { name: "Tested",   value: tested,   color: "#ffd803" },
-    { name: "Untested", value: untested, color: "#ef4565" },
+    { name: "Tested",   value: tested,   color: "#4FC3F7" },
+    { name: "Untested", value: untested, color: "#e5e7eb" },
   ];
   const catData = [...categories.image, ...categories.text].slice(0, 6).map((c, i) => ({
     name: c.name,
@@ -24,13 +25,16 @@ export function Dashboard() {
   }));
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-10 text-[#094067]">
-      <h1 className="text-3xl mb-1">Analytics Dashboard</h1>
-      <p className="text-[#5f6c7b] mb-6">Quality, coverage, and performance across your prompt library.</p>
+    <div className="max-w-[1400px] mx-auto px-6 py-10 text-[#0a0a0a]">
+      <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 transition-colors">
+        <ArrowLeft className="w-3.5 h-3.5" /> Back
+      </button>
+      <h1 className="text-3xl font-bold mb-1">Analytics <span className="font-extrabold">Dashboard</span></h1>
+      <p className="text-[#6b7280] mb-6">Quality, coverage, and performance across your prompt library.</p>
 
-      <div className="flex gap-1 mb-8 bg-[#094067]/5 p-1 rounded-xl w-fit">
+      <div className="flex gap-1 mb-8 bg-[#0a0a0a]/5 p-1 rounded-xl w-fit">
         {tabs.map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-1.5 rounded-lg text-[14px] ${tab===t?"bg-[#ffd803] text-[#094067]":"text-[#5f6c7b] hover:text-[#094067]"}`}>
+          <button key={t} onClick={() => setTab(t)} className={`px-4 py-1.5 rounded-lg text-[14px] ${tab===t?"bg-[#4FC3F7] text-white":"text-[#6b7280] hover:text-[#0a0a0a]"}`}>
             {t}
           </button>
         ))}
@@ -45,9 +49,9 @@ export function Dashboard() {
               ["Avg quality",   "4.7"],
               ["Contributors",  "14"],
             ].map(([l, v]) => (
-              <div key={l as string} className="bg-white border border-[#094067]/15 rounded-2xl p-5">
-                <div className="text-[#5f6c7b]" style={{ fontSize: "13px" }}>{l}</div>
-                <div className="text-3xl text-[#094067] mt-1" style={{ fontWeight: 700 }}>{v}</div>
+              <div key={l as string} className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-5">
+                <div className="text-[#6b7280]" style={{ fontSize: "13px" }}>{l}</div>
+                <div className="text-3xl text-[#0a0a0a] mt-1" style={{ fontWeight: 700 }}>{v}</div>
               </div>
             ))}
           </div>
@@ -58,7 +62,7 @@ export function Dashboard() {
                   <Pie data={testedData} dataKey="value" innerRadius={60} outerRadius={90} paddingAngle={4}>
                     {testedData.map((d) => <Cell key={`tested-${d.name}`} fill={d.color} />)}
                   </Pie>
-                  <Tooltip contentStyle={{ background: "#bce4d8", border: "1px solid rgba(9,64,103,0.15)" }} />
+                  <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid rgba(10, 10, 10,0.15)" }} />
                 </PieChart>
               </ResponsiveContainer>
             </Chart>
@@ -67,8 +71,8 @@ export function Dashboard() {
                 <BarChart data={catData}>
                   <XAxis dataKey="name" stroke="#94a1b2" fontSize={11} />
                   <YAxis stroke="#94a1b2" domain={[0, 5]} />
-                  <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid rgba(9,64,103,0.15)" }} />
-                  <Bar dataKey="score" fill="#ffd803" radius={[6, 6, 0, 0]} />
+                  <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid rgba(10, 10, 10,0.15)" }} />
+                  <Bar dataKey="score" fill="#4FC3F7" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </Chart>
@@ -81,8 +85,8 @@ export function Dashboard() {
           <ResponsiveContainer width="100%" height={360}>
             <BarChart data={catData} layout="vertical">
               <XAxis type="number" stroke="#94a1b2" domain={[0, 5]} />
-              <YAxis type="category" dataKey="name" stroke="#94a1b2" width={160} />
-              <Bar dataKey="score" fill="#ef4565" radius={[0, 6, 6, 0]} />
+              <YAxis type="category" dataKey="name" stroke="#94a1b2" width={100} />
+              <Bar dataKey="score" fill="#4FC3F7" radius={[0, 6, 6, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </Chart>
@@ -114,8 +118,8 @@ export function Dashboard() {
 
 function Chart({ title, children }: any) {
   return (
-    <div className="bg-white border border-[#094067]/15 rounded-2xl p-5">
-      <div className="text-[#094067] mb-3" style={{ fontWeight: 600 }}>{title}</div>
+    <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-5">
+      <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 600 }}>{title}</div>
       {children}
     </div>
   );
@@ -123,14 +127,14 @@ function Chart({ title, children }: any) {
 
 function PromptList({ title, items }: any) {
   return (
-    <div className="bg-white border border-[#094067]/15 rounded-2xl p-5">
-      <div className="text-[#094067] mb-3" style={{ fontWeight: 600 }}>{title}</div>
+    <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-5">
+      <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 600 }}>{title}</div>
       <ul className="space-y-2">
         {items.map((p: any) => (
-          <li key={p.id} className="flex items-center gap-3 p-2 rounded hover:bg-[#094067]/5">
-            <div className="text-[#5f6c7b] w-14 text-[12px]">{p.id.slice(0, 6)}</div>
-            <div className="text-[#094067] flex-1 line-clamp-1" style={{ fontSize: "13px" }}>{p.title}</div>
-            <div className="text-[#ef4565]" style={{ fontWeight: 700 }}>★ {p.rating}</div>
+          <li key={p.id} className="flex items-center gap-3 p-2 rounded hover:bg-[#0a0a0a]/5">
+            <div className="text-[#6b7280] w-14 text-[12px]">{p.id.slice(0, 6)}</div>
+            <div className="text-[#0a0a0a] flex-1 line-clamp-1" style={{ fontSize: "13px" }}>{p.title}</div>
+            <div className="text-[#0a0a0a]" style={{ fontWeight: 700 }}>★ {p.rating}</div>
           </li>
         ))}
       </ul>

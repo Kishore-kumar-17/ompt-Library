@@ -98,9 +98,12 @@ function transformRow(row: RawRow, rowIndex: number): CleanPrompt | null {
   // Skip rows with no title or base_prompt
   if (!row.title?.trim() || !row.base_prompt?.trim()) return null;
 
-  // Images are named image1.jpeg … image348.jpeg, matching Excel row order (1-based)
+  // Images are named image1.png … image348.png, matching Excel row order (1-based).
+  // These 8 have no enhanced PNG and remain .jpeg: 25, 29, 340, 344, 345, 346, 347, 348.
   const imageNum = rowIndex + 1;
-  const image_url = imageNum <= 348 ? `/images/image${imageNum}.jpeg` : "";
+  const JPEG_FALLBACKS = new Set([25, 29, 340, 344, 345, 346, 347, 348]);
+  const ext = JPEG_FALLBACKS.has(imageNum) ? "jpeg" : "png";
+  const image_url = imageNum <= 348 ? `/images/image${imageNum}.${ext}` : "";
 
   return {
     slug:          row.prompt_id.trim(),

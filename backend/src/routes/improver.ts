@@ -133,6 +133,7 @@ router.post("/improve", async (c) => {
       categoryLabel: locks?.categoryLabel ?? null,
       lockSection: locks?.lockSection ?? [],
       negativeLocks: locks?.negativeLockSection ?? [],
+      variables: locks?.variables ?? [],
       validation: locks?.validation ?? null,
       finalAssembledText: locks?.finalAssembledText ?? parsed.improved,
     });
@@ -163,6 +164,8 @@ CORE RULES:
 - Delete cargo-cult tokens: "8K ultra-sharp", "aesthetic", vague adjective stacks
 
 CRITICAL — do NOT output any lock block (no "**LOCKS — …**", no "GEOMETRY/ORIENTATION/FRAMING/LIGHT/MATERIAL:" headers, no ":: GEOMETRY" segments, no "X LOCK:" lines). Improve ONLY the descriptive prompt; a standardized lock layer + negative locks are appended automatically afterward.
+
+VARIABLE LAYER — mark genuinely swappable content with [TOKEN] placeholders in UPPER_SNAKE brackets so the user can personalize the prompt. Use these canonical tokens when they apply: [BRAND], [PRODUCT], [COLOR], [TAGLINE], [SUBJECT], [MODEL], [LOCATION], [GARMENT], [STYLE], [THEME], [TEXT]. Only bracket nouns the user would realistically change (the brand, the product, the accent color, the subject) — never bracket structural or compositional wording. Use at most ~4 tokens. If nothing is swappable, use none.
 
 ${platformRule}`;
 

@@ -21,9 +21,9 @@ const tabs: Tab[] = [
     key: "image",
     label: "Image",
     Icon: ImageIcon,
-    accent: "#ef4565",
+    accent: "#4FC3F7",
     verb: "design",
-    prompt: "A cinematic event poster, dramatic rim lighting, bold typography —ar 2:3",
+    prompt: "A cinematic event poster, dramatic rim lighting, bold typography -ar 2:3",
     output: { kind: "image", src: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1000" },
     route: "library:image",
   },
@@ -47,7 +47,7 @@ const tabs: Tab[] = [
     output: {
       kind: "text",
       lines: [
-        "• Platform migrates to an event-driven core — removes 3 legacy services.",
+        "• Platform migrates to an event-driven core - removes 3 legacy services.",
         "• Latency p99 drops from 840ms to 210ms on the read path.",
         "• Cost profile shifts from fixed capacity to per-request billing.",
         "• Rollout is gated by a feature flag; rollback takes under 60 seconds.",
@@ -67,7 +67,7 @@ const tabs: Tab[] = [
       kind: "text",
       lines: [
         "Stop rewriting the same prompt ten different ways.",
-        "A shared library turns every junior designer into a senior one —",
+        "A shared library turns every junior designer into a senior one -",
         "because the best prompt in the team becomes the default. 🧵",
       ],
     },
@@ -96,7 +96,7 @@ const tabs: Tab[] = [
     key: "compare",
     label: "Compare",
     Icon: BarChart3,
-    accent: "#ef4565",
+    accent: "#4FC3F7",
     verb: "compare",
     prompt: "Run this prompt across ChatGPT, Gemini, Grok, Midjourney, Firefly, FLUX.",
     output: { kind: "compare" },
@@ -110,28 +110,28 @@ export function InteractiveDemo({ go }: { go: (r: string) => void }) {
 
   return (
     <section className="max-w-[1200px] mx-auto px-6 mt-20">
-      <h2 className="text-[#094067] mb-2" style={{ fontSize: "clamp(24px,2.6vw,36px)", fontWeight: 800 }}>
+      <h2 className="text-[#0a0a0a] mb-2" style={{ fontSize: "clamp(24px,2.6vw,36px)", fontWeight: 800 }}>
         See how prompts become products.
       </h2>
-      <p className="text-[#5f6c7b] mb-6">Pick a discipline — we'll run a real prompt through it.</p>
+      <p className="text-[#6b7280] mb-6">Pick a discipline - we'll run a real prompt through it.</p>
 
       {/* The frame */}
-      <div className="relative rounded-3xl border-2 border-[#094067] shadow-[8px_8px_0_0_#094067] overflow-hidden bg-white">
+      <div className="relative rounded-3xl border-2 border-[#0a0a0a] shadow-[8px_8px_0_0_#0a0a0a] overflow-hidden bg-white">
         {/* Chrome */}
-        <div className="flex items-center gap-3 h-11 px-4 border-b-2 border-[#094067]/15 bg-white">
+        <div className="flex items-center gap-3 h-11 px-4 border-b-2 border-[#0a0a0a]/15 bg-white">
           <span className="flex gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-[#ef4565]" />
-            <span className="w-3 h-3 rounded-full bg-[#ffd803]" />
+            <span className="w-3 h-3 rounded-full bg-[#4FC3F7]" />
+            <span className="w-3 h-3 rounded-full bg-[#4FC3F7]" />
             <span className="w-3 h-3 rounded-full bg-[#22c55e]" />
           </span>
           <div className="flex-1 flex items-center justify-center">
-            <div className="inline-flex items-center gap-2 h-7 px-3 rounded-lg bg-[#094067]/5 border border-[#094067]/15 text-[12px] text-[#5f6c7b]">
-              <Sparkles className="w-3.5 h-3.5 text-[#ef4565]" />
+            <div className="inline-flex items-center gap-2 h-7 px-3 rounded-lg bg-[#0a0a0a]/5 border border-[#0a0a0a]/15 text-[12px] text-[#6b7280]">
+              <Sparkles className="w-3.5 h-3.5 text-[#0a0a0a]" />
               promptvault.app / {tab.key}
             </div>
           </div>
           <div className="flex -space-x-2">
-            {["#ef4565", "#ffd803", "#3a86ff"].map((c) => (
+            {["#4FC3F7", "#4FC3F7", "#3a86ff"].map((c) => (
               <span key={c} className="w-6 h-6 rounded-full border-2 border-white" style={{ background: c }} />
             ))}
           </div>
@@ -140,8 +140,8 @@ export function InteractiveDemo({ go }: { go: (r: string) => void }) {
         {/* Body */}
         <div className="grid md:grid-cols-[360px_1fr] min-h-[420px]">
           {/* Prompt pane */}
-          <div className="p-5 border-b-2 md:border-b-0 md:border-r-2 border-[#094067]/15 bg-white">
-            <div className="text-[11px] text-[#5f6c7b] uppercase mb-2" style={{ fontWeight: 700, letterSpacing: "0.08em" }}>
+          <div className="p-5 border-b-2 md:border-b-0 md:border-r-2 border-[#0a0a0a]/15 bg-white">
+            <div className="text-[11px] text-[#6b7280] uppercase mb-2" style={{ fontWeight: 700, letterSpacing: "0.08em" }}>
               Prompt
             </div>
             <AnimatePresence mode="wait">
@@ -158,12 +158,12 @@ export function InteractiveDemo({ go }: { go: (r: string) => void }) {
 
             <div className="mt-5 flex items-center gap-2">
               <button
-                className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border-2 border-[#094067] bg-[#ffd803] text-[#094067] text-[13px]"
-                style={{ fontWeight: 700, boxShadow: "3px 3px 0 0 #094067" }}
+                className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border-2 border-[#0a0a0a] bg-[#4FC3F7] text-[#0a0a0a] text-[13px]"
+                style={{ fontWeight: 700, boxShadow: "3px 3px 0 0 #0a0a0a" }}
               >
                 <Play className="w-3.5 h-3.5" /> Run
               </button>
-              <button className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-[#094067]/20 text-[#094067] text-[13px]">
+              <button className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-[#0a0a0a]/20 text-[#0a0a0a] text-[13px]">
                 <Copy className="w-3.5 h-3.5" /> Copy
               </button>
             </div>
@@ -196,9 +196,9 @@ export function InteractiveDemo({ go }: { go: (r: string) => void }) {
               key={t.key}
               onMouseEnter={() => setActive(t.key)}
               className="relative inline-flex items-center gap-1.5 px-3 py-1.5 text-[14px] cursor-default"
-              style={{ fontWeight: 600, color: on ? "#094067" : "#5f6c7b" }}
+              style={{ fontWeight: 600, color: on ? "#0a0a0a" : "#6b7280" }}
             >
-              <t.Icon className="w-4 h-4" style={{ color: on ? t.accent : "#5f6c7b" }} />
+              <t.Icon className="w-4 h-4" style={{ color: on ? t.accent : "#6b7280" }} />
               {t.label}
               {on && (
                 <motion.span
@@ -213,7 +213,7 @@ export function InteractiveDemo({ go }: { go: (r: string) => void }) {
       </div>
 
       {/* Caption */}
-      <div className="mt-4 text-center text-[#5f6c7b]">
+      <div className="mt-4 text-center text-[#6b7280]">
         Prompt to{" "}
         <span style={{ color: tab.accent, fontWeight: 700 }}>{tab.verb}</span>{" "}
         anything you can imagine with AI.
@@ -222,7 +222,7 @@ export function InteractiveDemo({ go }: { go: (r: string) => void }) {
         <div className="mt-3 text-center">
           <button
             onClick={() => go(tab.route!)}
-            className="inline-flex items-center gap-1 text-[#094067] text-[13px] underline decoration-2 underline-offset-4"
+            className="inline-flex items-center gap-1 text-[#0a0a0a] text-[13px] underline decoration-2 underline-offset-4"
             style={{ fontWeight: 700, textDecorationColor: tab.accent }}
           >
             Explore {tab.label} prompts <ArrowRight className="w-3.5 h-3.5" />
@@ -241,9 +241,9 @@ function TypewriterText({ text }: { text: string }) {
     return () => clearInterval(id);
   }, [text]);
   return (
-    <div className="text-[#094067] text-[14px] leading-relaxed min-h-[96px]">
+    <div className="text-[#0a0a0a] text-[14px] leading-relaxed min-h-[96px]">
       {text.slice(0, i)}
-      <span className="inline-block w-[2px] h-4 bg-[#ef4565] translate-y-[3px] ml-0.5 animate-pulse" />
+      <span className="inline-block w-[2px] h-4 bg-[#4FC3F7] translate-y-[3px] ml-0.5 animate-pulse" />
     </div>
   );
 }
@@ -270,7 +270,7 @@ function OutputView({ tab }: { tab: Tab }) {
   if (tab.output.kind === "code") {
     return (
       <div className="absolute inset-0 p-5 font-mono text-[13px] leading-relaxed text-[#d4d7de] overflow-auto">
-        <div className="text-[#5f6c7b] mb-2">// refactor.ts</div>
+        <div className="text-[#6b7280] mb-2">// refactor.ts</div>
         {tab.output.lines!.map((ln, i) => (
           <motion.div
             key={i}
@@ -278,7 +278,7 @@ function OutputView({ tab }: { tab: Tab }) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.12 }}
           >
-            <span className="text-[#5f6c7b] mr-3 select-none">{String(i + 1).padStart(2, " ")}</span>
+            <span className="text-[#6b7280] mr-3 select-none">{String(i + 1).padStart(2, " ")}</span>
             <span dangerouslySetInnerHTML={{ __html: highlightCode(ln) }} />
           </motion.div>
         ))}
@@ -311,7 +311,7 @@ function OutputView({ tab }: { tab: Tab }) {
     { n: "Grok",       c: "#a7a9be" },
     { n: "Midjourney", c: "#c8a2c8" },
     { n: "Firefly",    c: "#ff6b6b" },
-    { n: "FLUX",       c: "#ffd803" },
+    { n: "FLUX",       c: "#4FC3F7" },
   ];
   return (
     <div className="absolute inset-0 p-5 grid grid-cols-2 md:grid-cols-3 gap-3 overflow-auto">
@@ -348,7 +348,7 @@ function highlightCode(s: string) {
   let out = escape(s);
   out = out.replace(/\b(export|function|const|let|return|if|else|new)\b/g, '<span style="color:#c792ea">$1</span>');
   out = out.replace(/\b(reduce|applyCoupon|Math|max)\b/g, '<span style="color:#82aaff">$1</span>');
-  out = out.replace(/(\/\/[^<]*)/g, '<span style="color:#5f6c7b">$1</span>');
+  out = out.replace(/(\/\/[^<]*)/g, '<span style="color:#6b7280">$1</span>');
   out = out.replace(/([0-9]+)/g, '<span style="color:#f78c6c">$1</span>');
   return out;
 }

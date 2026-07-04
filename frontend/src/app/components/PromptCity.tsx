@@ -142,7 +142,7 @@ export function PromptCity({ go }: { go: (route: string) => void }) {
 
         {/* 70 / 30 split */}
         <div className="city-content">
-          {/* LEFT 70% — City + info overlay */}
+          {/* LEFT 70% - City + info overlay */}
           <div className="city-left">
             <div className="city-layers">
               <img src={`/images/districts/city-bw.png${V}`} alt="Prompt Bot city" className="city-layer city-layer--base" draggable={false} />
@@ -157,7 +157,7 @@ export function PromptCity({ go }: { go: (route: string) => void }) {
               ))}
             </div>
 
-            {/* Info overlays — positioned on the city */}
+            {/* Info overlays - positioned on the city */}
             <div className="city-overlays">
               {DISTRICTS.map((d, i) => (
                 <DistrictOverlay key={d.id} d={d} active={step === i} go={go} />
@@ -165,7 +165,7 @@ export function PromptCity({ go }: { go: (route: string) => void }) {
             </div>
           </div>
 
-          {/* RIGHT 30% — Standalone district image only */}
+          {/* RIGHT 30% - Standalone district image only */}
           <div className="city-right">
             {DISTRICTS.map((d, i) => (
               <div key={d.id} className={'dr' + (step === i ? ' dr--active' : '')}>

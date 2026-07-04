@@ -90,11 +90,11 @@ export const familyCategories: Record<Family, string[]> = {
 };
 
 export const familyMeta: Record<Family, { title: string }> = {
-  image:   { title: "Image Generation Prompts" },
-  video:   { title: "Video Generation Prompts" },
-  text:    { title: "Text Generation Prompts" },
-  content: { title: "Content Generation Prompts" },
-  website: { title: "Website Generation Prompts" },
+  image:   { title: "Image Library" },
+  video:   { title: "Video Library" },
+  text:    { title: "Text Library" },
+  content: { title: "Content Library" },
+  website: { title: "Website Library" },
 };
 
 export const samplePrompts: PromptItem[] = [
