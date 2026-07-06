@@ -1,173 +1,235 @@
-export const PLATFORM_IDS = [
-  "chatgpt",
-  "gemini",
-  "grok",
-  "midjourney",
-  "firefly",
-  "flux",
-  "ideogram",
-  "seedream",
-  "recraft",
-] as const;
+// ─── Families ─────────────────────────────────────────────────────────────────
 
-export type PlatformId = (typeof PLATFORM_IDS)[number];
+export type Family = "image" | "video" | "text" | "code" | "content";
 
-export const CATEGORY_IDS = [
-  "people-portraits",
-  "fashion-apparel",
-  "product-ecommerce",
-  "marketing-ads",
-  "art-illustration",
-  "trending-viral",
-  "social-media",
-] as const;
+// ─── Prompt Components ────────────────────────────────────────────────────────
 
-export type CategoryId = (typeof CATEGORY_IDS)[number];
+export type ComponentKey =
+  | "role"
+  | "objective"
+  | "context"
+  | "constraints"
+  | "style"
+  | "output_format"
+  | "technical"
+  | "platform_params"
+  | "safety"
+  | "negative";
 
-export type PromptFamily = "image" | "video" | "text" | "content" | "website";
-
-export type PlatformPromptMap = Partial<Record<PlatformId, string>> & Record<string, string>;
-
-export interface PromptVariable {
-  name: string;
-  placeholder?: string;
+export interface PromptComponent {
+  key: ComponentKey;
+  content: string;
+  weight: number;
+  required: boolean;
+  presentInOutput: boolean;
 }
 
-// ─── Variable layer ──────────────────────────────────────────────────────────
-export type VariableType = "text" | "color" | "image" | "select";
+// ─── Platform Configuration ───────────────────────────────────────────────────
 
-export interface VariableField {
-  /** Token name without brackets, e.g. "BRAND" (matches `[BRAND]` in the text). */
-  name: string;
-  /** Human label for the input, e.g. "Brand". */
-  label: string;
-  type: VariableType;
-  /** Input placeholder / example value. */
-  placeholder?: string;
-  /** Allowed options for `select` type. */
-  options?: string[];
-  /** Original phrase this token replaced — pre-fills the input so the prompt reads
-   *  complete out-of-the-box (the "Variable Brief" default). */
-  default?: string;
-}
-
-export interface PromptRecord {
+export interface PlatformConfig {
   id: string;
-  slug?: string;
-  title: string;
-  description?: string;
-  basePrompt?: string;
-  category: string;
-  subCategory?: string;
-  family?: PromptFamily;
-  tags?: string[];
-  tested?: boolean;
-  rating?: number;
-  reviews?: number;
-  image?: string;
-  author?: string;
-  variables?: PromptVariable[];
-  platforms: PlatformPromptMap;
-  metadata?: Record<string, unknown>;
+  name: string;
+  family: Family;
+  wordBudget: { min: number; max: number };
+  structureRules: string;
+  systemPromptAddition: string;
+  supportedTiers: string[];
+  parameterFlags: string;
+  compressionLevel: "minimal" | "standard" | "verbose";
+  componentOrder: ComponentKey[];
+  requiredComponents: ComponentKey[];
 }
 
-export interface ExtractedPromptFields {
-  subject?: string;
-  action?: string;
-  expression?: string;
-  gaze?: string;
-  pose?: string;
-  handPosition?: string;
-  headPosition?: string;
-  wardrobe?: string;
-  garment?: string;
-  garmentVisibility?: string;
-  garmentColor?: string;
-  garmentFit?: string;
-  product?: string;
-  productOrientation?: string;
-  productPosition?: string;
-  productVisibility?: string;
-  brandStyle?: string;
-  scale?: string;
-  props?: string;
-  background?: string;
-  composition?: string;
-  crop?: string;
-  cameraAngle?: string;
-  lighting?: string;
-  material?: string;
-  surface?: string;
-  palette?: string;
-  styleDna?: string;
-  // Marketing / advertising
-  ctaSpace?: string;
-  brandColors?: string;
-  // Art / illustration
-  renderingStyle?: string;
-  // Trending / viral
-  visualHook?: string;
+// ─── Scoring ──────────────────────────────────────────────────────────────────
+
+export interface ScoreDimension {
+  name: string;
+  score: number;
+  weight: number;
+  feedback: string;
 }
 
-export type LockKey = keyof ExtractedPromptFields | (string & {});
+export type ScoreGrade = "poor" | "good" | "excellent" | "pro";
 
-export interface LockDefinition {
-  key: LockKey;
+export interface PromptScore {
+  overall: number;
+  grade: ScoreGrade;
+  dimensions: ScoreDimension[];
+  wordCount: number;
+  inBudget: boolean;
+}
+
+// ─── Engine Requests ──────────────────────────────────────────────────────────
+
+export interface BuildRequest {
+  idea: string;
+  family: Family;
+  platform: string;
+  style?: string;
+  mood?: string;
+  aspect?: string;
+  category?: string;
+  stream?: boolean;
+}
+
+export interface ImproveRequest {
+  prompt: string;
+  platform: string;
+  family?: Family;
+}
+
+export interface AnalyzeRequest {
+  promptText: string;
+  platform?: string;
+  family?: Family;
+}
+
+export interface OptimizeRequest {
+  promptText: string;
+  targetPlatform: string;
+  family: Family;
+  focus?: "quality" | "length" | "format";
+}
+
+export interface ConvertRequest {
+  promptText: string;
+  fromPlatform: string;
+  toPlatform: string;
+  family: Family;
+}
+
+export interface ExplainRequest {
+  promptText: string;
+  platform?: string;
+  family?: Family;
+}
+
+// ─── Engine Results ───────────────────────────────────────────────────────────
+
+export interface BuildResult {
+  prompt: string;
+  platform: string;
+  family: Family;
+  score: PromptScore | null;
+  runId: string | null;
+  tokensUsed: number;
+}
+
+export interface ImproverChange {
   label: string;
-  required: boolean;
-  description: string;
-  extractionHints?: string[];
-  // Soft quality warning emitted by the validator when this lock's field is
-  // absent (category-specific guidance — keeps the validator template-driven
-  // instead of hardcoded to one category).
-  warning?: string;
+  applied: boolean;
 }
 
-export interface LockSectionItem {
-  key: LockKey;
-  label: string;
-  value: string;
-  required: boolean;
+export interface ImproveResult {
+  improved: string;
+  changes: ImproverChange[];
+  platform: string;
+  family: Family;
+  scoreBefore: PromptScore | null;
+  scoreAfter: PromptScore | null;
+  delta: number | null;
+  tokensUsed: number;
 }
 
-export interface LockTemplateExample {
-  promptTitle: string;
-  extracted: Partial<ExtractedPromptFields>;
-  notes?: string;
+export interface AnalysisSuggestion {
+  dimension: string;
+  severity: "critical" | "warning" | "info";
+  message: string;
+  example?: string;
 }
 
-export interface LockTemplate {
-  categoryId: CategoryId;
-  categoryLabel: string;
-  purpose: string;
-  mandatoryLocks: LockDefinition[];
-  optionalLocks: LockDefinition[];
-  locksToAvoid: string[];
-  extractionRules: string[];
-  defaultNegativeLocks: string[];
-  examples: LockTemplateExample[];
+export interface AnalyzeResult {
+  score: PromptScore;
+  missingComponents: ComponentKey[];
+  presentComponents: ComponentKey[];
+  suggestions: AnalysisSuggestion[];
+  wordCount: number;
+  detectedFamily: Family;
+  detectedPlatform: string | null;
+  tokensUsed: number;
+}
+
+export interface ConvertResult {
+  converted: string;
+  changesSummary: string[];
+  score: PromptScore | null;
+  tokensUsed: number;
+}
+
+export interface ExplainResult {
+  summary: string;
+  components: Array<{
+    key: ComponentKey;
+    text: string;
+    purpose: string;
+    effectiveness: "high" | "medium" | "low";
+  }>;
+  strengths: string[];
+  techniques: string[];
+  tokensUsed: number;
+}
+
+// ─── Pipeline ─────────────────────────────────────────────────────────────────
+
+export interface ParsedIntent {
+  subject: string;
+  action: string | null;
+  setting: string | null;
+  mood: string | null;
+  style: string | null;
+  constraints: string[];
+  suggestedTier: string | null;
+}
+
+export interface StructuredRequirements {
+  role: string | null;
+  objective: string;
+  context: string | null;
+  constraints: string[];
+  style: string | null;
+  outputFormat: string | null;
+  technical: string | null;
+  negative: string | null;
 }
 
 export interface ValidationResult {
-  valid: boolean;
+  isValid: boolean;
+  errors: string[];
   warnings: string[];
-  missingRequiredFields: string[];
+  wordCount: number;
+  inBudget: boolean;
 }
 
-export interface AssembledPromptResult {
-  promptId: string;
-  title: string;
-  // null when the prompt's category does not resolve to a supported CategoryId
-  // (graceful passthrough — platform variant returned without a lock layer).
-  categoryId: CategoryId | null;
-  categoryLabel: string;
-  selectedPlatform: PlatformId;
-  platformPromptText: string;
-  lockSection: LockSectionItem[];
-  negativeLockSection: string[];
-  // Variable layer: `[TOKEN]` placeholders detected in the descriptive prompt that
-  // the user can fill in to personalize it (locks stay invariant). Empty when none.
-  variables: VariableField[];
-  validation: ValidationResult;
-  finalAssembledText: string;
+export interface PipelineContext {
+  request: BuildRequest;
+  userId: string | null;
+  runId: string;
+  startedAt: Date;
+  intent: ParsedIntent | null;
+  detectedFamily: Family | null;
+  detectedCategory: string | null;
+  platform: PlatformConfig | null;
+  requirements: StructuredRequirements | null;
+  componentPlan: ComponentKey[];
+  components: Map<ComponentKey, PromptComponent>;
+  assembledPrompt: string | null;
+  validationResult: ValidationResult | null;
+  score: PromptScore | null;
+  tokensUsed: number;
+  stageTimings: Record<string, number>;
+  errors: string[];
 }
+
+export interface PipelineStage {
+  name: string;
+  execute(ctx: PipelineContext): Promise<PipelineContext>;
+}
+
+// ─── Streaming ────────────────────────────────────────────────────────────────
+
+export type StreamEvent =
+  | { type: "stage"; stage: string; label: string }
+  | { type: "chunk"; text: string }
+  | { type: "score"; score: PromptScore }
+  | { type: "done"; runId: string | null; tokensUsed: number }
+  | { type: "error"; message: string };

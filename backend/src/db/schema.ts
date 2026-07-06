@@ -213,6 +213,12 @@ export const builtPrompts = pgTable("built_prompts", {
   generatedPrompt: text("generated_prompt").notNull(),
   savedAsPromptId: varchar("saved_as_prompt_id", { length: 21 }).references(() => prompts.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
+  // Engine additions
+  qualityScore: integer("quality_score"),
+  scoreGrade: varchar("score_grade", { length: 20 }),
+  tokensUsed: integer("tokens_used"),
+  durationMs: integer("duration_ms"),
+  runId: varchar("run_id", { length: 21 }),
 });
 
 export const improvedPrompts = pgTable("improved_prompts", {
@@ -223,6 +229,11 @@ export const improvedPrompts = pgTable("improved_prompts", {
   platformId: varchar("platform_id", { length: 50 }),
   changesSummary: jsonb("changes_summary"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
+  // Engine additions
+  scoreBefore: integer("score_before"),
+  scoreAfter: integer("score_after"),
+  scoreDelta: integer("score_delta"),
+  tokensUsed: integer("tokens_used"),
 });
 
 // ─── Bulk Import ──────────────────────────────────────────────────────────────
@@ -283,4 +294,44 @@ export const notifications = pgTable("notifications", {
 }, (t) => ({
   userIdx: index("notifications_user_idx").on(t.userId),
   readIdx: index("notifications_read_idx").on(t.isRead),
+}));
+
+// ─── Engine Run Audit Log ─────────────────────────────────────────────────────
+
+export const engineRunTypeEnum = pgEnum("engine_run_type", [
+  "build", "improve", "analyze", "optimize", "convert", "explain",
+]);
+
+export const engineRuns = pgTable("engine_runs", {
+  id: varchar("id", { length: 21 }).primaryKey(),
+  userId: varchar("user_id", { length: 21 }).references(() => users.id, { onDelete: "set null" }),
+  type: engineRunTypeEnum("type").notNull(),
+  platform: varchar("platform", { length: 50 }),
+  family: familyEnum("family"),
+  inputTokens: integer("input_tokens").notNull().default(0),
+  outputTokens: integer("output_tokens").notNull().default(0),
+  durationMs: integer("duration_ms"),
+  success: boolean("success").notNull().default(true),
+  errorMessage: text("error_message"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (t) => ({
+  userIdx: index("engine_runs_user_idx").on(t.userId),
+  typeIdx: index("engine_runs_type_idx").on(t.type),
+  createdIdx: index("engine_runs_created_idx").on(t.createdAt),
+}));
+
+// ─── Prompt Versions ──────────────────────────────────────────────────────────
+
+export const promptVersions = pgTable("prompt_versions", {
+  id: serial("id").primaryKey(),
+  promptId: varchar("prompt_id", { length: 21 }).notNull().references(() => prompts.id, { onDelete: "cascade" }),
+  versionNumber: integer("version_number").notNull(),
+  promptText: text("prompt_text").notNull(),
+  changeReason: text("change_reason"),
+  score: integer("score"),
+  createdBy: varchar("created_by", { length: 21 }).references(() => users.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (t) => ({
+  promptIdx: index("prompt_versions_prompt_idx").on(t.promptId),
+  uniqueVersion: uniqueIndex("prompt_versions_unique").on(t.promptId, t.versionNumber),
 }));

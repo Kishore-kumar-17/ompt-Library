@@ -11,14 +11,14 @@
  */
 
 import { sql, eq, and, inArray, type SQL } from "drizzle-orm";
-import { db } from "../db/client.js";
+import { db } from "../../db/client.js";
 import {
   prompts,
   promptPlatforms,
   promptTags,
   tags,
   categories,
-} from "../db/schema.js";
+} from "../../db/schema.js";
 import { normalizePromptRecord, searchPrompts } from "./prompts.js";
 import type { PromptRecord } from "./types.js";
 
@@ -152,7 +152,7 @@ async function loadDbTags(promptId: string): Promise<string[]> {
     .from(promptTags)
     .innerJoin(tags, eq(promptTags.tagId, tags.id))
     .where(eq(promptTags.promptId, promptId));
-  return rows.map((r) => r.name);
+  return rows.map((r: { name: string }) => r.name);
 }
 
 type DbPromptRow = typeof prompts.$inferSelect;
@@ -208,11 +208,13 @@ async function searchDbPrompts(query: string, limit: number): Promise<PromptReco
     .limit(limit);
   if (hits.length === 0) return [];
 
-  const ids = hits.map((h) => h.prompt.id);
+  const ids = hits.map((h: { prompt: DbPromptRow; categoryLabel: string | null }) => h.prompt.id);
   const platformMaps = await loadDbPlatformMaps(ids);
 
   return hits
-    .map((h) => mapDbRow(h.prompt, h.categoryLabel, platformMaps.get(h.prompt.id) ?? {}, []))
+    .map((h: { prompt: DbPromptRow; categoryLabel: string | null }) =>
+      mapDbRow(h.prompt, h.categoryLabel, platformMaps.get(h.prompt.id) ?? {}, []),
+    )
     .filter((r): r is PromptRecord => r !== null);
 }
 
