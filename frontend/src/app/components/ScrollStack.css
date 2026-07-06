@@ -1,0 +1,17 @@
+.scroll-stack-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.scroll-stack-card {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 40px;
+  will-change: transform, filter;
+  transition: transform 0.12s linear, filter 0.12s linear;
+}
+
+.scroll-stack-card:last-child {
+  margin-bottom: 0;
+}
