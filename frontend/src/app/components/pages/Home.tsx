@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Users } from "lucide-react";
-import { motion, useInView, useTransform, useScroll, type MotionValue } from "motion/react";
+import { motion, useInView } from "motion/react";
 import frame1Video from "../../../imports/Frame_1.mp4";
 import frame2Video from "../../../imports/Frame_2.mp4";
 import frame3Video from "../../../imports/Frame_3.mp4";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 import RotatingText from "../RotatingText";
 import ScrollReveal from "../ScrollReveal";
+import SectionReveal from "../SectionReveal";
+import ScrollStack, { ScrollStackItem } from "../ScrollStack";
 
 // ── Category images (user-supplied) ──────────────────────────────────────────
 import imgSocialMedia   from "../../../imports/WhatsApp_Image_2026-04-27_at_1.12.44_PM.jpeg";
@@ -27,6 +29,7 @@ export function Home({ go }: { go: (p: string) => void }) {
       <HeroCarousel go={go} />
 
       {/* Breathing space 1 */}
+      <SectionReveal>
       <div className="py-28 md:py-40 border-t border-[#0a0a0a]/8">
         <div className="max-w-[1100px] mx-auto px-6 text-center">
           <div className="flex items-center justify-center gap-2 text-[#0a0a0a] mb-6" style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "0.02em" }}>
@@ -46,11 +49,13 @@ export function Home({ go }: { go: (p: string) => void }) {
           </ScrollReveal>
         </div>
       </div>
+      </SectionReveal>
 
       {/* Story Showcase - Discover / Learn / Create */}
       <StoryShowcase go={go} />
 
       {/* Breathing space 2 */}
+      <SectionReveal>
       <div className="py-28 md:py-40 border-t border-[#0a0a0a]/8">
         <div className="max-w-[720px] mx-auto px-6 text-center">
           <div className="flex items-center justify-center gap-2 text-[#0a0a0a] mb-6" style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "0.02em" }}>
@@ -85,11 +90,15 @@ export function Home({ go }: { go: (p: string) => void }) {
           </ScrollReveal>
         </div>
       </div>
+      </SectionReveal>
 
       {/* Browse by category - auto-scrolling marquee */}
+      <SectionReveal>
       <BrowseByCategory go={go} />
+      </SectionReveal>
 
       {/* Breathing space - Mastery */}
+      <SectionReveal>
       <div className="py-28 md:py-40 border-t border-[#0a0a0a]/8">
         <div className="max-w-[1100px] mx-auto px-6 text-center">
           <div className="flex items-center justify-center gap-2 text-[#0a0a0a] mb-6" style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "0.02em" }}>
@@ -109,8 +118,11 @@ export function Home({ go }: { go: (p: string) => void }) {
           </ScrollReveal>
         </div>
       </div>
+      </SectionReveal>
 
+      <SectionReveal>
       <CommunityPrizes go={go} />
+      </SectionReveal>
     </div>
   );
 }
@@ -398,9 +410,7 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
   );
 }
 
-// ─── How It Works ─────────────────────────────────────────────────────────────
-
-// ─── Story Showcase - scroll-driven Discover / Learn / Create ─────────────────
+// ─── Story Showcase - ScrollStack cards ──────────────────────────────────────
 
 const STORY_STEPS = [
   {
@@ -413,6 +423,8 @@ const STORY_STEPS = [
       "Explore thousands of curated prompts across image generation, video creation, website development, coding, and content creation.",
     ],
     benefits: ["Curated Library", "Real-World Results", "Multiple Categories", "Ready To Use"],
+    video: frame1Video,
+    path: "promptvault.app/discover",
   },
   {
     num: "02",
@@ -424,6 +436,8 @@ const STORY_STEPS = [
       "Learn how to generate better images, videos, websites, code, and content.",
     ],
     benefits: ["Beginner Friendly", "Step-by-Step Guides", "Proven Frameworks", "Practical Examples"],
+    video: frame2Video,
+    path: "promptvault.app/learn",
   },
   {
     num: "03",
@@ -435,241 +449,11 @@ const STORY_STEPS = [
       "Build images, videos, websites, applications, and content faster than ever.",
     ],
     benefits: ["Faster Creation", "Better Results", "Save Time", "Save Money"],
+    video: frame3Video,
+    path: "promptvault.app/create",
   },
 ];
 
-const STORY_VIDEOS = [frame1Video, frame2Video, frame3Video];
-const ACCENT = "#0a0a0a";
-
-function useStoryStepProgress(scrollYProgress: MotionValue<number>, index: number, count: number) {
-  // Overlapping crossfade: as one step fades out, the next fades in over the
-  // SAME range - so there are never blank gaps between steps. The returned
-  // value IS the step's opacity (1 = fully shown). One unconditional
-  // useTransform call; the if/else only builds plain keyframe arrays.
-  const w = 1 / count;
-  const overlap = 0.06; // half-width of each crossfade handoff
-  const stepStart = index * w;
-  const stepEnd = (index + 1) * w;
-  let input: number[];
-  let output: number[];
-  if (index === 0) {
-    input = [0, stepEnd - overlap, stepEnd + overlap];
-    output = [1, 1, 0];
-  } else if (index === count - 1) {
-    input = [stepStart - overlap, stepStart + overlap, 1];
-    output = [0, 1, 1];
-  } else {
-    input = [stepStart - overlap, stepStart + overlap, stepEnd - overlap, stepEnd + overlap];
-    output = [0, 1, 1, 0];
-  }
-  return useTransform(scrollYProgress, input, output);
-}
-
-// Text opacity: DISJOINT one-at-a-time fade (no two headlines ever overlap).
-// Quick fade at each boundary; only one step's copy is visible at a time.
-function useStoryTextOpacity(scrollYProgress: MotionValue<number>, index: number, count: number) {
-  const w = 1 / count;
-  const fade = 0.03;
-  const stepStart = index * w;
-  const stepEnd = (index + 1) * w;
-  let input: number[];
-  let output: number[];
-  if (index === 0) {
-    input = [0, stepEnd - fade, stepEnd];
-    output = [1, 1, 0];
-  } else if (index === count - 1) {
-    input = [stepStart, stepStart + fade, 1];
-    output = [0, 1, 1];
-  } else {
-    input = [stepStart, stepStart + fade, stepEnd - fade, stepEnd];
-    output = [0, 1, 1, 0];
-  }
-  return useTransform(scrollYProgress, input, output);
-}
-
-function StoryNavItem({ step, progress }: { step: typeof STORY_STEPS[0]; progress: MotionValue<number> }) {
-  const opacity = useTransform(progress, [0, 1], [0.32, 1]);
-  const x = useTransform(progress, [0, 1], [0, 6]);
-  const nameSize = useTransform(progress, [0, 1], [18, 26]);
-  const nameWeight = useTransform(progress, [0, 1], [400, 600]);
-  const color = useTransform(progress, [0, 1], ["#94a3b8", ACCENT]);
-  const barScale = useTransform(progress, [0, 1], [0, 1]);
-  const numColor = useTransform(progress, [0, 1], ["#cbd5e1", ACCENT]);
-
-  return (
-    <motion.div className="flex items-center gap-4" style={{ opacity, x }}>
-      <motion.span className="block w-[3px] rounded-full" style={{ height: 28, background: ACCENT, scaleY: barScale, originY: 0.5 }} />
-      <motion.span style={{ fontSize: 13, letterSpacing: 1, color: numColor }}>{step.num}</motion.span>
-      <motion.span style={{ fontSize: nameSize, fontWeight: nameWeight, fontStyle: "italic", color, letterSpacing: -0.4, fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}>{step.name}</motion.span>
-    </motion.div>
-  );
-}
-
-function StoryLeftFrame({ step, progress }: { step: typeof STORY_STEPS[0]; progress: MotionValue<number> }) {
-  const y = useTransform(progress, [0, 1], [18, 0]);
-  return (
-    <motion.div className="absolute inset-x-0 top-0" style={{ opacity: progress, y }}>
-      <h3 className="text-[#0a0a0a]" style={{ fontSize: "clamp(26px, 2.6vw, 38px)", lineHeight: 1.12, letterSpacing: -1, fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif", fontWeight: 800 }}>
-        <span style={{ fontStyle: "italic", fontWeight: 400 }}>{step.headline.split(" ")[0]}</span>{" "}
-        {step.headline.split(" ").slice(1).join(" ")}
-      </h3>
-      {step.description.map((d) => (
-        <p key={d} className="mt-4 text-[#6b7280]" style={{ fontSize: 15, lineHeight: 1.6 }}>{d}</p>
-      ))}
-      <div className="mt-7 grid grid-cols-2 gap-x-5 gap-y-3">
-        {step.benefits.map((b) => (
-          <div key={b} className="flex items-center gap-2.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0a0a0a] shrink-0" />
-            <span className="text-[#0a0a0a]" style={{ fontSize: 13.5 }}>{b}</span>
-          </div>
-        ))}
-      </div>
-    </motion.div>
-  );
-}
-
-function StoryFrameShell({ progress, children }: { progress: MotionValue<number>; children: React.ReactNode }) {
-  const y = useTransform(progress, [0, 1], [24, 0]);
-  const scale = useTransform(progress, [0, 1], [0.97, 1]);
-  return (
-    <motion.div className="absolute inset-0 flex items-center justify-center" style={{ opacity: progress, y, scale }}>
-      {children}
-    </motion.div>
-  );
-}
-
-function StoryFramedVideo({ src, path, progress, widthClass = "max-w-full" }: { src: string; path: string; progress: MotionValue<number>; widthClass?: string }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  useEffect(() => {
-    const apply = (v: number) => {
-      const el = videoRef.current;
-      if (!el) return;
-      if (v > 0.35) el.play().catch(() => {});
-      else el.pause();
-    };
-    apply(progress.get());
-    return progress.on("change", apply);
-  }, [progress]);
-
-  return (
-    <div
-      className={`w-full ${widthClass} overflow-hidden rounded-3xl border-2 border-[#0a0a0a]/15 bg-white`}
-      style={{ boxShadow: "0 40px 90px -35px rgba(10, 10, 10,0.25), 0 1px 0 rgba(255,255,255,0.9) inset" }}
-    >
-      <div className="flex items-center gap-3 border-b border-[#0a0a0a]/10 bg-[#0a0a0a]/3 px-4 py-2.5">
-        <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#4FC3F7]" />
-          <span className="w-2.5 h-2.5 rounded-full bg-[#4FC3F7]" />
-          <span className="w-2.5 h-2.5 rounded-full bg-[#3fb950]" />
-        </div>
-        <div className="mx-auto flex w-[55%] max-w-[300px] items-center justify-center gap-2 rounded-full border border-[#0a0a0a]/10 bg-[#0a0a0a]/5 px-3 py-1 text-[#6b7280]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#3fb950]" />
-          <span style={{ fontSize: 11 }}>{path}</span>
-        </div>
-        <div className="w-[46px]" />
-      </div>
-      <div className="relative w-full bg-[#f8fafc] aspect-video">
-        <video ref={videoRef} src={src} muted loop playsInline preload="metadata" className="absolute inset-0 w-full h-full object-cover" />
-      </div>
-    </div>
-  );
-}
-
-function StoryShowcase({ go }: { go: (p: string) => void }) {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
-
-  const p0 = useStoryStepProgress(scrollYProgress, 0, STORY_STEPS.length);
-  const p1 = useStoryStepProgress(scrollYProgress, 1, STORY_STEPS.length);
-  const p2 = useStoryStepProgress(scrollYProgress, 2, STORY_STEPS.length);
-  const progresses = [p0, p1, p2];
-
-  // Separate disjoint curve for the left text so two headlines never overlap.
-  const t0 = useStoryTextOpacity(scrollYProgress, 0, STORY_STEPS.length);
-  const t1 = useStoryTextOpacity(scrollYProgress, 1, STORY_STEPS.length);
-  const t2 = useStoryTextOpacity(scrollYProgress, 2, STORY_STEPS.length);
-  const textProgresses = [t0, t1, t2];
-
-  return (
-    <>
-      {/* ── Desktop: scroll-driven crossfade (shortened to ~one screen of scroll) ── */}
-      <section
-        ref={sectionRef}
-        className="relative hidden w-full lg:block"
-        style={{ height: "240vh", background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 45%, #ffffff 100%)" }}
-      >
-        <div className="sticky top-0 h-screen w-full overflow-hidden">
-          {/* Ambient blobs */}
-          <div aria-hidden className="pointer-events-none absolute -right-40 top-10 w-[520px] h-[520px] rounded-full" style={{ background: "radial-gradient(circle, rgba(10, 10, 10,0.06) 0%, transparent 70%)" }} />
-          <div aria-hidden className="pointer-events-none absolute -left-40 bottom-0 w-[480px] h-[480px] rounded-full" style={{ background: "radial-gradient(circle, rgba(79,195,247,0.10) 0%, transparent 70%)" }} />
-
-          <div className="relative mx-auto flex h-full max-w-[1500px] items-center gap-12 px-8">
-            {/* LEFT - nav + copy (38%) */}
-            <div className="relative flex flex-col justify-center" style={{ flexBasis: "38%", minWidth: 340 }}>
-              <div className="mb-9 flex flex-col gap-4">
-                {STORY_STEPS.map((s, i) => (
-                  <StoryNavItem key={s.key} step={s} progress={progresses[i]} />
-                ))}
-              </div>
-              <div className="relative min-h-[280px]">
-                {STORY_STEPS.map((s, i) => (
-                  <StoryLeftFrame key={s.key} step={s} progress={textProgresses[i]} />
-                ))}
-              </div>
-            </div>
-
-            {/* RIGHT - scroll-activated video frames (62%) */}
-            <div className="relative h-full flex-1" style={{ flexBasis: "62%" }}>
-              <StoryFrameShell progress={p0}>
-                <StoryFramedVideo src={frame1Video} path="promptvault.app/discover" progress={p0} />
-              </StoryFrameShell>
-              <StoryFrameShell progress={p1}>
-                <StoryFramedVideo src={frame2Video} path="promptvault.app/learn" progress={p1} />
-              </StoryFrameShell>
-              <StoryFrameShell progress={p2}>
-                <StoryFramedVideo src={frame3Video} path="promptvault.app/create" progress={p2} />
-              </StoryFrameShell>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Mobile/tablet: simple stacked steps so all the copy is visible ── */}
-      <div className="lg:hidden px-5 py-20 space-y-16" style={{ background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)" }}>
-        {STORY_STEPS.map((s, i) => (
-          <div key={s.key}>
-            <div className="mb-3 flex items-center gap-3">
-              <span className="font-mono text-[12px] text-[#94a3b8]">{s.num}</span>
-              <span className="text-xl font-semibold italic text-[#0a0a0a]" style={{ fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}>{s.name}</span>
-            </div>
-            <h3 className="mb-3 text-[#0a0a0a]" style={{ fontSize: "clamp(24px, 7vw, 32px)", lineHeight: 1.12, letterSpacing: -1, fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif", fontWeight: 800 }}>
-              <span style={{ fontStyle: "italic", fontWeight: 400 }}>{s.headline.split(" ")[0]}</span>{" "}
-              {s.headline.split(" ").slice(1).join(" ")}
-            </h3>
-            {s.description.map((d) => (
-              <p key={d} className="mt-2 text-[#6b7280]" style={{ fontSize: 15, lineHeight: 1.6 }}>{d}</p>
-            ))}
-            <div className="mb-6 mt-5 grid grid-cols-2 gap-x-5 gap-y-3">
-              {s.benefits.map((b) => (
-                <div key={b} className="flex items-center gap-2.5">
-                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#0a0a0a]" />
-                  <span className="text-[#0a0a0a]" style={{ fontSize: 13.5 }}>{b}</span>
-                </div>
-              ))}
-            </div>
-            <div className="overflow-hidden rounded-2xl border-2 border-[#0a0a0a]/15 bg-white" style={{ boxShadow: "0 24px 60px -30px rgba(10,10,10,0.3)" }}>
-              <div className="relative aspect-video w-full bg-[#f8fafc]">
-                <AutoplayVideo src={STORY_VIDEOS[i]} className="absolute inset-0 h-full w-full object-cover" />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </>
-  );
-}
-
-// ─── AutoplayVideo - reliably plays in iframes / sandboxes ───────────────────
 function AutoplayVideo({ src, className }: { src: string; className?: string }) {
   const ref = useRef<HTMLVideoElement>(null);
   const visible = useRef(false);
@@ -708,6 +492,87 @@ function AutoplayVideo({ src, className }: { src: string; className?: string }) 
 
   return (
     <video ref={ref} src={src} muted playsInline loop preload="auto" className={className} />
+  );
+}
+
+function StoryShowcase({ go }: { go: (p: string) => void }) {
+  return (
+    <section
+      style={{ background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 45%, #ffffff 100%)" }}
+    >
+      <ScrollStack
+        stackOffset={40}
+        scaleStep={0.04}
+        baseScale={0.92}
+      >
+        {STORY_STEPS.map((s) => (
+          <ScrollStackItem
+            key={s.key}
+            itemClassName="rounded-3xl bg-white border-2 border-[#0a0a0a]/10 overflow-hidden shadow-2xl"
+          >
+            <div className="flex flex-col lg:flex-row" style={{ minHeight: "calc(100vh - 120px)" }}>
+              {/* Left - Text content */}
+              <div className="flex-1 p-10 lg:p-16 flex flex-col justify-center">
+                <div className="flex items-center gap-3 mb-5">
+                  <span className="font-mono text-[13px] text-[#94a3b8]">{s.num}</span>
+                  <span
+                    className="text-2xl font-semibold italic text-[#0a0a0a]"
+                    style={{ fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+                  >
+                    {s.name}
+                  </span>
+                </div>
+                <h3
+                  className="text-[#0a0a0a] mb-5"
+                  style={{
+                    fontSize: "clamp(28px, 3.5vw, 42px)",
+                    lineHeight: 1.1,
+                    letterSpacing: -1.2,
+                    fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                    fontWeight: 800,
+                  }}
+                >
+                  <span style={{ fontStyle: "italic", fontWeight: 400 }}>{s.headline.split(" ")[0]}</span>{" "}
+                  {s.headline.split(" ").slice(1).join(" ")}
+                </h3>
+                {s.description.map((d) => (
+                  <p key={d} className="mt-2.5 text-[#6b7280]" style={{ fontSize: 16, lineHeight: 1.65 }}>{d}</p>
+                ))}
+                <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4">
+                  {s.benefits.map((b) => (
+                    <div key={b} className="flex items-center gap-2.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#0a0a0a] shrink-0" />
+                      <span className="text-[#0a0a0a]" style={{ fontSize: 14.5, fontWeight: 500 }}>{b}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right - Video */}
+              <div className="flex-1 lg:max-w-[58%]">
+                <div className="border-l border-[#0a0a0a]/10 h-full flex flex-col">
+                  <div className="flex items-center gap-3 border-b border-[#0a0a0a]/10 bg-[#0a0a0a]/3 px-5 py-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#4FC3F7]" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#4FC3F7]" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#3fb950]" />
+                    </div>
+                    <div className="mx-auto flex w-[55%] max-w-[300px] items-center justify-center gap-2 rounded-full border border-[#0a0a0a]/10 bg-[#0a0a0a]/5 px-3 py-1 text-[#6b7280]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#3fb950]" />
+                      <span style={{ fontSize: 11 }}>{s.path}</span>
+                    </div>
+                    <div className="w-[46px]" />
+                  </div>
+                  <div className="relative w-full bg-[#f8fafc] flex-1 min-h-[280px]">
+                    <AutoplayVideo src={s.video} className="absolute inset-0 w-full h-full object-contain" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ScrollStackItem>
+        ))}
+      </ScrollStack>
+    </section>
   );
 }
 
@@ -885,65 +750,16 @@ const prizes = [
 
 function CommunityPrizes({ go }: { go: (p: string) => void }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const inView = useInView(ref, { margin: "-80px" });
 
   return (
     <section ref={ref} className="max-w-[1100px] mx-auto px-6 mt-32 mb-24">
-      {/* Prize cards first */}
-      <div className="grid md:grid-cols-3 gap-6 mb-14">
-        {prizes.map((p, i) => (
-          <motion.div
-            key={p.label}
-            initial={{ opacity: 0, y: 28 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.12 * (i + 1) }}
-            className="relative group rounded-2xl p-6 border border-[#e7e9f1] bg-white transition-all duration-300 hover:-translate-y-1"
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = `0 12px 32px -8px ${p.accent}25, 0 4px 12px rgba(0,0,0,0.06)`;
-              e.currentTarget.style.borderColor = `${p.accent}50`;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = "none";
-              e.currentTarget.style.borderColor = "#e7e9f1";
-            }}
-          >
-            {/* Rank badge */}
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 text-white"
-              style={{ background: p.bg, fontSize: "14px", fontWeight: 800 }}
-            >
-              {p.rank}
-            </div>
-
-            {/* Label */}
-            <div
-              style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: p.accent, marginBottom: 6 }}
-            >
-              {p.label}
-            </div>
-
-            {/* Reward */}
-            <h3
-              className="text-[#0a0a0a] mb-2"
-              style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.02em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
-            >
-              {p.reward}
-            </h3>
-
-            {/* Description */}
-            <p className="text-[#6b7280] leading-relaxed" style={{ fontSize: "13.5px" }}>
-              {p.desc}
-            </p>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Header + CTA below the cards */}
+      {/* Header */}
       <motion.div
-        className="text-center"
-        initial={{ opacity: 0, y: 20 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5, delay: 0.5 }}
+        className="text-center mb-14"
+        initial={{ opacity: 0, y: 24 }}
+        animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+        transition={{ duration: 0.5 }}
       >
         <div
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0a0a0a]/5 text-[#0a0a0a] mb-5"
@@ -951,17 +767,86 @@ function CommunityPrizes({ go }: { go: (p: string) => void }) {
         >
           <Users className="w-3.5 h-3.5" /> Community
         </div>
-        <ScrollReveal baseRotation={0} blurStrength={3}>
-          <h2
-            className="text-[#0a0a0a] mb-3"
-            style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-0.03em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
-          >
-            <span style={{ fontWeight: 400 }}>Submit a prompt.</span> <span style={{ fontWeight: 800, color: "#0a0a0a" }}>Win prizes.</span>
-          </h2>
-          <p className="text-[#6b7280] max-w-lg mx-auto mb-8" style={{ fontSize: "16px", lineHeight: 1.6 }}>
-            Share your best prompts with the community and get rewarded.
-          </p>
-        </ScrollReveal>
+        <h2
+          className="text-[#0a0a0a] mb-3"
+          style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-0.03em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+        >
+          <span style={{ fontWeight: 400 }}>Submit a prompt.</span> <span style={{ fontWeight: 800, color: "#0a0a0a" }}>Win prizes.</span>
+        </h2>
+        <p className="text-[#6b7280] max-w-lg mx-auto mb-8" style={{ fontSize: "16px", lineHeight: 1.6 }}>
+          Share your best prompts with the community and get rewarded.
+        </p>
+      </motion.div>
+
+      {/* Prize cards — 3D card flip (exact preview match) */}
+      <div className="grid md:grid-cols-3 gap-6 mb-14">
+        {prizes.map((p, i) => (
+          <div key={p.label} style={{ perspective: "1200px" }}>
+            <motion.div
+              initial={{ rotateY: 180 }}
+              animate={inView ? { rotateY: 0 } : { rotateY: 180 }}
+              transition={inView ? { duration: 0.8, delay: 0.2 * (i + 1), ease: [0.4, 0, 0.2, 1] } : { duration: 0 }}
+              className="relative"
+              style={{ transformStyle: "preserve-3d" }}
+            >
+              {/* Back face — dark with ? */}
+              <div
+                className="absolute inset-0 rounded-2xl flex items-center justify-center"
+                style={{
+                  background: "#0a0a0a",
+                  backfaceVisibility: "hidden",
+                  transform: "rotateY(180deg)",
+                }}
+              >
+                <span style={{ fontSize: 48, fontWeight: 800, color: "#4FC3F7" }}>?</span>
+              </div>
+
+              {/* Front face — card content */}
+              <div
+                className="rounded-2xl p-6 border border-[#e7e9f1] bg-white transition-all duration-300 hover:-translate-y-1"
+                style={{ backfaceVisibility: "hidden" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = `0 12px 32px -8px ${p.accent}25, 0 4px 12px rgba(0,0,0,0.06)`;
+                  e.currentTarget.style.borderColor = `${p.accent}50`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.borderColor = "#e7e9f1";
+                }}
+              >
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 text-white"
+                  style={{ background: p.bg, fontSize: "14px", fontWeight: 800 }}
+                >
+                  {p.rank}
+                </div>
+                <div
+                  style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: p.accent, marginBottom: 6 }}
+                >
+                  {p.label}
+                </div>
+                <h3
+                  className="text-[#0a0a0a] mb-2"
+                  style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.02em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+                >
+                  {p.reward}
+                </h3>
+                <p className="text-[#6b7280] leading-relaxed" style={{ fontSize: "13.5px" }}>
+                  {p.desc}
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        ))}
+      </div>
+
+      {/* CTA button */}
+      <motion.div
+        className="text-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={inView ? { duration: 0.5, delay: 0.85 } : { duration: 0 }}
+      >
         <motion.button
           onClick={() => go("submit")}
           whileHover={{ scale: 1.04, y: -2 }}
