@@ -10,9 +10,11 @@ import {
   improveTextWithRules,
   parseTextPrompt,
   type TextPlatformKey,
+  type TextCategory,
 } from "./text/index.js";
 
 const VALID_TEXT_PLATFORMS: TextPlatformKey[] = ["claude", "chatgpt-text", "gemini-text", "grok-text", "perplexity", "deepseek"];
+const VALID_TEXT_CATEGORIES: TextCategory[] = ["qa", "creative", "analysis", "summarization", "transformation"];
 
 function resolveTextPlatform(platform: string): TextPlatformKey {
   return VALID_TEXT_PLATFORMS.includes(platform as TextPlatformKey)
@@ -30,10 +32,19 @@ function toGrade(score: number): ScoreGrade {
 export function buildTextFallback(request: BuildRequest): BuildResult {
   const platform = resolveTextPlatform(request.platform);
   const parsed = parseTextPrompt(request.idea);
+  // Prefer the caller's explicit category over keyword auto-detection — see
+  // the same fix in video-bridge.ts for the rationale.
+  const category = VALID_TEXT_CATEGORIES.includes(request.category as TextCategory)
+    ? (request.category as TextCategory)
+    : parsed.detectedCategory;
 
   const result = buildTextFromRules({
-    category: parsed.detectedCategory,
+    category,
     task: request.idea,
+    // BuildRequest (engine/types.ts) has no dedicated audience field, so the
+    // only signal available here is whatever parseTextPrompt detected from
+    // the idea text itself (e.g. "... for a beginner", "... for executives").
+    audience: parsed.audience ?? undefined,
     tone: request.style ?? request.mood,
     outputFormat: parsed.outputFormat ?? undefined,
     reasoningDepth: parsed.reasoningDepth ?? undefined,

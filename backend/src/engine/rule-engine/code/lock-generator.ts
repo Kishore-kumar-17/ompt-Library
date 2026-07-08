@@ -4,12 +4,13 @@
 
 import type { CodeLockValues, CodeCategory } from "./types.js"
 import { CATEGORY_DEFAULTS } from "./dictionaries.js"
-import { buildBoundaryLock, buildAcceptanceLock, buildConventionLock } from "./templates/bugfix.js"
+import { buildBoundaryLock, buildAcceptanceLock, buildConventionLock } from "./templates/shared.js"
 
 export function generateCodeLocks(
   category: CodeCategory,
   convention: string,
-  overrides: Partial<CodeLockValues> = {}
+  overrides: Partial<CodeLockValues> = {},
+  isAgentic = false
 ): { boundary: string; acceptance: string; convention: string } {
   const d = CATEGORY_DEFAULTS[category] ?? CATEGORY_DEFAULTS.bugfix
 
@@ -21,7 +22,7 @@ export function generateCodeLocks(
   }
 
   return {
-    boundary:   buildBoundaryLock(v.boundaryInclude, v.boundaryExclude),
+    boundary:   buildBoundaryLock(v.boundaryInclude, v.boundaryExclude, isAgentic),
     acceptance: buildAcceptanceLock(v.acceptance),
     convention: buildConventionLock(v.convention),
   }

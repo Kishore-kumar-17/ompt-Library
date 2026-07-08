@@ -34,6 +34,24 @@ export const LIGHTING_ATMOSPHERE: Record<string, string> = {
   "studio soft":    "even soft studio-style illumination, neutral color temperature, minimal shadow, controlled and consistent across the clip",
 }
 
+export const SUBJECT: Record<string, string> = {
+  "man":              "an adult man, average athletic build, naturalistic upright posture, moves with a steady deliberate gait and confident weight transfer between steps",
+  "woman":            "an adult woman, naturalistic upright posture, moves with a steady deliberate gait and confident weight transfer between steps",
+  "child":            "a young child, light quick-footed movement, unselfconscious natural body language, shorter stride length and higher energy motion than an adult",
+  "elderly person":   "an elderly person, careful measured gait, deliberate weight-supported movement, natural age-appropriate posture and reduced pace",
+  "crowd":            "a crowd of people, natural asynchronous individual movement within the group, believable density and flow between bodies, no repeating or cloned figures",
+  "athlete":          "a professional athlete mid-performance, explosive controlled movement, visible muscular effort, correct sport-specific biomechanics and follow-through",
+  "dog":              "a dog, natural quadrupedal gait, tail and ear movement responsive to the environment, believable weight shift through the shoulders and hips",
+  "cat":              "a cat, fluid low-slung quadrupedal movement, natural feline caution punctuated by sudden bursts of speed, tail used as a counterbalance",
+  "bird":             "a bird, natural wingbeat rhythm in flight or subtle perch-balance micro-movements when still, believable aerodynamic banking through turns",
+  "horse":            "a horse, natural equine gait — walk, trot, canter or gallop — with correctly sequenced leg movement and responsive mane/tail motion",
+  "car":              "a car, consistent suspension travel and body roll through corners, wheels rotating at a speed matched to the vehicle's actual ground speed",
+  "motorcycle":       "a motorcycle with rider, natural lean angle through turns, consistent wheel rotation speed, rider body-English matching the bike's motion",
+  "drone":            "a small consumer drone, stable hover with subtle prop-wash micro-vibration, smooth directional thrust transitions with no sudden snaps",
+  "robot":            "a robot or android figure, mechanically precise joint articulation, consistent servo-driven motion speed, no organic overshoot or human-like hesitation",
+  "object":           "an inanimate object, no self-generated motion — all movement in frame comes from the camera path or an external rotation/reveal mechanism",
+}
+
 export const ACTION: Record<string, string> = {
   "walking":        "walking at a natural human pace, steady rhythmic gait, weight shifting naturally between steps",
   "running":        "running at a dynamic athletic pace, visible effort and momentum, natural arm-leg counter-movement",
@@ -69,6 +87,48 @@ export const COLOR_GRADE: Record<string, string> = {
   "high contrast noir": "high-contrast black-and-white or near-monochrome grade, deep crushed blacks, punchy specular highlights",
   "pastel dreamlike": "soft pastel grade, lifted blacks, low contrast, gentle desaturated color palette with a dreamlike quality",
   "natural neutral": "natural neutral grade, accurate color reproduction, balanced contrast, minimal stylization",
+}
+
+// ─── Numeric camera specs ─────────────────────────────────────────────────────
+// Adds real numeric precision (focal length, degrees of movement, travel
+// distance) to the qualitative CAMERA_MOVE descriptions above, mirroring the
+// image engine's lens/aperture/ISO precision in its CAMERA dictionary.
+
+export interface CameraMoveNumeric {
+  focalLength: string
+  degrees?: number
+  travel?: string
+}
+
+export const CAMERA_MOVE_NUMERICS: Record<string, CameraMoveNumeric> = {
+  "dolly in":    { focalLength: "35mm-equivalent tightening to 50mm-equivalent field of view", travel: "1.5-2m dolly travel" },
+  "dolly out":   { focalLength: "50mm-equivalent opening to 24mm-equivalent field of view", travel: "1.5-2m dolly travel" },
+  "truck left":  { focalLength: "35mm-equivalent", travel: "2-3m lateral travel" },
+  "truck right": { focalLength: "35mm-equivalent", travel: "2-3m lateral travel" },
+  "pan":         { focalLength: "35mm-equivalent", degrees: 45 },
+  "tilt up":     { focalLength: "24mm-equivalent", degrees: 30 },
+  "tilt down":   { focalLength: "24mm-equivalent", degrees: 30 },
+  "crane up":    { focalLength: "24mm-equivalent", travel: "2-4m vertical rise" },
+  "crane down":  { focalLength: "24mm-equivalent", travel: "2-4m vertical descent" },
+  "arc":         { focalLength: "50mm-equivalent", degrees: 90 },
+  "orbit":       { focalLength: "50mm-equivalent", degrees: 360 },
+  "static":      { focalLength: "35mm-equivalent" },
+  "handheld":    { focalLength: "28mm-equivalent" },
+  "steadicam":   { focalLength: "35mm-equivalent" },
+  "push in":     { focalLength: "50mm-equivalent tightening to 85mm-equivalent field of view", travel: "1-1.5m push" },
+  "pull out":    { focalLength: "85mm-equivalent opening to 50mm-equivalent field of view", travel: "1-1.5m pull" },
+  "whip pan":    { focalLength: "35mm-equivalent", degrees: 120 },
+}
+
+// Typical native output frame rate per platform — used to give the CAMERA
+// lock real per-platform numeric grounding instead of a generic "smooth".
+export const PLATFORM_FPS: Record<string, number> = {
+  kling:  30,
+  sora:   24,
+  runway: 24,
+  pika:   24,
+  luma:   24,
+  veo:    24,
 }
 
 // ─── Category defaults ────────────────────────────────────────────────────────

@@ -4,7 +4,7 @@
 
 import type { VideoBuildRequest, VideoRuleEngineResult } from "./types.js"
 import { NEGATIVE_LOCKS, CATEGORY_DEFAULTS } from "./dictionaries.js"
-import { expandCameraMove, expandLighting, expandAction, expandSetting, expandColorGrade } from "./context-expander.js"
+import { expandCameraMove, expandLighting, expandAction, expandSetting, expandColorGrade, expandSubject, getCameraNumericSpec } from "./context-expander.js"
 import { generateVideoLocks } from "./lock-generator.js"
 import {
   buildSubjectSection, buildActionSection, buildSettingSection, buildCameraSection,
@@ -21,12 +21,20 @@ export function buildVideoFromRules(req: VideoBuildRequest): VideoRuleEngineResu
   const cat = req.category ?? "narrative"
   const defaults = CATEGORY_DEFAULTS[cat] ?? CATEGORY_DEFAULTS.narrative
 
-  const subjectExp  = req.subject ?? "the subject"
-  const actionExp   = expandAction(req.action ?? null)          ?? req.action ?? "moving naturally within the frame"
-  const settingExp  = expandSetting(req.setting ?? null)        ?? req.setting ?? "a clearly defined environment"
-  const cameraExp   = expandCameraMove(req.cameraMove ?? null)  ?? expandCameraMove(defaults.cameraMove) ?? defaults.cameraMove
-  const lightingExp = expandLighting(req.lighting ?? null)      ?? expandLighting(defaults.lighting) ?? defaults.lighting
-  const gradeExp    = expandColorGrade(req.colorGrade ?? null)  ?? expandColorGrade("natural neutral") ?? "natural neutral grade"
+  const subjectRaw    = req.subject ?? "the subject"
+  const subjectExp    = expandSubject(subjectRaw) ?? subjectRaw
+  // Short anchor form (first clause) for repeated use inside LOCKS text —
+  // keeps lock sentences readable even when the SUBJECT dictionary expands
+  // subjectRaw into a full descriptive clause.
+  const subjectAnchor = subjectExp.split(",")[0].trim() || subjectExp
+  const actionExp     = expandAction(req.action ?? null)          ?? req.action ?? "moving naturally within the frame"
+  const settingExp    = expandSetting(req.setting ?? null)        ?? req.setting ?? "a clearly defined environment"
+  const resolvedCameraMove = req.cameraMove ?? defaults.cameraMove
+  const cameraSpec    = getCameraNumericSpec(resolvedCameraMove, req.platform)
+  const cameraExpBase = expandCameraMove(resolvedCameraMove) ?? defaults.cameraMove
+  const cameraExp     = cameraSpec ? `${cameraExpBase}, ${cameraSpec}` : cameraExpBase
+  const lightingExp   = expandLighting(req.lighting ?? null)      ?? expandLighting(defaults.lighting) ?? defaults.lighting
+  const gradeExp      = expandColorGrade(req.colorGrade ?? null)  ?? expandColorGrade("natural neutral") ?? "natural neutral grade"
 
   const sections: string[] = [buildSubjectSection(subjectExp)]
 
@@ -45,11 +53,15 @@ export function buildVideoFromRules(req: VideoBuildRequest): VideoRuleEngineResu
   const negatives = NEGATIVE_LOCKS[cat] ?? NEGATIVE_LOCKS.narrative
   sections.push(buildExcludeSection(negatives))
 
-  const locks = generateVideoLocks(cat, subjectExp)
+  const locks = generateVideoLocks(cat, subjectAnchor, {
+    action: req.action ?? null,
+    setting: req.setting ?? null,
+    cameraMove: req.cameraMove ?? null,
+  })
   sections.push(locks.motion)
   sections.push(locks.camera)
   sections.push(locks.temporal)
-  if (cat === "narrative" || cat === "action") sections.push(locks.continuity)
+  sections.push(locks.continuity)
 
   if (req.extraNotes?.trim()) sections.push(`NOTES: ${req.extraNotes.trim()}`)
 

@@ -4,16 +4,17 @@
 
 import type { TextBuildRequest, TextRuleEngineResult } from "./types.js"
 import { ANTI_PATTERNS, CATEGORY_DEFAULTS } from "./dictionaries.js"
-import { expandRole, expandOutputFormat, expandTone, expandReasoningDepth } from "./context-expander.js"
+import { expandRole, expandOutputFormat, expandTone, expandReasoningDepth, expandAudience } from "./context-expander.js"
 import { generateTextLocks } from "./lock-generator.js"
 import {
   buildRoleSection, buildTaskSection, buildAudienceToneSection,
   buildOutputFormatSection, buildReasoningSection, buildAvoidSection,
+  buildQaQuestionTypeSection, detectQaMode, buildFewShotSection,
 } from "./templates/qa.js"
 import { buildCreativeConstraints } from "./templates/creative.js"
 import { buildAnalysisScopeDimensions } from "./templates/analysis.js"
 import { buildSourceHandlingSection } from "./templates/summarization.js"
-import { buildMappingSection } from "./templates/transformation.js"
+import { buildMappingSection, detectTransformationMode } from "./templates/transformation.js"
 import { formatForTextPlatform } from "./formatter.js"
 import { scoreTextPrompt } from "./validator.js"
 
@@ -21,26 +22,32 @@ export function buildTextFromRules(req: TextBuildRequest): TextRuleEngineResult 
   const cat = req.category ?? "qa"
   const defaults = CATEGORY_DEFAULTS[cat] ?? CATEGORY_DEFAULTS.qa
 
-  const taskExp    = req.task ?? "complete the requested task"
-  const roleExp    = expandRole(defaults.role) ?? defaults.role
-  const toneExp    = expandTone(req.tone ?? null) ?? expandTone(defaults.tone) ?? defaults.tone
-  const formatExp  = expandOutputFormat(req.outputFormat ?? null) ?? expandOutputFormat(defaults.outputFormat) ?? defaults.outputFormat
-  const depthExp   = expandReasoningDepth(req.reasoningDepth ?? null) ?? expandReasoningDepth(defaults.reasoningDepth) ?? defaults.reasoningDepth
+  const taskExp     = req.task ?? "complete the requested task"
+  const roleExp     = expandRole(defaults.role) ?? defaults.role
+  const toneExp     = expandTone(req.tone ?? null) ?? expandTone(defaults.tone) ?? defaults.tone
+  const formatExp   = expandOutputFormat(req.outputFormat ?? null) ?? expandOutputFormat(defaults.outputFormat) ?? defaults.outputFormat
+  const depthExp    = expandReasoningDepth(req.reasoningDepth ?? null) ?? expandReasoningDepth(defaults.reasoningDepth) ?? defaults.reasoningDepth
+  const audienceExp = expandAudience(req.audience ?? null)
 
   const sections: string[] = [buildRoleSection(roleExp), buildTaskSection(taskExp)]
 
-  if (cat === "creative")       sections.push(buildCreativeConstraints())
-  if (cat === "analysis")       sections.push(buildAnalysisScopeDimensions())
-  if (cat === "summarization")  sections.push(buildSourceHandlingSection())
-  if (cat === "transformation") sections.push(buildMappingSection())
+  if (cat === "qa")             sections.push(buildQaQuestionTypeSection(taskExp))
+  if (cat === "creative")       sections.push(buildCreativeConstraints(taskExp))
+  if (cat === "analysis")       sections.push(buildAnalysisScopeDimensions(taskExp))
+  if (cat === "summarization")  sections.push(buildSourceHandlingSection(taskExp))
+  if (cat === "transformation") sections.push(buildMappingSection(taskExp))
 
-  sections.push(buildAudienceToneSection(toneExp))
+  sections.push(buildAudienceToneSection(toneExp, audienceExp))
   sections.push(buildOutputFormatSection(formatExp))
 
   if (cat === "qa" || cat === "analysis") sections.push(buildReasoningSection(depthExp))
 
   const antiPatterns = ANTI_PATTERNS[cat] ?? ANTI_PATTERNS.qa
   sections.push(buildAvoidSection(antiPatterns))
+
+  const fewShotMode = cat === "qa" ? detectQaMode(taskExp) : cat === "transformation" ? detectTransformationMode(taskExp) : null
+  const fewShot = buildFewShotSection(cat, fewShotMode)
+  if (fewShot) sections.push(fewShot)
 
   const locks = generateTextLocks(cat, formatExp, depthExp)
   sections.push(locks.scope)

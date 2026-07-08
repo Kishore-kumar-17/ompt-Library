@@ -2,7 +2,7 @@
 // Expands short terms to rich instruction-engineering descriptions via
 // dictionary lookup. No AI — pure table-driven substitution.
 
-import { ROLE_PERSONA, OUTPUT_FORMAT, TONE, REASONING_DEPTH } from "./dictionaries.js"
+import { ROLE_PERSONA, OUTPUT_FORMAT, TONE, REASONING_DEPTH, AUDIENCE } from "./dictionaries.js"
 
 function lookup(dict: Record<string, string>, term: string | null): string | null {
   if (!term) return null
@@ -28,4 +28,8 @@ export function expandTone(term: string | null): string | null {
 
 export function expandReasoningDepth(term: string | null): string | null {
   return lookup(REASONING_DEPTH, term)
+}
+
+export function expandAudience(term: string | null): string | null {
+  return lookup(AUDIENCE, term)
 }

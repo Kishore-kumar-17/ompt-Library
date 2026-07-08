@@ -12,8 +12,64 @@ const CATEGORY_KEYWORDS: Record<TextCategory, string[]> = {
 }
 
 const OUTPUT_FORMAT_KEYWORDS = ["markdown", "bullet list", "numbered steps", "table", "json", "prose", "code block", "email"]
-const TONE_KEYWORDS = ["formal", "casual", "technical", "eli5", "explain like i'm five", "persuasive", "empathetic", "direct"]
-const REASONING_KEYWORDS = ["quick answer", "step by step", "consider edge cases", "exhaustive", "show working", "show your work"]
+
+// Alias phrase → canonical dictionary key. Several natural phrasings ("explain
+// like i'm five", "show your work") don't literally contain the dict's key
+// ("eli5", "show working"), so a plain substring match against the dict never
+// resolves them — map every alias to its canonical key here instead, and have
+// findAliasMatch() return the canonical key so context-expander's dictionary
+// lookups always hit.
+const TONE_KEYWORDS: Record<string, string> = {
+  "formal":     "formal",
+  "casual":     "casual",
+  "technical":  "technical",
+  "eli5":       "eli5",
+  "explain like i'm five": "eli5",
+  "explain like i am five": "eli5",
+  "persuasive": "persuasive",
+  "empathetic": "empathetic",
+  "direct":     "direct",
+}
+const REASONING_KEYWORDS: Record<string, string> = {
+  "quick answer":        "quick answer",
+  "step by step":        "step by step",
+  "consider edge cases": "consider edge cases",
+  "exhaustive":          "exhaustive",
+  "show working":        "show working",
+  "show your work":      "show working",
+}
+const AUDIENCE_KEYWORDS: Record<string, string> = {
+  "for a beginner":        "beginner",
+  "for beginners":         "beginner",
+  "beginners":             "beginner",
+  "novice":                "beginner",
+  "for an expert":         "expert",
+  "for experts":           "expert",
+  "expert audience":       "expert",
+  "for a 5-year-old":      "child",
+  "for a 5 year old":      "child",
+  "like i'm five":         "child",
+  "like i am five":        "child",
+  "for a child":           "child",
+  "for kids":              "child",
+  "for children":          "child",
+  "for executives":        "executive",
+  "for an executive":      "executive",
+  "for the board":         "executive",
+  "c-suite":               "executive",
+  "for a general audience": "general",
+  "general audience":      "general",
+  "layperson":             "general",
+  "laypeople":             "general",
+  "for students":          "student",
+  "for a student":         "student",
+  "classroom":             "student",
+  "technical audience":    "technical",
+  "non-technical audience": "non-technical",
+  "non technical audience": "non-technical",
+  "for professionals":     "professional",
+  "for practitioners":     "professional",
+}
 
 function detectCategory(text: string): TextCategory {
   const lower = text.toLowerCase()
@@ -31,6 +87,18 @@ function findFirstMatch(text: string, keywords: string[]): string | null {
   const lower = text.toLowerCase()
   for (const kw of keywords) {
     if (lower.includes(kw)) return kw
+  }
+  return null
+}
+
+// Like findFirstMatch, but for alias maps (phrase → canonical dict key).
+// Longer phrases are checked first so a specific alias ("for a 5-year-old")
+// wins over a shorter one that might also incidentally match.
+function findAliasMatch(text: string, aliasMap: Record<string, string>): string | null {
+  const lower = text.toLowerCase()
+  const phrases = Object.keys(aliasMap).sort((a, b) => b.length - a.length)
+  for (const phrase of phrases) {
+    if (lower.includes(phrase)) return aliasMap[phrase]
   }
   return null
 }
@@ -53,10 +121,10 @@ export function parseTextPrompt(raw: string): ParsedTextPrompt {
   const parsed: ParsedTextPrompt = {
     detectedCategory: category,
     task:           raw.trim().length > 3 ? raw.trim() : null,
-    audience:       null,
-    tone:           findFirstMatch(raw, TONE_KEYWORDS),
+    audience:       findAliasMatch(raw, AUDIENCE_KEYWORDS),
+    tone:           findAliasMatch(raw, TONE_KEYWORDS),
     outputFormat:   findFirstMatch(raw, OUTPUT_FORMAT_KEYWORDS),
-    reasoningDepth: findFirstMatch(raw, REASONING_KEYWORDS),
+    reasoningDepth: findAliasMatch(raw, REASONING_KEYWORDS),
     missingComponents: [],
     originalWords: words,
   }

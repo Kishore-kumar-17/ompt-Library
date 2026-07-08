@@ -98,6 +98,14 @@ Transform the weak prompt into a structured, production-ready content brief with
 - Target audience and tone
 - Structure and format
 - Key messages and constraints`,
+    website: `You are an expert AI website-builder prompt engineer (Lovable, Bolt, v0, and similar full-app-generation tools).
+Transform the weak prompt into a structured, production-ready website spec with:
+- Role framing (a senior product/conversion designer persona specializing in the site's domain)
+- Application overview: core pages/areas, primary and secondary conversion goals
+- Brand voice & mood, including a one-word "vibe" descriptor
+- Numbered core features/functionality per page
+- Design specifications: color mode + full hex palette, typography scale, spacing/radius system, responsive breakpoints, accessibility target
+- Content/copy guidance, technical/stack expectations, and what NOT to build`,
   };
 
   return `${baseRules[family]}

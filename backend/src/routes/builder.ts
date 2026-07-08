@@ -4,9 +4,75 @@ import { promptEngineBuilder } from "../engine/engines/prompt-engine-builder.js"
 import { PLATFORM_KNOWLEDGE } from "../engine/rag/knowledge.js";
 import { getRAGFileList } from "../engine/rag/loader.js";
 import { optionalAuth, engineRateLimit } from "../middleware/rateLimit.js";
-import type { BuildPromptRequest } from "../engine/contracts.js";
+import type { BuildPromptRequest, PromptMode } from "../engine/contracts.js";
 
 const router = new Hono();
+
+// The frontend builder page (Builder.tsx) posts its own shape — `idea` + `family`
+// plus a grab-bag of enrichment fields — rather than the public contract's
+// `input` + `mode`. Normalize here so contracts.ts stays the frozen public API
+// and the frontend doesn't need to change.
+interface FrontendBuildPayload {
+  input?: string;
+  mode?: PromptMode;
+  idea?: string;
+  family?: string;
+  platform?: string;
+  style?: string;
+  mood?: string;
+  aspect?: string;
+  category?: string;
+  subCategory?: string;
+  audience?: string;
+  palette?: string;
+  pages?: string[];
+  duration?: string;
+  cameraMovement?: string;
+  pacing?: string;
+  soundDesign?: string;
+  options?: BuildPromptRequest["options"];
+}
+
+const VALID_MODES: PromptMode[] = ["image", "video", "text", "code", "website"];
+
+function normalizeBuildRequest(body: FrontendBuildPayload): BuildPromptRequest | { error: string } {
+  const rawInput = body.input ?? body.idea;
+  if (!rawInput?.trim()) return { error: "input is required" };
+
+  const mode = body.mode ?? (body.family as PromptMode | undefined);
+  if (!mode) return { error: "mode is required" };
+  if (!VALID_MODES.includes(mode)) {
+    return { error: `mode "${mode}" is not supported yet. Valid modes: ${VALID_MODES.join(", ")}` };
+  }
+
+  if (!body.platform) return { error: "platform is required" };
+
+  // Fold the frontend's enrichment fields into the idea text so they aren't
+  // silently dropped — the pipeline only reads BuildPromptRequest.input.
+  const hints = [
+    body.style && `style: ${body.style}`,
+    body.mood && `mood: ${body.mood}`,
+    body.aspect && `aspect ratio: ${body.aspect}`,
+    body.category && `category: ${body.category}`,
+    body.subCategory && `sub-category: ${body.subCategory}`,
+    body.audience && `audience: ${body.audience}`,
+    body.palette && `palette: ${body.palette}`,
+    body.pages?.length && `pages: ${body.pages.join(", ")}`,
+    body.duration && `duration: ${body.duration}`,
+    body.cameraMovement && `camera movement: ${body.cameraMovement}`,
+    body.pacing && `pacing: ${body.pacing}`,
+    body.soundDesign && `sound design: ${body.soundDesign}`,
+  ].filter(Boolean) as string[];
+  const input = hints.length ? `${rawInput.trim()} (${hints.join("; ")})` : rawInput.trim();
+
+  return {
+    platform: body.platform as BuildPromptRequest["platform"],
+    mode,
+    input,
+    category: body.category,
+    options: body.options,
+  };
+}
 
 // ─── POST /generate — single platform ─────────────────────────────────────────
 router.post(
@@ -14,24 +80,35 @@ router.post(
   optionalAuth,
   engineRateLimit("build"),
   async (c) => {
-    const body = await c.req.json<BuildPromptRequest>();
-
-    if (!body.input?.trim()) {
-      return c.json({ error: "input is required" }, 400);
+    const rawBody = await c.req.json<FrontendBuildPayload>();
+    const normalized = normalizeBuildRequest(rawBody);
+    if ("error" in normalized) {
+      return c.json({ error: normalized.error }, 400);
     }
-    if (!body.mode) {
-      return c.json({ error: "mode is required" }, 400);
-    }
-    if (!body.platform) {
-      return c.json({ error: "platform is required" }, 400);
-    }
+    const body = normalized;
 
     const user = c.get("user") as { sub: string } | undefined;
     const userId = user?.sub ?? null;
 
     try {
       const result = await buildPrompt(body, userId);
-      return c.json(result);
+      // The pipeline engine has no lock-layer/variable concept (that belonged to
+      // the retired lock-engine) — send safe empty defaults so the frontend's
+      // LockLayerPanel/VariablePanel (which assume these arrays always exist)
+      // don't crash on undefined.
+      return c.json({
+        prompt: result.prompt,
+        platform: result.metadata.platform,
+        family: body.mode,
+        tokensUsed: 0,
+        categoryId: null,
+        categoryLabel: null,
+        lockSection: [],
+        negativeLocks: [],
+        variables: [],
+        validation: null,
+        finalAssembledText: result.prompt,
+      });
     } catch (err: any) {
       console.error("Builder error:", err?.message ?? err);
       return c.json({ error: err?.message ?? "AI generation failed. Please try again." }, 500);

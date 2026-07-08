@@ -44,9 +44,24 @@ export type CodePlatform =
   | "copilot"
   | "cursor";
 
-export type Platform = TextPlatform | ImagePlatform | VideoPlatform | CodePlatform;
+// Website-builder-context platform identifiers — a distinct namespace from
+// CodePlatform even though a few names overlap ("cursor", and TextPlatform's/
+// ImagePlatform's "chatgpt"/"gemini"/"grok"/"claude"): these mean "generate a
+// prompt aimed at this platform's website-building mode", not its code or
+// text mode.
+export type WebsitePlatform =
+  | "lovable"
+  | "bolt"
+  | "v0"
+  | "cursor"
+  | "chatgpt"
+  | "claude"
+  | "gemini"
+  | "grok";
 
-export type PromptMode = "image" | "video" | "text" | "code";
+export type Platform = TextPlatform | ImagePlatform | VideoPlatform | CodePlatform | WebsitePlatform;
+
+export type PromptMode = "image" | "video" | "text" | "code" | "website";
 
 // ─── Builder API ──────────────────────────────────────────────────────────────
 
@@ -54,6 +69,10 @@ export interface BuildPromptRequest {
   platform: Platform;
   mode: PromptMode;
   input: string;
+  // Optional explicit category (e.g. a UI category selector). When present
+  // and valid for the platform's family, this should be honored over
+  // keyword auto-detection from `input` — see rule-engine/*-bridge.ts.
+  category?: string;
   options?: {
     quality?: "fast" | "balanced" | "premium";
     creativity?: number;          // 0–1, default 0.5

@@ -56,15 +56,19 @@ function formatSora(raw: string): string {
 }
 
 function formatRunway(raw: string): string {
-  const subject = extractValue(raw, "SUBJECT")
-  const action  = extractValue(raw, "ACTION")
-  const camera  = extractValue(raw, "CAMERA")
-  const grade   = extractValue(raw, "COLOR GRADE")
-  const locks   = raw.match(/(\*\*LOCKS.*?)(?=\n\n|\*\*LOCKS|$)/gis)?.join("\n") ?? ""
+  const subject  = extractValue(raw, "SUBJECT")
+  const action   = extractValue(raw, "ACTION")
+  const setting  = extractValue(raw, "SETTING")
+  const camera   = extractValue(raw, "CAMERA")
+  const lighting = extractValue(raw, "LIGHTING")
+  const grade    = extractValue(raw, "COLOR GRADE")
+  const locks    = raw.match(/(\*\*LOCKS.*?)(?=\n\n|\*\*LOCKS|$)/gis)?.join("\n") ?? ""
 
   return [
     action ? `${subject}. ${action}` : `${subject}.`,
+    setting  ? `Setting: ${setting}.` : "",
     `Camera movement: ${camera}.`,
+    lighting ? `Lighting: ${lighting}.` : "",
     grade ? `Color grade: ${grade}.` : "",
     "",
     locks,

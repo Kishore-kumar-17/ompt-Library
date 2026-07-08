@@ -10,6 +10,7 @@ import { buildGenericFallback } from "../rule-engine/generic-fallback.js";
 import { buildVideoFallback } from "../rule-engine/video-bridge.js";
 import { buildTextFallback } from "../rule-engine/text-bridge.js";
 import { buildCodeFallback } from "../rule-engine/code-bridge.js";
+import { buildWebsiteFallback } from "../rule-engine/website-bridge.js";
 import type { PlatformKey } from "../rule-engine/types.js";
 import { PromptPipeline } from "../pipeline/index.js";
 import { getAIService } from "../ai/service.js";
@@ -42,7 +43,7 @@ function createBuildPipeline(): PromptPipeline {
 // ─── Request / response mapping ───────────────────────────────────────────────
 
 function toInternalRequest(r: BuildPromptRequest): BuildRequest {
-  return { idea: r.input, family: r.mode, platform: r.platform };
+  return { idea: r.input, family: r.mode, platform: r.platform, category: r.category };
 }
 
 function toPublicResponse(result: BuildResult, platform: string): BuildPromptResponse {
@@ -79,6 +80,9 @@ function ruleEngineFallback(request: BuildRequest): BuildResult {
   }
   if (request.family === "code") {
     return buildCodeFallback(request);
+  }
+  if (request.family === "website") {
+    return buildWebsiteFallback(request);
   }
   if (request.family !== "image") {
     return buildGenericFallback(request);
@@ -122,6 +126,17 @@ export async function buildPrompt(
 
   // Use rule engine when no valid API key is configured
   if (!hasApiKey()) {
+    return toPublicResponse(ruleEngineFallback(internal), request.platform);
+  }
+
+  // The AI pipeline (platformRegistry, CategoryDetectorStage, etc.) has no
+  // concept of website-builder platforms yet — several website platform IDs
+  // (chatgpt, claude, gemini, grok) collide with already-registered IMAGE
+  // platform configs, so running website requests through the pipeline
+  // doesn't throw, it silently produces an image-style prompt. Route website
+  // straight to the verified Website Formula v1.0 rule engine until the
+  // pipeline has real website-domain stage support.
+  if (internal.family === "website") {
     return toPublicResponse(ruleEngineFallback(internal), request.platform);
   }
 

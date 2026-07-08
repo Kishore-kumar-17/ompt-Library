@@ -1,16 +1,46 @@
 // ─── Code Validator / Quality Scorer ────────────────────────────────────────────
-// Scores prompts 0–100 based on completeness and section presence.
-// No AI — deterministic rule-based scoring.
+// Scores prompts 0–100 based on completeness and section presence, weighted by
+// what each category actually needs. A "review" prompt has no CONVENTIONS
+// section or LOCKS - CONVENTION lock the way a bugfix/refactor prompt does —
+// scoring it against the full section set every other category needs would
+// structurally cap it below 100 regardless of how good it actually is, so the
+// weights (and which sections even apply) are category-specific.
 
-const SECTION_WEIGHTS: Record<string, number> = {
+import type { CodeCategory } from "./types.js"
+
+const BASE_WEIGHTS: Record<string, number> = {
   TASK:            25,
   "TECH STACK":    12,
   "OUTPUT FORMAT": 18,
-  CONVENTIONS:      8,
   AVOID:            7,
   "LOCKS - BOUNDARY":   10,
   "LOCKS - ACCEPTANCE": 10,
-  "LOCKS - CONVENTION":  5,
+}
+
+// Every category has exactly one of these category-specific "extra" sections
+// (REPRO / ACCEPTANCE CRITERIA / NON-GOALS / FOCUS AREAS / COVERAGE TARGET).
+const CATEGORY_EXTRA_SECTION: Record<CodeCategory, string> = {
+  bugfix:   "REPRO",
+  feature:  "ACCEPTANCE CRITERIA",
+  refactor: "NON-GOALS",
+  review:   "FOCUS AREAS",
+  test:     "COVERAGE TARGET",
+}
+
+// Categories that don't use a CONVENTIONS section / LOCKS - CONVENTION lock —
+// "review" produces findings about someone else's code, not new conforming
+// code, so there's nothing to "match existing conventions" against.
+const CATEGORIES_WITHOUT_CONVENTION = new Set<CodeCategory>(["review"])
+
+function getSectionWeights(category?: CodeCategory): Record<string, number> {
+  const weights: Record<string, number> = { ...BASE_WEIGHTS }
+  weights[CATEGORY_EXTRA_SECTION[category ?? "feature"]] = 12
+
+  if (!category || !CATEGORIES_WITHOUT_CONVENTION.has(category)) {
+    weights.CONVENTIONS = 8
+    weights["LOCKS - CONVENTION"] = 5
+  }
+  return weights
 }
 
 function detectSection(prompt: string, section: string): boolean {
@@ -20,10 +50,11 @@ function detectSection(prompt: string, section: string): boolean {
   return lower.includes(`${sec}:`) || lower.includes(`${sec} `) || lower.includes(`${sec}\n`)
 }
 
-export function scoreCodePrompt(prompt: string): number {
+export function scoreCodePrompt(prompt: string, category?: CodeCategory): number {
+  const weights = getSectionWeights(category)
   let total = 0
   let earned = 0
-  for (const [section, weight] of Object.entries(SECTION_WEIGHTS)) {
+  for (const [section, weight] of Object.entries(weights)) {
     total += weight
     if (detectSection(prompt, section)) earned += weight
   }
@@ -34,6 +65,7 @@ export function scoreCodePrompt(prompt: string): number {
   return Math.min(100, Math.max(0, raw))
 }
 
-export function getMissingCodeSections(prompt: string): string[] {
-  return Object.keys(SECTION_WEIGHTS).filter((section) => !detectSection(prompt, section))
+export function getMissingCodeSections(prompt: string, category?: CodeCategory): string[] {
+  const weights = getSectionWeights(category)
+  return Object.keys(weights).filter((section) => !detectSection(prompt, section))
 }

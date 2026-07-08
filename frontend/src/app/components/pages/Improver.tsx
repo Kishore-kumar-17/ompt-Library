@@ -200,7 +200,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
             </div>
           )}
 
-          <div className={`flex-1 rounded-xl border p-4 min-h-[340px] relative transition-all ${
+          <div className={`flex-1 rounded-xl border p-4 min-h-[340px] shrink-0 relative transition-all ${
             result ? "bg-[#fafafa] border-[#0a0a0a]/15" : "bg-[#f5f5f5] border-[#0a0a0a]/10"
           }`}>
             {loading ? (

@@ -11,8 +11,16 @@ const CATEGORY_KEYWORDS: Record<CodeCategory, string[]> = {
   test:     ["test", "write tests", "unit test", "coverage", "spec for", "test cases"],
 }
 
-const TECH_STACK_KEYWORDS = ["react", "vue", "node", "typescript", "python", "go", "rust", "django", "express", "next.js"]
-const OUTPUT_FORMAT_KEYWORDS = ["diff only", "full file", "explanation included", "tests included", "inline comments"]
+const TECH_STACK_KEYWORDS = [
+  "react", "vue", "angular", "svelte", "node", "deno", "typescript", "javascript",
+  "python", "django", "flask", "fastapi", "go", "rust", "java", "spring", "kotlin",
+  "c#", "ruby", "rails", "php", "laravel", "swift", "c++", "express", "next.js",
+  "nuxt", "remix", "nestjs", "postgresql",
+]
+const OUTPUT_FORMAT_KEYWORDS = [
+  "diff only", "full file", "explanation included", "tests included", "inline comments",
+  "commit message", "pr description", "patch file",
+]
 
 function detectCategory(text: string): CodeCategory {
   const lower = text.toLowerCase()

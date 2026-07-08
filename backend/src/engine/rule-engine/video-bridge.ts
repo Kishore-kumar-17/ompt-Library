@@ -11,9 +11,11 @@ import {
   improveVideoWithRules,
   parseVideoPrompt,
   type VideoPlatformKey,
+  type VideoCategory,
 } from "./video/index.js";
 
 const VALID_VIDEO_PLATFORMS: VideoPlatformKey[] = ["kling", "sora", "runway", "pika", "luma", "veo"];
+const VALID_VIDEO_CATEGORIES: VideoCategory[] = ["narrative", "product", "nature", "action", "abstract"];
 
 function resolveVideoPlatform(platform: string): VideoPlatformKey {
   return VALID_VIDEO_PLATFORMS.includes(platform as VideoPlatformKey)
@@ -34,9 +36,16 @@ export function buildVideoFallback(request: BuildRequest): BuildResult {
   // it through the same parser the improver uses to recover category/setting/
   // camera/lighting hints before assembling.
   const parsed = parseVideoPrompt(request.idea);
+  // Prefer the caller's explicit category (e.g. a UI category selector) over
+  // keyword auto-detection — auto-detection is only a fallback for freeform
+  // ideas with no explicit selection, not something that should silently
+  // override a real user choice.
+  const category = VALID_VIDEO_CATEGORIES.includes(request.category as VideoCategory)
+    ? (request.category as VideoCategory)
+    : parsed.detectedCategory;
 
   const result = buildVideoFromRules({
-    category: parsed.detectedCategory,
+    category,
     subject: parsed.subject ?? request.idea,
     action: request.idea,
     setting: parsed.setting ?? undefined,

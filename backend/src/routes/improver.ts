@@ -24,7 +24,25 @@ router.post(
 
     try {
       const result = await improvePrompt(body, userId);
-      return c.json(result);
+      // Same shape adaptation as routes/builder.ts: the frontend expects a
+      // richer object (changes as {label, applied}, platform/family/tokensUsed,
+      // plus lock-layer fields the retired lock-engine used to produce) than
+      // the frozen public contract returns.
+      return c.json({
+        original: result.original,
+        improved: result.improved,
+        changes: result.improvements.map((label) => ({ label, applied: true })),
+        platform: body.platform,
+        family: (body as { family?: string }).family ?? "image",
+        tokensUsed: 0,
+        categoryId: null,
+        categoryLabel: null,
+        lockSection: [],
+        negativeLocks: [],
+        variables: [],
+        validation: null,
+        finalAssembledText: result.improved,
+      });
     } catch (err: any) {
       console.error("Improver error:", err?.message ?? err);
       return c.json({ error: err?.message ?? "AI improvement failed. Please try again." }, 500);

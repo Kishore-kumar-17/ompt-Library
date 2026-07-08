@@ -1,6 +1,6 @@
 // ─── Families ─────────────────────────────────────────────────────────────────
 
-export type Family = "image" | "video" | "text" | "code" | "content";
+export type Family = "image" | "video" | "text" | "code" | "content" | "website";
 
 // ─── Prompt Components ────────────────────────────────────────────────────────
 

@@ -10,9 +10,11 @@ import {
   improveCodeWithRules,
   parseCodePrompt,
   type CodePlatformKey,
+  type CodeCategory,
 } from "./code/index.js";
 
 const VALID_CODE_PLATFORMS: CodePlatformKey[] = ["claude-code", "cursor", "copilot", "chatgpt-code", "gemini-code"];
+const VALID_CODE_CATEGORIES: CodeCategory[] = ["bugfix", "feature", "refactor", "review", "test"];
 
 function resolveCodePlatform(platform: string): CodePlatformKey {
   return VALID_CODE_PLATFORMS.includes(platform as CodePlatformKey)
@@ -30,9 +32,14 @@ function toGrade(score: number): ScoreGrade {
 export function buildCodeFallback(request: BuildRequest): BuildResult {
   const platform = resolveCodePlatform(request.platform);
   const parsed = parseCodePrompt(request.idea);
+  // Prefer the caller's explicit category over keyword auto-detection — see
+  // the same fix in video-bridge.ts for the rationale.
+  const category = VALID_CODE_CATEGORIES.includes(request.category as CodeCategory)
+    ? (request.category as CodeCategory)
+    : parsed.detectedCategory;
 
   const result = buildCodeFromRules({
-    category: parsed.detectedCategory,
+    category,
     task: request.idea,
     techStack: parsed.techStack ?? undefined,
     outputFormat: parsed.outputFormat ?? undefined,
