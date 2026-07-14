@@ -1,30 +1,41 @@
-﻿import { useEffect, useState, useRef, useCallback } from "react";
+﻿import { useEffect, useState, useRef, useCallback, lazy, Suspense } from "react";
 import { Toaster } from "sonner";
 import LoadingScreen from "./components/LoadingScreen";
 import { Nav } from "./components/Nav";
 import { Footer } from "./components/Footer";
 import { AuthModal } from "./components/AuthModal";
-import { CommandPalette } from "./components/CommandPalette";
 import { Home } from "./components/pages/Home";
-import { Library, LibraryLanding } from "./components/pages/Library";
-import { Detail } from "./components/pages/Detail";
-import { Builder } from "./components/pages/Builder";
-import { Improver } from "./components/pages/Improver";
-import { Compare } from "./components/pages/Compare";
-import { Dashboard } from "./components/pages/Dashboard";
-import { Profile } from "./components/pages/Profile";
-import { Submit } from "./components/pages/Submit";
-import { AdminImport } from "./components/pages/AdminImport";
-import { AdminImageReview } from "./components/pages/AdminImageReview";
-import { WebsiteDetail } from "./components/pages/WebsiteDetail";
-import { Guide } from "./components/pages/Guide";
-import { Pricing } from "./components/pages/Pricing";
+
+const CommandPalette   = lazy(() => import("./components/CommandPalette").then(m => ({ default: m.CommandPalette })));
+const Library          = lazy(() => import("./components/pages/Library").then(m => ({ default: m.Library })));
+const LibraryLanding   = lazy(() => import("./components/pages/Library").then(m => ({ default: m.LibraryLanding })));
+const Detail           = lazy(() => import("./components/pages/Detail").then(m => ({ default: m.Detail })));
+const Builder          = lazy(() => import("./components/pages/Builder").then(m => ({ default: m.Builder })));
+const Improver         = lazy(() => import("./components/pages/Improver").then(m => ({ default: m.Improver })));
+const Compare          = lazy(() => import("./components/pages/Compare").then(m => ({ default: m.Compare })));
+const Dashboard        = lazy(() => import("./components/pages/Dashboard").then(m => ({ default: m.Dashboard })));
+const Profile          = lazy(() => import("./components/pages/Profile").then(m => ({ default: m.Profile })));
+const Submit           = lazy(() => import("./components/pages/Submit").then(m => ({ default: m.Submit })));
+const AdminImport      = lazy(() => import("./components/pages/AdminImport").then(m => ({ default: m.AdminImport })));
+const AdminImageReview = lazy(() => import("./components/pages/AdminImageReview").then(m => ({ default: m.AdminImageReview })));
+const WebsiteDetail    = lazy(() => import("./components/pages/WebsiteDetail").then(m => ({ default: m.WebsiteDetail })));
+const Guide            = lazy(() => import("./components/pages/Guide").then(m => ({ default: m.Guide })));
+const Pricing          = lazy(() => import("./components/pages/Pricing").then(m => ({ default: m.Pricing })));
+
+function PageFallback() {
+  return (
+    <div className="flex items-center justify-center py-32">
+      <div className="w-6 h-6 rounded-full border-2 border-[#0a0a0a]/10 border-t-[#4FC3F7] animate-spin" />
+    </div>
+  );
+}
 
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [route, setRouteRaw] = useState("home");
   const [authOpen, setAuthOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
+  const [cmdEverOpened, setCmdEverOpened] = useState(false);
   const history = useRef<string[]>(["home"]);
 
   const setRoute = (r: string) => {
@@ -50,6 +61,7 @@ export default function App() {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
+        setCmdEverOpened(true);
         setCmdOpen((v) => !v);
       }
       if (e.key === "Escape") setCmdOpen(false);
@@ -74,25 +86,31 @@ export default function App() {
       {loading && <LoadingScreen onComplete={() => setLoading(false)} />}
       <Nav current={current} onNavigate={setRoute} onAuth={() => setAuthOpen(true)} onBack={goBack} canGoBack={canGoBack} />
       <main>
-        {route === "home"      && <Home go={setRoute} />}
-        {route === "library"   && <LibraryLanding go={setRoute} />}
-        {libraryFamily         && <Library key={route} go={setRoute} family={libraryFamily} initialCategory={libraryInitialCategory} />}
-        {detailId              && <Detail key={detailId} id={detailId} defaultPlatform={detailPlatform} go={setRoute} />}
-        {route === "builder"   && <Builder go={setRoute} />}
-        {route === "improver"  && <Improver go={setRoute} />}
-        {route === "compare"   && <Compare go={setRoute} />}
-        {route === "dashboard" && <Dashboard go={setRoute} />}
-        {route === "profile"   && <Profile go={setRoute} />}
-        {route === "submit"    && <Submit go={setRoute} onAuth={() => setAuthOpen(true)} />}
-        {route === "admin"     && <AdminImport go={setRoute} />}
-        {route === "image-review" && <AdminImageReview />}
-        {websiteSlug && <WebsiteDetail key={websiteSlug} slug={websiteSlug} go={setRoute} />}
-        {(route === "guide" || guideSection) && <Guide key={guideSection ?? "guide"} go={setRoute} initialSection={guideSection ?? undefined} />}
-        {route === "pricing"   && <Pricing go={setRoute} onAuth={() => setAuthOpen(true)} />}
+        {route === "home" && <Home go={setRoute} />}
+        <Suspense fallback={<PageFallback />}>
+          {route === "library"   && <LibraryLanding go={setRoute} />}
+          {libraryFamily         && <Library key={route} go={setRoute} family={libraryFamily} initialCategory={libraryInitialCategory} />}
+          {detailId              && <Detail key={detailId} id={detailId} defaultPlatform={detailPlatform} go={setRoute} />}
+          {route === "builder"   && <Builder go={setRoute} />}
+          {route === "improver"  && <Improver go={setRoute} />}
+          {route === "compare"   && <Compare go={setRoute} />}
+          {route === "dashboard" && <Dashboard go={setRoute} />}
+          {route === "profile"   && <Profile go={setRoute} />}
+          {route === "submit"    && <Submit go={setRoute} onAuth={() => setAuthOpen(true)} />}
+          {route === "admin"     && <AdminImport go={setRoute} />}
+          {route === "image-review" && <AdminImageReview />}
+          {websiteSlug && <WebsiteDetail key={websiteSlug} slug={websiteSlug} go={setRoute} />}
+          {(route === "guide" || guideSection) && <Guide key={guideSection ?? "guide"} go={setRoute} initialSection={guideSection ?? undefined} />}
+          {route === "pricing"   && <Pricing go={setRoute} onAuth={() => setAuthOpen(true)} />}
+        </Suspense>
       </main>
       <Footer go={setRoute} />
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
-      <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} go={setRoute} />
+      {cmdEverOpened && (
+        <Suspense fallback={null}>
+          <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} go={setRoute} />
+        </Suspense>
+      )}
       <Toaster
         position="bottom-right"
         richColors
