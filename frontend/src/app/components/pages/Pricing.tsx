@@ -8,7 +8,7 @@ const plans = [
     price: "₹0",
     period: "forever",
     description: "Explore, copy, and build with the full library.",
-    color: "#bce4d8",
+    color: "#6b7280",
     features: [
       "Browse all public prompts",
       "Copy up to 20 prompts/day",
@@ -43,7 +43,7 @@ const plans = [
   },
   {
     id: "enterprise",
-    icon: <Building2 className="w-5 h-5" />,
+    icon: <Building2 className="w-5 h-5 text-white" />,
     name: "Enterprise",
     price: "Custom",
     period: "contact us",
@@ -65,10 +65,10 @@ const plans = [
 ];
 
 const faqs = [
-  { q: "Can I switch plans?", a: "Yes - upgrade or downgrade any time. Changes take effect at the next billing cycle." },
+  { q: "Can I switch plans?", a: "Yes — upgrade or downgrade any time. Changes take effect at the next billing cycle." },
   { q: "Is the free plan really free?", a: "Yes, forever. No credit card required to sign up." },
   { q: "What counts as a 'copy'?", a: "Every time you copy a prompt text to your clipboard, that counts as one copy." },
-  { q: "Do submitted prompts get reviewed?", a: "Yes - all submissions go through editorial review before going live. Pro users get priority review (usually within 24 hours)." },
+  { q: "Do submitted prompts get reviewed?", a: "Yes — all submissions go through editorial review before going live. Pro users get priority review (usually within 24 hours)." },
 ];
 
 export function Pricing({ go, onAuth }: { go: (p: string) => void; onAuth?: () => void }) {
@@ -76,12 +76,12 @@ export function Pricing({ go, onAuth }: { go: (p: string) => void; onAuth?: () =
     <div className="max-w-[1100px] mx-auto px-6 py-14 text-[#0a0a0a]">
 
       {/* Header */}
+      <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 transition-colors">
+        <ArrowLeft className="w-3.5 h-3.5" /> Back
+      </button>
       <div className="text-center mb-14">
-        <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 mx-auto transition-colors">
-          <ArrowLeft className="w-3.5 h-3.5" /> Back
-        </button>
         <h1 className="text-4xl font-bold mb-3">Simple, <span className="font-extrabold">Honest Pricing</span></h1>
-        <p className="text-[#6b7280] text-lg max-w-xl mx-auto">
+        <p className="text-[#6b7280] text-base md:text-lg max-w-2xl lg:max-w-none mx-auto lg:whitespace-nowrap">
           Start free. Upgrade when you need more. No hidden fees, no lock-in.
         </p>
       </div>
@@ -91,6 +91,8 @@ export function Pricing({ go, onAuth }: { go: (p: string) => void; onAuth?: () =
         {plans.map((plan) => (
           <div
             key={plan.id}
+            role="group"
+            aria-label={`${plan.name} plan`}
             className={`rounded-2xl border-2 p-7 flex flex-col relative ${
               plan.highlighted
                 ? "border-[#0a0a0a] shadow-[6px_6px_0_0_#0a0a0a]"
@@ -121,25 +123,30 @@ export function Pricing({ go, onAuth }: { go: (p: string) => void; onAuth?: () =
 
             <ul className="space-y-2.5 flex-1 mb-7">
               {plan.features.map((f) => (
-                <li key={f} className="flex items-start gap-2 text-[14px]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#4FC3F7] shrink-0 mt-2" />
+                <li key={f} className="flex items-center gap-2 text-[14px]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#4FC3F7] shrink-0" />
                   <span className="text-[#0a0a0a]">{f}</span>
                 </li>
               ))}
             </ul>
 
-            <button
-              onClick={plan.id !== "enterprise" ? () => onAuth?.() : () => { window.location.href = "mailto:inaicommunity@gmail.com"; }}
-              className={`w-full h-11 rounded-full font-bold text-[14px] border-2 border-[#0a0a0a] transition-all hover:shadow-[3px_3px_0_0_#0a0a0a] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] ${
-                plan.highlighted
-                  ? "bg-[#0a0a0a] text-white"
-                  : plan.id === "enterprise"
-                  ? "bg-white text-[#0a0a0a]"
-                  : "bg-[#4FC3F7] text-white"
-              }`}
-            >
-              {plan.cta}
-            </button>
+            {plan.id === "enterprise" ? (
+              <a
+                href="mailto:inaicommunity@gmail.com"
+                className="w-full h-11 rounded-full font-bold text-[14px] border-2 border-[#0a0a0a] transition-all hover:shadow-[3px_3px_0_0_#0a0a0a] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] bg-white text-[#0a0a0a] flex items-center justify-center"
+              >
+                {plan.cta}
+              </a>
+            ) : (
+              <button
+                onClick={() => onAuth?.()}
+                className={`w-full h-11 rounded-full font-bold text-[14px] border-2 border-[#0a0a0a] transition-all hover:shadow-[3px_3px_0_0_#0a0a0a] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] ${
+                  plan.highlighted ? "bg-[#0a0a0a] text-white" : "bg-[#4FC3F7] text-white"
+                }`}
+              >
+                {plan.cta}
+              </button>
+            )}
           </div>
         ))}
       </div>

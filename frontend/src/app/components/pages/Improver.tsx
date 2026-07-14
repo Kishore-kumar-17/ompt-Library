@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Wand2, Copy, Check, RefreshCw, ArrowLeft, Image, Video, FileText, PenTool, Globe } from "lucide-react";
+import { Wand2, Copy, Check, RefreshCw, ArrowLeft, Image, Video, FileText, PenTool, Globe, Save } from "lucide-react";
 import { toast } from "sonner";
 import { platforms, videoPlatforms, websitePlatforms } from "../theme";
-import { improverApi, variablesApi, type ImproverResult } from "../../lib/api";
+import { improverApi, variablesApi, authStore, type ImproverResult } from "../../lib/api";
 import { LockLayerPanel } from "../LockLayerPanel";
 import { VariablePanel } from "../VariablePanel";
 import { applyVariables } from "../../lib/variables";
@@ -58,6 +58,10 @@ export function Improver({ go }: { go: (p: string) => void }) {
   const activePlatforms = getPlatformsForFamily(family);
 
   const variableFields = result?.variables ?? [];
+  // Single source of truth for "the current prompt text" — used for both the
+  // on-screen preview and Copy, so users never copy something they didn't see.
+  const baseText = result ? (result.finalAssembledText || result.improved) : "";
+  const displayText = regenText ?? applyVariables(baseText, vars);
 
   async function handleRegenerate() {
     if (regenerating || !result) return;
@@ -82,7 +86,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
     setRegenText(null);
 
     try {
-      const res = await improverApi.improve({ prompt: input, platform });
+      const res = await improverApi.improve({ prompt: input, platform, family });
       setResult(res);
       // Pre-fill the brief with each variable's default.
       setVars(Object.fromEntries((res.variables ?? []).filter(v => v.default).map(v => [v.name, v.default!])));
@@ -96,21 +100,28 @@ export function Improver({ go }: { go: (p: string) => void }) {
 
   function handleCopy() {
     if (!result?.improved) return;
-    navigator.clipboard?.writeText(regenText ?? applyVariables(result.finalAssembledText || result.improved, vars));
+    navigator.clipboard?.writeText(displayText);
     setCopied(true);
+    toast.success("Prompt copied");
     setTimeout(() => setCopied(false), 2000);
   }
 
-  const appliedCount = result?.changes.filter(c => c.applied).length ?? 0;
+  const changes = result?.changes ?? [];
+  const appliedCount = changes.filter(c => c.applied).length;
 
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-10 text-[#0a0a0a]">
       <div className="mb-8">
-        <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 transition-colors">
-          <ArrowLeft className="w-3.5 h-3.5" /> Back
+        <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-4 transition-colors">
+          <ArrowLeft className="w-3.5 h-3.5" /> Back to Library
         </button>
-        <h1 className="text-3xl font-bold">Prompt <span className="font-extrabold">Improver</span></h1>
-        <p className="text-[#6b7280] mt-1">Paste a weak prompt - AI upgrades it to pro quality with lock blocks, camera rigs, and platform-native formatting.</p>
+        <h1
+          className="text-[#0a0a0a] mb-2"
+          style={{ fontSize: "clamp(28px, 4vw, 40px)", fontWeight: 400, letterSpacing: "-0.03em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+        >
+          Prompt <span style={{ fontWeight: 800 }}>Improver</span>
+        </h1>
+        <p className="text-[#6b7280]" style={{ fontSize: "15px" }}>Paste a weak prompt — AI upgrades it to pro quality with lock blocks, camera rigs, and platform-native formatting.</p>
       </div>
 
       {/* Family selector */}
@@ -122,15 +133,17 @@ export function Improver({ go }: { go: (p: string) => void }) {
           return (
             <button
               key={f.key}
+              disabled={loading}
+              aria-disabled={locked}
               onClick={() => {
-                if (locked) { toast("Coming Soon", { description: `${f.label} prompts will be available soon.` }); return; }
+                if (locked || loading) { if (locked) toast("Coming Soon", { description: `${f.label} prompts will be available soon.` }); return; }
                 setFamily(f.key);
               }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-[13px] transition-all relative ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-[13px] transition-all relative disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4FC3F7] focus-visible:outline-offset-2 ${
                 locked
                   ? "bg-[#0a0a0a]/5 border-[#0a0a0a]/10 text-[#6b7280]/50 cursor-not-allowed"
                   : on
-                  ? "bg-[#4FC3F7] text-white border-[#4FC3F7]"
+                  ? "bg-[#4FC3F7] text-[#0a0a0a] border-[#4FC3F7]"
                   : "bg-white border-[#0a0a0a]/15 text-[#6b7280] hover:border-[#0a0a0a]/30 hover:text-[#0a0a0a]"
               }`}
               style={on && !locked ? { fontWeight: 600 } : {}}
@@ -139,9 +152,9 @@ export function Improver({ go }: { go: (p: string) => void }) {
               <div className="text-left">
                 <div className="flex items-center gap-1.5">
                   {f.label}
-                  {locked && <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#4FC3F7]/15 text-[#4FC3F7]">SOON</span>}
+                  {locked && <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#4FC3F7]/15 text-[#0a0a0a]">SOON</span>}
                 </div>
-                <div className={`text-[10px] ${locked ? "text-[#6b7280]/40" : on ? "text-white/70" : "text-[#6b7280]/60"}`}>{f.desc}</div>
+                <div className={`text-[10px] ${locked ? "text-[#6b7280]/40" : on ? "text-[#0a0a0a]/70" : "text-[#6b7280]/60"}`}>{f.desc}</div>
               </div>
             </button>
           );
@@ -152,18 +165,21 @@ export function Improver({ go }: { go: (p: string) => void }) {
 
         {/* Input */}
         <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-6 flex flex-col">
-          <div className="text-[#6b7280] text-[13px] mb-2 font-semibold">Original prompt</div>
+          <label htmlFor="improver-input" className="block text-[#6b7280] text-[13px] mb-2 font-semibold">Original prompt</label>
           <textarea
+            id="improver-input"
+            disabled={loading}
             value={input}
             onChange={e => { setInput(e.target.value); setResult(null); setError(""); }}
             placeholder={"Paste your prompt here.\n\nExamples:\n\u2022 \"a cat sitting on a windowsill, golden hour\"\n\u2022 \"create a photo of a luxury watch on dark background\"\n\u2022 \"write a blog post about AI trends\""}
-            className="flex-1 w-full p-4 rounded-xl bg-[#f5f5f5] border border-[#0a0a0a]/15 text-[#0a0a0a] outline-none focus:border-[#4FC3F7] font-mono text-[13px] resize-none min-h-[340px]"
+            className="flex-1 w-full p-4 rounded-xl bg-[#f5f5f5] border border-[#0a0a0a]/15 text-[#0a0a0a] outline-none focus:border-[#4FC3F7] font-mono text-[13px] resize-none min-h-[340px] disabled:opacity-60"
           />
           <div className="mt-4 flex items-center gap-3">
             <button
               onClick={run}
               disabled={!input.trim() || loading}
-              className="h-11 px-6 rounded-full bg-[#4FC3F7] text-white font-bold inline-flex items-center gap-2 hover:bg-[#4FC3F7]/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              className="h-13 px-6 rounded-2xl bg-[#4FC3F7] text-[#0a0a0a] font-bold inline-flex items-center gap-2 hover:bg-[#4FC3F7]/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              style={{ height: "52px" }}
             >
               {loading ? <><RefreshCw className="w-4 h-4 animate-spin" />Improving...</> : <><Wand2 className="w-4 h-4" />Improve prompt</>}
             </button>
@@ -178,10 +194,11 @@ export function Improver({ go }: { go: (p: string) => void }) {
             {activePlatforms.map(pl => (
               <button
                 key={pl.key}
+                disabled={loading}
                 onClick={() => { setPlatform(pl.key); setResult(null); }}
-                className={`px-3 py-1.5 rounded-full border text-[13px] transition-all ${
+                className={`px-3 py-1.5 rounded-full border text-[13px] transition-all disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4FC3F7] focus-visible:outline-offset-2 ${
                   platform === pl.key
-                    ? "bg-[#4FC3F7] text-white border-[#4FC3F7]"
+                    ? "bg-[#4FC3F7] text-[#0a0a0a] border-[#4FC3F7]"
                     : "border-[#0a0a0a]/15 text-[#6b7280] hover:text-[#0a0a0a]"
                 }`}
               >
@@ -200,7 +217,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
             </div>
           )}
 
-          <div className={`flex-1 rounded-xl border p-4 min-h-[340px] shrink-0 relative transition-all ${
+          <div className={`flex-1 rounded-xl border p-4 min-h-[340px] max-h-[600px] overflow-y-auto shrink-0 relative transition-all ${
             result ? "bg-[#fafafa] border-[#0a0a0a]/15" : "bg-[#f5f5f5] border-[#0a0a0a]/10"
           }`}>
             {loading ? (
@@ -214,11 +231,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
               </div>
             ) : result ? (
               <pre className="whitespace-pre-wrap break-words text-[#0a0a0a] font-mono text-[13px] leading-relaxed">
-                {regenText
-                  ? regenText
-                  : variableFields.length > 0
-                  ? highlight(applyVariables(result.improved, vars), variableFields.map(v => v.name))
-                  : result.improved}
+                {variableFields.length > 0 ? highlight(displayText, variableFields.map(v => v.name)) : displayText}
               </pre>
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
@@ -230,12 +243,23 @@ export function Improver({ go }: { go: (p: string) => void }) {
           </div>
 
           {result && (
-            <button
-              onClick={handleCopy}
-              className="mt-4 h-10 px-5 rounded-full bg-[#4FC3F7] text-white font-bold inline-flex items-center gap-2 self-start hover:bg-[#4FC3F7]/90 transition-colors"
-            >
-              {copied ? <><Check className="w-4 h-4" />Copied!</> : <><Copy className="w-4 h-4" />Copy</>}
-            </button>
+            <div className="mt-4 flex items-center gap-2">
+              <button
+                onClick={handleCopy}
+                className="h-10 px-5 rounded-full bg-[#4FC3F7] text-[#0a0a0a] font-bold inline-flex items-center gap-2 hover:bg-[#4FC3F7]/90 transition-colors"
+              >
+                {copied ? <><Check className="w-4 h-4" />Copied!</> : <><Copy className="w-4 h-4" />Copy</>}
+              </button>
+              <button
+                onClick={() => {
+                  if (!authStore.getUser()) { toast.error("Sign in to save prompts"); return; }
+                  toast("Saving improved prompts isn't available yet", { description: "Copy it for now — we're working on it." });
+                }}
+                className="h-10 px-5 rounded-full border border-[#0a0a0a]/15 text-[#0a0a0a] font-semibold inline-flex items-center gap-2 hover:bg-[#0a0a0a]/5 transition-colors"
+              >
+                <Save className="w-4 h-4" />Save to Library
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -245,15 +269,25 @@ export function Improver({ go }: { go: (p: string) => void }) {
         <section className="mt-6 bg-white border border-[#0a0a0a]/15 rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-[#0a0a0a] font-bold">What changed</h2>
-            <span className="px-2.5 py-0.5 rounded-full bg-[#4FC3F7]/15 text-[#4FC3F7] text-[12px] font-bold">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#4FC3F7]/15 text-[#0a0a0a] text-[12px] font-bold">
               {appliedCount} improvement{appliedCount !== 1 ? "s" : ""} applied
             </span>
           </div>
+          {appliedCount === 0 && (
+            <p className="text-[#6b7280] text-[13px] mb-3">
+              Your prompt already covered the checks below — nothing needed changing.
+            </p>
+          )}
           <ul className="space-y-2">
-            {result.changes.map((c, i) => (
+            {changes.map((c, i) => (
               <li key={i} className="flex items-start gap-2 text-[14px]">
                 <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-2 ${c.applied ? "bg-[#4FC3F7]" : "bg-[#0a0a0a]/20"}`} />
-                <span className={c.applied ? "text-[#0a0a0a]" : "text-[#6b7280]/50 line-through"}>{c.label}</span>
+                <span
+                  className={c.applied ? "text-[#0a0a0a]" : "text-[#6b7280]/50 line-through"}
+                  title={c.applied ? undefined : "Not applied — your prompt already handled this, or it didn't apply here."}
+                >
+                  {c.label}
+                </span>
               </li>
             ))}
           </ul>

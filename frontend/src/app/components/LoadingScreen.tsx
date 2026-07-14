@@ -1,13 +1,24 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
+const SESSION_KEY = "pv_loading_shown";
+
 export default function LoadingScreen({ onComplete }: { onComplete: () => void }) {
-  const [progress, setProgress] = useState(0);
-  const [visible, setVisible] = useState(true);
+  const alreadyShown = typeof sessionStorage !== "undefined" && sessionStorage.getItem(SESSION_KEY) === "1";
+  const reducedMotion = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const skip = alreadyShown || reducedMotion;
+
+  const [progress, setProgress] = useState(skip ? 100 : 0);
+  const [visible, setVisible] = useState(!skip);
   const raf = useRef<number>(0);
   const start = useRef(Date.now());
 
   useEffect(() => {
+    if (skip) {
+      sessionStorage.setItem(SESSION_KEY, "1");
+      onComplete();
+      return;
+    }
     const MIN_MS = 2200;
     const tick = () => {
       const elapsed = Date.now() - start.current;
@@ -18,12 +29,16 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
       if (pct < 100) {
         raf.current = requestAnimationFrame(tick);
       } else {
+        sessionStorage.setItem(SESSION_KEY, "1");
         setTimeout(() => setVisible(false), 300);
       }
     };
     raf.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (skip) return null;
 
   return (
     <AnimatePresence onExitComplete={onComplete}>
@@ -50,12 +65,12 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="relative mb-10 flex flex-col items-center"
           >
-            <img src="/logo-text.png" alt="Prompt Bot" style={{ height: "52px", width: "auto" }} />
+            <span style={{ fontSize: "28px", fontWeight: 700, color: "#0a0a0a", letterSpacing: "-0.02em" }}>Prompt Bot</span>
             <div
-              className="text-[#94a3b8] text-center mt-2"
+              className="text-[#6b7280] text-center mt-2"
               style={{ fontSize: "13px", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase" }}
             >
-              Crafting excellence
+              Prompts that work
             </div>
           </motion.div>
 

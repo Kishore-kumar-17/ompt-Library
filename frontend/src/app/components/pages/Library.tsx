@@ -2,11 +2,11 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  LayoutGrid, List, ThumbsUp, ThumbsDown, Copy, X,
+  LayoutGrid, List, Copy, X,
   Search, ChevronLeft, ChevronRight, Loader2, ArrowRight, ArrowLeft,
 } from "lucide-react";
 import { platforms, videoPlatforms, websitePlatforms, familyMeta, categories as themeCats, type Family } from "../theme";
-import { libraryApi, type LibraryPrompt } from "../../lib/api";
+import { libraryApi, authStore, type LibraryPrompt } from "../../lib/api";
 import { promptImageMap } from "../../lib/prompt-images";
 import { imageLibraryPrompts } from "../../lib/library-data";
 import { videoLibraryPrompts } from "../../lib/video-data";
@@ -26,54 +26,29 @@ const FEATURED_IMAGE_IDS = [
   "321","323","325","336","343",
 ];
 
-// ─── Featured Thumbnail ──────────────────────────────────────────────────────
-
-function FeaturedThumb({ design, onClick }: { design: typeof websiteDesigns[0]; onClick: () => void }) {
-  const [thumbErr, setThumbErr] = useState(false);
-  const thumbUrl = design.screenshot || `/previews/${design.slug}/thumb.jpg`;
-
-  return (
-    <motion.button
-      onClick={onClick}
-      whileHover={{ y: -3, scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 300, damping: 24 }}
-      className="rounded-xl overflow-hidden border border-[#0a0a0a]/10 bg-white text-left group"
-    >
-      <div className="w-full aspect-[16/10] bg-[#f5f5f5] overflow-hidden relative">
-        {!thumbErr ? (
-          <img
-            src={thumbUrl}
-            alt={design.title}
-            className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-            onError={() => setThumbErr(true)}
-          />
-        ) : (
-          <iframe
-            src={`/previews/${design.slug}/index.html`}
-            className="pointer-events-none"
-            style={{ width: "1280px", height: "800px", transform: "scale(0.17)", transformOrigin: "top left", border: "none" }}
-            tabIndex={-1}
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2.5">
-          <span className="text-white text-[11px] flex items-center gap-1" style={{ fontWeight: 600 }}>
-            View Details →
-          </span>
-        </div>
-      </div>
-      <div className="px-2.5 py-2">
-        <div className="text-[#0a0a0a] text-[12px] truncate" style={{ fontWeight: 700 }}>{design.title}</div>
-        <div className="text-[#6b7280] text-[10px] truncate mt-0.5">{design.category}</div>
-      </div>
-    </motion.button>
-  );
-}
+const FEATURED_WEBSITE_IDS = [
+  "bw_01","bw_04","bw_05","bw_07","dpecom_01","lp_07","lp_15",
+  "pcpp01","pcpp05","pcpp07","pcpp11",
+  "pfecomm_01","pfecomm_02","pfecomm_04",
+  "portfolio_04","sbecom_01","sbecom_03",
+];
 
 // ─── Masonry Image Card (Pinterest-style) ────────────────────────────────────
 
 function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
   const [loaded, setLoaded] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!authStore.getUser()) { toast.error("Sign in to save prompts"); return; }
+    try {
+      const res = await libraryApi.save(p.id);
+      setSaved(res.saved);
+      toast(res.saved ? "Saved to library" : "Removed from library", { description: p.title });
+    } catch { toast.error("Could not save"); }
+  };
 
   return (
     <motion.div
@@ -134,11 +109,12 @@ function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
         >
           <button
             type="button"
-            onClick={(e) => e.stopPropagation()}
+            onClick={handleSave}
+            aria-label={saved ? "Remove from saved" : "Save prompt"}
             className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-md text-[#0a0a0a] flex items-center justify-center hover:bg-white transition-colors"
             style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill={saved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
         </motion.div>
       </div>
@@ -207,7 +183,13 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
   }, []);
 
   // ── Reset filters when family changes ────────────────────────────────────
-  useEffect(() => { setCat(null); setPlatform(null); setPage(1); setQuery(""); setInputVal(""); }, [family]);
+  useEffect(() => {
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    setCat(null); setPlatform(null); setPage(1); setQuery(""); setInputVal("");
+  }, [family]);
+
+  // Cancel any pending debounced search on unmount.
+  useEffect(() => () => { if (searchTimer.current) clearTimeout(searchTimer.current); }, []);
 
   // ── Debounce search input ────────────────────────────────────────────────
   const handleInput = (val: string) => {
@@ -297,15 +279,30 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
     }
     return filtered;
   }, [fallbackSource, cat, query, isImageFamily, sortBy]);
-  const effectivePageSize = isImageFamily ? fallbackFiltered.length || 1 : PAGE_SIZE;
   const fallbackPage   = isImageFamily ? fallbackFiltered : fallbackFiltered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const fallbackPages  = isImageFamily ? 1 : Math.ceil(fallbackFiltered.length / PAGE_SIZE);
+
+  // ── Website family: filter + feature-sort, then paginate like everything else ──
+  const websiteFiltered = useMemo(() => {
+    if (!isWebsiteFamily) return [];
+    const filtered = websiteDesigns.filter(d => !cat || d.subCategory === cat || d.category === cat);
+    return [...filtered].sort((a, b) => {
+      const aIdx = FEATURED_WEBSITE_IDS.indexOf(a.id);
+      const bIdx = FEATURED_WEBSITE_IDS.indexOf(b.id);
+      if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+      if (aIdx !== -1) return -1;
+      if (bIdx !== -1) return 1;
+      return 0;
+    });
+  }, [isWebsiteFamily, cat]);
+  const websitePage  = websiteFiltered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const websitePages = Math.ceil(websiteFiltered.length / PAGE_SIZE) || 1;
 
   // ── Determine items to render ────────────────────────────────────────────
   const useFallbackForFamily = isImageFamily || isVideoFamily;
   const displayItems  = (useFallback || useFallbackForFamily) ? fallbackPage : prompts.map(toCardItem);
-  const displayTotal  = (useFallback || useFallbackForFamily) ? fallbackFiltered.length : total;
-  const displayPages  = (useFallback || useFallbackForFamily) ? fallbackPages : pages;
+  const displayTotal  = isWebsiteFamily ? websiteFiltered.length : (useFallback || useFallbackForFamily) ? fallbackFiltered.length : total;
+  const displayPages  = isWebsiteFamily ? websitePages : (useFallback || useFallbackForFamily) ? fallbackPages : pages;
 
   // ── Sort client-side (non-image families) ──────────────────────────────
   const sorted = useMemo(() => {
@@ -398,8 +395,8 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
             <option value="score">Highest score</option>
           </select>
           <div className="flex rounded-lg border border-[#0a0a0a]/20 overflow-hidden">
-            <button onClick={() => setView("grid")} className={`p-2 ${view==="grid"?"bg-[#0a0a0a]/10":"bg-transparent"}`}><LayoutGrid className="w-4 h-4" /></button>
-            <button onClick={() => setView("list")} className={`p-2 ${view==="list"?"bg-[#0a0a0a]/10":"bg-transparent"}`}><List className="w-4 h-4" /></button>
+            <button onClick={() => setView("grid")} aria-label="Grid view" aria-pressed={view === "grid"} className={`p-2 ${view==="grid"?"bg-[#0a0a0a]/10":"bg-transparent"}`}><LayoutGrid className="w-4 h-4" /></button>
+            <button onClick={() => setView("list")} aria-label="List view" aria-pressed={view === "list"} className={`p-2 ${view==="list"?"bg-[#0a0a0a]/10":"bg-transparent"}`}><List className="w-4 h-4" /></button>
           </div>
         </div>
       </div>
@@ -416,7 +413,11 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
         />
         {inputVal && (
           <button
-            onClick={() => { setInputVal(""); setQuery(""); setPage(1); }}
+            onClick={() => {
+              if (searchTimer.current) clearTimeout(searchTimer.current);
+              setInputVal(""); setQuery(""); setPage(1);
+            }}
+            aria-label="Clear search"
             className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6b7280] hover:text-[#0a0a0a]"
           >
             <X className="w-4 h-4" />
@@ -447,25 +448,8 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
       {/* ── Prompt grid / list ───────────────────────────────────────── */}
       <div>
           {/* Website Library */}
-          {isWebsiteFamily ? (() => {
-            const FEATURED_IDS = [
-              "bw_01","bw_04","bw_05","bw_07","dpecom_01","lp_07","lp_15",
-              "pcpp01","pcpp05","pcpp07","pcpp11",
-              "pfecomm_01","pfecomm_02","pfecomm_04",
-              "portfolio_04","sbecom_01","sbecom_03",
-            ];
-            const filtered = websiteDesigns.filter(d => !cat || d.subCategory === cat || d.category === cat);
-            // Sort: featured IDs first, rest after
-            const sorted = [...filtered].sort((a, b) => {
-              const aIdx = FEATURED_IDS.indexOf(a.id);
-              const bIdx = FEATURED_IDS.indexOf(b.id);
-              if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
-              if (aIdx !== -1) return -1;
-              if (bIdx !== -1) return 1;
-              return 0;
-            });
-
-            return sorted.length === 0 ? (
+          {isWebsiteFamily ? (
+            websiteFiltered.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-24 gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-[#0a0a0a]/10 flex items-center justify-center">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="1.5" strokeLinecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M8 16h8"/></svg>
@@ -474,7 +458,7 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {sorted.map(d => (
+                {websitePage.map(d => (
                   <WebsitePromptCard
                     key={d.id}
                     design={d}
@@ -482,13 +466,14 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
                     onCopy={() => {
                       const prompt = websitePlatformVersions[d.slug]?.lovable ?? d.description;
                       navigator.clipboard?.writeText(prompt);
+                      toast.success("Copied Lovable prompt", { description: "Open the design for other platform versions." });
                     }}
                     onPreviewExpand={() => setExpandedSlug(d.slug)}
                   />
                 ))}
               </div>
-            );
-          })() :!loading && !isImageFamily && !isVideoFamily && !isWebsiteFamily && sorted.length === 0 ? (
+            )
+          ) : !loading && !isImageFamily && !isVideoFamily && !isWebsiteFamily && sorted.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
               <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#4FC3F7]/30 to-[#0a0a0a]/10 flex items-center justify-center text-4xl">
                 ✦
@@ -544,7 +529,7 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
                   <tr>
                     <th className="text-left p-3">Title</th>
                     <th className="text-left p-3">Category</th>
-                    <th className="text-left p-3">Feedback</th>
+                    <th className="text-left p-3">Rating</th>
                     <th className="text-left p-3">Status</th>
                     <th className="p-3"></th>
                   </tr>
@@ -554,9 +539,22 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
                     <tr key={p.id} className="border-t border-[#0a0a0a]/15 hover:bg-[#0a0a0a]/5 cursor-pointer" onClick={() => go("detail:" + p.id + (platform ? ":" + platform : ""))}>
                       <td className="p-3 text-[#0a0a0a]" style={{ fontWeight: 600 }}>{p.title}</td>
                       <td className="p-3 text-[#6b7280]">{p.category}</td>
-                      <td className="p-3"><span className="inline-flex items-center gap-1.5"><ThumbsUp className="w-3.5 h-3.5 text-[#6b7280]" /><ThumbsDown className="w-3.5 h-3.5 text-[#6b7280]" /></span></td>
+                      <td className="p-3 text-[#0a0a0a]">{(p as any).rating ? `★ ${(p as any).rating}` : "-"}</td>
                       <td className="p-3">{(p as any).tested && <span className="inline-flex items-center gap-1 text-[#0a0a0a]"><span className="w-1.5 h-1.5 rounded-full bg-[#4FC3F7]" />tested</span>}</td>
-                      <td className="p-3 text-right"><Copy className="w-4 h-4 text-[#0a0a0a] inline" /></td>
+                      <td className="p-3 text-right">
+                        <button
+                          type="button"
+                          aria-label="Copy prompt"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigator.clipboard?.writeText((p as any).description ?? "");
+                            toast.success("Prompt copied", { description: p.title });
+                          }}
+                          className="p-1 rounded-md hover:bg-[#0a0a0a]/10 transition-colors"
+                        >
+                          <Copy className="w-4 h-4 text-[#0a0a0a]" />
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -630,22 +628,7 @@ const FAMILY_CARDS = [
     count: "420+",
     label: "prompts",
     chips: ["Midjourney", "Firefly", "FLUX", "ChatGPT", "Gemini"],
-    cover: "/images/families/image.png",
     comingSoon: false,
-    bg: "bg-white",
-    border: "border-[#4FC3F7]/60",
-    accentBg: "bg-[#4FC3F7]",
-    accentText: "text-[#0a0a0a]",
-    taglineColor: "text-[#6b7280]",
-    countColor: "text-[#0a0a0a]",
-    chipClass: "bg-[#0a0a0a]/8 border border-[#0a0a0a]/15 text-[#6b7280]",
-    visual: (
-      <div className="flex gap-2 flex-wrap">
-        {["#4FC3F7","#4FC3F7","#0a0a0a","#90b4ce"].map((c, i) => (
-          <div key={i} className="w-10 h-10 rounded-xl border-2 border-white shadow-sm" style={{ background: c }} />
-        ))}
-      </div>
-    ),
   },
   {
     key: "video",
@@ -654,20 +637,7 @@ const FAMILY_CARDS = [
     count: "30",
     label: "prompts",
     chips: ["Veo", "Kling", "Seedance", "Higgsfield", "Pika"],
-    cover: "/images/families/video.png",
     comingSoon: false,
-    bg: "bg-gradient-to-br from-[#1a1a2e] to-[#4c1d95]",
-    border: "border-[#7c3aed]/40",
-    accentBg: "bg-[#7c3aed]",
-    accentText: "text-white",
-    taglineColor: "text-white/60",
-    countColor: "text-white",
-    chipClass: "border border-white/20 text-white/60",
-    visual: (
-      <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-        <div className="w-0 h-0 border-t-[8px] border-t-transparent border-l-[14px] border-l-white border-b-[8px] border-b-transparent ml-1" />
-      </div>
-    ),
   },
   {
     key: "website",
@@ -676,22 +646,7 @@ const FAMILY_CARDS = [
     count: "90+",
     label: "designs",
     chips: ["Lovable", "Bolt", "Claude Code", "Codex", "Replit"],
-    cover: "/images/families/website.png",
     comingSoon: false,
-    bg: "bg-[#0a0a0a]",
-    border: "border-[#0a0a0a]/20",
-    accentBg: "bg-[#4FC3F7]",
-    accentText: "text-[#0a0a0a]",
-    taglineColor: "text-white/60",
-    countColor: "text-white",
-    chipClass: "border border-white/20 text-white/60",
-    visual: (
-      <div className="flex gap-1">
-        {["#4FC3F7","#4FC3F7","#10a37f"].map((c,i) => (
-          <div key={i} className="w-3 h-3 rounded-full" style={{ background: c }} />
-        ))}
-      </div>
-    ),
   },
   {
     key: "text",
@@ -700,22 +655,7 @@ const FAMILY_CARDS = [
     count: "Coming",
     label: "soon",
     chips: ["ChatGPT", "Gemini", "Grok", "Claude"],
-    cover: "/images/families/text.png",
     comingSoon: true,
-    bg: "bg-[#0d1b2a]",
-    border: "border-[#0a0a0a]/30",
-    accentBg: "bg-[#4FC3F7]",
-    accentText: "text-white",
-    taglineColor: "text-white/50",
-    countColor: "text-white",
-    chipClass: "border border-white/15 text-white/50",
-    visual: (
-      <div className="font-mono text-[10px] text-[#bce4d8]/60 leading-4 space-y-0.5">
-        <div>const prompt = <span className="text-[#4FC3F7]">`</span></div>
-        <div className="pl-2 text-[#90b4ce]">You are an expert…</div>
-        <div><span className="text-[#4FC3F7]">`</span>;</div>
-      </div>
-    ),
   },
   {
     key: "content",
@@ -724,102 +664,13 @@ const FAMILY_CARDS = [
     count: "Coming",
     label: "soon",
     chips: ["ChatGPT", "Gemini", "Claude", "Grok"],
-    cover: "/images/families/content.png",
     comingSoon: true,
-    bg: "bg-gradient-to-br from-[#4FC3F7]/10 to-white",
-    border: "border-[#4FC3F7]/20",
-    accentBg: "bg-[#4FC3F7]",
-    accentText: "text-white",
-    taglineColor: "text-[#6b7280]",
-    countColor: "text-[#0a0a0a]",
-    chipClass: "bg-[#4FC3F7]/10 border border-[#4FC3F7]/20 text-[#0a0a0a]",
-    visual: (
-      <div className="flex flex-wrap gap-1">
-        {["Blog", "Email", "Ad Copy", "Social"].map(t => (
-          <span key={t} className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/20 text-[#0a0a0a] text-[10px] font-semibold">{t}</span>
-        ))}
-      </div>
-    ),
   },
 ];
 
-function LandingCard({ card, go }: { card: typeof FAMILY_CARDS[number]; go: (p: string) => void }) {
-  const [hovered, setHovered] = useState(false);
-  const [loaded, setLoaded]   = useState(false);
-
-  return (
-    <motion.div
-      onClick={() => {
-        if (card.comingSoon) { toast("Coming Soon", { description: `${card.title} will be available soon.` }); return; }
-        go("library:" + card.key);
-      }}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => { if (e.key === "Enter") { if (card.comingSoon) return; go("library:" + card.key); } }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      whileHover={{ y: card.comingSoon ? 0 : -4 }}
-      whileTap={{ scale: card.comingSoon ? 1 : 0.99 }}
-      transition={{ type: "spring", stiffness: 300, damping: 24 }}
-      className="break-inside-avoid mb-5 bg-white rounded-2xl border p-3 cursor-pointer group"
-      style={{
-        borderColor: hovered ? "#4FC3F7" : "rgba(10,10,10,0.10)",
-        boxShadow: hovered
-          ? "0 18px 40px -16px rgba(10,10,10,0.20)"
-          : "0 1px 2px rgba(10,10,10,0.04)",
-        transition: "border-color 0.25s ease, box-shadow 0.25s ease",
-      }}
-    >
-      {/* Meta row */}
-      <div className="flex items-center justify-between px-1 pt-0.5 pb-2.5">
-        <span className="text-[12px] text-[#6b7280]">
-          <span className="text-[#0a0a0a] font-bold">{card.count}</span> {card.label}
-        </span>
-        <span className="w-6 h-6 rounded-full border border-[#0a0a0a]/10 flex items-center justify-center text-[#6b7280] transition-colors group-hover:bg-[#4FC3F7] group-hover:text-[#0a0a0a] group-hover:border-[#4FC3F7]">
-          <ArrowRight className="w-3.5 h-3.5" />
-        </span>
-      </div>
-
-      {/* Cover image */}
-      <div className="relative rounded-xl overflow-hidden bg-[#f4f4f5]">
-        <img
-          src={card.cover}
-          alt={card.title}
-          className="w-full block transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-          style={{
-            opacity: loaded ? 1 : 0,
-            filter: card.comingSoon ? "grayscale(0.45)" : "none",
-            transition: "opacity 0.4s ease",
-          }}
-          onLoad={() => setLoaded(true)}
-        />
-        {card.comingSoon && (
-          <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full bg-[#4FC3F7] text-white text-[11px] font-bold">
-            Coming soon
-          </span>
-        )}
-      </div>
-
-      {/* Title + tagline + chips */}
-      <div className="px-1 pt-3 pb-1">
-        <h3 className="text-[#0a0a0a] text-[17px] font-bold leading-tight">{card.title}</h3>
-        <p className="text-[#6b7280] text-[13px] leading-relaxed mt-1.5">{card.tagline}</p>
-
-        <div className="flex flex-wrap gap-1.5 mt-3">
-          {card.chips.map(chip => (
-            <span key={chip} className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#0a0a0a]/[0.05] text-[#6b7280]">
-              {chip}
-            </span>
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
 export function LibraryLanding({ go }: { go: (p: string) => void }) {
   return (
-    <div className="max-w-[1260px] mx-auto px-6 py-12 text-[#0a0a0a]">
+    <div className="max-w-[1400px] mx-auto px-6 py-12 text-[#0a0a0a]">
       <div className="mb-10 text-center">
         <h1
           className="text-[#0a0a0a] mb-2"
@@ -998,7 +849,7 @@ function FilterPill({ active, onClick, children, count }: { active: boolean; onC
       className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-[13px] transition-all ${
         active
           ? "bg-[#4FC3F7] text-white border-[#4FC3F7]"
-          : "bg-white border-[#0a0a0a]/15 text-[#3f3f3f] hover:border-[#0a0a0a]/30 hover:text-[#0a0a0a]"
+          : "bg-white border-[#0a0a0a]/15 text-[#6b7280] hover:border-[#0a0a0a]/30 hover:text-[#0a0a0a]"
       }`}
       style={active ? { fontWeight: 600 } : {}}
     >

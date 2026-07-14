@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import {
   ThumbsUp, ThumbsDown, Copy, Loader2, ArrowLeft, Layers,
   AlertTriangle, ChevronDown, ChevronLeft, ChevronRight,
-  Columns2, LayoutGrid, Zap, Star,
+  Columns2, LayoutGrid, Star,
 } from "lucide-react";
 import { platforms } from "../theme";
 import { imageLibraryPrompts } from "../../lib/library-data";
@@ -158,16 +158,18 @@ function highlightPlatformSyntax(text: string): React.ReactNode[] {
   return parts;
 }
 
-// ─── Categories ─────────────────────────────────────────────────────────────
-
-const ALL_CATEGORIES = [
-  "Art & Illustration", "Fashion & Apparel", "Marketing & Ads",
-  "People & Portraits", "Product & E-com", "Social Media", "Trending & Viral",
-];
-
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export function Compare({ go }: { go: (p: string) => void }) {
+  // Derived from the actual dataset, so it can never drift out of sync with it.
+  const ALL_CATEGORIES = useMemo(
+    () => Array.from(new Set(imageLibraryPrompts.map(p => p.category))).sort(),
+    []
+  );
+  const categoryCounts = useMemo(
+    () => ALL_CATEGORIES.map(name => ({ name, count: imageLibraryPrompts.filter(p => p.category === name).length })),
+    [ALL_CATEGORIES]
+  );
   const [promptId, setPromptId] = useState(imageLibraryPrompts[0].id);
   const [platformData, setPlatformData] = useState<Record<string, string> | null>(null);
   const [loading, setLoading] = useState(false);
@@ -235,7 +237,12 @@ export function Compare({ go }: { go: (p: string) => void }) {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLSelectElement || e.target instanceof HTMLInputElement) return;
+      if (
+        e.target instanceof HTMLSelectElement ||
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLButtonElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) return;
       if (e.key === "ArrowLeft") { e.preventDefault(); goToPrev(); }
       if (e.key === "ArrowRight") { e.preventDefault(); goToNext(); }
     };
@@ -259,11 +266,11 @@ export function Compare({ go }: { go: (p: string) => void }) {
   };
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-10 text-[#0a0a0a]">
+    <div className="max-w-[1400px] mx-auto px-6 py-8 text-[#0a0a0a]">
       {/* Header */}
       <div className="mb-6">
         <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 transition-colors">
-          <ArrowLeft className="w-3.5 h-3.5" /> Back
+          <ArrowLeft className="w-3.5 h-3.5" /> Back to Library
         </button>
         <h1 className="text-3xl font-bold">Compare <span className="font-extrabold">Platforms</span></h1>
         <p className="text-[#6b7280] mt-1">See how the same prompt is structured differently for ChatGPT, Gemini, Grok, Midjourney, Firefly, and FLUX.</p>
@@ -273,24 +280,21 @@ export function Compare({ go }: { go: (p: string) => void }) {
       <div className="flex flex-wrap gap-1.5 mb-4">
         <button
           onClick={() => setCatFilter(null)}
-          className={`px-3 py-1.5 rounded-full text-[12px] transition-all ${!catFilter ? "bg-[#0a0a0a] text-white" : "bg-[#0a0a0a]/5 text-[#6b7280] hover:text-[#0a0a0a]"}`}
+          className={`px-3 py-1.5 rounded-full border text-[12px] transition-all ${!catFilter ? "bg-[#4FC3F7] text-white border-[#4FC3F7]" : "bg-white border-[#0a0a0a]/15 text-[#6b7280] hover:text-[#0a0a0a]"}`}
           style={{ fontWeight: 600 }}
         >
           All ({imageLibraryPrompts.length})
         </button>
-        {ALL_CATEGORIES.map(c => {
-          const count = imageLibraryPrompts.filter(p => p.category === c).length;
-          return (
-            <button
-              key={c}
-              onClick={() => setCatFilter(catFilter === c ? null : c)}
-              className={`px-3 py-1.5 rounded-full text-[12px] transition-all ${catFilter === c ? "bg-[#0a0a0a] text-white" : "bg-[#0a0a0a]/5 text-[#6b7280] hover:text-[#0a0a0a]"}`}
-              style={{ fontWeight: 600 }}
-            >
-              {c} ({count})
-            </button>
-          );
-        })}
+        {categoryCounts.map(({ name: c, count }) => (
+          <button
+            key={c}
+            onClick={() => setCatFilter(catFilter === c ? null : c)}
+            className={`px-3 py-1.5 rounded-full border text-[12px] transition-all ${catFilter === c ? "bg-[#4FC3F7] text-white border-[#4FC3F7]" : "bg-white border-[#0a0a0a]/15 text-[#6b7280] hover:text-[#0a0a0a]"}`}
+            style={{ fontWeight: 600 }}
+          >
+            {c} ({count})
+          </button>
+        ))}
       </div>
 
       {/* Prompt selector + image preview + nav */}
@@ -304,6 +308,7 @@ export function Compare({ go }: { go: (p: string) => void }) {
             <button
               onClick={goToPrev}
               disabled={currentIdx <= 0}
+              aria-label="Previous prompt"
               className="shrink-0 w-8 h-10 rounded-lg border border-[#0a0a0a]/10 flex items-center justify-center text-[#6b7280] hover:text-[#0a0a0a] disabled:opacity-30 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -320,6 +325,7 @@ export function Compare({ go }: { go: (p: string) => void }) {
             <button
               onClick={goToNext}
               disabled={currentIdx >= filteredPrompts.length - 1}
+              aria-label="Next prompt"
               className="shrink-0 w-8 h-10 rounded-lg border border-[#0a0a0a]/10 flex items-center justify-center text-[#6b7280] hover:text-[#0a0a0a] disabled:opacity-30 transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
@@ -332,7 +338,7 @@ export function Compare({ go }: { go: (p: string) => void }) {
           </div>
         </div>
         {prompt.image && (
-          <div className="rounded-xl overflow-hidden border border-[#0a0a0a]/10 bg-[#f5f5f5] aspect-square">
+          <div className="rounded-xl overflow-hidden border border-[#0a0a0a]/10 bg-[#f5f5f5] aspect-square w-32 md:w-auto mx-auto md:mx-0">
             <img src={prompt.image} alt={prompt.title} className="w-full h-full object-cover" />
           </div>
         )}
@@ -696,8 +702,8 @@ function PlatformCard({
                 <Copy className="w-3.5 h-3.5" /> Copy
               </button>
               <span className="ml-auto inline-flex items-center gap-1.5">
-                <button onClick={() => onVote("up")} className={`p-1 rounded-md transition-colors ${vote === "up" ? "bg-[#4FC3F7]/20 text-[#4FC3F7]" : "text-[#6b7280] hover:text-[#0a0a0a]"}`}><ThumbsUp className="w-3.5 h-3.5" /></button>
-                <button onClick={() => onVote("down")} className={`p-1 rounded-md transition-colors ${vote === "down" ? "bg-red-100 text-red-500" : "text-[#6b7280] hover:text-[#0a0a0a]"}`}><ThumbsDown className="w-3.5 h-3.5" /></button>
+                <button onClick={() => onVote("up")} aria-label="This version was helpful" className={`p-1 rounded-md transition-colors ${vote === "up" ? "bg-[#4FC3F7]/20 text-[#4FC3F7]" : "text-[#6b7280] hover:text-[#0a0a0a]"}`}><ThumbsUp className="w-3.5 h-3.5" /></button>
+                <button onClick={() => onVote("down")} aria-label="This version was not helpful" className={`p-1 rounded-md transition-colors ${vote === "down" ? "bg-red-100 text-red-500" : "text-[#6b7280] hover:text-[#0a0a0a]"}`}><ThumbsDown className="w-3.5 h-3.5" /></button>
               </span>
             </div>
           </>

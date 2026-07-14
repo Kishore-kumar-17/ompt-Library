@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+﻿import { useEffect, useState, useRef, useCallback } from "react";
 import { Toaster } from "sonner";
 import LoadingScreen from "./components/LoadingScreen";
 import { Nav } from "./components/Nav";
@@ -25,11 +25,26 @@ export default function App() {
   const [route, setRouteRaw] = useState("home");
   const [authOpen, setAuthOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
+  const history = useRef<string[]>(["home"]);
 
   const setRoute = (r: string) => {
+    if (r !== route) {
+      history.current.push(r);
+    }
     setRouteRaw(r);
     queueMicrotask(() => window.scrollTo({ top: 0, behavior: "smooth" }));
   };
+
+  const goBack = useCallback(() => {
+    if (history.current.length > 1) {
+      history.current.pop(); // remove current
+      const prev = history.current[history.current.length - 1];
+      setRouteRaw(prev);
+      queueMicrotask(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+    }
+  }, []);
+
+  const canGoBack = history.current.length > 1 && route !== "home";
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -57,7 +72,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-white text-[#0a0a0a]">
       {loading && <LoadingScreen onComplete={() => setLoading(false)} />}
-      <Nav current={current} onNavigate={setRoute} onAuth={() => setAuthOpen(true)} />
+      <Nav current={current} onNavigate={setRoute} onAuth={() => setAuthOpen(true)} onBack={goBack} canGoBack={canGoBack} />
       <main>
         {route === "home"      && <Home go={setRoute} />}
         {route === "library"   && <LibraryLanding go={setRoute} />}
@@ -68,11 +83,11 @@ export default function App() {
         {route === "compare"   && <Compare go={setRoute} />}
         {route === "dashboard" && <Dashboard go={setRoute} />}
         {route === "profile"   && <Profile go={setRoute} />}
-        {route === "submit"    && <Submit go={setRoute} />}
+        {route === "submit"    && <Submit go={setRoute} onAuth={() => setAuthOpen(true)} />}
         {route === "admin"     && <AdminImport go={setRoute} />}
         {route === "image-review" && <AdminImageReview />}
         {websiteSlug && <WebsiteDetail key={websiteSlug} slug={websiteSlug} go={setRoute} />}
-        {(route === "guide" || guideSection) && <Guide go={setRoute} initialSection={guideSection ?? undefined} />}
+        {(route === "guide" || guideSection) && <Guide key={guideSection ?? "guide"} go={setRoute} initialSection={guideSection ?? undefined} />}
         {route === "pricing"   && <Pricing go={setRoute} onAuth={() => setAuthOpen(true)} />}
       </main>
       <Footer go={setRoute} />

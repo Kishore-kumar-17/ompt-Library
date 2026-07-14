@@ -1,12 +1,13 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Settings, Heart, Clock, Upload, Sparkles, ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 import { imageLibraryPrompts } from "../../lib/library-data";
 import { PromptCard } from "../PromptCard";
-import { profileApi, authStore, submissionsApi, type ProfileStats, type Submission } from "../../lib/api";
+import { profileApi, authStore, submissionsApi, AUTH_CHANGED_EVENT, type ProfileStats, type Submission } from "../../lib/api";
 
 export function Profile({ go }: { go: (p: string) => void }) {
-  const user = authStore.getUser();
-  const displayName = user?.displayName ?? user?.email?.split("@")[0] ?? "Guest";
+  const [user, setUser] = useState(() => authStore.getUser());
+  const displayName = user?.displayName || user?.email?.split("@")[0] || "Guest";
 
   const [stats, setStats] = useState<ProfileStats>({ saved: 0, copied: 0, submitted: 0, approved: 0 });
   const [statsLoaded, setStatsLoaded] = useState(false);
@@ -14,6 +15,18 @@ export function Profile({ go }: { go: (p: string) => void }) {
   const [submissionsLoaded, setSubmissionsLoaded] = useState(false);
 
   useEffect(() => {
+    const onAuthChanged = () => setUser(authStore.getUser());
+    window.addEventListener(AUTH_CHANGED_EVENT, onAuthChanged);
+    return () => window.removeEventListener(AUTH_CHANGED_EVENT, onAuthChanged);
+  }, []);
+
+  useEffect(() => {
+    // Clear the previous user's data immediately so a login/logout/switch
+    // never flashes stale numbers or someone else's submissions.
+    setStats({ saved: 0, copied: 0, submitted: 0, approved: 0 });
+    setSubmissions([]);
+    setStatsLoaded(false);
+    setSubmissionsLoaded(false);
     if (!user) return;
     profileApi.stats()
       .then(setStats)
@@ -23,7 +36,7 @@ export function Profile({ go }: { go: (p: string) => void }) {
       .then(setSubmissions)
       .catch(() => setSubmissions([]))
       .finally(() => setSubmissionsLoaded(true));
-  }, []);
+  }, [user]);
 
   const statCards = [
     { n: String(stats.copied),    l: "Copied" },
@@ -38,34 +51,43 @@ export function Profile({ go }: { go: (p: string) => void }) {
         <ArrowLeft className="w-3.5 h-3.5" /> Back
       </button>
       <div className="flex items-center gap-4 mb-8">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#4FC3F7] to-[#4FC3F7] flex items-center justify-center text-[#0a0a0a] text-xl font-bold border-2 border-[#0a0a0a]">
+        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#4FC3F7] to-[#2f8fc7] flex items-center justify-center text-white text-xl font-bold border border-[#0a0a0a]/15">
           {displayName[0].toUpperCase()}
         </div>
         <div>
           <h1 className="text-2xl text-[#0a0a0a] font-bold">Hi, {displayName}</h1>
-          <p className="text-[#6b7280]">{user ? `${user.email} · Joined 2026` : "Sign in to see your activity"}</p>
+          <p className="text-[#6b7280]">{user ? user.email : "Sign in to see your activity"}</p>
         </div>
-        <button className="ml-auto inline-flex items-center gap-2 px-4 h-10 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#0a0a0a] hover:bg-[#0a0a0a]/10 transition-colors">
+        <button
+          onClick={() => toast("Account settings are coming soon.")}
+          className="ml-auto inline-flex items-center gap-2 px-4 h-10 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#0a0a0a] hover:bg-[#0a0a0a]/10 transition-colors"
+        >
           <Settings className="w-4 h-4" />Settings
         </button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-        {statCards.map(({ n, l }) => (
-          <div key={l} className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-5">
-            <div className={`text-3xl text-[#0a0a0a] font-bold ${!statsLoaded && user ? "animate-pulse opacity-40" : ""}`}>{n}</div>
-            <div className="text-[#6b7280]">{l}</div>
-          </div>
-        ))}
-      </div>
+      {user ? (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+          {statCards.map(({ n, l }) => (
+            <div key={l} className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-5">
+              <div className={`text-3xl text-[#0a0a0a] font-bold ${!statsLoaded ? "animate-pulse opacity-40" : ""}`}>{n}</div>
+              <div className="text-[#6b7280]">{l}</div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-6 text-[#6b7280] text-center mb-10">
+          Sign in to see your activity stats.
+        </div>
+      )}
 
       <EmptySection icon={<Heart className="w-5 h-5 text-[#0a0a0a]" />} title="Your favorites" loggedIn={!!user} emptyMsg="Save prompts by clicking the bookmark icon on any prompt card." signInMsg="Sign in to save your favourite prompts." />
-      <EmptySection icon={<Clock className="w-5 h-5 text-[#90b4ce]" />} title="Recently viewed" loggedIn={!!user} emptyMsg="Prompts you open will appear here." signInMsg="Sign in to track your recently viewed prompts." />
+      <EmptySection icon={<Clock className="w-5 h-5 text-[#0a0a0a]" />} title="Recently viewed" loggedIn={!!user} emptyMsg="Prompts you open will appear here." signInMsg="Sign in to track your recently viewed prompts." />
 
       <section className="mt-10">
         <div className="flex items-center gap-2 mb-4">
           <Upload className="w-5 h-5 text-[#0a0a0a]" />
-          <h2 className="text-[#0a0a0a]">Your submissions</h2>
+          <h2 className="text-[#0a0a0a] text-xl font-bold">Your submissions</h2>
         </div>
         {user ? (
           <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl overflow-hidden">
@@ -75,12 +97,13 @@ export function Profile({ go }: { go: (p: string) => void }) {
               <div className="p-4 text-[#6b7280]">No submissions yet.</div>
             ) : submissions.map((submission) => {
               const raw = submission.rawData as any;
-              const title = raw?.title ?? raw?.basePrompt?.slice?.(0, 60) ?? "Untitled prompt";
+              const rawBase = raw?.basePrompt;
+              const title = raw?.title ?? (rawBase ? (rawBase.length > 60 ? `${rawBase.slice(0, 60)}…` : rawBase) : "Untitled prompt");
               const color = submission.status === "approved"
                 ? "#22c55e"
                 : submission.status === "rejected"
-                  ? "#4FC3F7"
-                  : "#a7a9be";
+                  ? "#ef4444"
+                  : "#6b7280";
               return (
                 <div key={submission.id} className="flex items-center p-4 border-b last:border-b-0 border-[#0a0a0a]/15">
                   <div className="text-[#0a0a0a] flex-1 font-medium">{title}</div>
@@ -96,7 +119,7 @@ export function Profile({ go }: { go: (p: string) => void }) {
         )}
       </section>
 
-      <ProfileSection icon={<Sparkles className="w-5 h-5 text-[#0a0a0a]" />} title="Recommended for you" items={imageLibraryPrompts.slice(0, 4)} go={go} />
+      <ProfileSection icon={<Sparkles className="w-5 h-5 text-[#0a0a0a]" />} title="Popular right now" items={imageLibraryPrompts.slice(0, 4)} go={go} />
     </div>
   );
 }
@@ -104,7 +127,7 @@ export function Profile({ go }: { go: (p: string) => void }) {
 function ProfileSection({ icon, title, items, go }: any) {
   return (
     <section className="mt-10">
-      <div className="flex items-center gap-2 mb-4">{icon}<h2 className="text-[#0a0a0a]">{title}</h2></div>
+      <div className="flex items-center gap-2 mb-4">{icon}<h2 className="text-[#0a0a0a] text-xl font-bold">{title}</h2></div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {items.map((p: any) => <PromptCard key={p.id} p={p} onClick={() => go("detail:" + p.id)} />)}
       </div>
@@ -115,7 +138,7 @@ function ProfileSection({ icon, title, items, go }: any) {
 function EmptySection({ icon, title, loggedIn, emptyMsg, signInMsg }: { icon: ReactNode; title: string; loggedIn: boolean; emptyMsg: string; signInMsg: string }) {
   return (
     <section className="mt-10">
-      <div className="flex items-center gap-2 mb-4">{icon}<h2 className="text-[#0a0a0a]">{title}</h2></div>
+      <div className="flex items-center gap-2 mb-4">{icon}<h2 className="text-[#0a0a0a] text-xl font-bold">{title}</h2></div>
       <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-6 text-[#6b7280] text-center">
         {loggedIn ? emptyMsg : signInMsg}
       </div>

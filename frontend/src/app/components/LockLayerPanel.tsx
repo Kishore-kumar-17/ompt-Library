@@ -29,7 +29,7 @@ export function LockLayerPanel({
           <span
             className={`px-2.5 py-0.5 rounded-full text-[12px] font-bold border inline-flex items-center gap-1 ${
               validation.valid
-                ? "bg-[#bce4d8] text-[#0a0a0a] border-[#0a0a0a]/20"
+                ? "bg-[#4FC3F7]/20 text-[#0a0a0a] border-[#0a0a0a]/20"
                 : "bg-amber-50 text-amber-700 border-amber-200"
             }`}
           >

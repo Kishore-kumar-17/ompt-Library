@@ -8,6 +8,8 @@ export const token = {
   clear: () => localStorage.removeItem("pv_token"),
 };
 
+export const AUTH_CHANGED_EVENT = "pv-auth-changed";
+
 export const authStore = {
   getUser: () => {
     try {
@@ -17,8 +19,15 @@ export const authStore = {
       return null;
     }
   },
-  setUser: (u: AuthUser) => localStorage.setItem("pv_user", JSON.stringify(u)),
-  clear: () => { token.clear(); localStorage.removeItem("pv_user"); },
+  setUser: (u: AuthUser) => {
+    localStorage.setItem("pv_user", JSON.stringify(u));
+    window.dispatchEvent(new Event(AUTH_CHANGED_EVENT));
+  },
+  clear: () => {
+    token.clear();
+    localStorage.removeItem("pv_user");
+    window.dispatchEvent(new Event(AUTH_CHANGED_EVENT));
+  },
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────

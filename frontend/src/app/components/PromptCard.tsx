@@ -63,7 +63,7 @@ export function PromptCard({ p, onClick, hideActions }: { p: PromptItem; onClick
           </div>
         )}
         <div className="absolute top-2 left-2 flex gap-1 flex-wrap">
-          <span className="px-2 py-0.5 rounded-full bg-[#0a0a0a]/50 text-[#bce4d8] backdrop-blur text-[11px]">
+          <span className="px-2 py-0.5 rounded-full bg-[#0a0a0a]/50 text-white backdrop-blur text-[11px]">
             {p.category}
           </span>
           {p.tested && (
@@ -75,7 +75,7 @@ export function PromptCard({ p, onClick, hideActions }: { p: PromptItem; onClick
         <button
           type="button"
           onClick={handleSave}
-          className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0a0a0a]/50 hover:bg-[#4FC3F7] text-[#bce4d8] backdrop-blur"
+          className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0a0a0a]/50 hover:bg-[#4FC3F7] text-white backdrop-blur"
         >
           <Heart className={`w-4 h-4 ${saved ? "fill-current" : ""}`} />
         </button>

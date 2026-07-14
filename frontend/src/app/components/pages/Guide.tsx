@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import { BookOpen, Target, Layers, Wand2, Sparkles, Scale, ListChecks, Lightbulb, Copy, ChevronRight, Play, Image, Globe, Video, Code2, FileText, ArrowLeft, Rocket, Check, AlertTriangle } from "lucide-react";
@@ -20,9 +20,10 @@ const sections = [
 ];
 
 export function Guide({ go, initialSection }: { go: (p: string) => void; initialSection?: string }) {
-  const [active, setActive] = useState(initialSection || "playground");
+  const validInitial = initialSection && sections.some(s => s.key === initialSection) ? initialSection : "playground";
+  const [active, setActive] = useState(validInitial);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const activeSection = sections.find(s => s.key === active);
+  const activeSection = sections.find(s => s.key === active) ?? sections[0];
 
   return (
     <div className="max-w-[1200px] mx-auto px-6 py-12 text-[#0a0a0a]">
@@ -32,6 +33,8 @@ export function Guide({ go, initialSection }: { go: (p: string) => void; initial
           <button
             className="lg:hidden w-full flex items-center justify-between px-4 py-3 mb-2 bg-white border border-[#0a0a0a]/10 rounded-2xl shadow-sm"
             onClick={() => setMobileNavOpen(v => !v)}
+            aria-expanded={mobileNavOpen}
+            aria-controls="guide-mobile-nav"
           >
             <span className="text-[#0a0a0a] text-[14px]" style={{ fontWeight: 600 }}>
               {activeSection?.label ?? "Select section"}
@@ -39,7 +42,7 @@ export function Guide({ go, initialSection }: { go: (p: string) => void; initial
             <ChevronRight className={`w-4 h-4 text-[#6b7280] transition-transform ${mobileNavOpen ? "rotate-90" : ""}`} />
           </button>
 
-          <div className={`lg:block ${mobileNavOpen ? "" : "hidden"}`}>
+          <div id="guide-mobile-nav" className={`lg:block ${mobileNavOpen ? "" : "hidden"}`}>
             <div className="bg-white border border-[#0a0a0a]/10 rounded-2xl p-2 shadow-sm">
               <div className="px-3 pt-1 pb-2 text-[10px] uppercase tracking-widest text-[#6b7280]" style={{ fontWeight: 700 }}>
                 Prompt Craft
@@ -50,6 +53,7 @@ export function Guide({ go, initialSection }: { go: (p: string) => void; initial
                 return (
                   <button
                     key={s.key}
+                    aria-current={on ? "page" : undefined}
                     onClick={() => { setActive(s.key); setMobileNavOpen(false); }}
                     className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition ${
                       on ? "bg-[#4FC3F7] text-white" : "text-[#6b7280] hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/5"
@@ -70,6 +74,7 @@ export function Guide({ go, initialSection }: { go: (p: string) => void; initial
                 return (
                   <button
                     key={s.key}
+                    aria-current={on ? "page" : undefined}
                     onClick={() => { setActive(s.key); setMobileNavOpen(false); }}
                     className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition ${
                       on ? "bg-[#4FC3F7] text-white" : "text-[#6b7280] hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/5"
@@ -87,7 +92,7 @@ export function Guide({ go, initialSection }: { go: (p: string) => void; initial
               <div className="flex items-start justify-between">
                 <div>
                   <div className="text-[#0a0a0a] mb-1" style={{ fontWeight: 700 }}>Ready to try?</div>
-                  <p className="text-[#6b7280] mb-3" style={{ fontSize: "13px", lineHeight: 1.5 }}>Jump into the library and copy a tested prompt/prompt.</p>
+                  <p className="text-[#6b7280] mb-3" style={{ fontSize: "13px", lineHeight: 1.5 }}>Jump into the library and copy a tested prompt.</p>
                   <button onClick={() => go("library")} className="h-9 px-4 rounded-full bg-[#4FC3F7] text-white" style={{ fontWeight: 700 }}>
                     Browse prompts
                   </button>
@@ -184,7 +189,7 @@ function Anatomy() {
   const parts = [
     { color: "#4FC3F7", name: "Role",        desc: "Who the AI should act as.",                     ex: "You are a senior copywriter..." },
     { color: "#0a0a0a", name: "Task",        desc: "What to produce, clearly.",                     ex: "Write a 3-line LinkedIn hook..." },
-    { color: "#90b4ce", name: "Context",     desc: "Relevant background or audience.",              ex: "Audience: early-stage founders." },
+    { color: "#6b7280", name: "Context",     desc: "Relevant background or audience.",              ex: "Audience: early-stage founders." },
     { color: "#4FC3F7", name: "Constraints", desc: "Length, tone, format rules.",                   ex: "Max 60 words. No emojis." },
     { color: "#6b7280", name: "Format",      desc: "How output should be shaped.",                  ex: "Return as JSON with 3 fields." },
     { color: "#4FC3F7", name: "Examples",    desc: "Few-shot samples (optional but powerful).",     ex: "Example: 'Shipping beats perfection.'" },
@@ -321,11 +326,11 @@ Tone: [tone]. Max [word_count] words.`}</PromptBlock>
           ].map((m, i) => (
             <div key={i} className="grid md:grid-cols-[1fr_1fr_1.5fr] gap-3 border border-[#0a0a0a]/10 rounded-xl p-3">
               <div>
-                <span className="text-[11px] text-red-500" style={{ fontWeight: 700 }}>BAD</span>
+                <span className="px-2 py-0.5 rounded-full text-[11px] bg-red-100 text-red-600 border border-red-200" style={{ fontWeight: 700 }}>Weak</span>
                 <div className="font-mono text-[12px] text-[#0a0a0a] mt-1">{m.bad}</div>
               </div>
               <div>
-                <span className="text-[11px] text-green-600" style={{ fontWeight: 700 }}>GOOD</span>
+                <span className="px-2 py-0.5 rounded-full text-[11px] bg-green-100 text-green-700 border border-green-200" style={{ fontWeight: 700 }}>Strong</span>
                 <div className="font-mono text-[12px] text-[#0a0a0a] mt-1">{m.good}</div>
               </div>
               <div className="text-[#6b7280] text-[12px]" style={{ lineHeight: 1.5 }}>{m.why}</div>
@@ -440,8 +445,10 @@ function Checklist() {
           {items.map((t, i) => (
             <li key={i}>
               <button
+                role="checkbox"
+                aria-checked={checked[i]}
                 onClick={() => toggleItem(i)}
-                className="w-full flex items-start gap-3 p-2 rounded-xl text-left transition-colors hover:bg-[#0a0a0a]/3"
+                className="w-full flex items-start gap-3 p-2 rounded-xl text-left transition-colors hover:bg-[#0a0a0a]/5"
               >
                 <span className={`mt-0.5 shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
                   checked[i]
@@ -517,12 +524,12 @@ function Tips() {
 type PartKey = "role" | "task" | "context" | "constraints" | "format" | "examples";
 
 const partDefs: { key: PartKey; name: string; color: string; sample: string }[] = [
-  { key: "role",        name: "Role",        color: "#4FC3F7", sample: "You are a senior copywriter with 10 years of B2B SaaS experience." },
+  { key: "role",        name: "Role",        color: "#0a0a0a", sample: "You are a senior copywriter with 10 years of B2B SaaS experience." },
   { key: "task",        name: "Task",        color: "#0a0a0a", sample: "Write a 3-line LinkedIn hook announcing a new AI prompt library." },
-  { key: "context",     name: "Context",     color: "#90b4ce", sample: "Audience: early-stage founders who skim feeds fast." },
-  { key: "constraints", name: "Constraints", color: "#4FC3F7", sample: "Max 60 words. Punchy tone. No emojis. No hashtags." },
-  { key: "format",      name: "Format",      color: "#6b7280", sample: "Return as a 3-item markdown list." },
-  { key: "examples",    name: "Examples",    color: "#4FC3F7", sample: "Example tone: \"Shipping beats perfection. Here's why...\"" },
+  { key: "context",     name: "Context",     color: "#0a0a0a", sample: "Audience: early-stage founders who skim feeds fast." },
+  { key: "constraints", name: "Constraints", color: "#0a0a0a", sample: "Max 60 words. Punchy tone. No emojis. No hashtags." },
+  { key: "format",      name: "Format",      color: "#0a0a0a", sample: "Return as a 3-item markdown list." },
+  { key: "examples",    name: "Examples",    color: "#0a0a0a", sample: "Example tone: \"Shipping beats perfection. Here's why...\"" },
 ];
 
 function Playground() {
@@ -634,7 +641,7 @@ function Playground() {
             </div>
             <div className="h-2 rounded-full bg-[#0a0a0a]/10 overflow-hidden mb-3">
               <motion.div
-                className="h-full bg-gradient-to-r from-[#4FC3F7] to-[#4FC3F7]"
+                className="h-full bg-gradient-to-r from-[#4FC3F7] to-[#2f8fc7]"
                 animate={{ width: `${(score / 5) * 100}%` }}
                 transition={{ type: "spring", stiffness: 120, damping: 18 }}
               />
@@ -678,10 +685,10 @@ function StepCard({ stepIndex, totalSteps, done, onToggle, children }: {
 
   return (
     <div
-      className="bg-white border rounded-2xl p-6 transition-all duration-300 relative"
+      className="border rounded-2xl p-6 transition-all duration-300 relative"
       style={{
         borderColor: isDone ? "#10b981" : "rgba(10, 10, 10, 0.10)",
-        opacity: isDone ? 0.6 : 1,
+        background: isDone ? "rgba(16, 185, 129, 0.04)" : "#ffffff",
       }}
     >
       {isDone && (
@@ -739,7 +746,7 @@ function ToolBadge({ name, color }: { name: string; color: string }) {
 function ProTip({ text }: { text: string }) {
   return (
     <div className="flex items-start gap-2">
-      <span className="text-[#10a37f] text-[15px]">✅</span>
+      <span className="text-[15px]">✅</span>
       <span className="text-[#0a0a0a]" style={{ lineHeight: 1.6 }}>{text}</span>
     </div>
   );
@@ -751,7 +758,7 @@ function ImageGenGuide() {
   const { done, toggle } = useStepDone(5);
 
   return (
-    <Section title="Image Generation Guide" icon={Image}>
+    <Section title="Image Generation" icon={Image}>
       <StepCard stepIndex={0} totalSteps={5} done={done} onToggle={toggle}>
         <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 1 - Choose Your Tool & Set Up</div>
         <p className="text-[#6b7280] mb-4" style={{ lineHeight: 1.6 }}>Pick an image generation tool, create an account, and get familiar with the interface.</p>
@@ -873,6 +880,7 @@ function FeaturedWebsiteCard({ design, onClick }: { design: WebsiteDesign; onCli
         ) : (
           <iframe
             src={`/previews/${design.slug}/index.html`}
+            title={`${design.title} preview`}
             className="pointer-events-none"
             style={{ width: "1280px", height: "800px", transform: "scale(0.203)", transformOrigin: "top left", border: "none" }}
             tabIndex={-1}
@@ -896,7 +904,30 @@ function WebGenGuide({ go }: { go: (p: string) => void }) {
   const featured = FEATURED_WEBSITE_IDS
     .map(id => websiteDesigns.find(d => d.id === id))
     .filter((d): d is WebsiteDesign => Boolean(d));
-  const [scrollPaused, setScrollPaused] = useState(false);
+  const marqueeRef = useRef<HTMLDivElement>(null);
+  const marqueePaused = useRef(false);
+  const marqueeResumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pauseMarquee = () => { marqueePaused.current = true; if (marqueeResumeTimer.current) clearTimeout(marqueeResumeTimer.current); };
+  const resumeMarqueeSoon = (delay = 0) => {
+    if (marqueeResumeTimer.current) clearTimeout(marqueeResumeTimer.current);
+    marqueeResumeTimer.current = setTimeout(() => { marqueePaused.current = false; }, delay);
+  };
+
+  useEffect(() => {
+    const el = marqueeRef.current;
+    if (!el) return;
+    let raf: number;
+    const tick = () => {
+      if (!marqueePaused.current) {
+        el.scrollLeft += 0.5;
+        const half = el.scrollWidth / 2;
+        if (el.scrollLeft >= half) el.scrollLeft -= half;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); if (marqueeResumeTimer.current) clearTimeout(marqueeResumeTimer.current); };
+  }, []);
 
   return (
     <Section title="Website Generation" icon={Globe}>
@@ -916,21 +947,22 @@ function WebGenGuide({ go }: { go: (p: string) => void }) {
           </button>
         </div>
         <div
-          className="overflow-hidden"
+          ref={marqueeRef}
+          className="overflow-x-auto overflow-y-hidden no-scrollbar"
           style={{
             maskImage: "linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%)",
             WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%)",
+            WebkitOverflowScrolling: "touch",
           }}
-          onMouseEnter={() => setScrollPaused(true)}
-          onMouseLeave={() => setScrollPaused(false)}
+          onMouseEnter={pauseMarquee}
+          onMouseLeave={() => resumeMarqueeSoon(0)}
+          onTouchStart={pauseMarquee}
+          onTouchEnd={() => resumeMarqueeSoon(2500)}
+          onPointerDown={pauseMarquee}
+          onPointerUp={() => resumeMarqueeSoon(1000)}
+          onPointerCancel={() => resumeMarqueeSoon(1000)}
         >
-          <div
-            className="flex gap-4 py-1 featured-web-marquee"
-            style={{
-              width: "max-content",
-              animationPlayState: scrollPaused ? "paused" : "running",
-            }}
-          >
+          <div className="flex gap-4 py-1" style={{ width: "max-content" }}>
             {[...featured, ...featured].map((d, i) => (
               <FeaturedWebsiteCard
                 key={`${d.id}-${i}`}
@@ -941,13 +973,8 @@ function WebGenGuide({ go }: { go: (p: string) => void }) {
           </div>
         </div>
         <style>{`
-          .featured-web-marquee {
-            animation: featured-web-scroll 50s linear infinite;
-          }
-          @keyframes featured-web-scroll {
-            from { transform: translateX(0); }
-            to   { transform: translateX(-50%); }
-          }
+          .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+          .no-scrollbar::-webkit-scrollbar { display: none; }
         `}</style>
       </div>
 
@@ -969,7 +996,7 @@ function WebGenGuide({ go }: { go: (p: string) => void }) {
         <div className="flex flex-wrap gap-2">
           <ToolBadge name="Lovable"   color="#4FC3F7" />
           <ToolBadge name="Bolt"      color="#0a0a0a" />
-          <ToolBadge name="v0"        color="#0f0f0f" />
+          <ToolBadge name="v0"        color="#0a0a0a" />
           <ToolBadge name="Replit AI" color="#4FC3F7" />
           <ToolBadge name="Cursor"    color="#10a37f" />
           <ToolBadge name="CodeSX"    color="#90b4ce" />
@@ -1029,7 +1056,7 @@ function VideoGenGuide() {
   const { done, toggle } = useStepDone(5);
 
   return (
-    <Section title="Video Generation Guide" icon={Video}>
+    <Section title="Video Generation" icon={Video}>
       <StepCard stepIndex={0} totalSteps={5} done={done} onToggle={toggle}>
         <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 1 - Choose Your Tool & Set Up</div>
         <p className="text-[#6b7280] mb-4" style={{ lineHeight: 1.6 }}>Pick a video AI tool, create an account, and explore the interface. Most tools offer text-to-video and image-to-video modes.</p>

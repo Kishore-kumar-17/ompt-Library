@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { platforms, videoPlatforms, websitePlatforms } from "../theme";
-import { authStore, builderApi, variablesApi, type EngineLockFields } from "../../lib/api";
+import { authStore, builderApi, variablesApi, type EngineLockFields, type BuilderResult } from "../../lib/api";
 import { LockLayerPanel } from "../LockLayerPanel";
 import { VariablePanel } from "../VariablePanel";
 import { applyVariables } from "../../lib/variables";
@@ -76,8 +76,8 @@ const STEPS = [
 
 // ─── Chip selector ────────────────────────────────────────────────────────────
 
-function ChipGroup({ label, options, value, onChange }: {
-  label: string; options: string[]; value: string; onChange: (v: string) => void;
+function ChipGroup({ label, options, value, onChange, disabled }: {
+  label: string; options: string[]; value: string; onChange: (v: string) => void; disabled?: boolean;
 }) {
   return (
     <div>
@@ -86,8 +86,9 @@ function ChipGroup({ label, options, value, onChange }: {
         {options.map((opt) => (
           <button
             key={opt}
+            disabled={disabled}
             onClick={() => onChange(value === opt ? "" : opt)}
-            className={`px-3 py-1 rounded-full text-[12px] border transition-all ${
+            className={`px-3 py-1 rounded-full text-[12px] border transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4FC3F7] focus-visible:outline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
               value === opt
                 ? "bg-[#4FC3F7] text-[#0a0a0a] border-[#4FC3F7]"
                 : "bg-white border-[#0a0a0a]/15 text-[#6b7280] hover:border-[#0a0a0a]/40 hover:text-[#0a0a0a]"
@@ -102,8 +103,8 @@ function ChipGroup({ label, options, value, onChange }: {
   );
 }
 
-function MultiChipGroup({ label, options, value, onChange }: {
-  label: string; options: string[]; value: string[]; onChange: (v: string[]) => void;
+function MultiChipGroup({ label, options, value, onChange, disabled }: {
+  label: string; options: string[]; value: string[]; onChange: (v: string[]) => void; disabled?: boolean;
 }) {
   return (
     <div>
@@ -114,8 +115,9 @@ function MultiChipGroup({ label, options, value, onChange }: {
           return (
             <button
               key={opt}
+              disabled={disabled}
               onClick={() => onChange(selected ? value.filter(v => v !== opt) : [...value, opt])}
-              className={`px-3 py-1 rounded-full text-[12px] border transition-all ${
+              className={`px-3 py-1 rounded-full text-[12px] border transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4FC3F7] focus-visible:outline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
                 selected
                   ? "bg-[#4FC3F7] text-[#0a0a0a] border-[#4FC3F7]"
                   : "bg-white border-[#0a0a0a]/15 text-[#6b7280] hover:border-[#0a0a0a]/40 hover:text-[#0a0a0a]"
@@ -174,7 +176,9 @@ export function Builder({ go }: { go: (p: string) => void }) {
   // Reset website subcategory when category changes
   useEffect(() => { setWebsiteSubCategory(""); }, [websiteCategory]);
 
-  // Switch platform defaults when family changes
+  // Switch platform defaults when family changes, and clear family-specific
+  // enhancement state so a value picked under one family (e.g. an Image style)
+  // never gets silently submitted under another (e.g. Video).
   useEffect(() => {
     if (family === "website") {
       setPlatform("lovable");
@@ -183,6 +187,8 @@ export function Builder({ go }: { go: (p: string) => void }) {
     } else {
       setPlatform("midjourney");
     }
+    setStyle("");
+    setMood("");
     setHasGenerated(false);
   }, [family]);
 
@@ -193,7 +199,12 @@ export function Builder({ go }: { go: (p: string) => void }) {
 
   const canGenerate = idea.trim().length > 0;
   const variableFields = lockData?.variables ?? [];
-  const displayPrompt = regenText ?? applyVariables(generated, vars);
+  // Single source of truth for "the current prompt text" — used for both the
+  // on-screen preview and Copy/Download, so users never copy something they
+  // didn't see rendered.
+  const baseText = lockData?.finalAssembledText || generated;
+  const displayPrompt = regenText ?? applyVariables(baseText, vars);
+  const outputText = isWebsite ? generated : displayPrompt;
 
   // Current step indicator
   const currentStep = !canGenerate ? 0 : !hasGenerated ? 1 : 2;
@@ -256,10 +267,13 @@ export function Builder({ go }: { go: (p: string) => void }) {
     setIsLoading(true);
     setError("");
     setShowAllPlatforms(true);
+    setAllPlatformResults({});
 
     const results: Record<string, string> = {};
-    try {
-      const promises = activePlatforms.map(async (pl) => {
+    const fullResults: Record<string, BuilderResult> = {};
+    const failed: string[] = [];
+    const outcomes = await Promise.allSettled(
+      activePlatforms.map(async (pl) => {
         const payload: Parameters<typeof builderApi.generate>[0] = {
           idea, family, platform: pl.key,
           style: style || undefined,
@@ -277,34 +291,57 @@ export function Builder({ go }: { go: (p: string) => void }) {
         };
         const result = await builderApi.generate(payload);
         results[pl.key] = result.finalAssembledText || result.prompt;
-      });
-      await Promise.all(promises);
-      setAllPlatformResults(results);
-      setHasGenerated(true);
-    } catch (err: any) {
-      setError(err?.message ?? "Generation failed");
-      toast.error("Multi-platform generation failed");
-    } finally {
-      setIsLoading(false);
+        fullResults[pl.key] = result;
+      })
+    );
+    outcomes.forEach((o, i) => { if (o.status === "rejected") failed.push(activePlatforms[i].name); });
+
+    setAllPlatformResults(results);
+    if (Object.keys(results).length > 0) setHasGenerated(true);
+
+    // Keep "Single view" in sync with the batch: populate it for whichever
+    // platform is currently selected, or clear stale data from a previous
+    // single-generate if that platform didn't come back in this batch.
+    const currentPlatformResult = fullResults[platform];
+    if (currentPlatformResult) {
+      setGenerated(currentPlatformResult.prompt);
+      setLockData(currentPlatformResult);
+      setVars(Object.fromEntries((currentPlatformResult.variables ?? []).filter(v => v.default).map(v => [v.name, v.default!])));
+    } else {
+      setGenerated("");
+      setLockData(null);
+      setVars({});
     }
+    setRegenText(null);
+
+    if (failed.length > 0 && Object.keys(results).length > 0) {
+      setError(`Failed for: ${failed.join(", ")}. Other platforms generated successfully.`);
+      toast.error("Some platforms failed", { description: failed.join(", ") });
+    } else if (failed.length > 0) {
+      setError("Generation failed for all platforms.");
+      toast.error("Multi-platform generation failed");
+    }
+    setIsLoading(false);
   }
 
   function handleCopy() {
     if (!generated) return;
-    navigator.clipboard?.writeText(regenText ?? applyVariables(lockData?.finalAssembledText || generated, vars));
+    navigator.clipboard?.writeText(outputText);
     setCopied(true);
+    toast.success("Prompt copied");
     setTimeout(() => setCopied(false), 2000);
   }
 
   function handleDownload() {
     if (!generated) return;
-    const content = regenText ?? applyVariables(lockData?.finalAssembledText || generated, vars);
-    const blob = new Blob([content], { type: "text/markdown" });
+    const blob = new Blob([outputText], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `website-prompt-${platform}.md`;
+    a.download = `${family}-prompt-${platform}.md`;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
     toast.success("Downloaded as .md file");
   }
@@ -329,8 +366,8 @@ export function Builder({ go }: { go: (p: string) => void }) {
         </h1>
         <p className="text-[#6b7280]" style={{ fontSize: "15px" }}>
           {isWebsite
-            ? "Describe your business - AI generates a structured 10-section website prompt for any AI builder."
-            : "Describe your idea - AI generates a production-ready prompt with locks and formatting."}
+            ? "Describe your business — AI generates a structured 10-section website prompt for any AI builder."
+            : "Describe your idea — AI generates a production-ready prompt with locks and formatting."}
         </p>
 
         {/* Step indicator */}
@@ -372,11 +409,13 @@ export function Builder({ go }: { go: (p: string) => void }) {
                 return (
                   <button
                     key={f.key}
+                    disabled={isLoading}
+                    aria-disabled={locked}
                     onClick={() => {
-                      if (locked) { toast("Coming Soon", { description: `${f.label} prompts will be available soon.` }); return; }
+                      if (locked || isLoading) { if (locked) toast("Coming Soon", { description: `${f.label} prompts will be available soon.` }); return; }
                       setFamily(f.key); setHasGenerated(false);
                     }}
-                    className={`p-3 rounded-xl border text-left transition-all relative ${
+                    className={`p-3 rounded-xl border text-left transition-all relative disabled:opacity-50 disabled:cursor-not-allowed ${
                       locked
                         ? "bg-[#0a0a0a]/5 border-[#0a0a0a]/10 cursor-not-allowed"
                         : family === f.key
@@ -386,7 +425,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
                   >
                     <div className={`text-[13px] flex items-center gap-1.5 ${locked ? "text-[#6b7280]/50" : "text-[#0a0a0a]"}`} style={{ fontWeight: 600 }}>
                       {f.label}
-                      {locked && <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#4FC3F7]/15 text-[#4FC3F7]">SOON</span>}
+                      {locked && <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#4FC3F7]/15 text-[#0a0a0a]">SOON</span>}
                     </div>
                     <div className={`text-[10px] mt-0.5 ${locked ? "text-[#6b7280]/40" : family === f.key ? "text-[#0a0a0a]/70" : "text-[#6b7280]"}`}>{f.desc}</div>
                   </button>
@@ -403,8 +442,9 @@ export function Builder({ go }: { go: (p: string) => void }) {
                 {WEBSITE_CATEGORIES.map((cat) => (
                   <button
                     key={cat.key}
+                    disabled={isLoading}
                     onClick={() => { setWebsiteCategory(websiteCategory === cat.key ? "" : cat.key); setHasGenerated(false); }}
-                    className={`p-3 rounded-xl border text-left transition-all ${
+                    className={`p-3 rounded-xl border text-left transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                       websiteCategory === cat.key
                         ? "bg-[#4FC3F7] border-[#4FC3F7]"
                         : "bg-white border-[#0a0a0a]/15 hover:border-[#0a0a0a]/30"
@@ -428,8 +468,9 @@ export function Builder({ go }: { go: (p: string) => void }) {
                 {selectedCategorySubs.map((sub) => (
                   <button
                     key={sub}
+                    disabled={isLoading}
                     onClick={() => { setWebsiteSubCategory(websiteSubCategory === sub ? "" : sub); setHasGenerated(false); }}
-                    className={`px-3 py-1 rounded-full text-[12px] border transition-all ${
+                    className={`px-3 py-1 rounded-full text-[12px] border transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                       websiteSubCategory === sub
                         ? "bg-[#4FC3F7] text-[#0a0a0a] border-[#4FC3F7]"
                         : "bg-white border-[#0a0a0a]/15 text-[#6b7280] hover:border-[#0a0a0a]/40 hover:text-[#0a0a0a]"
@@ -447,18 +488,20 @@ export function Builder({ go }: { go: (p: string) => void }) {
           <div className="bg-white border-2 border-[#0a0a0a]/15 rounded-2xl p-5 focus-within:border-[#4FC3F7] transition-colors">
             <div className="flex items-center gap-2 mb-3">
               <Wand2 className="w-4 h-4 text-[#4FC3F7]" />
-              <span className="text-[13px] text-[#0a0a0a]" style={{ fontWeight: 600 }}>
+              <label htmlFor="builder-idea" className="text-[13px] text-[#0a0a0a]" style={{ fontWeight: 600 }}>
                 {isWebsite ? "Describe your business or idea" : "Your idea or scene"}
-              </span>
+              </label>
             </div>
             <textarea
+              id="builder-idea"
               rows={3}
+              disabled={isLoading}
               value={idea}
-              onChange={(e) => { setIdea(e.target.value); setHasGenerated(false); }}
+              onChange={(e) => { setIdea(e.target.value); setHasGenerated(false); setError(""); }}
               placeholder={isWebsite
                 ? `Try:\n"A premium Japanese restaurant in Mumbai with omakase dining, sake bar, and chef's table booking"\n"SaaS dashboard for managing freelance invoices and contracts"`
                 : `Try:\n"a samurai standing in rain at night"\n"luxury perfume bottle on marble surface"`}
-              className="w-full resize-none text-[#0a0a0a] placeholder:text-[#6b7280]/50 text-[15px] outline-none leading-relaxed bg-transparent"
+              className="w-full resize-none text-[#0a0a0a] placeholder:text-[#6b7280]/50 text-[15px] outline-none leading-relaxed bg-transparent disabled:opacity-60"
             />
             <div className="flex items-center justify-between mt-1">
               <div className="text-[11px] text-[#6b7280]/50">{idea.length > 0 ? `${idea.length} characters` : ""}</div>
@@ -476,8 +519,9 @@ export function Builder({ go }: { go: (p: string) => void }) {
                 {CATEGORIES.map((cat) => (
                   <button
                     key={cat.key}
+                    disabled={isLoading}
                     onClick={() => { setCategory(cat.key); setHasGenerated(false); }}
-                    className={`px-3 py-1 rounded-full text-[12px] border transition-all ${
+                    className={`px-3 py-1 rounded-full text-[12px] border transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                       category === cat.key
                         ? "bg-[#4FC3F7] text-[#0a0a0a] border-[#4FC3F7]"
                         : "bg-white border-[#0a0a0a]/15 text-[#6b7280] hover:border-[#0a0a0a]/40 hover:text-[#0a0a0a]"
@@ -501,8 +545,9 @@ export function Builder({ go }: { go: (p: string) => void }) {
                 {VIDEO_CATEGORIES.map((cat) => (
                   <button
                     key={cat.key}
+                    disabled={isLoading}
                     onClick={() => { setVideoCategory(videoCategory === cat.key ? "" : cat.key); setHasGenerated(false); }}
-                    className={`px-3 py-1 rounded-full text-[12px] border transition-all ${
+                    className={`px-3 py-1 rounded-full text-[12px] border transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                       videoCategory === cat.key
                         ? "bg-[#4FC3F7] text-[#0a0a0a] border-[#4FC3F7]"
                         : "bg-white border-[#0a0a0a]/15 text-[#6b7280] hover:border-[#0a0a0a]/40 hover:text-[#0a0a0a]"
@@ -523,8 +568,9 @@ export function Builder({ go }: { go: (p: string) => void }) {
               {activePlatforms.map((pl) => (
                 <button
                   key={pl.key}
+                  disabled={isLoading}
                   onClick={() => { setPlatform(pl.key); setHasGenerated(false); }}
-                  className={`px-3 py-1.5 rounded-full border text-[13px] transition-all ${
+                  className={`px-3 py-1.5 rounded-full border text-[13px] transition-all disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4FC3F7] focus-visible:outline-offset-2 ${
                     platform === pl.key
                       ? "bg-[#4FC3F7] text-[#0a0a0a] border-[#4FC3F7]"
                       : "border-[#0a0a0a]/15 text-[#6b7280] hover:text-[#0a0a0a] hover:border-[#0a0a0a]/30"
@@ -560,28 +606,28 @@ export function Builder({ go }: { go: (p: string) => void }) {
               <div className="px-5 pb-5 space-y-4 border-t border-[#0a0a0a]/8 pt-4">
                 {isWebsite ? (
                   <>
-                    <ChipGroup label="Style"    options={WEBSITE_STYLES}    value={style}           onChange={(v) => { setStyle(v);           setHasGenerated(false); }} />
-                    <ChipGroup label="Mood"     options={WEBSITE_MOODS}     value={mood}            onChange={(v) => { setMood(v);            setHasGenerated(false); }} />
-                    <ChipGroup label="Palette"  options={WEBSITE_PALETTES}  value={websitePalette}  onChange={(v) => { setWebsitePalette(v);  setHasGenerated(false); }} />
-                    <ChipGroup label="Audience" options={WEBSITE_AUDIENCES} value={websiteAudience} onChange={(v) => { setWebsiteAudience(v); setHasGenerated(false); }} />
-                    <MultiChipGroup label="Pages" options={WEBSITE_PAGES}   value={websitePages}    onChange={(v) => { setWebsitePages(v);    setHasGenerated(false); }} />
+                    <ChipGroup disabled={isLoading} label="Style"    options={WEBSITE_STYLES}    value={style}           onChange={(v) => { setStyle(v);           setHasGenerated(false); }} />
+                    <ChipGroup disabled={isLoading} label="Mood"     options={WEBSITE_MOODS}     value={mood}            onChange={(v) => { setMood(v);            setHasGenerated(false); }} />
+                    <ChipGroup disabled={isLoading} label="Palette"  options={WEBSITE_PALETTES}  value={websitePalette}  onChange={(v) => { setWebsitePalette(v);  setHasGenerated(false); }} />
+                    <ChipGroup disabled={isLoading} label="Audience" options={WEBSITE_AUDIENCES} value={websiteAudience} onChange={(v) => { setWebsiteAudience(v); setHasGenerated(false); }} />
+                    <MultiChipGroup disabled={isLoading} label="Pages" options={WEBSITE_PAGES}   value={websitePages}    onChange={(v) => { setWebsitePages(v);    setHasGenerated(false); }} />
                   </>
                 ) : isVideo ? (
                   <>
-                    <ChipGroup label="Style"           options={VIDEO_STYLES}    value={style}         onChange={(v) => { setStyle(v);          setHasGenerated(false); }} />
-                    <ChipGroup label="Mood"            options={VIDEO_MOODS}     value={mood}          onChange={(v) => { setMood(v);           setHasGenerated(false); }} />
-                    <ChipGroup label="Duration"        options={VIDEO_DURATIONS} value={videoDuration}  onChange={(v) => { setVideoDuration(v);  setHasGenerated(false); }} />
-                    <ChipGroup label="Camera Movement" options={VIDEO_CAMERAS}   value={videoCamera}    onChange={(v) => { setVideoCamera(v);    setHasGenerated(false); }} />
-                    <ChipGroup label="Pacing"          options={VIDEO_PACING}    value={videoPacing}    onChange={(v) => { setVideoPacing(v);    setHasGenerated(false); }} />
-                    <ChipGroup label="Sound Design"    options={VIDEO_SOUND}     value={videoSound}     onChange={(v) => { setVideoSound(v);     setHasGenerated(false); }} />
-                    <ChipGroup label="Aspect Ratio"    options={ASPECTS}         value={aspect}         onChange={(v) => { setAspect(v);         setHasGenerated(false); }} />
+                    <ChipGroup disabled={isLoading} label="Style"           options={VIDEO_STYLES}    value={style}         onChange={(v) => { setStyle(v);          setHasGenerated(false); }} />
+                    <ChipGroup disabled={isLoading} label="Mood"            options={VIDEO_MOODS}     value={mood}          onChange={(v) => { setMood(v);           setHasGenerated(false); }} />
+                    <ChipGroup disabled={isLoading} label="Duration"        options={VIDEO_DURATIONS} value={videoDuration}  onChange={(v) => { setVideoDuration(v);  setHasGenerated(false); }} />
+                    <ChipGroup disabled={isLoading} label="Camera Movement" options={VIDEO_CAMERAS}   value={videoCamera}    onChange={(v) => { setVideoCamera(v);    setHasGenerated(false); }} />
+                    <ChipGroup disabled={isLoading} label="Pacing"          options={VIDEO_PACING}    value={videoPacing}    onChange={(v) => { setVideoPacing(v);    setHasGenerated(false); }} />
+                    <ChipGroup disabled={isLoading} label="Sound Design"    options={VIDEO_SOUND}     value={videoSound}     onChange={(v) => { setVideoSound(v);     setHasGenerated(false); }} />
+                    <ChipGroup disabled={isLoading} label="Aspect Ratio"    options={ASPECTS}         value={aspect}         onChange={(v) => { setAspect(v);         setHasGenerated(false); }} />
                   </>
                 ) : (
                   <>
-                    <ChipGroup label="Style"       options={STYLES}  value={style}  onChange={(v) => { setStyle(v);  setHasGenerated(false); }} />
-                    <ChipGroup label="Mood"        options={MOODS}   value={mood}   onChange={(v) => { setMood(v);   setHasGenerated(false); }} />
+                    <ChipGroup disabled={isLoading} label="Style"       options={STYLES}  value={style}  onChange={(v) => { setStyle(v);  setHasGenerated(false); }} />
+                    <ChipGroup disabled={isLoading} label="Mood"        options={MOODS}   value={mood}   onChange={(v) => { setMood(v);   setHasGenerated(false); }} />
                     {family === "image" && (
-                      <ChipGroup label="Aspect Ratio" options={ASPECTS} value={aspect} onChange={(v) => { setAspect(v); setHasGenerated(false); }} />
+                      <ChipGroup disabled={isLoading} label="Aspect Ratio" options={ASPECTS} value={aspect} onChange={(v) => { setAspect(v); setHasGenerated(false); }} />
                     )}
                   </>
                 )}
@@ -613,11 +659,12 @@ export function Builder({ go }: { go: (p: string) => void }) {
             <button
               onClick={handleGenerateAll}
               disabled={!canGenerate || isLoading}
+              title={`Generate for all ${activePlatforms.length} platforms`}
               className="h-[52px] px-5 rounded-2xl border border-[#0a0a0a]/15 text-[#0a0a0a] text-[13px] flex items-center justify-center gap-2 hover:bg-[#0a0a0a]/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
               style={{ fontWeight: 600 }}
             >
               <Layers className="w-4 h-4" />
-              All {activePlatforms.length}
+              All {activePlatforms.length} platforms
             </button>
           </div>
         </div>
@@ -661,7 +708,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
 
           {/* Single platform output */}
           {!showAllPlatforms && (
-            <div className={`relative rounded-xl border min-h-[220px] shrink-0 p-4 transition-all ${
+            <div className={`relative rounded-xl border min-h-[220px] max-h-[600px] overflow-y-auto shrink-0 p-4 transition-all ${
               hasGenerated ? "bg-[#fafafa] border-[#0a0a0a]/10" : "bg-[#f5f5f5] border-[#0a0a0a]/8"
             }`}>
               {isLoading ? (
@@ -681,7 +728,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
                 </div>
               ) : hasGenerated ? (
                 <pre className="whitespace-pre-wrap break-words font-mono text-[13px] leading-relaxed text-[#0a0a0a]">
-                  {!isWebsite && variableFields.length > 0 ? highlight(displayPrompt, variableFields.map(v => v.name)) : (isWebsite ? generated : generated)}
+                  {!isWebsite && variableFields.length > 0 ? highlight(outputText, variableFields.map(v => v.name)) : outputText}
                 </pre>
               ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center px-6">
@@ -794,11 +841,23 @@ export function Builder({ go }: { go: (p: string) => void }) {
                 <button
                   onClick={handleDownload}
                   disabled={!hasGenerated || isLoading}
-                  className="h-11 rounded-xl border border-[#0a0a0a]/15 text-[#0a0a0a] text-[13px] flex items-center justify-center gap-2 hover:bg-[#0a0a0a]/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all col-span-2"
+                  className="h-11 rounded-xl border border-[#0a0a0a]/15 text-[#0a0a0a] text-[13px] flex items-center justify-center gap-2 hover:bg-[#0a0a0a]/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                   style={{ fontWeight: 600 }}
                 >
                   <Download className="w-4 h-4" />
                   Download as .md
+                </button>
+                <button
+                  onClick={() => {
+                    if (!authStore.getUser()) { toast.error("Sign in to save prompts"); return; }
+                    toast("Saving generated prompts isn't available yet", { description: "Copy or download it for now — we're working on it." });
+                  }}
+                  disabled={!hasGenerated || isLoading}
+                  className="h-11 rounded-xl border border-[#0a0a0a]/15 text-[#0a0a0a] text-[13px] flex items-center justify-center gap-2 hover:bg-[#0a0a0a]/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all col-span-2"
+                  style={{ fontWeight: 600 }}
+                >
+                  <Save className="w-4 h-4" />
+                  Save to Library
                 </button>
               </>
             ) : (
@@ -826,7 +885,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
                 <button
                   onClick={() => {
                     if (!authStore.getUser()) { toast.error("Sign in to save prompts"); return; }
-                    toast.success("Saved to library", { description: `${platform} · ${family}` });
+                    toast("Saving generated prompts isn't available yet", { description: "Copy or download it for now — we're working on it." });
                   }}
                   disabled={!hasGenerated || isLoading}
                   className="h-11 rounded-xl border border-[#0a0a0a]/15 text-[#0a0a0a] text-[13px] flex items-center justify-center gap-2 hover:bg-[#0a0a0a]/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all col-span-2"

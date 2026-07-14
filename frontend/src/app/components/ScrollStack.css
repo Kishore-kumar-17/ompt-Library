@@ -2,6 +2,7 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 24px;
+  position: relative;
 }
 
 .scroll-stack-card {
@@ -14,4 +15,65 @@
 
 .scroll-stack-card:last-child {
   margin-bottom: 0;
+}
+
+/* Dot indicators */
+.scroll-stack-dots {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: opacity 0.3s ease;
+}
+
+/* 24px hit area for touch/click, with a smaller 10px visible dot centered inside */
+.scroll-stack-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scroll-stack-dot::after {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid #0a0a0a;
+  background: transparent;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.scroll-stack-dot.active::after {
+  background: #0a0a0a;
+  transform: scale(1.3);
+}
+
+.scroll-stack-dot:hover::after {
+  background: rgba(10, 10, 10, 0.4);
+}
+
+.scroll-stack-dot:focus-visible {
+  outline: 2px solid #4FC3F7;
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+/* Dots are a desktop scroll affordance; on narrow/stacked mobile layouts they
+   can overlap page content, and touch users already have swipe navigation. */
+@media (max-width: 768px) {
+  .scroll-stack-dots {
+    display: none;
+  }
 }

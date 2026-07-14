@@ -56,6 +56,10 @@ export default function ScrollReveal({
     const el = containerRef.current;
     if (!el) return;
 
+    // Respect the user's motion preference: skip the scroll-linked
+    // rotate/opacity/blur animation and just show the content normally.
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+
     const scroller =
       scrollContainerRef?.current ?? window;
 
@@ -115,7 +119,17 @@ export default function ScrollReveal({
       }
     }, el);
 
-    return () => ctx.revert();
+    // Images/fonts loading after mount can shift layout and invalidate the
+    // trigger positions ScrollTrigger measured on mount — recalculate once
+    // everything has actually loaded so above-the-fold content doesn't
+    // flash from visible to dimmed.
+    const onLoad = () => ScrollTrigger.refresh();
+    window.addEventListener('load', onLoad);
+
+    return () => {
+      window.removeEventListener('load', onLoad);
+      ctx.revert();
+    };
   }, [scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd, blurStrength]);
 
   return (

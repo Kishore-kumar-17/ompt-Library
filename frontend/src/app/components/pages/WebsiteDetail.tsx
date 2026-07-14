@@ -68,6 +68,11 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [iframeError, setIframeError] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
+  const [vote, setVote] = useState<"up" | "down" | null>(null);
+  const castVote = (dir: "up" | "down") => {
+    setVote(v => (v === dir ? null : dir));
+    if (vote !== dir) toast.success(dir === "up" ? "Thanks for the feedback!" : "Thanks — we'll take a look.");
+  };
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const previewUrl = `/previews/${slug}/index.html`;
@@ -78,6 +83,19 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [fullscreen]);
+
+  // The iframe's onError rarely fires for a missing local file (the browser
+  // "successfully" loads a 404 page), so proactively check the file exists
+  // instead of relying on it.
+  useEffect(() => {
+    setIframeLoaded(false);
+    setIframeError(false);
+    let cancelled = false;
+    fetch(previewUrl, { method: "HEAD" })
+      .then(res => { if (!cancelled && !res.ok) setIframeError(true); })
+      .catch(() => { if (!cancelled) setIframeError(true); });
+    return () => { cancelled = true; };
+  }, [previewUrl]);
 
   if (!design) {
     return (
@@ -106,7 +124,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-8 text-[#0a0a0a]">
       <button onClick={() => go("library:website")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-4 transition-colors">
-        <ArrowLeft className="w-3.5 h-3.5" /> Back to Website Generation
+        <ArrowLeft className="w-3.5 h-3.5" /> Back to Website Library
       </button>
 
       <div className="grid lg:grid-cols-2 gap-10 items-start">
@@ -126,10 +144,10 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                 <div className={`w-2 h-2 rounded-full shrink-0 ${iframeLoaded && !iframeError ? "bg-[#28c840]" : "bg-[#febc2e]"}`} />
                 <span className="text-[11px] text-[#6b7280] flex-1 truncate">{design.slug.replace(/_/g, "-")}.vercel.app</span>
               </div>
-              <button onClick={() => window.open(previewUrl, "_blank")} className="text-[#6b7280] hover:text-[#0a0a0a] p-0.5 rounded transition-colors" title="Open in new tab">
+              <button onClick={() => window.open(previewUrl, "_blank")} className="text-[#6b7280] hover:text-[#0a0a0a] p-0.5 rounded transition-colors" title="Open in new tab" aria-label="Open preview in new tab">
                 <ExternalLink className="w-3.5 h-3.5" />
               </button>
-              <button onClick={() => setFullscreen(true)} className="text-[#6b7280] hover:text-[#0a0a0a] p-0.5 rounded transition-colors" title="Expand fullscreen">
+              <button onClick={() => setFullscreen(true)} className="text-[#6b7280] hover:text-[#0a0a0a] p-0.5 rounded transition-colors" title="Expand fullscreen" aria-label="Expand preview fullscreen">
                 <Maximize2 className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -154,7 +172,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                 </div>
               )}
               {iframeError ? (
-                <WebsiteDetailPlaceholder design={design} />
+                <WebsiteDetailPlaceholder design={design} previewUrl={previewUrl} />
               ) : (
                 <>
                   <iframe
@@ -223,13 +241,21 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
           </div>
 
           <h1 className="text-3xl font-bold text-[#0a0a0a] mb-1">{design.title}</h1>
-          <p className="text-[#6b7280] text-[15px] mb-1">{design.style}</p>
-          <p className="text-[#6b7280] mb-5 leading-relaxed">{design.description}</p>
+          <p className="text-[#4FC3F7] text-[13px] font-semibold uppercase tracking-wide mb-2">{design.style}</p>
+          <p className="text-[#6b7280] mb-5 leading-relaxed line-clamp-3">{design.description}</p>
 
           <div className="flex items-center gap-4 mb-6 text-[#6b7280]">
             <span className="inline-flex items-center gap-1.5">
-              <button className="p-1 rounded-md text-[#6b7280] hover:text-[#4FC3F7] hover:bg-[#4FC3F7]/10 transition-colors"><ThumbsUp className="w-4 h-4" /></button>
-              <button className="p-1 rounded-md text-[#6b7280] hover:text-red-500 hover:bg-red-50 transition-colors"><ThumbsDown className="w-4 h-4" /></button>
+              <button
+                onClick={() => castVote("up")}
+                aria-label="This design was helpful"
+                className={`p-1 rounded-md transition-colors ${vote === "up" ? "bg-[#4FC3F7]/20 text-[#4FC3F7]" : "text-[#6b7280] hover:text-[#4FC3F7] hover:bg-[#4FC3F7]/10"}`}
+              ><ThumbsUp className="w-4 h-4" /></button>
+              <button
+                onClick={() => castVote("down")}
+                aria-label="This design was not helpful"
+                className={`p-1 rounded-md transition-colors ${vote === "down" ? "bg-red-100 text-red-500" : "text-[#6b7280] hover:text-red-500 hover:bg-red-50"}`}
+              ><ThumbsDown className="w-4 h-4" /></button>
             </span>
           </div>
 
@@ -257,7 +283,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
           <div className="relative bg-white border-2 border-[#0a0a0a] rounded-2xl p-4 mb-4 shadow-[6px_6px_0_0_#0a0a0a]">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] text-[#6b7280] uppercase font-bold tracking-widest">{activePl?.name} prompt</span>
-              <button onClick={handleCopy} className="p-1.5 rounded-lg bg-[#0a0a0a]/5 hover:bg-[#0a0a0a]/10 text-[#6b7280] hover:text-[#0a0a0a] transition-colors" title="Copy prompt">
+              <button onClick={handleCopy} className="p-1.5 rounded-lg bg-[#0a0a0a]/5 hover:bg-[#0a0a0a]/10 text-[#6b7280] hover:text-[#0a0a0a] transition-colors" title="Copy prompt" aria-label="Copy prompt">
                 <Copy className="w-4 h-4" />
               </button>
             </div>
@@ -284,13 +310,15 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
           <div className="border border-[#0a0a0a]/15 rounded-2xl overflow-hidden">
             <button
               onClick={() => setDocsOpen(v => !v)}
+              aria-expanded={docsOpen}
+              aria-controls="scaffold-docs-list"
               className="w-full flex items-center justify-between px-4 py-3 bg-[#0a0a0a]/3 hover:bg-[#0a0a0a]/5 transition-colors"
             >
-              <span className="text-[#0a0a0a] font-semibold text-[14px]">9 Supporting scaffold files</span>
+              <span className="text-[#0a0a0a] font-semibold text-[14px]">{DOCS.length + 1} Supporting scaffold files</span>
               {docsOpen ? <ChevronUp className="w-4 h-4 text-[#6b7280]" /> : <ChevronDown className="w-4 h-4 text-[#6b7280]" />}
             </button>
             {docsOpen && (
-              <div className="divide-y divide-[#0a0a0a]/8">
+              <div id="scaffold-docs-list" className="divide-y divide-[#0a0a0a]/8">
                 {DOCS.map(doc => (
                   <div key={doc.key} className="flex items-center justify-between px-4 py-3">
                     <div>
@@ -299,6 +327,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                     </div>
                     <button
                       onClick={() => downloadScaffoldFile(design.slug, doc.file, doc.label)}
+                      aria-label={`Download ${doc.label}`}
                       className="p-1.5 rounded-lg hover:bg-[#0a0a0a]/5 text-[#6b7280] hover:text-[#0a0a0a] transition-colors"
                       title={`Download ${doc.label}`}
                     >
@@ -313,6 +342,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                   </div>
                   <button
                     onClick={() => downloadScaffoldFile(design.slug, `${design.slug}.md`, `${design.slug}.md`)}
+                    aria-label={`Download ${design.slug}.md`}
                     className="p-1.5 rounded-lg hover:bg-[#4FC3F7]/20 text-[#0a0a0a] hover:text-[#0a0a0a] transition-colors"
                     title={`Download ${design.slug}.md`}
                   >
@@ -348,7 +378,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
               {/* Dark macOS chrome */}
               <div className="flex items-center gap-2 px-4 py-2.5 bg-[#1c1c1e] border-b border-white/10 shrink-0">
                 <div className="flex gap-1.5">
-                  <button onClick={() => setFullscreen(false)} className="w-3 h-3 rounded-full bg-[#ff5f57] hover:brightness-90 transition-all" title="Close (Esc)" />
+                  <button onClick={() => setFullscreen(false)} className="w-3 h-3 rounded-full bg-[#ff5f57] hover:brightness-90 transition-all" title="Close (Esc)" aria-label="Close fullscreen preview" />
                   <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
                   <div className="w-3 h-3 rounded-full bg-[#28c840]" />
                 </div>
@@ -360,6 +390,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                   onClick={() => window.open(previewUrl, "_blank")}
                   className="text-white/40 hover:text-white/80 p-1 rounded transition-colors"
                   title="Open in new tab"
+                  aria-label="Open preview in new tab"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                 </button>
@@ -367,6 +398,7 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                   onClick={() => setFullscreen(false)}
                   className="text-white/40 hover:text-white/80 p-1 rounded transition-colors"
                   title="Close (Esc)"
+                  aria-label="Close fullscreen preview"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -809,89 +841,40 @@ function WebsiteBuildGuide({ promptText, platformName }: { promptText: string; p
   );
 }
 
-// ─── Large detail placeholder ─────────────────────────────────────────────────
+// ─── Preview-unavailable fallback ──────────────────────────────────────────────
+// Shown when the live iframe preview fails to load. Reflects this design's own
+// metadata rather than a generic mockup, so it never misrepresents what the
+// design actually is.
 
-function WebsiteDetailPlaceholder({ design }: { design: { accentColor: string; bgColor: string } }) {
+function WebsiteDetailPlaceholder({ design, previewUrl }: { design: { title: string; category: string; subCategory: string; style: string; accentColor: string; bgColor: string }; previewUrl: string }) {
   return (
-    <div className="w-full" style={{ background: design.bgColor }}>
-      {/* Nav */}
-      <div className="flex items-center justify-between px-5 py-3 border-b" style={{ borderColor: "#E5E7EB" }}>
-        <span style={{ fontSize: "11px", fontWeight: 700, color: "#1A1A1A", letterSpacing: "0.1em" }}>CULINARYNARRATIVE</span>
-        <div className="flex gap-4 items-center">
-          {["Menu", "Stories", "Shop"].map(l => (
-            <span key={l} style={{ fontSize: "9px", color: "#1A1A1A" }}>{l}</span>
-          ))}
-          <span style={{ fontSize: "9px", fontWeight: 700, color: "#fff", background: "#E31E24", padding: "3px 10px", borderRadius: "2px" }}>
-            Book a Table
-          </span>
+    <div className="w-full h-full flex items-center justify-center" style={{ background: design.bgColor }}>
+      <div className="max-w-sm text-center px-6">
+        <div
+          className="w-12 h-12 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+          style={{ background: `${design.accentColor}1a` }}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={design.accentColor} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="4" width="18" height="14" rx="2" />
+            <path d="M3 9h18" />
+            <path d="M9 4v5" />
+          </svg>
         </div>
-      </div>
-
-      {/* Hero */}
-      <div className="py-16 px-5 text-center" style={{ background: "#1A1A1A" }}>
-        <div style={{ fontSize: "8px", color: design.accentColor, fontWeight: 700, letterSpacing: "4px" }} className="mb-2">MODERN INDIAN DINING</div>
-        <div style={{ fontSize: "22px", fontWeight: 700, color: "#FFFDF6", lineHeight: 1.2 }} className="mb-3">
-          A Canteen for the Curious
+        <div style={{ fontSize: "15px", fontWeight: 700, color: "#0a0a0a" }} className="mb-1.5">
+          Live preview isn't available right now
         </div>
-        <div style={{ fontSize: "9px", color: "rgba(255,253,246,0.6)" }} className="mb-5">
-          Where stories meet the plate. Where the curious find their table.
+        <div style={{ fontSize: "13px", color: "#6b7280", lineHeight: 1.5 }} className="mb-4">
+          {design.title} — {design.style || design.subCategory || design.category} — is still fully documented below: the prompt, the build guide, and every scaffold file.
         </div>
-        <div className="flex gap-3 justify-center">
-          <span style={{ fontSize: "9px", background: "#E31E24", color: "#fff", padding: "5px 14px", borderRadius: "2px", fontWeight: 600 }}>Book a Table</span>
-          <span style={{ fontSize: "9px", color: "#FFFDF6", border: "1px solid rgba(255,255,255,0.4)", padding: "5px 14px", borderRadius: "2px" }}>View Menu</span>
-        </div>
-      </div>
-
-      {/* Menu Strip */}
-      <div className="px-5 py-6" style={{ background: design.bgColor }}>
-        <div style={{ fontSize: "13px", fontWeight: 700, color: "#1A1A1A" }} className="mb-3">Our Menu</div>
-        <div className="space-y-3">
-          {[
-            { name: "Pork Ribs Vindaloo", desc: "A slow-braise of spare ribs, Goan vinegar spice, pickled shallots, roti.", veg: false, price: "₹ 1,450" },
-            { name: "Mumbai Masala Chips", desc: "Fried potatoes, spiced compound butter, tamarind chutney, peanuts.", veg: true, price: "₹ 450" },
-            { name: "Bombay Sour", desc: "House whisky, kokum shrub, cardamom bitters, curry leaf salt rim.", veg: true, price: "₹ 750" },
-          ].map(dish => (
-            <div key={dish.name} className="flex items-center justify-between border-b pb-2" style={{ borderColor: "#E5E7EB" }}>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full mt-0.5 shrink-0" style={{ background: dish.veg ? design.accentColor : "#E31E24" }} />
-                <div>
-                  <div style={{ fontSize: "11px", fontWeight: 700, color: "#1A1A1A" }}>{dish.name}</div>
-                  <div style={{ fontSize: "8px", color: "#6B7280" }}>{dish.desc}</div>
-                </div>
-              </div>
-              <span style={{ fontSize: "10px", color: "#1A1A1A", fontWeight: 600, marginLeft: "8px" }}>{dish.price}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Stories */}
-      <div className="px-5 py-6" style={{ background: "#F9FAFB" }}>
-        <div style={{ fontSize: "13px", fontWeight: 700, color: "#1A1A1A" }} className="mb-3">Canteen Stories</div>
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            "Independence Day Daawat",
-            "The Cocktail Book Launch",
-            "Chef's Table Series",
-            "Community Harvest Festival",
-          ].map(story => (
-            <div key={story} style={{ background: "#EAB308", padding: "10px 12px", borderRadius: "8px" }}>
-              <div style={{ fontSize: "8px", fontWeight: 700, color: "#1A1A1A", lineHeight: 1.4 }}>{story}</div>
-              <div style={{ fontSize: "7px", color: "#92400E", marginTop: "4px" }}>Read More →</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="px-5 py-6" style={{ background: "#0D0D0D" }}>
-        <div style={{ fontSize: "13px", fontWeight: 700, color: "#FFFDF6" }} className="mb-1">CulinaryNarrative</div>
-        <div style={{ fontSize: "8px", color: "rgba(255,255,255,0.4)" }} className="mb-3">Mumbai · London · Singapore</div>
-        <div className="flex gap-4">
-          {["Menu", "Stories", "Shop", "Careers"].map(l => (
-            <span key={l} style={{ fontSize: "8px", color: design.accentColor }}>{l}</span>
-          ))}
-        </div>
+        <a
+          href={previewUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ fontSize: "13px", fontWeight: 600, color: design.accentColor }}
+          className="hover:underline"
+        >
+          Try opening it directly →
+        </a>
       </div>
     </div>
   );

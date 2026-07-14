@@ -30,10 +30,10 @@ export function Home({ go }: { go: (p: string) => void }) {
 
       {/* Breathing space 1 */}
       <SectionReveal>
-      <div className="py-28 md:py-40 border-t border-[#0a0a0a]/8">
+      <div className="py-28 md:py-40 border-t border-[#0a0a0a]/10">
         <div className="max-w-[1100px] mx-auto px-6 text-center">
           <div className="flex items-center justify-center gap-2 text-[#0a0a0a] mb-6" style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "0.02em" }}>
-            <span className="text-[#94a3b8] font-mono" style={{ fontSize: "12px" }}>1.0</span>
+            <span className="text-[#6b7280] font-mono" style={{ fontSize: "12px" }}>1.0</span>
             <span>Philosophy</span>
           </div>
           <ScrollReveal>
@@ -41,7 +41,7 @@ export function Home({ go }: { go: (p: string) => void }) {
               className="text-[#0a0a0a] mb-6"
               style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 400, lineHeight: 1.08, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
             >
-              <span style={{ fontWeight: 800 }}>Prompting</span> is the <span style={{ fontWeight: 800 }}>New Coding.</span>
+              <span style={{ fontWeight: 800 }}>Prompting</span> is the <span style={{ fontWeight: 800, color: "#4FC3F7" }}>New Coding.</span>
             </h2>
             <p className="text-[#6b7280] max-w-[620px] mx-auto" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
               The best AI outputs don't come from better models - they come from better prompts. Master the craft of prompting and unlock the full potential of every AI tool.
@@ -56,21 +56,21 @@ export function Home({ go }: { go: (p: string) => void }) {
 
       {/* Breathing space 2 */}
       <SectionReveal>
-      <div className="py-28 md:py-40 border-t border-[#0a0a0a]/8">
-        <div className="max-w-[720px] mx-auto px-6 text-center">
+      <div className="py-28 md:py-40 border-t border-[#0a0a0a]/10">
+        <div className="max-w-[1100px] mx-auto px-6 text-center">
           <div className="flex items-center justify-center gap-2 text-[#0a0a0a] mb-6" style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "0.02em" }}>
-            <span className="text-[#94a3b8] font-mono" style={{ fontSize: "12px" }}>2.0</span>
+            <span className="text-[#6b7280] font-mono" style={{ fontSize: "12px" }}>2.0</span>
             <span>Possibilities</span>
           </div>
           <ScrollReveal>
           <h2
-            className="text-[#0a0a0a] flex flex-wrap items-center justify-center gap-3 md:gap-4 mb-6"
+            className="text-[#0a0a0a] flex items-center justify-center gap-3 md:gap-4 mb-6"
             style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 400, lineHeight: 1.08, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
           >
-            <span>A new way to</span>
+            <span className="shrink-0">A new way to</span>
             <RotatingText
               texts={['CREATE', 'BUILD', 'THINK', 'LEARN']}
-              mainClassName="px-3 md:px-5 bg-[#0a0a0a] text-white overflow-hidden py-1 md:py-2 justify-center rounded-xl"
+              mainClassName="px-3 md:px-5 bg-[#0a0a0a] text-white overflow-hidden py-1 md:py-2 justify-center rounded-xl min-w-[140px] md:min-w-[200px]"
               staggerFrom="last"
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
@@ -84,7 +84,7 @@ export function Home({ go }: { go: (p: string) => void }) {
               loop
             />
           </h2>
-          <p className="text-[#6b7280]" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
+          <p className="text-[#6b7280] max-w-[620px] mx-auto" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
             From stunning images to production code, from viral videos to full websites - one prompt is all it takes. Browse what works, copy it, make it yours.
           </p>
           </ScrollReveal>
@@ -99,10 +99,10 @@ export function Home({ go }: { go: (p: string) => void }) {
 
       {/* Breathing space - Mastery */}
       <SectionReveal>
-      <div className="py-28 md:py-40 border-t border-[#0a0a0a]/8">
+      <div className="py-28 md:py-40 border-t border-[#0a0a0a]/10">
         <div className="max-w-[1100px] mx-auto px-6 text-center">
           <div className="flex items-center justify-center gap-2 text-[#0a0a0a] mb-6" style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "0.02em" }}>
-            <span className="text-[#94a3b8] font-mono" style={{ fontSize: "12px" }}>3.0</span>
+            <span className="text-[#6b7280] font-mono" style={{ fontSize: "12px" }}>3.0</span>
             <span>Mastery</span>
           </div>
           <ScrollReveal>
@@ -110,7 +110,7 @@ export function Home({ go }: { go: (p: string) => void }) {
             className="text-[#0a0a0a] mb-6"
             style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 400, lineHeight: 1.08, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
           >
-            Don't just use <span style={{ fontWeight: 800 }}>AI</span> - <em style={{ fontWeight: 400, fontStyle: "italic" }}>Master it.</em>
+            Don't just use <span style={{ fontWeight: 800, color: "#4FC3F7" }}>AI</span> - <em style={{ fontWeight: 400, fontStyle: "italic" }}>Master it.</em>
           </h2>
           <p className="text-[#6b7280] max-w-[620px] mx-auto" style={{ fontSize: "clamp(16px, 1.8vw, 20px)", lineHeight: 1.6 }}>
             The gap between average and exceptional AI output is the prompt. Our curated library gives you the exact words that produce professional-grade results, every time.
@@ -186,9 +186,9 @@ function HeroCard({ id }: { id: number }) {
 const CARD_IDS = [0, 1, 2, 3, 4, 5, 6];
 
 function HeroCarousel({ go }: { go: (p: string) => void }) {
-  // ── 9:16 card ratio - height drives width ─────────────────────────────────
+  // ── 10:16 card ratio - height drives width ────────────────────────────────
   // CARD_H is capped to keep the section within the viewport.
-  // BASE_W = CARD_H × (9/16) → every card is exactly 9:16 portrait.
+  // BASE_W = CARD_H × (10/16) → every card is exactly 10:16 portrait.
   useViewportWidth();  // kept to trigger re-render on resize (min-width guard)
   const vh = useViewportHeight();
   // Nav is h-16 = 64px; fill remaining viewport so LaptopHero never peeks through
@@ -337,15 +337,15 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
         }}
       >
         <div style={{
-          fontSize: 34, fontWeight: 500, color: "#0f0f0f",
+          fontSize: 34, fontWeight: 500, color: "#0a0a0a",
           letterSpacing: "-0.025em", lineHeight: 1.22, marginBottom: 24,
           minHeight: "1.4em",
-          fontFamily: "'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif",
+          fontFamily: "'DM Sans','Helvetica Neue',Helvetica,Arial,sans-serif",
         }}>
           {twText}
           <span style={{
             display: "inline-block", width: 1.5, height: "0.9em",
-            background: "#0f0f0f", marginLeft: 2, verticalAlign: "middle",
+            background: "#0a0a0a", marginLeft: 2, verticalAlign: "middle",
             animation: "promptBlink 1s step-end infinite",
           }} />
         </div>
@@ -354,6 +354,7 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
             onClick={() => go("library")}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
+            className="focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a0a0a]"
             style={{
               background: "#4FC3F7",
               color: "white", border: "none", borderRadius: 999,
@@ -362,7 +363,7 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
               boxShadow: "0 4px 20px rgba(79,195,247,0.36)",
             }}
           >
-            Get started
+            Get started for free
           </motion.button>
         </div>
       </div>
@@ -372,36 +373,39 @@ function HeroCarousel({ go }: { go: (p: string) => void }) {
         <button
           aria-label="Previous slide"
           onClick={() => manualNav(prev)}
-          style={{ width: 40, height: 40, borderRadius: "50%", background: "white", border: "1px solid #e5e7eb", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 2px 10px rgba(0,0,0,0.08)", transition: "box-shadow 0.2s" }}
+          className="focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4FC3F7] focus-visible:outline-offset-2"
+          style={{ width: 40, height: 40, borderRadius: "50%", background: "white", border: "1px solid rgba(10,10,10,0.12)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 2px 10px rgba(0,0,0,0.08)", transition: "box-shadow 0.2s" }}
           onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 4px 18px rgba(0,0,0,0.14)")}
           onMouseLeave={e => (e.currentTarget.style.boxShadow = "0 2px 10px rgba(0,0,0,0.08)")}
         >
-          <svg viewBox="0 0 16 16" fill="none" width={14} height={14}><path d="M10 12L6 8l4-4" stroke="#1a1a1a" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <svg viewBox="0 0 16 16" fill="none" width={14} height={14}><path d="M10 12L6 8l4-4" stroke="#0a0a0a" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round"/></svg>
         </button>
         <button
-          aria-label="Play or pause slideshow"
+          aria-label={paused ? "Play slideshow" : "Pause slideshow"}
           onClick={() => setPaused(pp => !pp)}
-          style={{ width: 40, height: 40, borderRadius: "50%", background: "white", border: "1px solid #e5e7eb", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 2px 10px rgba(0,0,0,0.08)", transition: "box-shadow 0.2s" }}
+          className="focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4FC3F7] focus-visible:outline-offset-2"
+          style={{ width: 40, height: 40, borderRadius: "50%", background: "white", border: "1px solid rgba(10,10,10,0.12)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 2px 10px rgba(0,0,0,0.08)", transition: "box-shadow 0.2s" }}
           onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 4px 18px rgba(0,0,0,0.14)")}
           onMouseLeave={e => (e.currentTarget.style.boxShadow = "0 2px 10px rgba(0,0,0,0.08)")}
         >
           {paused ? (
-            <svg viewBox="0 0 16 16" fill="none" width={12} height={12}><path d="M4 3l9 5-9 5V3z" fill="#1a1a1a"/></svg>
+            <svg viewBox="0 0 16 16" fill="none" width={12} height={12}><path d="M4 3l9 5-9 5V3z" fill="#0a0a0a"/></svg>
           ) : (
             <svg viewBox="0 0 16 16" fill="none" width={12} height={12}>
-              <rect x="3" y="3" width="3.5" height="10" rx="1" fill="#1a1a1a"/>
-              <rect x="9.5" y="3" width="3.5" height="10" rx="1" fill="#1a1a1a"/>
+              <rect x="3" y="3" width="3.5" height="10" rx="1" fill="#0a0a0a"/>
+              <rect x="9.5" y="3" width="3.5" height="10" rx="1" fill="#0a0a0a"/>
             </svg>
           )}
         </button>
         <button
           aria-label="Next slide"
           onClick={() => manualNav(next)}
-          style={{ width: 40, height: 40, borderRadius: "50%", background: "white", border: "1px solid #e5e7eb", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 2px 10px rgba(0,0,0,0.08)", transition: "box-shadow 0.2s" }}
+          className="focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4FC3F7] focus-visible:outline-offset-2"
+          style={{ width: 40, height: 40, borderRadius: "50%", background: "white", border: "1px solid rgba(10,10,10,0.12)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 2px 10px rgba(0,0,0,0.08)", transition: "box-shadow 0.2s" }}
           onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 4px 18px rgba(0,0,0,0.14)")}
           onMouseLeave={e => (e.currentTarget.style.boxShadow = "0 2px 10px rgba(0,0,0,0.08)")}
         >
-          <svg viewBox="0 0 16 16" fill="none" width={14} height={14}><path d="M6 4l4 4-4 4" stroke="#1a1a1a" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <svg viewBox="0 0 16 16" fill="none" width={14} height={14}><path d="M6 4l4 4-4 4" stroke="#0a0a0a" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round"/></svg>
         </button>
       </div>
 
@@ -424,7 +428,7 @@ const STORY_STEPS = [
     ],
     benefits: ["Curated Library", "Real-World Results", "Multiple Categories", "Ready To Use"],
     video: frame1Video,
-    path: "promptvault.app/discover",
+    path: "promptbot.app/discover",
   },
   {
     num: "02",
@@ -437,7 +441,7 @@ const STORY_STEPS = [
     ],
     benefits: ["Beginner Friendly", "Step-by-Step Guides", "Proven Frameworks", "Practical Examples"],
     video: frame2Video,
-    path: "promptvault.app/learn",
+    path: "promptbot.app/learn",
   },
   {
     num: "03",
@@ -450,7 +454,7 @@ const STORY_STEPS = [
     ],
     benefits: ["Faster Creation", "Better Results", "Save Time", "Save Money"],
     video: frame3Video,
-    path: "promptvault.app/create",
+    path: "promptbot.app/create",
   },
 ];
 
@@ -508,13 +512,13 @@ function StoryShowcase({ go }: { go: (p: string) => void }) {
         {STORY_STEPS.map((s) => (
           <ScrollStackItem
             key={s.key}
-            itemClassName="rounded-3xl bg-white border-2 border-[#0a0a0a]/10 overflow-hidden shadow-2xl"
+            itemClassName="rounded-3xl bg-white border border-[#0a0a0a]/10 overflow-hidden shadow-2xl"
           >
-            <div className="flex flex-col lg:flex-row" style={{ minHeight: "calc(100vh - 120px)" }}>
+            <div className="flex flex-col lg:flex-row lg:[min-height:calc(100vh-120px)]">
               {/* Left - Text content */}
               <div className="flex-1 p-10 lg:p-16 flex flex-col justify-center">
                 <div className="flex items-center gap-3 mb-5">
-                  <span className="font-mono text-[13px] text-[#94a3b8]">{s.num}</span>
+                  <span className="font-mono text-[13px] text-[#6b7280]">{s.num}</span>
                   <span
                     className="text-2xl font-semibold italic text-[#0a0a0a]"
                     style={{ fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
@@ -527,7 +531,7 @@ function StoryShowcase({ go }: { go: (p: string) => void }) {
                   style={{
                     fontSize: "clamp(28px, 3.5vw, 42px)",
                     lineHeight: 1.1,
-                    letterSpacing: -1.2,
+                    letterSpacing: "-0.03em",
                     fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
                     fontWeight: 800,
                   }}
@@ -554,11 +558,11 @@ function StoryShowcase({ go }: { go: (p: string) => void }) {
                   <div className="flex items-center gap-3 border-b border-[#0a0a0a]/10 bg-[#0a0a0a]/3 px-5 py-3">
                     <div className="flex items-center gap-1.5">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#4FC3F7]" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#4FC3F7]" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#3fb950]" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#4FC3F7]/50" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#0a0a0a]/15" />
                     </div>
                     <div className="mx-auto flex w-[55%] max-w-[300px] items-center justify-center gap-2 rounded-full border border-[#0a0a0a]/10 bg-[#0a0a0a]/5 px-3 py-1 text-[#6b7280]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#3fb950]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#4FC3F7]" />
                       <span style={{ fontSize: 11 }}>{s.path}</span>
                     </div>
                     <div className="w-[46px]" />
@@ -594,11 +598,35 @@ const browseCategories = [
 
 function BrowseByCategory({ go }: { go: (p: string) => void }) {
   const doubled = [...browseCategories, ...browseCategories];
-  const [paused, setPaused] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const pausedRef = useRef(false);
+  const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const pause = () => { pausedRef.current = true; if (resumeTimer.current) clearTimeout(resumeTimer.current); };
+  const resumeSoon = (delay = 0) => {
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    resumeTimer.current = setTimeout(() => { pausedRef.current = false; }, delay);
+  };
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    let raf: number;
+    const tick = () => {
+      if (!pausedRef.current) {
+        el.scrollLeft += 0.6;
+        const half = el.scrollWidth / 2;
+        if (el.scrollLeft >= half) el.scrollLeft -= half;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); if (resumeTimer.current) clearTimeout(resumeTimer.current); };
+  }, []);
 
   return (
     <section
-      className="mt-16 py-16 relative overflow-hidden"
+      className="py-16 relative overflow-hidden"
       style={{
         borderRadius: "32px",
         margin: "64px 0 0 0",
@@ -624,7 +652,7 @@ function BrowseByCategory({ go }: { go: (p: string) => void }) {
       />
 
       {/* Header */}
-      <div className="max-w-[1200px] mx-auto px-6 mb-8 flex items-end justify-between relative z-10">
+      <div className="max-w-[1200px] mx-auto px-6 mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-3 relative z-10">
         <ScrollReveal baseRotation={0} blurStrength={3}>
           <h2
             className="text-[#0a0a0a] mb-2"
@@ -638,36 +666,39 @@ function BrowseByCategory({ go }: { go: (p: string) => void }) {
         </ScrollReveal>
         <button
           onClick={() => go("library")}
-          className="text-[#0a0a0a] hover:text-[#555] transition-colors"
+          className="text-[#0a0a0a] hover:text-[#6b7280] transition-colors"
           style={{ fontSize: "14px", fontWeight: 600 }}
         >
           View all →
         </button>
       </div>
 
-      {/* Auto-scrolling carousel */}
+      {/* Auto-scrolling carousel — native scroll so touch users can swipe through it */}
       <div
-        className="relative overflow-hidden z-10"
+        ref={scrollRef}
+        className="relative overflow-x-auto overflow-y-hidden z-10 no-scrollbar"
         style={{
           maskImage: "linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)",
           WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)",
+          WebkitOverflowScrolling: "touch",
         }}
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
+        onMouseEnter={pause}
+        onMouseLeave={() => resumeSoon(0)}
+        onTouchStart={pause}
+        onTouchEnd={() => resumeSoon(2500)}
+        onPointerDown={pause}
+        onPointerUp={() => resumeSoon(1000)}
+        onPointerCancel={() => resumeSoon(1000)}
       >
-        <div
-          className="flex gap-6 py-4 browse-cat-marquee"
-          style={{
-            width: "max-content",
-            animationPlayState: paused ? "paused" : "running",
-          }}
-        >
+        <div className="flex gap-6 py-4" style={{ width: "max-content" }}>
           {doubled.map((cat, i) => (
             <motion.button
               key={`${cat.name}-${i}`}
               onClick={() => go("library:image:" + encodeURIComponent(cat.libraryCategory))}
               whileHover={{ y: -8, scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300, damping: 24 }}
+              aria-hidden={i >= browseCategories.length}
+              tabIndex={i >= browseCategories.length ? -1 : 0}
               className="flex-shrink-0 rounded-[24px] p-4 pb-5 text-center flex flex-col items-center gap-1 group"
               style={{
                 width: "280px",
@@ -705,15 +736,9 @@ function BrowseByCategory({ go }: { go: (p: string) => void }) {
         </div>
       </div>
 
-      {/* Marquee CSS */}
       <style>{`
-        .browse-cat-marquee {
-          animation: browse-cat-scroll 40s linear infinite;
-        }
-        @keyframes browse-cat-scroll {
-          from { transform: translateX(0); }
-          to   { transform: translateX(-50%); }
-        }
+        .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
       `}</style>
     </section>
   );
@@ -733,10 +758,10 @@ const prizes = [
   {
     rank: "02",
     label: "Get Featured",
-    reward: "10k+ readers see your work",
+    reward: "Featured library placement",
     desc: "Every approved prompt gets showcased in our library. Your name, your craft, seen by thousands.",
-    accent: "#0a0a0a",
-    bg: "#0a0a0a",
+    accent: "#4FC3F7",
+    bg: "#4FC3F7",
   },
   {
     rank: "03",
@@ -750,7 +775,12 @@ const prizes = [
 
 function CommunityPrizes({ go }: { go: (p: string) => void }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { margin: "-80px" });
+  const inView = useInView(ref, { margin: "-80px", once: true });
+  const [revealed, setRevealed] = useState<Record<number, boolean>>({});
+
+  const toggleCard = (i: number) => {
+    setRevealed((prev) => ({ ...prev, [i]: !prev[i] }));
+  };
 
   return (
     <section ref={ref} className="max-w-[1100px] mx-auto px-6 mt-32 mb-24">
@@ -771,73 +801,87 @@ function CommunityPrizes({ go }: { go: (p: string) => void }) {
           className="text-[#0a0a0a] mb-3"
           style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-0.03em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
         >
-          <span style={{ fontWeight: 400 }}>Submit a prompt.</span> <span style={{ fontWeight: 800, color: "#0a0a0a" }}>Win prizes.</span>
+          <span style={{ fontWeight: 400 }}>Submit a prompt.</span> <span style={{ fontWeight: 800, color: "#4FC3F7" }}>Win prizes.</span>
         </h2>
-        <p className="text-[#6b7280] max-w-lg mx-auto mb-8" style={{ fontSize: "16px", lineHeight: 1.6 }}>
+        <p className="text-[#6b7280] max-w-lg mx-auto mb-3" style={{ fontSize: "16px", lineHeight: 1.6 }}>
           Share your best prompts with the community and get rewarded.
         </p>
+        <p className="text-[#6b7280]" style={{ fontSize: "13px" }}>Click each card to reveal the prize</p>
       </motion.div>
 
-      {/* Prize cards — 3D card flip (exact preview match) */}
+      {/* Prize cards — click to flip */}
       <div className="grid md:grid-cols-3 gap-6 mb-14">
-        {prizes.map((p, i) => (
-          <div key={p.label} style={{ perspective: "1200px" }}>
-            <motion.div
-              initial={{ rotateY: 180 }}
-              animate={inView ? { rotateY: 0 } : { rotateY: 180 }}
-              transition={inView ? { duration: 0.8, delay: 0.2 * (i + 1), ease: [0.4, 0, 0.2, 1] } : { duration: 0 }}
-              className="relative"
-              style={{ transformStyle: "preserve-3d" }}
+        {prizes.map((p, i) => {
+          const isRevealed = !!revealed[i];
+          return (
+            <div
+              key={p.label}
+              role="button"
+              tabIndex={0}
+              aria-pressed={isRevealed}
+              aria-label={isRevealed ? `${p.label}: ${p.reward}` : `Reveal prize ${i + 1}`}
+              style={{ perspective: "1200px" }}
+              onClick={() => toggleCard(i)}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleCard(i); } }}
+              className="cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4FC3F7] focus-visible:outline-offset-2 rounded-2xl"
             >
-              {/* Back face — dark with ? */}
-              <div
-                className="absolute inset-0 rounded-2xl flex items-center justify-center"
-                style={{
-                  background: "#0a0a0a",
-                  backfaceVisibility: "hidden",
-                  transform: "rotateY(180deg)",
-                }}
+              <motion.div
+                animate={{ rotateY: isRevealed ? 0 : 180 }}
+                transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+                className="relative"
+                style={{ transformStyle: "preserve-3d" }}
               >
-                <span style={{ fontSize: 48, fontWeight: 800, color: "#4FC3F7" }}>?</span>
-              </div>
+                {/* Back face — dark with ? */}
+                <div
+                  className="absolute inset-0 rounded-2xl flex flex-col items-center justify-center gap-3"
+                  style={{
+                    background: "#0a0a0a",
+                    backfaceVisibility: "hidden",
+                    transform: "rotateY(180deg)",
+                  }}
+                >
+                  <span style={{ fontSize: 48, fontWeight: 800, color: "#4FC3F7" }}>?</span>
+                  <span className="text-white/60" style={{ fontSize: 13, fontWeight: 600 }}>Tap to reveal</span>
+                </div>
 
-              {/* Front face — card content */}
-              <div
-                className="rounded-2xl p-6 border border-[#e7e9f1] bg-white transition-all duration-300 hover:-translate-y-1"
-                style={{ backfaceVisibility: "hidden" }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = `0 12px 32px -8px ${p.accent}25, 0 4px 12px rgba(0,0,0,0.06)`;
-                  e.currentTarget.style.borderColor = `${p.accent}50`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = "none";
-                  e.currentTarget.style.borderColor = "#e7e9f1";
-                }}
-              >
+                {/* Front face — card content */}
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 text-white"
-                  style={{ background: p.bg, fontSize: "14px", fontWeight: 800 }}
+                  className="rounded-2xl p-6 border border-[#0a0a0a]/15 bg-white transition-all duration-300 hover:-translate-y-1"
+                  style={{ backfaceVisibility: "hidden" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = `0 12px 32px -8px ${p.accent}25, 0 4px 12px rgba(0,0,0,0.06)`;
+                    e.currentTarget.style.borderColor = `${p.accent}50`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = "none";
+                    e.currentTarget.style.borderColor = "rgba(10,10,10,0.15)";
+                  }}
                 >
-                  {p.rank}
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 text-white"
+                    style={{ background: p.bg, fontSize: "14px", fontWeight: 800 }}
+                  >
+                    {p.rank}
+                  </div>
+                  <div
+                    style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: p.accent, marginBottom: 6 }}
+                  >
+                    {p.label}
+                  </div>
+                  <h3
+                    className="text-[#0a0a0a] mb-2"
+                    style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.02em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+                  >
+                    {p.reward}
+                  </h3>
+                  <p className="text-[#6b7280] leading-relaxed" style={{ fontSize: "13.5px" }}>
+                    {p.desc}
+                  </p>
                 </div>
-                <div
-                  style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: p.accent, marginBottom: 6 }}
-                >
-                  {p.label}
-                </div>
-                <h3
-                  className="text-[#0a0a0a] mb-2"
-                  style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.02em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
-                >
-                  {p.reward}
-                </h3>
-                <p className="text-[#6b7280] leading-relaxed" style={{ fontSize: "13.5px" }}>
-                  {p.desc}
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        ))}
+              </motion.div>
+            </div>
+          );
+        })}
       </div>
 
       {/* CTA button */}
@@ -845,7 +889,7 @@ function CommunityPrizes({ go }: { go: (p: string) => void }) {
         className="text-center"
         initial={{ opacity: 0, y: 20 }}
         animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-        transition={inView ? { duration: 0.5, delay: 0.85 } : { duration: 0 }}
+        transition={inView ? { duration: 0.5, delay: 0.3 } : { duration: 0 }}
       >
         <motion.button
           onClick={() => go("submit")}

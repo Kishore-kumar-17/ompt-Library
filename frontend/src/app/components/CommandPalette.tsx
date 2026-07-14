@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Search, Command, CornerDownLeft, FileText, Library as LibraryIcon, Wand2, Sparkles, BarChart3, User, BookOpen, Upload } from "lucide-react";
+import { Search, CornerDownLeft, FileText, Library as LibraryIcon, Wand2, Sparkles, BarChart3, User, BookOpen, Upload } from "lucide-react";
 import { imageLibraryPrompts } from "../lib/library-data";
 
 type Item = {
@@ -23,6 +23,8 @@ const pages: Item[] = [
   { id: "p-profile",   kind: "page", label: "Profile",          hint: "Your account",     route: "profile",   icon: User },
   { id: "p-submit",    kind: "page", label: "Submit a prompt",  hint: "6-step wizard",    route: "submit",    icon: Upload },
 ];
+
+const isMac = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform ?? navigator.userAgent);
 
 export function CommandPalette({ open, onClose, go }: { open: boolean; onClose: () => void; go: (r: string) => void }) {
   const [q, setQ] = useState("");
@@ -92,10 +94,16 @@ export function CommandPalette({ open, onClose, go }: { open: boolean; onClose: 
                 placeholder="Search prompts, jump to pages..."
                 className="flex-1 bg-transparent outline-none text-[#0a0a0a] placeholder:text-[#6b7280]"
                 style={{ fontSize: "15px" }}
+                role="combobox"
+                aria-expanded="true"
+                aria-controls="cmdk-listbox"
+                aria-activedescendant={results[cursor]?.id}
+                aria-autocomplete="list"
+                aria-label="Search prompts, jump to pages"
               />
               <kbd className="px-2 py-0.5 rounded bg-[#4FC3F7] text-[#0a0a0a] text-[11px]" style={{ fontWeight: 700 }}>ESC</kbd>
             </div>
-            <div className="max-h-[360px] overflow-y-auto py-2">
+            <div className="max-h-[360px] overflow-y-auto py-2" role="listbox" id="cmdk-listbox" aria-label="Results">
               {results.length === 0 && (
                 <div className="px-4 py-8 text-center text-[#6b7280]">
                   No matches. Try another word.
@@ -107,7 +115,10 @@ export function CommandPalette({ open, onClose, go }: { open: boolean; onClose: 
                 return (
                   <button
                     key={i.id}
-                    onMouseEnter={() => setCursor(idx)}
+                    id={i.id}
+                    role="option"
+                    aria-selected={on}
+                    onMouseMove={() => setCursor(idx)}
                     onClick={() => choose(i.route)}
                     className={`w-full flex items-center gap-3 px-4 py-2.5 text-left ${
                       on ? "bg-[#4FC3F7]/30" : "hover:bg-[#0a0a0a]/5"
@@ -129,7 +140,7 @@ export function CommandPalette({ open, onClose, go }: { open: boolean; onClose: 
             <div className="flex items-center gap-4 px-4 h-10 border-t-2 border-[#0a0a0a]/10 bg-[#0a0a0a]/5 text-[11px] text-[#6b7280]">
               <span className="inline-flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-white border border-[#0a0a0a]/20">↑↓</kbd> navigate</span>
               <span className="inline-flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-white border border-[#0a0a0a]/20">↵</kbd> open</span>
-              <span className="ml-auto inline-flex items-center gap-1"><Command className="w-3 h-3" /> K to toggle</span>
+              <span className="ml-auto inline-flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-white border border-[#0a0a0a]/20">{isMac ? "⌘" : "Ctrl"}</kbd> K to toggle</span>
             </div>
           </motion.div>
         </motion.div>

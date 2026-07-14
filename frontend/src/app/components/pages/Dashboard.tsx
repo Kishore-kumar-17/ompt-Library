@@ -10,14 +10,25 @@ export function Dashboard({ go }: { go: (p: string) => void }) {
 
   const tested = samplePrompts.filter(p => p.tested).length;
   const untested = samplePrompts.length - tested;
+  const avgQuality = (samplePrompts.reduce((sum, p) => sum + p.rating, 0) / samplePrompts.length).toFixed(1);
+  const contributorCount = new Set(samplePrompts.map(p => p.author)).size;
   const testedData = [
     { name: "Tested",   value: tested,   color: "#4FC3F7" },
-    { name: "Untested", value: untested, color: "#e5e7eb" },
+    { name: "Untested", value: untested, color: "rgba(10,10,10,0.12)" },
   ];
-  const catData = [...categories.image, ...categories.text].slice(0, 6).map((c, i) => ({
-    name: c.name,
-    score: parseFloat((3.8 + ((i * 0.23) % 1.1)).toFixed(2)),
+  const allCatFamilies: [string, string][] = [
+    ...categories.image.map(c => [c.name, "Image"] as [string, string]),
+    ...categories.video.map(c => [c.name, "Video"] as [string, string]),
+    ...categories.website.map(c => [c.name, "Website"] as [string, string]),
+    ...categories.text.map(c => [c.name, "Text"] as [string, string]),
+  ];
+  const allCatData = allCatFamilies.map(([name, family], i) => ({
+    name, family,
+    score: parseFloat((3.7 + ((i * 0.17) % 1.2)).toFixed(2)),
   }));
+  // Overview's compact preview reuses the same scores as the full breakdown,
+  // so a category never shows two different numbers depending on which tab you're on.
+  const catData = allCatData.slice(0, 6);
   const platData = platforms.map((p, i) => ({
     name: p.name,
     score: parseFloat((3.9 + ((i * 0.19) % 1)).toFixed(2)),
@@ -32,13 +43,17 @@ export function Dashboard({ go }: { go: (p: string) => void }) {
       <h1 className="text-3xl font-bold mb-1">Analytics <span className="font-extrabold">Dashboard</span></h1>
       <p className="text-[#6b7280] mb-6">Quality, coverage, and performance across your prompt library.</p>
 
-      <div className="flex gap-1 mb-8 bg-[#0a0a0a]/5 p-1 rounded-xl w-fit">
+      <div className="flex gap-1 mb-8 bg-[#0a0a0a]/5 p-1 rounded-xl w-fit max-w-full overflow-x-auto no-scrollbar">
         {tabs.map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-1.5 rounded-lg text-[14px] ${tab===t?"bg-[#4FC3F7] text-white":"text-[#6b7280] hover:text-[#0a0a0a]"}`}>
+          <button key={t} onClick={() => setTab(t)} className={`shrink-0 px-4 py-1.5 rounded-lg text-[14px] ${tab===t?"bg-[#4FC3F7] text-white":"text-[#6b7280] hover:text-[#0a0a0a]"}`}>
             {t}
           </button>
         ))}
       </div>
+      <style>{`
+        .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+      `}</style>
 
       {tab === "Overview" && (
         <>
@@ -46,8 +61,8 @@ export function Dashboard({ go }: { go: (p: string) => void }) {
             {[
               ["Total prompts", samplePrompts.length],
               ["Tested %",      `${Math.round(tested/samplePrompts.length*100)}%`],
-              ["Avg quality",   "4.7"],
-              ["Contributors",  "14"],
+              ["Avg quality",   avgQuality],
+              ["Contributors",  contributorCount],
             ].map(([l, v]) => (
               <div key={l as string} className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-5">
                 <div className="text-[#6b7280]" style={{ fontSize: "13px" }}>{l}</div>
@@ -62,16 +77,16 @@ export function Dashboard({ go }: { go: (p: string) => void }) {
                   <Pie data={testedData} dataKey="value" innerRadius={60} outerRadius={90} paddingAngle={4}>
                     {testedData.map((d) => <Cell key={`tested-${d.name}`} fill={d.color} />)}
                   </Pie>
-                  <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid rgba(10, 10, 10,0.15)" }} />
+                  <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid rgba(10,10,10,0.15)" }} />
                 </PieChart>
               </ResponsiveContainer>
             </Chart>
             <Chart title="Category average scores">
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={catData}>
-                  <XAxis dataKey="name" stroke="#94a1b2" fontSize={11} />
-                  <YAxis stroke="#94a1b2" domain={[0, 5]} />
-                  <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid rgba(10, 10, 10,0.15)" }} />
+                  <XAxis dataKey="name" stroke="#6b7280" fontSize={11} />
+                  <YAxis stroke="#6b7280" domain={[0, 5]} />
+                  <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid rgba(10,10,10,0.15)" }} />
                   <Bar dataKey="score" fill="#4FC3F7" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -81,11 +96,15 @@ export function Dashboard({ go }: { go: (p: string) => void }) {
       )}
 
       {tab === "Categories" && (
-        <Chart title="All category scores">
-          <ResponsiveContainer width="100%" height={360}>
-            <BarChart data={catData} layout="vertical">
-              <XAxis type="number" stroke="#94a1b2" domain={[0, 5]} />
-              <YAxis type="category" dataKey="name" stroke="#94a1b2" width={100} />
+        <Chart title={`All category scores (${allCatData.length} categories across Image, Video, Website, Text)`}>
+          <ResponsiveContainer width="100%" height={allCatData.length * 32}>
+            <BarChart data={allCatData} layout="vertical" margin={{ left: 40 }}>
+              <XAxis type="number" stroke="#6b7280" domain={[0, 5]} />
+              <YAxis type="category" dataKey="name" stroke="#6b7280" width={170} fontSize={12} />
+              <Tooltip
+                contentStyle={{ background: "#ffffff", border: "1px solid rgba(10,10,10,0.15)" }}
+                formatter={(value: any, _name, item: any) => [value, item?.payload?.family]}
+              />
               <Bar dataKey="score" fill="#4FC3F7" radius={[0, 6, 6, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -96,8 +115,8 @@ export function Dashboard({ go }: { go: (p: string) => void }) {
         <Chart title="Platform performance">
           <ResponsiveContainer width="100%" height={320}>
             <BarChart data={platData}>
-              <XAxis dataKey="name" stroke="#94a1b2" />
-              <YAxis stroke="#94a1b2" domain={[0, 5]} />
+              <XAxis dataKey="name" stroke="#6b7280" />
+              <YAxis stroke="#6b7280" domain={[0, 5]} />
               <Bar dataKey="score" radius={[6, 6, 0, 0]}>
                 {platData.map((d) => <Cell key={`plat-${d.name}`} fill={d.color} />)}
               </Bar>
@@ -109,7 +128,7 @@ export function Dashboard({ go }: { go: (p: string) => void }) {
       {tab === "Prompts" && (
         <div className="grid md:grid-cols-2 gap-4">
           <PromptList title="Top rated" items={[...samplePrompts].sort((a, b) => b.rating - a.rating).slice(0, 5)} />
-          <PromptList title="Low performers" items={[...samplePrompts].sort((a, b) => a.rating - b.rating).slice(0, 5)} />
+          <PromptList title="Needs improvement" items={[...samplePrompts].sort((a, b) => a.rating - b.rating).slice(0, 5)} />
         </div>
       )}
     </div>
@@ -130,9 +149,9 @@ function PromptList({ title, items }: any) {
     <div className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-5">
       <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 600 }}>{title}</div>
       <ul className="space-y-2">
-        {items.map((p: any) => (
+        {items.map((p: any, i: number) => (
           <li key={p.id} className="flex items-center gap-3 p-2 rounded hover:bg-[#0a0a0a]/5">
-            <div className="text-[#6b7280] w-14 text-[12px]">{p.id.slice(0, 6)}</div>
+            <div className="text-[#6b7280] w-5 text-[12px] text-right">{i + 1}</div>
             <div className="text-[#0a0a0a] flex-1 line-clamp-1" style={{ fontSize: "13px" }}>{p.title}</div>
             <div className="text-[#0a0a0a]" style={{ fontWeight: 700 }}>★ {p.rating}</div>
           </li>

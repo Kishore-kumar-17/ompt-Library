@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { authApi } from "../lib/api";
@@ -10,6 +10,13 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
   const [password, setPassword] = useState("");
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState("");
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && !loading) onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose, loading]);
 
   if (!open) return null;
 
@@ -32,20 +39,30 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
         toast.success("Account created!", { description: "Welcome to Prompt Bot." });
       }
       onClose();
-      window.location.reload();
     } catch (err: any) {
-      setError(err.message ?? "Something went wrong. Is the backend running?");
+      setError(err.message ?? "We couldn't reach the server. Please try again.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#0a0a0a]/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white border-2 border-[#0a0a0a] rounded-2xl p-8 relative shadow-[8px_8px_0_0_#0a0a0a] max-h-[90vh] overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 bg-[#0a0a0a]/50 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={() => { if (!loading) onClose(); }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={mode === "login" ? "Log in" : "Create your account"}
+        onClick={e => e.stopPropagation()}
+        className="w-full max-w-md bg-white border-2 border-[#0a0a0a] rounded-2xl p-8 relative shadow-[8px_8px_0_0_#0a0a0a] max-h-[90vh] overflow-y-auto"
+      >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-md hover:bg-[#0a0a0a]/5 text-[#6b7280]"
+          disabled={loading}
+          aria-label="Close"
+          className="absolute top-4 right-4 p-1.5 rounded-md hover:bg-[#0a0a0a]/5 text-[#6b7280] disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <X className="w-5 h-5" />
         </button>
@@ -57,13 +74,19 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
           {mode === "login" ? "Log in to save favourites and submit prompts." : "Join to build, save, and share prompts."}
         </p>
 
-        {/* OAuth placeholders */}
+        {/* OAuth placeholders — visually de-emphasized since they're not wired up yet */}
         <div className="space-y-2 mb-5">
-          <button onClick={() => toast.info("Coming soon", { description: "Google login is not yet available." })} className="w-full h-10 rounded-lg bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#0a0a0a] hover:bg-[#0a0a0a]/10 text-[14px]">
-            Continue with Google
+          <button
+            onClick={() => toast.info("Coming soon", { description: "Google login is not yet available." })}
+            className="w-full h-10 rounded-lg bg-[#0a0a0a]/5 border border-dashed border-[#0a0a0a]/20 text-[#6b7280] hover:bg-[#0a0a0a]/10 text-[14px] inline-flex items-center justify-center gap-2"
+          >
+            Continue with Google <span className="text-[11px] text-[#6b7280]/70">(soon)</span>
           </button>
-          <button onClick={() => toast.info("Coming soon", { description: "GitHub login is not yet available." })} className="w-full h-10 rounded-lg bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#0a0a0a] hover:bg-[#0a0a0a]/10 text-[14px]">
-            Continue with GitHub
+          <button
+            onClick={() => toast.info("Coming soon", { description: "GitHub login is not yet available." })}
+            className="w-full h-10 rounded-lg bg-[#0a0a0a]/5 border border-dashed border-[#0a0a0a]/20 text-[#6b7280] hover:bg-[#0a0a0a]/10 text-[14px] inline-flex items-center justify-center gap-2"
+          >
+            Continue with GitHub <span className="text-[11px] text-[#6b7280]/70">(soon)</span>
           </button>
         </div>
 
@@ -75,6 +98,7 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
           {mode === "signup" && (
             <input
               placeholder="Name"
+              aria-label="Name"
               value={name}
               onChange={e => setName(e.target.value)}
               className="w-full h-10 px-3 rounded-lg bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#0a0a0a] placeholder:text-[#6b7280] outline-none focus:border-[#4FC3F7] text-[14px]"
@@ -83,6 +107,7 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
           <input
             type="email"
             placeholder="Email"
+            aria-label="Email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
@@ -91,14 +116,16 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
           <input
             type="password"
             placeholder="Password"
+            aria-label="Password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
+            minLength={mode === "signup" ? 8 : undefined}
             className="w-full h-10 px-3 rounded-lg bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#0a0a0a] placeholder:text-[#6b7280] outline-none focus:border-[#4FC3F7] text-[14px]"
           />
 
           {error && (
-            <div className="flex items-center gap-2 text-[#0a0a0a] text-[13px] bg-[#4FC3F7]/5 border border-[#4FC3F7]/20 rounded-lg px-3 py-2">
+            <div className="flex items-center gap-2 text-red-600 text-[13px] bg-red-50 border border-red-200 rounded-lg px-3 py-2">
               <AlertCircle className="w-4 h-4 shrink-0" />{error}
             </div>
           )}
