@@ -1,6 +1,7 @@
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import { jwtVerify } from "jose";
+import { jwtSecret as secret } from "../lib/jwt.js";
 
 export type JWTPayload = { sub: string; isAdmin: boolean };
 
@@ -9,13 +10,6 @@ declare module "hono" {
     user: JWTPayload;
   }
 }
-
-const jwtSecret = process.env.JWT_SECRET;
-if (!jwtSecret && process.env.NODE_ENV === "production") {
-  throw new Error("JWT_SECRET is required in production");
-}
-
-const secret = new TextEncoder().encode(jwtSecret ?? "dev-secret");
 
 export const requireAuth = createMiddleware(async (c, next) => {
   const authHeader = c.req.header("Authorization");

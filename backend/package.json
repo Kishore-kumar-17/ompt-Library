@@ -13,7 +13,7 @@
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.104.1",
+    "@anthropic-ai/sdk": "^0.104.2",
     "@hono/node-server": "^1.13.7",
     "@hono/zod-validator": "^0.4.3",
     "bcryptjs": "^3.0.2",

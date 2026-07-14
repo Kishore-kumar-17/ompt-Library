@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import Anthropic from "@anthropic-ai/sdk";
-import { assembleFromText } from "../engine/index.js";
+import { assembleFromText } from "../engine/lock-engine/index.js";
 
 const router = new Hono();
 

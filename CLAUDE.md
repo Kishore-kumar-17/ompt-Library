@@ -38,7 +38,7 @@ DATABASE_URL=postgresql://user:password@localhost:5432/promptvault
 JWT_SECRET=change-me-to-a-long-random-string
 PORT=3000
 FRONTEND_URL=http://localhost:5173
-ANTHROPIC_API_KEY=sk-ant-...
+OPENROUTER_API_KEY=sk-or-v1-...
 ```
 
 **Frontend** (`frontend/.env`):

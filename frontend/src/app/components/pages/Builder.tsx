@@ -661,7 +661,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
 
           {/* Single platform output */}
           {!showAllPlatforms && (
-            <div className={`relative rounded-xl border min-h-[220px] p-4 transition-all ${
+            <div className={`relative rounded-xl border min-h-[220px] shrink-0 p-4 transition-all ${
               hasGenerated ? "bg-[#fafafa] border-[#0a0a0a]/10" : "bg-[#f5f5f5] border-[#0a0a0a]/8"
             }`}>
               {isLoading ? (

@@ -1,0 +1,37 @@
+{
+  "model_name": "Midjourney",
+  "prompt_philosophy": "keyword and parameter-based",
+  "preferred_prompt_style": "concise and technical",
+  "required_components": [
+    "subject description",
+    "visual style",
+    "medium or technique",
+    "composition",
+    "lighting",
+    "color",
+    "mood",
+    "--ar (aspect ratio)"
+  ],
+  "best_practices": [
+    "Use strong descriptive keywords",
+    "Reference art styles and artists",
+    "Use parameters (--ar, --s, --q)",
+    "Include lighting keywords",
+    "Specify material and texture",
+    "Use comma separation"
+  ],
+  "avoid": [
+    "full sentences",
+    "conversational tone",
+    "contradictory styles",
+    "unsupported parameters"
+  ],
+  "recreation_strategy": [
+    "identify style references",
+    "extract key visual elements",
+    "determine optimal parameters",
+    "identify lighting keywords",
+    "determine aspect ratio",
+    "identify quality level"
+  ]
+}
