@@ -371,9 +371,9 @@ export function Builder({ go }: { go: (p: string) => void }) {
         </p>
 
         {/* Step indicator */}
-        <div className="flex items-center gap-3 mt-5">
+        <div className="flex items-center gap-3 mt-5 overflow-x-auto no-scrollbar pb-1">
           {STEPS.map((s, i) => (
-            <div key={s.num} className="flex items-center gap-2">
+            <div key={s.num} className="flex items-center gap-2 shrink-0">
               <div
                 className="w-7 h-7 rounded-full flex items-center justify-center text-[12px] transition-all"
                 style={{
@@ -393,6 +393,10 @@ export function Builder({ go }: { go: (p: string) => void }) {
             </div>
           ))}
         </div>
+        <style>{`
+          .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+          .no-scrollbar::-webkit-scrollbar { display: none; }
+        `}</style>
       </div>
 
       <div className="grid lg:grid-cols-[1fr_1fr] gap-6 items-start">

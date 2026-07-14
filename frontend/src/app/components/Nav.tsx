@@ -91,7 +91,7 @@ export function Nav({ current, onNavigate, onAuth, onBack, canGoBack }: Props) {
 
   return (
     <header className="bg-white sticky top-0 z-50" style={{ borderBottom: "1px solid rgba(10,10,10,0.1)" }}>
-      <div className="max-w-[1280px] mx-auto px-2 md:px-3 h-16 flex items-center gap-3">
+      <div className="max-w-[1280px] mx-auto px-2 lg:px-3 h-16 flex items-center gap-3">
 
         {/* ── Back button ── */}
         {canGoBack && (
@@ -114,7 +114,7 @@ export function Nav({ current, onNavigate, onAuth, onBack, canGoBack }: Props) {
         </button>
 
         {/* ── Nav links ── */}
-        <nav className="hidden md:flex items-center gap-1 ml-2">
+        <nav className="hidden lg:flex items-center gap-1 ml-2">
           {NAV_LINKS.map((item) => {
             const active = isActive(current, item.route);
             return (
@@ -141,7 +141,7 @@ export function Nav({ current, onNavigate, onAuth, onBack, canGoBack }: Props) {
           {user ? (
             <button
               onClick={() => nav("profile")}
-              className={`hidden md:flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-[#0a0a0a]/5 transition-colors ${focusRing}`}
+              className={`hidden lg:flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-[#0a0a0a]/5 transition-colors ${focusRing}`}
               aria-label={`Signed in as ${displayName} — go to profile`}
             >
               <span className="w-7 h-7 rounded-full bg-[#4FC3F7] text-white flex items-center justify-center text-[12px] font-bold shrink-0">
@@ -152,7 +152,7 @@ export function Nav({ current, onNavigate, onAuth, onBack, canGoBack }: Props) {
           ) : (
             <button
               onClick={onAuth}
-              className={`hidden md:block px-3 py-2 text-[#6b7280] hover:text-[#0a0a0a] rounded-lg transition-colors ${focusRing}`}
+              className={`hidden lg:block px-3 py-2 text-[#6b7280] hover:text-[#0a0a0a] rounded-lg transition-colors ${focusRing}`}
               style={{ fontSize: "14px", fontWeight: 500 }}
             >
               Log in
@@ -161,7 +161,7 @@ export function Nav({ current, onNavigate, onAuth, onBack, canGoBack }: Props) {
 
           <button
             onClick={() => nav("submit")}
-            className={`hidden md:block px-5 py-2 rounded-lg border text-[#6b7280] hover:border-[#0a0a0a]/40 hover:text-[#0a0a0a] transition-all ${focusRing}`}
+            className={`hidden lg:block px-5 py-2 rounded-lg border text-[#6b7280] hover:border-[#0a0a0a]/40 hover:text-[#0a0a0a] transition-all ${focusRing}`}
             style={{ fontSize: "14px", fontWeight: 500, borderColor: "rgba(10,10,10,0.15)" }}
           >
             Submit a prompt
@@ -169,7 +169,7 @@ export function Nav({ current, onNavigate, onAuth, onBack, canGoBack }: Props) {
 
           <button
             onClick={() => nav("library")}
-            className={`hidden md:block px-5 py-2 rounded-lg bg-[#0a0a0a] text-white hover:bg-[#2a2a2a] transition-colors ${focusRing}`}
+            className={`hidden lg:block px-5 py-2 rounded-lg bg-[#0a0a0a] text-white hover:bg-[#2a2a2a] transition-colors ${focusRing}`}
             style={{ fontSize: "14px", fontWeight: 600 }}
           >
             Get started for free
@@ -179,7 +179,7 @@ export function Nav({ current, onNavigate, onAuth, onBack, canGoBack }: Props) {
           <button
             ref={hamburgerRef}
             onClick={() => setOpen(v => !v)}
-            className={`ml-1 md:hidden p-2 text-[#6b7280] rounded-lg ${focusRing}`}
+            className={`ml-1 lg:hidden p-2 text-[#6b7280] rounded-lg ${focusRing}`}
             aria-label="Toggle menu"
             aria-expanded={open}
             aria-controls="mobile-nav-menu"
@@ -193,11 +193,11 @@ export function Nav({ current, onNavigate, onAuth, onBack, canGoBack }: Props) {
       {open && (
         <>
           <div
-            className="md:hidden fixed inset-0 top-16 bg-[#0a0a0a]/30 z-40"
+            className="lg:hidden fixed inset-0 top-16 bg-[#0a0a0a]/30 z-40"
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
-          <div ref={menuRef} id="mobile-nav-menu" role="dialog" aria-modal="true" aria-label="Mobile navigation" className="md:hidden absolute top-full left-0 right-0 bg-white border-t border-[#0a0a0a]/10 shadow-lg z-50">
+          <div ref={menuRef} id="mobile-nav-menu" role="dialog" aria-modal="true" aria-label="Mobile navigation" className="lg:hidden absolute top-full left-0 right-0 bg-white border-t border-[#0a0a0a]/10 shadow-lg z-50">
             <div className="flex flex-col px-6 py-4 gap-1">
               {NAV_LINKS.map(item => {
                 const active = isActive(current, item.route);
