@@ -24,7 +24,23 @@ const PALETTE_KEYWORDS  = ["neutral", "cool", "warm", "monochrome", "dark", "vib
 const SETTING_KEYWORDS  = ["office", "studio", "street", "outdoor", "indoor", "nature", "library", "cafe", "rooftop", "desert", "market", "home"]
 const WARDROBE_KEYWORDS = ["suit", "business casual", "casual", "hoodie", "formal", "streetwear", "traditional", "athletic", "smart casual", "jeans", "dress"]
 
+// ─── Word-boundary keyword matching ───────────────────────────────────────────
+// Plain .includes() false-positives on substrings ("surface" contains "face"),
+// which silently misclassifies the subject. Match on word boundaries instead.
+
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+}
+
+function containsKeyword(lower: string, keyword: string): boolean {
+  return new RegExp(`\\b${escapeRegExp(keyword)}\\b`).test(lower)
+}
+
 // ─── Category detection ───────────────────────────────────────────────────────
+// Falls back to "product" (not "people") when nothing matches or scores tie —
+// its required fields (subject/lighting/camera) carry no wardrobe/skin
+// assumptions, so it degrades gracefully for subjects outside the five known
+// categories (animals, landscapes, vehicles, food, etc).
 
 function detectCategory(text: string): RuleEngineCategory {
   const lower = text.toLowerCase()
@@ -33,12 +49,14 @@ function detectCategory(text: string): RuleEngineCategory {
   }
   for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
     for (const kw of keywords) {
-      if (lower.includes(kw)) scores[cat as RuleEngineCategory]++
+      if (containsKeyword(lower, kw)) scores[cat as RuleEngineCategory]++
     }
   }
   const sorted = (Object.entries(scores) as [RuleEngineCategory, number][])
     .sort((a, b) => b[1] - a[1])
-  return sorted[0][1] > 0 ? sorted[0][0] : "people"
+  const [topCategory, topScore] = sorted[0]
+  const isTie = sorted.filter(([, score]) => score === topScore).length > 1
+  return topScore > 0 && !isTie ? topCategory : "product"
 }
 
 // ─── Generic keyword finder ───────────────────────────────────────────────────
@@ -46,7 +64,7 @@ function detectCategory(text: string): RuleEngineCategory {
 function findFirstMatch(text: string, keywords: string[]): string | null {
   const lower = text.toLowerCase()
   for (const kw of keywords) {
-    if (lower.includes(kw)) return kw
+    if (containsKeyword(lower, kw)) return kw
   }
   return null
 }

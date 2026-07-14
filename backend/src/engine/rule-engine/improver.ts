@@ -44,14 +44,26 @@ export function improveWithRules(req: RuleEngineImproveRequest): RuleEngineResul
   // Build enriched sections
   const lines: string[] = [
     `SUBJECT: ${subjectExp}`,
-    `WARDROBE: ${wardrobeExp}`,
-    `SETTING: ${settingExp}`,
-    `COMPOSITION: chest-and-above framing, subject centred horizontally, eyes at upper 40% of frame, 55mm-equivalent perspective, rule-of-thirds vertical alignment`,
-    `LIGHTING: ${lightingExp}`,
-    `CAMERA: ${cameraExp}`,
   ]
 
-  if (cat === "people" || cat === "fashion") {
+  // Wardrobe/skin/portrait-composition sections only make sense for a person
+  // on camera — a wrong category guess should never dress a product or animal
+  // in "business casual".
+  const isPortraitSubject = cat === "people" || cat === "fashion"
+  if (isPortraitSubject) {
+    lines.push(`WARDROBE: ${wardrobeExp}`)
+  }
+
+  lines.push(
+    `SETTING: ${settingExp}`,
+    isPortraitSubject
+      ? `COMPOSITION: chest-and-above framing, subject centred horizontally, eyes at upper 40% of frame, 55mm-equivalent perspective, rule-of-thirds vertical alignment`
+      : `COMPOSITION: subject centred with balanced negative space, 55mm-equivalent perspective, rule-of-thirds alignment`,
+    `LIGHTING: ${lightingExp}`,
+    `CAMERA: ${cameraExp}`,
+  )
+
+  if (isPortraitSubject) {
     lines.push(buildSkinSection())
   }
 
