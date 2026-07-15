@@ -1,4 +1,5 @@
-import { Check, Zap, Star, Building2, ArrowLeft } from "lucide-react";
+import { useState } from "react";
+import { Check, Zap, Star, Building2, ArrowLeft, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 const plans = [
@@ -73,6 +74,7 @@ const faqs = [
 ];
 
 export function Pricing({ go, onAuth }: { go: (p: string) => void; onAuth?: () => void }) {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   return (
     <div className="max-w-[1100px] mx-auto px-6 py-14 text-[#0a0a0a]">
 
@@ -165,12 +167,26 @@ export function Pricing({ go, onAuth }: { go: (p: string) => void; onAuth?: () =
       <div className="max-w-2xl mx-auto">
         <h2 className="text-2xl font-bold mb-6 text-center">Frequently asked questions</h2>
         <div className="space-y-4">
-          {faqs.map((faq) => (
-            <div key={faq.q} className="bg-white border border-[#0a0a0a]/15 rounded-2xl p-5">
-              <div className="font-semibold text-[#0a0a0a] mb-1">{faq.q}</div>
-              <div className="text-[#6b7280] text-[14px]">{faq.a}</div>
-            </div>
-          ))}
+          {faqs.map((faq, i) => {
+            const isOpen = openFaq === i;
+            return (
+              <div key={faq.q} className="bg-white border border-[#0a0a0a]/15 rounded-2xl overflow-hidden">
+                <button
+                  onClick={() => setOpenFaq(isOpen ? null : i)}
+                  className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-[#0a0a0a]/[0.02] transition-colors"
+                >
+                  <span className="font-semibold text-[#0a0a0a]">{faq.q}</span>
+                  <Plus
+                    className="w-4 h-4 text-[#6b7280] shrink-0 transition-transform duration-200"
+                    style={{ transform: isOpen ? "rotate(45deg)" : "rotate(0deg)" }}
+                  />
+                </button>
+                {isOpen && (
+                  <div className="px-5 pb-5 text-[#6b7280] text-[14px]">{faq.a}</div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -37,7 +37,6 @@ const FEATURED_WEBSITE_IDS = [
 // ─── Masonry Image Card (Pinterest-style) ────────────────────────────────────
 
 function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
-  const [loaded, setLoaded] = useState(false);
   const [hovered, setHovered] = useState(false);
   const savedIds = useSavedIds();
   const [saved, setSaved] = useState(false);
@@ -82,8 +81,6 @@ function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
             src={p.image}
             alt={p.title}
             className="w-full block transition-transform duration-700 ease-out group-hover:scale-[1.06]"
-            style={{ opacity: loaded ? 1 : 0, transition: "opacity 0.4s ease" }}
-            onLoad={() => setLoaded(true)}
           />
         ) : (
           <div className="w-full aspect-[4/3] bg-gradient-to-br from-[#f0f0f0] to-[#e8e8e8] flex items-center justify-center">
@@ -266,7 +263,8 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
     const filtered = fallbackSource.filter(p =>
       (!cat || p.category === cat) &&
       (!query || p.title.toLowerCase().includes(query.toLowerCase()) ||
-                 p.description.toLowerCase().includes(query.toLowerCase()))
+                 p.description.toLowerCase().includes(query.toLowerCase()) ||
+                 (p.tags ?? []).some((t: string) => t.toLowerCase().includes(query.toLowerCase())))
     );
     // Featured images first within every category
     if (isImageFamily && !query) {

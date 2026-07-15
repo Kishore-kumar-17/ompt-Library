@@ -17,6 +17,14 @@ const STYLES  = ["Cinematic", "Minimalist", "Vintage", "Dark Moody", "Vibrant", 
 const MOODS   = ["Dramatic", "Peaceful", "Energetic", "Mysterious", "Nostalgic", "Futuristic", "Romantic", "Eerie", "Epic", "Intimate"];
 const ASPECTS = ["1:1", "16:9", "9:16", "4:3", "2:3", "3:2", "21:9"];
 
+// Image-specific options — mirrors the rule engine's own keyword vocabulary
+// (engine/rule-engine/parser.ts LIGHTING_/CAMERA_/SETTING_/PALETTE_KEYWORDS)
+// so a chosen chip is actually meaningful to the engine, not arbitrary.
+const IMAGE_LIGHTING = ["Window Light", "Golden Hour", "Studio", "Ring Light", "Morning Light", "Blue Hour", "Overcast", "Candlelight", "Neon", "Rembrandt", "Backlight", "Dramatic", "Soft"];
+const IMAGE_CAMERA   = ["Portrait", "Close-Up", "Environmental", "Wide", "Editorial", "Product Shot", "Fashion Shot", "Chest-Up", "Head-and-Shoulders", "Full-Length"];
+const IMAGE_SETTING  = ["Office", "Studio", "Street", "Outdoor", "Indoor", "Nature", "Library", "Cafe", "Rooftop", "Desert", "Market", "Home"];
+const IMAGE_PALETTE  = ["Neutral", "Cool", "Warm", "Monochrome", "Dark", "Vibrant"];
+
 // Video-specific options
 const VIDEO_STYLES    = ["Cinematic", "Documentary", "Commercial", "Motion Graphics", "Animated", "Slow-Mo", "Timelapse", "Vlog", "Film Noir", "Music Video", "Drone Aerial", "Neon"];
 const VIDEO_MOODS     = ["Dramatic", "Peaceful", "Energetic", "Mysterious", "Nostalgic", "Futuristic", "Romantic", "Eerie", "Epic", "Intimate"];
@@ -145,6 +153,12 @@ export function Builder({ go }: { go: (p: string) => void }) {
   const [showEnhance, setShowEnhance] = useState(false);
   const [showAllPlatforms, setShowAllPlatforms] = useState(false);
 
+  // Image-specific enhancement state
+  const [imgLighting, setImgLighting] = useState("");
+  const [imgCamera, setImgCamera]     = useState("");
+  const [imgSetting, setImgSetting]   = useState("");
+  const [imgPalette, setImgPalette]   = useState("");
+
   // Video-specific state
   const [videoDuration, setVideoDuration]       = useState("");
   const [videoCamera, setVideoCamera]           = useState("");
@@ -192,6 +206,10 @@ export function Builder({ go }: { go: (p: string) => void }) {
     }
     setStyle("");
     setMood("");
+    setImgLighting("");
+    setImgCamera("");
+    setImgSetting("");
+    setImgPalette("");
     setHasGenerated(false);
   }, [family]);
 
@@ -235,12 +253,15 @@ export function Builder({ go }: { go: (p: string) => void }) {
         category: isWebsite ? (websiteCategory || undefined) : isVideo ? (videoCategory || undefined) : (family === "image" ? category : undefined),
         subCategory: isWebsite ? (websiteSubCategory || undefined) : undefined,
         audience: isWebsite ? (websiteAudience || undefined) : undefined,
-        palette: isWebsite ? (websitePalette || undefined) : undefined,
+        palette: isWebsite ? (websitePalette || undefined) : (family === "image" ? (imgPalette || undefined) : undefined),
         pages: isWebsite && websitePages.length > 0 ? websitePages : undefined,
         duration: isVideo ? (videoDuration || undefined) : undefined,
         cameraMovement: isVideo ? (videoCamera || undefined) : undefined,
         pacing: isVideo ? (videoPacing || undefined) : undefined,
         soundDesign: isVideo ? (videoSound || undefined) : undefined,
+        lighting: family === "image" ? (imgLighting || undefined) : undefined,
+        cameraAngle: family === "image" ? (imgCamera || undefined) : undefined,
+        setting: family === "image" ? (imgSetting || undefined) : undefined,
       };
       const result = await builderApi.generate(payload);
       setGenerated(result.prompt);
@@ -275,12 +296,15 @@ export function Builder({ go }: { go: (p: string) => void }) {
           category: isWebsite ? (websiteCategory || undefined) : isVideo ? (videoCategory || undefined) : (family === "image" ? category : undefined),
           subCategory: isWebsite ? (websiteSubCategory || undefined) : undefined,
           audience: isWebsite ? (websiteAudience || undefined) : undefined,
-          palette: isWebsite ? (websitePalette || undefined) : undefined,
+          palette: isWebsite ? (websitePalette || undefined) : (family === "image" ? (imgPalette || undefined) : undefined),
           pages: isWebsite && websitePages.length > 0 ? websitePages : undefined,
           duration: isVideo ? (videoDuration || undefined) : undefined,
           cameraMovement: isVideo ? (videoCamera || undefined) : undefined,
           pacing: isVideo ? (videoPacing || undefined) : undefined,
           soundDesign: isVideo ? (videoSound || undefined) : undefined,
+          lighting: family === "image" ? (imgLighting || undefined) : undefined,
+          cameraAngle: family === "image" ? (imgCamera || undefined) : undefined,
+          setting: family === "image" ? (imgSetting || undefined) : undefined,
         };
         const result = await builderApi.generate(payload);
         results[pl.key] = result.finalAssembledText || result.prompt;
@@ -342,6 +366,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
   // Count active enhancements
   const videoEnhancementCount   = [style, mood, videoDuration, videoCamera, videoPacing, videoSound].filter(Boolean).length;
   const websiteEnhancementCount = [style, mood, websitePalette, websiteAudience].filter(Boolean).length + (websitePages.length > 0 ? 1 : 0);
+  const imageEnhancementCount   = [style, mood, imgLighting, imgCamera, imgSetting, imgPalette].filter(Boolean).length;
 
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-10 text-[#0a0a0a]">
@@ -591,9 +616,9 @@ export function Builder({ go }: { go: (p: string) => void }) {
               <span className="flex items-center gap-2">
                 Enhancements
                 <span className="text-[#6b7280] font-normal">optional</span>
-                {(isWebsite ? websiteEnhancementCount > 0 : isVideo ? videoEnhancementCount > 0 : (style || mood)) && (
+                {(isWebsite ? websiteEnhancementCount > 0 : isVideo ? videoEnhancementCount > 0 : family === "image" ? imageEnhancementCount > 0 : (style || mood)) && (
                   <span className="px-1.5 py-0.5 rounded-full bg-[#4FC3F7] text-[10px] text-[#0a0a0a]" style={{ fontWeight: 700 }}>
-                    {isWebsite ? websiteEnhancementCount : isVideo ? videoEnhancementCount : [style, mood].filter(Boolean).length}
+                    {isWebsite ? websiteEnhancementCount : isVideo ? videoEnhancementCount : family === "image" ? imageEnhancementCount : [style, mood].filter(Boolean).length}
                   </span>
                 )}
               </span>
@@ -624,7 +649,13 @@ export function Builder({ go }: { go: (p: string) => void }) {
                     <ChipGroup disabled={isLoading} label="Style"       options={STYLES}  value={style}  onChange={(v) => { setStyle(v);  setHasGenerated(false); }} />
                     <ChipGroup disabled={isLoading} label="Mood"        options={MOODS}   value={mood}   onChange={(v) => { setMood(v);   setHasGenerated(false); }} />
                     {family === "image" && (
-                      <ChipGroup disabled={isLoading} label="Aspect Ratio" options={ASPECTS} value={aspect} onChange={(v) => { setAspect(v); setHasGenerated(false); }} />
+                      <>
+                        <ChipGroup disabled={isLoading} label="Aspect Ratio"      options={ASPECTS}       value={aspect}      onChange={(v) => { setAspect(v);      setHasGenerated(false); }} />
+                        <ChipGroup disabled={isLoading} label="Lighting"         options={IMAGE_LIGHTING} value={imgLighting} onChange={(v) => { setImgLighting(v); setHasGenerated(false); }} />
+                        <ChipGroup disabled={isLoading} label="Camera / Shot Type" options={IMAGE_CAMERA}  value={imgCamera}   onChange={(v) => { setImgCamera(v);   setHasGenerated(false); }} />
+                        <ChipGroup disabled={isLoading} label="Setting"          options={IMAGE_SETTING}  value={imgSetting}  onChange={(v) => { setImgSetting(v);  setHasGenerated(false); }} />
+                        <ChipGroup disabled={isLoading} label="Palette"          options={IMAGE_PALETTE}  value={imgPalette}  onChange={(v) => { setImgPalette(v);  setHasGenerated(false); }} />
+                      </>
                     )}
                   </>
                 )}

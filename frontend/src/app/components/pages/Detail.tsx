@@ -279,7 +279,13 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
           {(p.tags ?? []).length > 0 && (
             <div className="flex flex-wrap gap-2 mt-4 mb-4">
               {(p.tags ?? []).map(t => (
-                <span key={t} className="px-2 py-1 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#6b7280] text-[12px]">#{t}</span>
+                <button
+                  key={t}
+                  onClick={() => go(`library:${p.family ?? "image"}:${encodeURIComponent("#" + t)}`)}
+                  className="px-2 py-1 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#6b7280] text-[12px] hover:bg-[#0a0a0a]/10 hover:text-[#0a0a0a] transition-colors cursor-pointer"
+                >
+                  #{t}
+                </button>
               ))}
             </div>
           )}
@@ -474,7 +480,13 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
               <h2 className="text-[#0a0a0a] mb-4">Tags</h2>
               <div className="flex flex-wrap gap-2 mb-8">
                 {(p.tags ?? []).map(t => (
-                  <button key={t} onClick={() => go("library:image:#" + t)} className="px-2 py-1 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#6b7280] text-[13px] hover:bg-[#0a0a0a]/10 hover:text-[#0a0a0a] transition-colors cursor-pointer">#{t}</button>
+                  <button
+                    key={t}
+                    onClick={() => go(`library:${p.family ?? "image"}:${encodeURIComponent("#" + t)}`)}
+                    className="px-2 py-1 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#6b7280] text-[13px] hover:bg-[#0a0a0a]/10 hover:text-[#0a0a0a] transition-colors cursor-pointer"
+                  >
+                    #{t}
+                  </button>
                 ))}
               </div>
             </>

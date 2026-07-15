@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { improvePrompt } from "../engine/modules/improver.js";
 import { optionalAuth, engineRateLimit } from "../middleware/rateLimit.js";
+import { computeImageLocks } from "./image-locks.js";
 import type { ImprovePromptRequest } from "../engine/contracts.js";
 
 const router = new Hono();
@@ -36,22 +37,26 @@ router.post(
     try {
       const result = await improvePrompt(body, userId);
       const categoryId = result.metadata.category ?? null;
+      const family = body.family ?? "image";
       // Same shape adaptation as routes/builder.ts: the frontend expects a
       // richer object (changes as {label, applied}, platform/family/tokensUsed,
       // plus lock-layer fields the lock-engine used to produce for this flow
       // before build/improve moved off it (it's still live for /api/variables,
       // see routes/variables.ts) — than the frozen public contract returns.
+      // For images, compute real lock/negative-lock text additively from the
+      // detected/overridden category instead of leaving the panel empty.
+      const locks = family === "image" ? computeImageLocks(categoryId) : null;
       return c.json({
         original: result.original,
         improved: result.improved,
         changes: result.improvements.map((label) => ({ label, applied: true })),
         platform: body.platform,
-        family: body.family ?? "image",
+        family,
         tokensUsed: 0,
         categoryId,
         categoryLabel: categoryId ? (CATEGORY_LABELS[categoryId] ?? categoryId) : null,
-        lockSection: [],
-        negativeLocks: [],
+        lockSection: locks?.lockSection ?? [],
+        negativeLocks: locks?.negativeLocks ?? [],
         variables: [],
         validation: null,
         finalAssembledText: result.improved,

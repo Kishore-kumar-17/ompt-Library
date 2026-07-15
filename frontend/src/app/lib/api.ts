@@ -316,6 +316,9 @@ export const builderApi = {
     cameraMovement?: string;
     pacing?: string;
     soundDesign?: string;
+    lighting?: string;
+    cameraAngle?: string;
+    setting?: string;
   }) =>
     apiFetch<BuilderResult>("/api/builder/generate", {
       method: "POST",

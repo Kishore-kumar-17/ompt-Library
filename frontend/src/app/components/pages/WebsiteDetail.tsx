@@ -303,11 +303,8 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
 
           {/* Prompt preview */}
           <div className="relative bg-white border-2 border-[#0a0a0a] rounded-2xl p-4 mb-4 shadow-[6px_6px_0_0_#0a0a0a]">
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2">
               <span className="text-[11px] text-[#6b7280] uppercase font-bold tracking-widest">{activePl?.name} prompt</span>
-              <button onClick={handleCopy} className="p-1.5 rounded-lg bg-[#0a0a0a]/5 hover:bg-[#0a0a0a]/10 text-[#6b7280] hover:text-[#0a0a0a] transition-colors" title="Copy prompt" aria-label="Copy prompt">
-                <Copy className="w-4 h-4" />
-              </button>
             </div>
             <pre className="whitespace-pre-wrap text-[#0a0a0a] font-mono text-[12px] leading-relaxed max-h-72 overflow-y-auto">{promptText}</pre>
           </div>

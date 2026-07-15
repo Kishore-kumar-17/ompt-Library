@@ -4,6 +4,7 @@ import { promptEngineBuilder } from "../engine/engines/prompt-engine-builder.js"
 import { PLATFORM_KNOWLEDGE } from "../engine/rag/knowledge.js";
 import { getRAGFileList } from "../engine/rag/loader.js";
 import { optionalAuth, engineRateLimit } from "../middleware/rateLimit.js";
+import { computeImageLocks } from "./image-locks.js";
 import type { BuildPromptRequest, PromptMode } from "../engine/contracts.js";
 
 const router = new Hono();
@@ -30,6 +31,9 @@ interface FrontendBuildPayload {
   cameraMovement?: string;
   pacing?: string;
   soundDesign?: string;
+  lighting?: string;
+  cameraAngle?: string;
+  setting?: string;
   options?: BuildPromptRequest["options"];
 }
 
@@ -62,6 +66,9 @@ function normalizeBuildRequest(body: FrontendBuildPayload): BuildPromptRequest |
     body.cameraMovement && `camera movement: ${body.cameraMovement}`,
     body.pacing && `pacing: ${body.pacing}`,
     body.soundDesign && `sound design: ${body.soundDesign}`,
+    body.lighting && `lighting: ${body.lighting}`,
+    body.cameraAngle && `camera/shot type: ${body.cameraAngle}`,
+    body.setting && `setting: ${body.setting}`,
   ].filter(Boolean) as string[];
   const input = hints.length ? `${rawInput.trim()} (${hints.join("; ")})` : rawInput.trim();
 
@@ -94,9 +101,12 @@ router.post(
       const result = await buildPrompt(body, userId);
       // The pipeline engine has no lock-layer/variable concept (that belonged to
       // the lock-engine, which build/improve no longer use — it's still live
-      // for /api/variables, see routes/variables.ts) — send safe empty defaults
-      // so the frontend's LockLayerPanel/VariablePanel (which assume these
-      // arrays always exist) don't crash on undefined.
+      // for /api/variables, see routes/variables.ts). For the image family,
+      // compute real lock/negative-lock text additively via computeImageLocks
+      // (uses the same rule-engine dictionaries the improve path already
+      // relies on) so the frontend's LockLayerPanel isn't empty; other
+      // families still get safe empty defaults.
+      const locks = body.mode === "image" ? computeImageLocks(body.category ?? null) : null;
       return c.json({
         prompt: result.prompt,
         platform: result.metadata.platform,
@@ -104,8 +114,8 @@ router.post(
         tokensUsed: 0,
         categoryId: null,
         categoryLabel: null,
-        lockSection: [],
-        negativeLocks: [],
+        lockSection: locks?.lockSection ?? [],
+        negativeLocks: locks?.negativeLocks ?? [],
         variables: [],
         validation: null,
         finalAssembledText: result.prompt,
