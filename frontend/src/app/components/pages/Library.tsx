@@ -15,6 +15,7 @@ import { PromptCard } from "../PromptCard";
 import { WebsitePromptCard, WebsitePreviewModal } from "../WebsitePromptCard";
 import { websiteDesigns } from "../../lib/website-data";
 import { websitePlatformVersions } from "../../lib/website-platforms";
+import { useSavedIds, invalidateSavedIds } from "../../lib/savedIds";
 
 const PAGE_SIZE = 20;
 
@@ -38,7 +39,10 @@ const FEATURED_WEBSITE_IDS = [
 function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
   const [loaded, setLoaded] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const savedIds = useSavedIds();
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => { setSaved(savedIds.has(Number(p.id))); }, [savedIds, p.id]);
 
   const handleSave = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -46,6 +50,7 @@ function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
     try {
       const res = await libraryApi.save(p.id);
       setSaved(res.saved);
+      invalidateSavedIds();
       toast(res.saved ? "Saved to library" : "Removed from library", { description: p.title });
     } catch { toast.error("Could not save"); }
   };
@@ -328,6 +333,21 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
     return categories.length > 0 ? categories : [];
   }, [isImageFamily, isVideoFamily, isWebsiteFamily, categories]);
 
+  // A recognized family renders `meta`; an unrecognized one (a mistyped or
+  // stale route string) previously fell through to a generic API fetch with
+  // no family filter and a blank/undefined header — signal it clearly instead.
+  if (family && !meta) {
+    return (
+      <div className="max-w-[900px] mx-auto px-6 py-24 text-center">
+        <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-6 transition-colors">
+          <ArrowLeft className="w-3.5 h-3.5" /> Back to Library
+        </button>
+        <h1 className="text-[#0a0a0a] mb-2" style={{ fontSize: 24, fontWeight: 700 }}>Unknown category</h1>
+        <p className="text-[#6b7280]" style={{ fontSize: 14 }}>"{family}" isn't a category we recognize. Pick one from the Library instead.</p>
+      </div>
+    );
+  }
+
   return (
   <>
     <div className="max-w-[1400px] mx-auto px-6 py-8 text-[#0a0a0a]">
@@ -549,6 +569,7 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
                             e.stopPropagation();
                             navigator.clipboard?.writeText((p as any).description ?? "");
                             toast.success("Prompt copied", { description: p.title });
+                            if (authStore.getUser()) libraryApi.copy(p.id).catch(() => {});
                           }}
                           className="p-1 rounded-md hover:bg-[#0a0a0a]/10 transition-colors"
                         >

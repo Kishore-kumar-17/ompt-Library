@@ -1,14 +1,18 @@
-﻿import { useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Heart, Copy } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { PromptItem } from "./theme";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { authStore, libraryApi } from "../lib/api";
+import { useSavedIds, invalidateSavedIds } from "../lib/savedIds";
 
 export function PromptCard({ p, onClick, hideActions }: { p: PromptItem; onClick?: () => void; hideActions?: boolean }) {
+  const savedIds = useSavedIds();
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => { setSaved(savedIds.has(Number(p.id))); }, [savedIds, p.id]);
 
   const handleSave = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -16,6 +20,7 @@ export function PromptCard({ p, onClick, hideActions }: { p: PromptItem; onClick
     try {
       const res = await libraryApi.save(p.id);
       setSaved(res.saved);
+      invalidateSavedIds();
       toast(res.saved ? "Saved to library" : "Removed from library", { description: p.title });
     } catch { toast.error("Could not save"); }
   };
@@ -27,6 +32,7 @@ export function PromptCard({ p, onClick, hideActions }: { p: PromptItem; onClick
       setCopied(true);
       toast.success("Prompt copied", { description: p.title });
       setTimeout(() => setCopied(false), 2000);
+      if (authStore.getUser()) libraryApi.copy(p.id).catch(() => {});
     } catch { toast.error("Failed to copy"); }
   };
   return (

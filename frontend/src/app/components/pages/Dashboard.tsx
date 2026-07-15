@@ -40,8 +40,11 @@ export function Dashboard({ go }: { go: (p: string) => void }) {
       <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-3 transition-colors">
         <ArrowLeft className="w-3.5 h-3.5" /> Back
       </button>
-      <h1 className="text-3xl font-bold mb-1">Analytics <span className="font-extrabold">Dashboard</span></h1>
-      <p className="text-[#6b7280] mb-6">Quality, coverage, and performance across your prompt library.</p>
+      <div className="flex items-center gap-2.5 mb-1 flex-wrap">
+        <h1 className="text-3xl font-bold">Analytics <span className="font-extrabold">Dashboard</span></h1>
+        <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold uppercase tracking-wide">Preview data</span>
+      </div>
+      <p className="text-[#6b7280] mb-6">A preview of what quality, coverage, and platform-performance analytics will look like — the numbers below are illustrative, not live data yet.</p>
 
       <div className="flex gap-1 mb-8 bg-[#0a0a0a]/5 p-1 rounded-xl w-fit max-w-full overflow-x-auto no-scrollbar">
         {tabs.map(t => (

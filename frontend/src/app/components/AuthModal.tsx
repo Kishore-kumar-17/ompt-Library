@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { X, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { authApi } from "../lib/api";
+import { useFocusTrap } from "../lib/useFocusTrap";
 
 export function AuthModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [mode, setMode]         = useState<"login" | "signup">("login");
@@ -17,6 +18,8 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose, loading]);
+
+  const dialogRef = useFocusTrap<HTMLDivElement>(open, () => { if (!loading) onClose(); });
 
   if (!open) return null;
 
@@ -52,6 +55,7 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
       onClick={() => { if (!loading) onClose(); }}
     >
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={mode === "login" ? "Log in" : "Create your account"}

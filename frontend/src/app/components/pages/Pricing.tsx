@@ -1,4 +1,5 @@
 import { Check, Zap, Star, Building2, ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 
 const plans = [
   {
@@ -139,7 +140,16 @@ export function Pricing({ go, onAuth }: { go: (p: string) => void; onAuth?: () =
               </a>
             ) : (
               <button
-                onClick={() => onAuth?.()}
+                onClick={() => {
+                  if (plan.id === "pro") {
+                    // No billing integration exists yet — say so, rather than
+                    // silently opening the same free sign-up as the Free plan.
+                    toast("Pro billing isn't live yet", {
+                      description: "We'll set you up on the Free tier for now — email us to get on the Pro waitlist.",
+                    });
+                  }
+                  onAuth?.();
+                }}
                 className={`w-full h-11 rounded-full font-bold text-[14px] border-2 border-[#0a0a0a] transition-all hover:shadow-[3px_3px_0_0_#0a0a0a] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] ${
                   plan.highlighted ? "bg-[#0a0a0a] text-white" : "bg-[#4FC3F7] text-white"
                 }`}

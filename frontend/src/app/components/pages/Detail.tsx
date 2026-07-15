@@ -16,6 +16,7 @@ import { videoLibraryPrompts } from "../../lib/video-data";
 import { videoPlatformVersions } from "../../lib/video-platforms";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 import { PromptCard } from "../PromptCard";
+import { useSavedIds, invalidateSavedIds } from "../../lib/savedIds";
 
 const SAMPLE_REVIEWS = [
   { name: "Arjun S.",   initials: "AS", color: "#0a0a0a", stars: 5, helpful: 34, body: "Produced exactly what I needed - sharp, editorial output on the first try. Saved me 20 minutes of prompt tweaking." },
@@ -64,6 +65,7 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
   const isVideoPrompt = staticPrompt?.family === "video";
   const [platform, setPlatform] = useState(defaultPlatform ?? (isVideoPrompt ? "veo" : "chatgpt"));
   const [vars, setVars]         = useState<Record<string, string>>({});
+  const savedIds = useSavedIds();
   const [saved, setSaved]       = useState(false);
   const [saving, setSaving]     = useState(false);
   const [vote, setVote]         = useState<"up" | "down" | null>(null);
@@ -101,6 +103,8 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
   }, [id, staticPrompt]);
 
   const p = prompt;
+
+  useEffect(() => { if (p) setSaved(savedIds.has(Number(p.id))); }, [savedIds, p?.id]);
 
   // Merge lazily-loaded platform data into the prompt's platforms map
   const resolvedPlatforms: Record<string, string> = {
@@ -221,6 +225,7 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
     try {
       const res = await libraryApi.save(p.id);
       setSaved(res.saved);
+      invalidateSavedIds();
       toast(res.saved ? "Saved to library" : "Removed from library", { description: p.title });
     } catch { toast.error("Could not save - is the backend running?"); }
     finally { setSaving(false); }

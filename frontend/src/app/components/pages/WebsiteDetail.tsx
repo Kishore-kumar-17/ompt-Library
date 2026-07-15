@@ -40,13 +40,22 @@ async function downloadAllScaffoldFiles(slug: string, title: string) {
   try {
     const files = [...DOCS.map(d => d.file), `${slug}.md`];
     const sections: string[] = [];
+    let missing = 0;
     for (const file of files) {
       const res = await fetch(`/scaffolds/${slug}/${file}`);
       if (res.ok) {
         const text = await res.text();
         sections.push(text);
+      } else {
+        missing++;
       }
     }
+
+    if (sections.length === 0) {
+      toast.error("Download failed", { description: "No scaffold files were found for this design." });
+      return;
+    }
+
     const combined = sections.join("\n\n---\n\n");
     const blob = new Blob([combined], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
@@ -55,7 +64,14 @@ async function downloadAllScaffoldFiles(slug: string, title: string) {
     a.download = `${slug}-scaffold.md`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("Downloaded", { description: `${slug}-scaffold.md (${files.length} files)` });
+
+    if (missing > 0) {
+      toast.warning("Downloaded with missing sections", {
+        description: `${slug}-scaffold.md includes ${sections.length} of ${files.length} files — ${missing} weren't found.`,
+      });
+    } else {
+      toast.success("Downloaded", { description: `${slug}-scaffold.md (${sections.length} files)` });
+    }
   } catch {
     toast.error("Download failed");
   }
@@ -175,6 +191,12 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                 <WebsiteDetailPlaceholder design={design} previewUrl={previewUrl} />
               ) : (
                 <>
+                  {/* sandbox="allow-scripts allow-same-origin" is a documented sandbox-bypass
+                      combination — accepted here because guardIframeNavigation/patchIframeLinks
+                      below reach into iframe.contentDocument, which requires the iframe to be
+                      same-origin in the first place. Preview HTML is static, developer-authored
+                      content under frontend/public/previews/, not user-generated — revisit this
+                      if that ever changes. */}
                   <iframe
                     ref={iframeRef}
                     src={previewUrl}
