@@ -5,8 +5,8 @@ import { platforms, videoPlatforms, websitePlatforms } from "../theme";
 import { improverApi, variablesApi, authStore, type ImproverResult } from "../../lib/api";
 import { LockLayerPanel } from "../LockLayerPanel";
 import { VariablePanel } from "../VariablePanel";
-import { applyVariables } from "../../lib/variables";
 import { highlight } from "../../lib/highlight";
+import { useEngineOutput } from "../../lib/useEngineOutput";
 
 // ─── Family definitions ──────────────────────────────────────────────────────
 
@@ -56,8 +56,8 @@ export function Improver({ go }: { go: (p: string) => void }) {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied]   = useState(false);
   const [error, setError]     = useState("");
-  const [vars, setVars]       = useState<Record<string, string>>({});
-  const [regenText, setRegenText] = useState<string | null>(null);
+  const output = useEngineOutput(result, result?.improved ?? "");
+  const { vars, setVars, regenText, setRegenText, variableFields, displayText } = output;
   const [regenerating, setRegen]  = useState(false);
   // Explicit category override — null means "trust the rule engine's own
   // detection." Set when the user corrects a misclassified category.
@@ -72,12 +72,6 @@ export function Improver({ go }: { go: (p: string) => void }) {
   }, [family]);
 
   const activePlatforms = getPlatformsForFamily(family);
-
-  const variableFields = result?.variables ?? [];
-  // Single source of truth for "the current prompt text" — used for both the
-  // on-screen preview and Copy, so users never copy something they didn't see.
-  const baseText = result ? (result.finalAssembledText || result.improved) : "";
-  const displayText = regenText ?? applyVariables(baseText, vars);
 
   async function handleRegenerate() {
     if (regenerating || !result) return;
@@ -98,15 +92,13 @@ export function Improver({ go }: { go: (p: string) => void }) {
     setLoading(true);
     setError("");
     setResult(null);
-    setVars({});
-    setRegenText(null);
+    output.resetForNewRun();
 
     try {
       const category = overrideCategory ?? categoryOverride ?? undefined;
       const res = await improverApi.improve({ prompt: input, platform, family, category });
       setResult(res);
-      // Pre-fill the brief with each variable's default.
-      setVars(Object.fromEntries((res.variables ?? []).filter(v => v.default).map(v => [v.name, v.default!])));
+      output.prefillFromResult(res);
     } catch (err: any) {
       setError(err?.message ?? "Improvement failed");
       toast.error("Improvement failed", { description: err?.message });

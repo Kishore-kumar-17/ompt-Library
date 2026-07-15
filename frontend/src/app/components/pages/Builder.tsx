@@ -8,8 +8,8 @@ import { platforms, videoPlatforms, websitePlatforms } from "../theme";
 import { authStore, builderApi, variablesApi, type EngineLockFields, type BuilderResult } from "../../lib/api";
 import { LockLayerPanel } from "../LockLayerPanel";
 import { VariablePanel } from "../VariablePanel";
-import { applyVariables } from "../../lib/variables";
 import { highlight } from "../../lib/highlight";
+import { useEngineOutput } from "../../lib/useEngineOutput";
 
 // ─── Enhancement options ──────────────────────────────────────────────────────
 
@@ -168,9 +168,12 @@ export function Builder({ go }: { go: (p: string) => void }) {
   const [error, setError]           = useState("");
   const [category, setCategory]     = useState("people-portraits");
   const [lockData, setLockData]     = useState<EngineLockFields | null>(null);
-  const [vars, setVars]             = useState<Record<string, string>>({});
-  const [regenText, setRegenText]   = useState<string | null>(null);
   const [regenerating, setRegen]    = useState(false);
+
+  const isWebsite = family === "website";
+  const isVideo   = family === "video";
+  const output = useEngineOutput(lockData, generated, { skipVariables: isWebsite });
+  const { vars, setVars, regenText, setRegenText, variableFields, displayText: outputText } = output;
   useEffect(() => { setRegenText(null); }, [platform]);
 
   // Reset website subcategory when category changes
@@ -192,19 +195,10 @@ export function Builder({ go }: { go: (p: string) => void }) {
     setHasGenerated(false);
   }, [family]);
 
-  const isWebsite = family === "website";
-  const isVideo   = family === "video";
   const activePlatforms = isWebsite ? websitePlatforms : isVideo ? videoPlatforms : platforms;
   const selectedCategorySubs = WEBSITE_CATEGORIES.find(c => c.key === websiteCategory)?.subs ?? [];
 
   const canGenerate = idea.trim().length > 0;
-  const variableFields = lockData?.variables ?? [];
-  // Single source of truth for "the current prompt text" — used for both the
-  // on-screen preview and Copy/Download, so users never copy something they
-  // didn't see rendered.
-  const baseText = lockData?.finalAssembledText || generated;
-  const displayPrompt = regenText ?? applyVariables(baseText, vars);
-  const outputText = isWebsite ? generated : displayPrompt;
 
   // Current step indicator
   const currentStep = !canGenerate ? 0 : !hasGenerated ? 1 : 2;
@@ -230,8 +224,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
     setHasGenerated(false);
     setAllPlatformResults({});
     setLockData(null);
-    setVars({});
-    setRegenText(null);
+    output.resetForNewRun();
 
     try {
       const payload: Parameters<typeof builderApi.generate>[0] = {
@@ -252,7 +245,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
       const result = await builderApi.generate(payload);
       setGenerated(result.prompt);
       setLockData(result);
-      setVars(Object.fromEntries((result.variables ?? []).filter(v => v.default).map(v => [v.name, v.default!])));
+      output.prefillFromResult(result);
       setHasGenerated(true);
     } catch (err: any) {
       setError(err?.message ?? "Generation failed");
@@ -306,7 +299,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
     if (currentPlatformResult) {
       setGenerated(currentPlatformResult.prompt);
       setLockData(currentPlatformResult);
-      setVars(Object.fromEntries((currentPlatformResult.variables ?? []).filter(v => v.default).map(v => [v.name, v.default!])));
+      output.prefillFromResult(currentPlatformResult);
     } else {
       setGenerated("");
       setLockData(null);
