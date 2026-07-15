@@ -42,6 +42,29 @@ export function buildColorGradeSection(grade: string): string {
   return `COLOR GRADE: ${grade}`
 }
 
+// Fixed per-category defaults (see dictionaries.ts CATEGORY_OUTPUT_DEFAULTS) —
+// not keyword-detected from the idea like SUBJECT/CAMERA/LIGHTING above.
+
+export function buildStyleSection(style: string): string {
+  return `STYLE: ${style}`
+}
+
+export function buildQualityTagSection(qualityTag: string): string {
+  return `QUALITY TAG: ${qualityTag}`
+}
+
+export function buildAudioSection(audio: string): string {
+  return `AUDIO: ${audio}`
+}
+
+export function buildAspectRatioSection(aspectRatio: string): string {
+  return `ASPECT RATIO: ${aspectRatio}`
+}
+
+export function buildDurationSection(duration: string): string {
+  return `DURATION: ${duration}`
+}
+
 export function buildRefsSection(mood: string = "cinematic"): string {
   const refs: Record<string, string> = {
     "cinematic":   "REFS: Roger Deakins — naturalistic motivated light. Emmanuel Lubezki — continuous immersive camera movement. Greig Fraser — high-contrast atmospheric depth",

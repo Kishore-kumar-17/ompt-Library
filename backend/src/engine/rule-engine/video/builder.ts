@@ -3,12 +3,13 @@
 // Zero API calls — Motion Formula v1.0 assembly only.
 
 import type { VideoBuildRequest, VideoRuleEngineResult } from "./types.js"
-import { NEGATIVE_LOCKS, CATEGORY_DEFAULTS } from "./dictionaries.js"
+import { NEGATIVE_LOCKS, CATEGORY_DEFAULTS, CATEGORY_OUTPUT_DEFAULTS } from "./dictionaries.js"
 import { expandCameraMove, expandLighting, expandAction, expandSetting, expandColorGrade, expandSubject, getCameraNumericSpec } from "./context-expander.js"
 import { generateVideoLocks } from "./lock-generator.js"
 import {
   buildSubjectSection, buildActionSection, buildSettingSection, buildCameraSection,
   buildLightingSection, buildColorGradeSection, buildRefsSection, buildExcludeSection,
+  buildStyleSection, buildQualityTagSection, buildAudioSection, buildAspectRatioSection, buildDurationSection,
 } from "./templates/narrative.js"
 import { buildProductRotation } from "./templates/product.js"
 import { buildNatureAtmosphere } from "./templates/nature.js"
@@ -48,6 +49,14 @@ export function buildVideoFromRules(req: VideoBuildRequest): VideoRuleEngineResu
   sections.push(buildCameraSection(cameraExp))
   sections.push(buildLightingSection(lightingExp))
   sections.push(buildColorGradeSection(gradeExp))
+
+  const outputDefaults = CATEGORY_OUTPUT_DEFAULTS[cat] ?? CATEGORY_OUTPUT_DEFAULTS.narrative
+  sections.push(buildStyleSection(outputDefaults.style))
+  sections.push(buildQualityTagSection(outputDefaults.qualityTag))
+  sections.push(buildAudioSection(outputDefaults.audio))
+  sections.push(buildAspectRatioSection(outputDefaults.aspectRatio))
+  sections.push(buildDurationSection(defaults.duration))
+
   sections.push(buildRefsSection(req.mood ?? "cinematic"))
 
   const negatives = NEGATIVE_LOCKS[cat] ?? NEGATIVE_LOCKS.narrative
