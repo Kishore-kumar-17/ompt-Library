@@ -2,6 +2,7 @@
 // Keyword extraction from raw user input — no AI, no API.
 
 import type { ParsedCodePrompt, CodeCategory } from "./types.js"
+import { findFirstMatch, detectCategoryByScore } from "../keyword-utils.js"
 
 const CATEGORY_KEYWORDS: Record<CodeCategory, string[]> = {
   bugfix:   ["bug", "fix", "error", "crash", "broken", "not working", "doesn't work", "isn't working", "fails", "exception", "race condition", "stack trace"],
@@ -23,23 +24,7 @@ const OUTPUT_FORMAT_KEYWORDS = [
 ]
 
 function detectCategory(text: string): CodeCategory {
-  const lower = text.toLowerCase()
-  const scores: Record<CodeCategory, number> = { bugfix: 0, feature: 0, refactor: 0, review: 0, test: 0 }
-  for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
-    for (const kw of keywords) {
-      if (lower.includes(kw)) scores[cat as CodeCategory]++
-    }
-  }
-  const sorted = (Object.entries(scores) as [CodeCategory, number][]).sort((a, b) => b[1] - a[1])
-  return sorted[0][1] > 0 ? sorted[0][0] : "feature"
-}
-
-function findFirstMatch(text: string, keywords: string[]): string | null {
-  const lower = text.toLowerCase()
-  for (const kw of keywords) {
-    if (lower.includes(kw)) return kw
-  }
-  return null
+  return detectCategoryByScore(text, CATEGORY_KEYWORDS, "feature")
 }
 
 function getMissingComponents(parsed: Partial<ParsedCodePrompt>, category: CodeCategory): string[] {

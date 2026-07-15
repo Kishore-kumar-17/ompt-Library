@@ -2,6 +2,7 @@
 // Keyword extraction from raw user input — no AI, no API.
 
 import type { ParsedPrompt, RuleEngineCategory } from "./types"
+import { findFirstMatch, detectCategoryByScore } from "./keyword-utils"
 
 // ─── Category detection keywords ─────────────────────────────────────────────
 
@@ -24,18 +25,6 @@ const PALETTE_KEYWORDS  = ["neutral", "cool", "warm", "monochrome", "dark", "vib
 const SETTING_KEYWORDS  = ["office", "studio", "street", "outdoor", "indoor", "nature", "library", "cafe", "rooftop", "desert", "market", "home"]
 const WARDROBE_KEYWORDS = ["suit", "business casual", "casual", "hoodie", "formal", "streetwear", "traditional", "athletic", "smart casual", "jeans", "dress"]
 
-// ─── Word-boundary keyword matching ───────────────────────────────────────────
-// Plain .includes() false-positives on substrings ("surface" contains "face"),
-// which silently misclassifies the subject. Match on word boundaries instead.
-
-function escapeRegExp(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-}
-
-function containsKeyword(lower: string, keyword: string): boolean {
-  return new RegExp(`\\b${escapeRegExp(keyword)}\\b`).test(lower)
-}
-
 // ─── Category detection ───────────────────────────────────────────────────────
 // Falls back to "product" (not "people") when nothing matches or scores tie —
 // its required fields (subject/lighting/camera) carry no wardrobe/skin
@@ -43,30 +32,7 @@ function containsKeyword(lower: string, keyword: string): boolean {
 // categories (animals, landscapes, vehicles, food, etc).
 
 function detectCategory(text: string): RuleEngineCategory {
-  const lower = text.toLowerCase()
-  const scores: Record<RuleEngineCategory, number> = {
-    people: 0, fashion: 0, product: 0, art: 0, social: 0,
-  }
-  for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
-    for (const kw of keywords) {
-      if (containsKeyword(lower, kw)) scores[cat as RuleEngineCategory]++
-    }
-  }
-  const sorted = (Object.entries(scores) as [RuleEngineCategory, number][])
-    .sort((a, b) => b[1] - a[1])
-  const [topCategory, topScore] = sorted[0]
-  const isTie = sorted.filter(([, score]) => score === topScore).length > 1
-  return topScore > 0 && !isTie ? topCategory : "product"
-}
-
-// ─── Generic keyword finder ───────────────────────────────────────────────────
-
-function findFirstMatch(text: string, keywords: string[]): string | null {
-  const lower = text.toLowerCase()
-  for (const kw of keywords) {
-    if (containsKeyword(lower, kw)) return kw
-  }
-  return null
+  return detectCategoryByScore(text, CATEGORY_KEYWORDS, "product")
 }
 
 // ─── Hand position normaliser ─────────────────────────────────────────────────

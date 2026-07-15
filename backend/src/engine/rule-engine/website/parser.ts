@@ -8,6 +8,7 @@
 
 import type { ParsedWebsitePrompt, WebsiteCategory } from "./types.js"
 import { CATEGORY_SUBCATEGORIES, WEBSITE_PAGE_NAMES } from "./dictionaries.js"
+import { containsKeyword, detectCategoryByScore } from "../keyword-utils.js"
 
 const CATEGORY_KEYWORDS: Record<WebsiteCategory, string[]> = {
   business:  ["restaurant", "cafe", "clinic", "healthcare", "school", "institute", "boutique", "retail store", "real estate", "law firm", "legal", "service business", "salon", "gym"],
@@ -25,15 +26,7 @@ const AUDIENCE_KEYWORDS: Record<string, string> = {
 }
 
 function detectCategory(text: string): WebsiteCategory {
-  const lower = text.toLowerCase()
-  const scores: Record<WebsiteCategory, number> = { business: 0, ecommerce: 0, portfolio: 0, saas: 0, landing: 0 }
-  for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
-    for (const kw of keywords) {
-      if (lower.includes(kw)) scores[cat as WebsiteCategory]++
-    }
-  }
-  const sorted = (Object.entries(scores) as [WebsiteCategory, number][]).sort((a, b) => b[1] - a[1])
-  return sorted[0][1] > 0 ? sorted[0][0] : "business"
+  return detectCategoryByScore(text, CATEGORY_KEYWORDS, "business")
 }
 
 function detectSubcategory(text: string, category: WebsiteCategory): string | null {
@@ -41,14 +34,14 @@ function detectSubcategory(text: string, category: WebsiteCategory): string | nu
   const candidates = CATEGORY_SUBCATEGORIES[category] ?? []
   for (const sub of candidates) {
     const parts = sub.toLowerCase().split(/\s*\/\s*/)
-    if (parts.some((p) => lower.includes(p))) return sub
+    if (parts.some((p) => containsKeyword(lower, p))) return sub
   }
   return null
 }
 
 function detectPalette(text: string): string | null {
   const lower = text.toLowerCase()
-  const hit = PALETTE_KEYWORDS.find((kw) => lower.includes(kw))
+  const hit = PALETTE_KEYWORDS.find((kw) => containsKeyword(lower, kw))
   if (!hit) return null
   return hit.replace(/\b\w/g, (c) => c.toUpperCase())
 }
@@ -56,14 +49,14 @@ function detectPalette(text: string): string | null {
 function detectAudience(text: string): string | null {
   const lower = text.toLowerCase()
   for (const [kw, label] of Object.entries(AUDIENCE_KEYWORDS)) {
-    if (lower.includes(kw)) return label
+    if (containsKeyword(lower, kw)) return label
   }
   return null
 }
 
 function detectPages(text: string): string[] {
   const lower = text.toLowerCase()
-  return WEBSITE_PAGE_NAMES.filter((page) => lower.includes(page.toLowerCase()))
+  return WEBSITE_PAGE_NAMES.filter((page) => containsKeyword(lower, page.toLowerCase()))
 }
 
 function getMissingComponents(parsed: Partial<ParsedWebsitePrompt>): string[] {
