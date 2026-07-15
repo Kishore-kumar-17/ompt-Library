@@ -117,40 +117,6 @@ router.post(
   }
 );
 
-// ─── POST /generate-all — all 6 platforms in one shot ─────────────────────────
-// Uses the PromptEngineBuilder pipeline: idea → SceneJSON → per-engine prompt.
-// Zero API calls, <10ms, replaces 6 parallel frontend requests.
-router.post(
-  "/generate-all",
-  optionalAuth,
-  engineRateLimit("build"),
-  async (c) => {
-    const body = await c.req.json<{
-      idea: string
-      style?: string
-      mood?: string
-    }>();
-
-    if (!body.idea?.trim()) {
-      return c.json({ error: "idea is required" }, 400);
-    }
-
-    try {
-      // Combine idea + optional style/mood hints into one idea string
-      const ideaParts = [body.idea.trim()]
-      if (body.style) ideaParts.push(body.style)
-      if (body.mood)  ideaParts.push(body.mood)
-      const fullIdea = ideaParts.join(", ")
-
-      const result = promptEngineBuilder.generateAllPrompts(fullIdea)
-      return c.json({ ok: true, data: result })
-    } catch (err: any) {
-      console.error("Generate-all error:", err?.message ?? err);
-      return c.json({ error: err?.message ?? "Generation failed" }, 500);
-    }
-  }
-);
-
 // ─── GET /engines — list available engine models ──────────────────────────────
 router.get("/engines", (c) => {
   return c.json({ ok: true, data: promptEngineBuilder.listAvailableModels() });
