@@ -66,7 +66,7 @@ app.post("/analyze", async (c) => {
 
     const parsed  = parsePrompt(body.promptText)
     const score   = scorePrompt(body.promptText, parsed.detectedCategory)
-    const missing = getMissingSections(body.promptText)
+    const missing = getMissingSections(body.promptText, parsed.detectedCategory)
 
     return c.json({
       ok: true,

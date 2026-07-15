@@ -5,6 +5,17 @@ import type { ImprovePromptRequest } from "../engine/contracts.js";
 
 const router = new Hono();
 
+// Human-readable labels for the rule engine's detected subject category —
+// surfaced to the frontend so a misclassification is visible and correctable
+// instead of silently driving the wrong wardrobe/skin/composition sections.
+const CATEGORY_LABELS: Record<string, string> = {
+  people:  "People & Portraits",
+  fashion: "Fashion & Apparel",
+  product: "Product & Ecommerce",
+  art:     "Art & Illustration",
+  social:  "Social & Content",
+};
+
 router.post(
   "/improve",
   optionalAuth,
@@ -24,19 +35,21 @@ router.post(
 
     try {
       const result = await improvePrompt(body, userId);
+      const categoryId = result.metadata.category ?? null;
       // Same shape adaptation as routes/builder.ts: the frontend expects a
       // richer object (changes as {label, applied}, platform/family/tokensUsed,
-      // plus lock-layer fields the retired lock-engine used to produce) than
-      // the frozen public contract returns.
+      // plus lock-layer fields the lock-engine used to produce for this flow
+      // before build/improve moved off it (it's still live for /api/variables,
+      // see routes/variables.ts) — than the frozen public contract returns.
       return c.json({
         original: result.original,
         improved: result.improved,
         changes: result.improvements.map((label) => ({ label, applied: true })),
         platform: body.platform,
-        family: (body as { family?: string }).family ?? "image",
+        family: body.family ?? "image",
         tokensUsed: 0,
-        categoryId: null,
-        categoryLabel: null,
+        categoryId,
+        categoryLabel: categoryId ? (CATEGORY_LABELS[categoryId] ?? categoryId) : null,
         lockSection: [],
         negativeLocks: [],
         variables: [],

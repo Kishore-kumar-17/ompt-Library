@@ -35,7 +35,9 @@ export type VideoPlatform =
   | "pika"
   | "luma"
   | "kling"
-  | "veo";
+  | "veo"
+  | "seedance"
+  | "higgsfield";
 
 export type CodePlatform =
   | "claude-code"
@@ -94,6 +96,17 @@ export interface BuildPromptResponse {
 export interface ImprovePromptRequest {
   platform: Platform;
   prompt: string;
+  // Optional explicit family (image/video/text/code/content/website). When
+  // present, this overrides platform/keyword-based family detection —
+  // several platform IDs are shared across families (chatgpt/gemini/grok
+  // across image+website, cursor across code+website), so detection alone
+  // cannot disambiguate them; the caller's own family selector is the only
+  // reliable signal in those cases.
+  family?: string;
+  // Optional explicit subject category (people/fashion/product/art/social —
+  // image family only). When present, this overrides the rule engine's
+  // auto-detected category instead of trusting keyword classification alone.
+  category?: string;
   options?: {
     preserveIntent?: boolean;
     aggressiveness?: "light" | "medium" | "heavy";
@@ -107,5 +120,8 @@ export interface ImprovePromptResponse {
   metadata: {
     scoreBefore: number;          // 0–100
     scoreAfter: number;           // 0–100
+    // Subject category the rule engine detected/used (image family only via
+    // the zero-API path). Null when not applicable (AI path, other families).
+    category?: string | null;
   };
 }

@@ -93,9 +93,10 @@ router.post(
     try {
       const result = await buildPrompt(body, userId);
       // The pipeline engine has no lock-layer/variable concept (that belonged to
-      // the retired lock-engine) — send safe empty defaults so the frontend's
-      // LockLayerPanel/VariablePanel (which assume these arrays always exist)
-      // don't crash on undefined.
+      // the lock-engine, which build/improve no longer use — it's still live
+      // for /api/variables, see routes/variables.ts) — send safe empty defaults
+      // so the frontend's LockLayerPanel/VariablePanel (which assume these
+      // arrays always exist) don't crash on undefined.
       return c.json({
         prompt: result.prompt,
         platform: result.metadata.platform,

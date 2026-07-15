@@ -7,7 +7,7 @@
 
 export type VideoCategory = "narrative" | "product" | "nature" | "action" | "abstract"
 
-export type VideoPlatformKey = "kling" | "sora" | "runway" | "pika" | "luma" | "veo"
+export type VideoPlatformKey = "kling" | "sora" | "runway" | "pika" | "luma" | "veo" | "seedance" | "higgsfield"
 
 export interface VideoBuildRequest {
   category: VideoCategory
