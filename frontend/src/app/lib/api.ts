@@ -304,7 +304,7 @@ export interface ImproverResult extends EngineLockFields {
 }
 
 export const improverApi = {
-  improve: (payload: { prompt: string; platform: string; family?: string }) =>
+  improve: (payload: { prompt: string; platform: string; family?: string; category?: string }) =>
     apiFetch<ImproverResult>("/api/improver/improve", {
       method: "POST",
       body: JSON.stringify(payload),
