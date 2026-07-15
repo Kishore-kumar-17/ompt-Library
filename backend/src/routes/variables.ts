@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import Anthropic from "@anthropic-ai/sdk";
 import { assembleFromText } from "../engine/lock-engine/index.js";
+import { optionalAuth, engineRateLimit } from "../middleware/rateLimit.js";
 
 const router = new Hono();
 
@@ -13,7 +14,7 @@ const router = new Hono();
  * appends the engine lock layer + negative locks. Returns the same shape as the
  * Builder so the UI can swap it in directly.
  */
-router.post("/expand", async (c) => {
+router.post("/expand", optionalAuth, engineRateLimit("expand"), async (c) => {
   const body = await c.req.json<{
     category: string;
     platform: string;

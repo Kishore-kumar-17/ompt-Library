@@ -6,6 +6,7 @@ import { nanoid } from "nanoid";
 import { db } from "../db/client.js";
 import { submissions, prompts, notifications } from "../db/schema.js";
 import { requireAuth, requireAdmin } from "../middleware/auth.js";
+import { engineRateLimit } from "../middleware/rateLimit.js";
 
 const router = new Hono();
 
@@ -26,7 +27,7 @@ const submitSchema = z.object({
 
 // ─── User: Submit a prompt for review ─────────────────────────────────────────
 
-router.post("/", requireAuth, zValidator("json", submitSchema), async (c) => {
+router.post("/", requireAuth, engineRateLimit("submit"), zValidator("json", submitSchema), async (c) => {
   const data = c.req.valid("json");
   const submitterId = c.get("user").sub;
   const id = nanoid();
@@ -83,44 +84,56 @@ router.post("/:id/review", requireAuth, requireAdmin, zValidator("json", reviewS
 
   const newStatus = action === "approve" ? "approved" : "rejected";
 
-  await db.transaction(async (tx) => {
-    await tx
-      .update(submissions)
-      .set({ status: newStatus, reviewNote, reviewedBy: adminId, reviewedAt: new Date() })
-      .where(eq(submissions.id, id));
+  if (action === "approve") {
+    const raw = submission.rawData as Record<string, unknown> | null;
+    if (!raw?.family || !raw?.title || !raw?.basePrompt) {
+      return c.json({ error: "Submission is missing required fields (family, title, basePrompt) and can't be approved as-is" }, 400);
+    }
+  }
 
-    if (action === "approve" && submission.submitterId) {
-      // Promote raw submission data into the prompts table
-      const raw = submission.rawData as Record<string, unknown>;
-      const promptId = nanoid();
-      await tx.insert(prompts).values({
-        id: promptId,
-        authorId: submission.submitterId,
-        family: raw.family as "image" | "video" | "text" | "content",
-        categoryId: submission.categoryId ?? undefined,
-        title: raw.title as string,
-        description: raw.description as string | undefined,
-        basePrompt: raw.basePrompt as string,
-        status: "approved",
-      });
-
+  try {
+    await db.transaction(async (tx) => {
       await tx
         .update(submissions)
-        .set({ promptId })
+        .set({ status: newStatus, reviewNote, reviewedBy: adminId, reviewedAt: new Date() })
         .where(eq(submissions.id, id));
-    }
 
-    // Notify submitter
-    if (submission.submitterId) {
-      await tx.insert(notifications).values({
-        userId: submission.submitterId,
-        type: action === "approve" ? "prompt_approved" : "prompt_rejected",
-        title: action === "approve" ? "Your prompt was approved!" : "Submission update",
-        body: reviewNote ?? (action === "approve" ? "Your prompt is now live." : "Your submission was not accepted."),
-        metadata: { submissionId: id },
-      });
-    }
-  });
+      if (action === "approve" && submission.submitterId) {
+        // Promote raw submission data into the prompts table
+        const raw = submission.rawData as Record<string, unknown>;
+        const promptId = nanoid();
+        await tx.insert(prompts).values({
+          id: promptId,
+          authorId: submission.submitterId,
+          family: raw.family as "image" | "video" | "text" | "content",
+          categoryId: submission.categoryId ?? undefined,
+          title: raw.title as string,
+          description: raw.description as string | undefined,
+          basePrompt: raw.basePrompt as string,
+          status: "approved",
+        });
+
+        await tx
+          .update(submissions)
+          .set({ promptId })
+          .where(eq(submissions.id, id));
+      }
+
+      // Notify submitter
+      if (submission.submitterId) {
+        await tx.insert(notifications).values({
+          userId: submission.submitterId,
+          type: action === "approve" ? "prompt_approved" : "prompt_rejected",
+          title: action === "approve" ? "Your prompt was approved!" : "Submission update",
+          body: reviewNote ?? (action === "approve" ? "Your prompt is now live." : "Your submission was not accepted."),
+          metadata: { submissionId: id },
+        });
+      }
+    });
+  } catch (err: any) {
+    console.error("Submission review error:", err?.message ?? err);
+    return c.json({ error: "Review failed — the submission's stored data may be invalid. No changes were made." }, 500);
+  }
 
   return c.json({ status: newStatus });
 });

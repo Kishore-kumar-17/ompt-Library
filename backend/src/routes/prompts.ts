@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import { eq, and, ilike, sql, desc, asc, inArray } from "drizzle-orm";
+import { eq, and, gt, ilike, sql, desc, asc, inArray } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { db } from "../db/client.js";
 import {
@@ -9,6 +9,10 @@ import {
   categories, copyEvents, viewEvents, savedPrompts,
 } from "../db/schema.js";
 import { requireAuth, requireAdmin } from "../middleware/auth.js";
+import { optionalAuth } from "../middleware/rateLimit.js";
+
+const VIEW_DEDUP_WINDOW_MS = 24 * 60 * 60_000;
+const COPY_DEDUP_WINDOW_MS = 60 * 60_000;
 
 const router = new Hono();
 
@@ -67,8 +71,9 @@ router.get("/", zValidator("query", listSchema), async (c) => {
 
 // ─── Get Single ───────────────────────────────────────────────────────────────
 
-router.get("/:id", async (c) => {
+router.get("/:id", optionalAuth, async (c) => {
   const id = c.req.param("id");
+  if (!id) return c.json({ error: "Not found" }, 404);
 
   const [prompt] = await db.select().from(prompts).where(eq(prompts.id, id)).limit(1);
   if (!prompt || prompt.status !== "approved") return c.json({ error: "Not found" }, 404);
@@ -78,8 +83,25 @@ router.get("/:id", async (c) => {
     db.select().from(promptVariables).where(eq(promptVariables.promptId, id)),
   ]);
 
-  // Increment view count (fire-and-forget)
-  db.update(prompts).set({ viewCount: sql`${prompts.viewCount} + 1` }).where(eq(prompts.id, id)).execute();
+  // Only track views for signed-in users, deduped to once per prompt per
+  // rolling 24h window — an anonymous GET can be spammed with no identity to
+  // dedup against, so it no longer increments the public view count at all.
+  const user = c.get("user") as { sub: string } | undefined;
+  if (user) {
+    const since = new Date(Date.now() - VIEW_DEDUP_WINDOW_MS);
+    const [recent] = await db
+      .select({ id: viewEvents.id })
+      .from(viewEvents)
+      .where(and(eq(viewEvents.promptId, id), eq(viewEvents.userId, user.sub), gt(viewEvents.viewedAt, since)))
+      .limit(1);
+
+    if (!recent) {
+      await Promise.all([
+        db.insert(viewEvents).values({ promptId: id, userId: user.sub }),
+        db.update(prompts).set({ viewCount: sql`${prompts.viewCount} + 1` }).where(eq(prompts.id, id)),
+      ]);
+    }
+  }
 
   return c.json({ ...prompt, platforms, variables });
 });
@@ -91,10 +113,20 @@ router.post("/:id/copy", requireAuth, async (c) => {
   const userId = c.get("user").sub;
   const { platformId } = await c.req.json().catch(() => ({})) as { platformId?: string };
 
-  await Promise.all([
-    db.insert(copyEvents).values({ promptId, userId, platformId }),
-    db.update(prompts).set({ copyCount: sql`${prompts.copyCount} + 1` }).where(eq(prompts.id, promptId)),
-  ]);
+  // Always record the event (real activity log for the "Copied" stat), but
+  // only bump the public copyCount ranking signal once per prompt per rolling
+  // hour per user — otherwise a tight loop trivially inflates "popular" sort.
+  const since = new Date(Date.now() - COPY_DEDUP_WINDOW_MS);
+  const [recent] = await db
+    .select({ id: copyEvents.id })
+    .from(copyEvents)
+    .where(and(eq(copyEvents.promptId, promptId), eq(copyEvents.userId, userId), gt(copyEvents.copiedAt, since)))
+    .limit(1);
+
+  await db.insert(copyEvents).values({ promptId, userId, platformId });
+  if (!recent) {
+    await db.update(prompts).set({ copyCount: sql`${prompts.copyCount} + 1` }).where(eq(prompts.id, promptId));
+  }
 
   return c.json({ success: true });
 });

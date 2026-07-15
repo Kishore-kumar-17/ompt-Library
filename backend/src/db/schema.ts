@@ -70,7 +70,7 @@ export const platforms = pgTable("platforms", {
 export const prompts = pgTable("prompts", {
   id: varchar("id", { length: 21 }).primaryKey(),
   authorId: varchar("author_id", { length: 21 }).references(() => users.id, { onDelete: "set null" }),
-  categoryId: varchar("category_id", { length: 50 }).references(() => categories.id),
+  categoryId: varchar("category_id", { length: 50 }).references(() => categories.id, { onDelete: "set null" }),
   family: familyEnum("family").notNull(),
   title: varchar("title", { length: 200 }).notNull(),
   description: text("description"),
@@ -175,6 +175,7 @@ export const copyEvents = pgTable("copy_events", {
   copiedAt: timestamp("copied_at").notNull().defaultNow(),
 }, (t) => ({
   promptIdx: index("copy_events_prompt_idx").on(t.promptId),
+  userIdx: index("copy_events_user_idx").on(t.userId),
 }));
 
 export const viewEvents = pgTable("view_events", {
@@ -184,6 +185,7 @@ export const viewEvents = pgTable("view_events", {
   viewedAt: timestamp("viewed_at").notNull().defaultNow(),
 }, (t) => ({
   promptIdx: index("view_events_prompt_idx").on(t.promptId),
+  userIdx: index("view_events_user_idx").on(t.userId),
 }));
 
 // ─── Submissions ──────────────────────────────────────────────────────────────
@@ -192,15 +194,18 @@ export const submissions = pgTable("submissions", {
   id: varchar("id", { length: 21 }).primaryKey(),
   submitterId: varchar("submitter_id", { length: 21 }).references(() => users.id, { onDelete: "set null" }),
   promptId: varchar("prompt_id", { length: 21 }).references(() => prompts.id, { onDelete: "set null" }),
-  categoryId: varchar("category_id", { length: 50 }),
+  categoryId: varchar("category_id", { length: 50 }).references(() => categories.id, { onDelete: "set null" }),
   platformIds: text("platform_ids").array().notNull().default(sql`'{}'::text[]`),
   rawData: jsonb("raw_data"),
   status: promptStatusEnum("status").notNull().default("pending"),
   reviewNote: text("review_note"),
-  reviewedBy: varchar("reviewed_by", { length: 21 }).references(() => users.id),
+  reviewedBy: varchar("reviewed_by", { length: 21 }).references(() => users.id, { onDelete: "set null" }),
   reviewedAt: timestamp("reviewed_at"),
   submittedAt: timestamp("submitted_at").notNull().defaultNow(),
-});
+}, (t) => ({
+  submitterIdx: index("submissions_submitter_idx").on(t.submitterId),
+  statusIdx: index("submissions_status_idx").on(t.status),
+}));
 
 // ─── Builder / Improver Output ────────────────────────────────────────────────
 

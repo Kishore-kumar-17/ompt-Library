@@ -8,6 +8,7 @@ import { z } from "zod";
 import { sql, type SQL } from "drizzle-orm";
 import { db } from "../db/client.js";
 import { requireAuth } from "../middleware/auth.js";
+import { optionalAuth, engineRateLimit } from "../middleware/rateLimit.js";
 
 const router = new Hono();
 
@@ -37,29 +38,43 @@ function andClause(conditions: SQL[]): SQL {
   return conditions.length > 0 ? sql`AND ${sql.join(conditions, sql` AND `)}` : sql``;
 }
 
-async function ensureLibraryActivityTables() {
-  await db.execute(sql`
-    CREATE TABLE IF NOT EXISTS pl_saved_prompts (
-      user_id   VARCHAR(21) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      prompt_id INTEGER     NOT NULL REFERENCES pl_prompts(id) ON DELETE CASCADE,
-      saved_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      PRIMARY KEY (user_id, prompt_id)
-    )
-  `);
-  await db.execute(sql`
-    CREATE TABLE IF NOT EXISTS pl_copy_events (
-      id         SERIAL      PRIMARY KEY,
-      prompt_id  INTEGER     NOT NULL REFERENCES pl_prompts(id) ON DELETE CASCADE,
-      user_id    VARCHAR(21) REFERENCES users(id) ON DELETE SET NULL,
-      platform   VARCHAR(50),
-      copied_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    )
-  `);
-  await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_pl_saved_user ON pl_saved_prompts (user_id)`);
-  await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_pl_copy_user ON pl_copy_events (user_id)`);
+// Runs the activity-table DDL at most once per process lifetime instead of on
+// every copy/save request — previously this ran 4 statements on every single
+// hit to the two hottest write endpoints in the library.
+let activityTablesReady: Promise<void> | null = null;
+
+function ensureLibraryActivityTables(): Promise<void> {
+  if (!activityTablesReady) {
+    activityTablesReady = (async () => {
+      await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS pl_saved_prompts (
+          user_id   VARCHAR(21) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          prompt_id INTEGER     NOT NULL REFERENCES pl_prompts(id) ON DELETE CASCADE,
+          saved_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          PRIMARY KEY (user_id, prompt_id)
+        )
+      `);
+      await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS pl_copy_events (
+          id         SERIAL      PRIMARY KEY,
+          prompt_id  INTEGER     NOT NULL REFERENCES pl_prompts(id) ON DELETE CASCADE,
+          user_id    VARCHAR(21) REFERENCES users(id) ON DELETE SET NULL,
+          platform   VARCHAR(50),
+          copied_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+      `);
+      await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_pl_saved_user ON pl_saved_prompts (user_id)`);
+      await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_pl_copy_user ON pl_copy_events (user_id)`);
+    })().catch((err) => {
+      // Let the next request retry instead of caching a permanent failure.
+      activityTablesReady = null;
+      throw err;
+    });
+  }
+  return activityTablesReady;
 }
 
-router.get("/categories", async (c) => {
+router.get("/categories", optionalAuth, engineRateLimit("libraryRead"), async (c) => {
   const rows = await rawSql<{ category: string; count: number }>(sql`
     SELECT category, count(*)::int AS count
     FROM   pl_prompts
@@ -69,7 +84,7 @@ router.get("/categories", async (c) => {
   return c.json(rows);
 });
 
-router.get("/tags", zValidator("query", z.object({
+router.get("/tags", optionalAuth, engineRateLimit("libraryRead"), zValidator("query", z.object({
   limit: z.coerce.number().int().min(1).max(100).default(30),
 })), async (c) => {
   const { limit } = c.req.valid("query");
@@ -95,7 +110,7 @@ const searchSchema = listSchema.extend({
   mode: z.enum(["fulltext", "fuzzy", "both"]).default("both"),
 });
 
-router.get("/prompts", zValidator("query", listSchema), async (c) => {
+router.get("/prompts", optionalAuth, engineRateLimit("libraryRead"), zValidator("query", listSchema), async (c) => {
   const { category, tags, page, limit } = c.req.valid("query");
   const offset = (page - 1) * limit;
   const where = whereClause(filterConditions(category, tags));
@@ -115,7 +130,7 @@ router.get("/prompts", zValidator("query", listSchema), async (c) => {
   return c.json({ data: rows, total, page, limit, pages: Math.ceil(total / limit) });
 });
 
-router.get("/prompts/search", zValidator("query", searchSchema), async (c) => {
+router.get("/prompts/search", optionalAuth, engineRateLimit("libraryRead"), zValidator("query", searchSchema), async (c) => {
   const { q, mode, category, tags, page, limit } = c.req.valid("query");
   const offset = (page - 1) * limit;
   const filters = andClause(filterConditions(category, tags));
@@ -181,7 +196,18 @@ router.get("/prompts/search", zValidator("query", searchSchema), async (c) => {
   });
 });
 
-router.get("/prompts/:id", async (c) => {
+router.get("/saved", requireAuth, async (c) => {
+  const userId = c.get("user").sub;
+  await ensureLibraryActivityTables();
+
+  const rows = await rawSql<{ prompt_id: number }>(sql`
+    SELECT prompt_id FROM pl_saved_prompts WHERE user_id = ${userId}
+  `);
+
+  return c.json({ ids: rows.map((r) => r.prompt_id) });
+});
+
+router.get("/prompts/:id", optionalAuth, engineRateLimit("libraryRead"), async (c) => {
   const id = Number(c.req.param("id"));
   if (isNaN(id)) return c.json({ error: "Invalid id" }, 400);
 
