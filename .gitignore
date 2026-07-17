@@ -36,6 +36,7 @@ generated_website_platforms.ts
 /DISTRICTS/
 /WhatsApp Image*.jpeg
 /images for prompt library/
+/_local-notes/
 
 # Frontend is pnpm-only; avoid npm lockfile ambiguity on Vercel
 frontend/package-lock.json
