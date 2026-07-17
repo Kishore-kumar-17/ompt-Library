@@ -24,7 +24,7 @@ const columnMapSchema = z.object({
 
 const bulkRowSchema = z.object({
   title: z.string().min(1),
-  family: z.enum(["image", "video", "text", "content"]),
+  family: z.enum(["image", "video", "text", "content", "website"]),
   basePrompt: z.string().min(1),
   categoryId: z.string().optional(),
   qualityScore: z.coerce.number().int().min(0).max(100).optional(),

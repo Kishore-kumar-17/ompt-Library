@@ -13,7 +13,7 @@ const router = new Hono();
 const submitSchema = z.object({
   title: z.string().min(1).max(200),
   description: z.string().optional(),
-  family: z.enum(["image", "video", "text", "content"]),
+  family: z.enum(["image", "video", "text", "content", "website"]),
   categoryId: z.string().optional(),
   basePrompt: z.string().min(1),
   platformIds: z.array(z.string()).min(1),

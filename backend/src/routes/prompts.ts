@@ -19,7 +19,7 @@ const router = new Hono();
 // ─── List / Search ────────────────────────────────────────────────────────────
 
 const listSchema = z.object({
-  family: z.enum(["image", "video", "text", "content"]).optional(),
+  family: z.enum(["image", "video", "text", "content", "website"]).optional(),
   category: z.string().optional(),
   platform: z.string().optional(),
   tested: z.coerce.boolean().optional(),
@@ -161,7 +161,7 @@ router.post("/:id/save", requireAuth, async (c) => {
 const createSchema = z.object({
   title: z.string().min(1).max(200),
   description: z.string().optional(),
-  family: z.enum(["image", "video", "text", "content"]),
+  family: z.enum(["image", "video", "text", "content", "website"]),
   categoryId: z.string().optional(),
   basePrompt: z.string().min(1),
   platforms: z.array(z.object({

@@ -17,7 +17,7 @@ import { sql } from "drizzle-orm";
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
 
-export const familyEnum = pgEnum("family", ["image", "video", "text", "content"]);
+export const familyEnum = pgEnum("family", ["image", "video", "text", "content", "website"]);
 export const promptStatusEnum = pgEnum("prompt_status", ["draft", "pending", "approved", "rejected"]);
 export const subscriptionStatusEnum = pgEnum("subscription_status", ["active", "cancelled", "past_due", "trialing"]);
 export const importStatusEnum = pgEnum("import_status", ["pending", "processing", "completed", "failed"]);
