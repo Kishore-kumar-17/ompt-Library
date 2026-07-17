@@ -63,7 +63,15 @@ router.post("/explain", optionalAuth, engineRateLimit("explain"), async (c) => {
 
 router.get("/history", requireAuth, async (c) => {
   const user = c.get("user") as { sub: string };
-  const limit = Math.min(Number(c.req.query("limit") ?? "20"), 50);
+  const rawLimit = c.req.query("limit");
+  // A bare Number(...) turns "abc" into NaN and lets negatives through —
+  // both used to reach db.limit() unvalidated and fail at the driver level
+  // as a generic 500 instead of a clean 400.
+  const parsedLimit = rawLimit === undefined ? 20 : Number(rawLimit);
+  if (!Number.isInteger(parsedLimit) || parsedLimit < 1) {
+    return c.json({ error: "limit must be a positive integer" }, 400);
+  }
+  const limit = Math.min(parsedLimit, 50);
   const type = c.req.query("type") as "built" | "improved" | undefined;
 
   try {

@@ -1,9 +1,21 @@
 import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
 import Anthropic from "@anthropic-ai/sdk";
 import { assembleFromText } from "../engine/lock-engine/index.js";
 import { optionalAuth, engineRateLimit } from "../middleware/rateLimit.js";
 
 const router = new Hono();
+
+const expandSchema = z.object({
+  category: z.string().optional(),
+  platform: z.string().optional(),
+  // Non-string values (numbers, nested objects) used to reach the .trim()
+  // call below unvalidated and throw outside the try/catch, surfacing as a
+  // generic 500 instead of a clean 400.
+  brief: z.record(z.string()),
+  title: z.string().optional(),
+});
 
 /**
  * Variable layer — Option B "Regenerate with my values".
@@ -14,15 +26,10 @@ const router = new Hono();
  * appends the engine lock layer + negative locks. Returns the same shape as the
  * Builder so the UI can swap it in directly.
  */
-router.post("/expand", optionalAuth, engineRateLimit("expand"), async (c) => {
-  const body = await c.req.json<{
-    category: string;
-    platform: string;
-    brief: Record<string, string>;
-    title?: string;
-  }>();
+router.post("/expand", optionalAuth, engineRateLimit("expand"), zValidator("json", expandSchema), async (c) => {
+  const body = c.req.valid("json");
 
-  if (!body.brief || Object.keys(body.brief).length === 0) {
+  if (Object.keys(body.brief).length === 0) {
     return c.json({ error: "brief is required" }, 400);
   }
   const apiKey = process.env.ANTHROPIC_API_KEY;

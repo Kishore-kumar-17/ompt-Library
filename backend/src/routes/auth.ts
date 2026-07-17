@@ -39,7 +39,10 @@ router.post("/register", authRateLimit("register"), zValidator("json", registerS
   const [user] = await db
     .insert(users)
     .values({ id: nanoid(), email, passwordHash, displayName: displayName ?? email.split("@")[0] })
-    .returning({ id: users.id, email: users.email, displayName: users.displayName, isAdmin: users.isAdmin });
+    .returning({
+      id: users.id, email: users.email, displayName: users.displayName,
+      avatarUrl: users.avatarUrl, bio: users.bio, isAdmin: users.isAdmin,
+    });
 
   const token = await signToken({ sub: user.id, isAdmin: user.isAdmin });
   return c.json({ user, token }, 201);
