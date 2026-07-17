@@ -1,0 +1,21 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[598],{9040:function(e,r,_){Promise.resolve().then(_.t.bind(_,2439,23)),Promise.resolve().then(_.t.bind(_,1486,23)),Promise.resolve().then(_.bind(_,9706))},8030:function(e,r,_){"use strict";_.d(r,{Z:function(){return l}});var t=_(2265);/**
+ * @license lucide-react v0.378.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let o=e=>e.replace(/([a-z0-9])([A-Z])/g,"$1-$2").toLowerCase(),a=function(){for(var e=arguments.length,r=Array(e),_=0;_<e;_++)r[_]=arguments[_];return r.filter((e,r,_)=>!!e&&_.indexOf(e)===r).join(" ")};/**
+ * @license lucide-react v0.378.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */var c={xmlns:"http://www.w3.org/2000/svg",width:24,height:24,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2,strokeLinecap:"round",strokeLinejoin:"round"};/**
+ * @license lucide-react v0.378.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let n=(0,t.forwardRef)((e,r)=>{let{color:_="currentColor",size:o=24,strokeWidth:n=2,absoluteStrokeWidth:l,className:s="",children:i,iconNode:p,...u}=e;return(0,t.createElement)("svg",{ref:r,...c,width:o,height:o,stroke:_,strokeWidth:l?24*Number(n)/Number(o):n,className:a("lucide",s),...u},[...p.map(e=>{let[r,_]=e;return(0,t.createElement)(r,_)}),...Array.isArray(i)?i:[i]])}),l=(e,r)=>{let _=(0,t.forwardRef)((_,c)=>{let{className:l,...s}=_;return(0,t.createElement)(n,{ref:c,iconNode:r,className:a("lucide-".concat(o(e)),l),...s})});return _.displayName="".concat(e),_}},9706:function(e,r,_){"use strict";_.d(r,{default:function(){return l}});var t=_(7437);/**
+ * @license lucide-react v0.378.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let o=(0,_(8030).Z)("ChevronRight",[["path",{d:"m9 18 6-6-6-6",key:"mthhwq"}]]);var a=_(6317),c=_.n(a);let n=[{label:"Features",href:"#features"},{label:"Specifications",href:"/specifications"},{label:"Accessories",href:"#accessories"},{label:"Buy",href:"/buy"}];function l(){return(0,t.jsxs)("nav",{className:c().nav,children:[(0,t.jsxs)("a",{href:"/",className:c().logo,children:["VORTEX",(0,t.jsx)("span",{className:c().logoSub,children:"PRECISION ENGINEERING"})]}),(0,t.jsx)("div",{className:c().links,children:n.map(e=>(0,t.jsx)("a",{href:e.href,className:c().link,children:e.label},e.label))}),(0,t.jsxs)("a",{href:"/buy",className:c().cta,children:["Buy — $649 ",(0,t.jsx)(o,{size:12,style:{display:"inline",marginLeft:4}})]})]})}},1486:function(e){e.exports={page:"page_page__zaik_",hero:"page_hero__YeIj3",breadcrumb:"page_breadcrumb__NgGwm",heroTitle:"page_heroTitle__rV2Vn",heroSub:"page_heroSub__2dz_p",specSection:"page_specSection__m1r5p",specInner:"page_specInner__IJmmw",specGroup:"page_specGroup__BCHXI",specGroupHeader:"page_specGroupHeader__LhHT3",specGroupTitle:"page_specGroupTitle__pCI9T",specRow:"page_specRow__Gbot2",specKey:"page_specKey__sB_jS",specVal:"page_specVal__RjwP7",certSection:"page_certSection__XAV6i",certInner:"page_certInner__KBhh6",certTitle:"page_certTitle__MqDXl",certGrid:"page_certGrid__R3pGA",certCard:"page_certCard__Pd_zM",certBadge:"page_certBadge__iNCjG",certName:"page_certName__e5Z_c",certDesc:"page_certDesc__YdadJ",certMeta:"page_certMeta__9jYB1"}},2439:function(e){e.exports={footer:"Footer_footer__UaG1g",top:"Footer_top__b4wwC",brand:"Footer_brand___zP6t",brandName:"Footer_brandName___BP45",brandSub:"Footer_brandSub__8vo2p",brandDesc:"Footer_brandDesc__oUQ_R",certRow:"Footer_certRow___1f_l",cert:"Footer_cert__CVokl",col:"Footer_col__Uenj5",colTitle:"Footer_colTitle__sNZTr",colLinks:"Footer_colLinks__S_436",colLink:"Footer_colLink__44YGj",bottom:"Footer_bottom__O5rKs",copyright:"Footer_copyright__j5CNb",legalLinks:"Footer_legalLinks__ABuv_",legalLink:"Footer_legalLink__VU9ur"}},6317:function(e){e.exports={nav:"Nav_nav__BptBv",logo:"Nav_logo__7KrlL",logoSub:"Nav_logoSub__BlRCF",links:"Nav_links__TBJFU",link:"Nav_link__zheGr",cta:"Nav_cta__cuujR"}}},function(e){e.O(0,[95,971,23,744],function(){return e(e.s=9040)}),_N_E=e.O()}]);

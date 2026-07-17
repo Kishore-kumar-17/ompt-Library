@@ -1,0 +1,31 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[827],{3165:function(e,a,l){Promise.resolve().then(l.t.bind(l,8173,23)),Promise.resolve().then(l.t.bind(l,231,23)),Promise.resolve().then(l.bind(l,8581))},2940:function(e,a,l){"use strict";l.d(a,{Z:function(){return r}});/**
+ * @license lucide-react v0.378.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let r=(0,l(8030).Z)("CircleCheckBig",[["path",{d:"M22 11.08V12a10 10 0 1 1-5.93-9.14",key:"g774vq"}],["path",{d:"m9 11 3 3L22 4",key:"1pflzl"}]])},5293:function(e,a,l){"use strict";l.d(a,{Z:function(){return r}});/**
+ * @license lucide-react v0.378.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let r=(0,l(8030).Z)("Leaf",[["path",{d:"M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z",key:"nnexq3"}],["path",{d:"M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12",key:"mt58a7"}]])},5447:function(e,a,l){"use strict";l.d(a,{Z:function(){return r}});/**
+ * @license lucide-react v0.378.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let r=(0,l(8030).Z)("Recycle",[["path",{d:"M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5",key:"x6z5xu"}],["path",{d:"M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12",key:"1x4zh5"}],["path",{d:"m14 16-3 3 3 3",key:"f6jyew"}],["path",{d:"M8.293 13.596 7.196 9.5 3.1 10.598",key:"wf1obh"}],["path",{d:"m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843",key:"9tzpgr"}],["path",{d:"m13.378 9.633 4.096 1.098 1.097-4.096",key:"1oe83g"}]])},500:function(e,a,l){"use strict";l.d(a,{Z:function(){return r}});/**
+ * @license lucide-react v0.378.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let r=(0,l(8030).Z)("Shield",[["path",{d:"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",key:"oel41y"}]])},8581:function(e,a,l){"use strict";l.d(a,{default:function(){return m}});var r=l(7437),t=l(5293),c=l(8030);/**
+ * @license lucide-react v0.378.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let n=(0,c.Z)("Globe",[["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}],["path",{d:"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20",key:"13o1zl"}],["path",{d:"M2 12h20",key:"9i4pu4"}]]);var o=l(5447),i=l(500),s=l(2940);/**
+ * @license lucide-react v0.378.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let d=(0,c.Z)("Package",[["path",{d:"m7.5 4.27 9 5.15",key:"1c824w"}],["path",{d:"M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z",key:"hh9hay"}],["path",{d:"m3.3 7 8.7 5 8.7-5",key:"g66t2b"}],["path",{d:"M12 22V12",key:"d0xqtd"}]]),u=[{id:"carbon",value:"4,820",label:"Tonnes of CO₂ Offset",sublabel:"Through verified Gold Standard carbon credits since 2019",icon:"Leaf",color:"var(--accent)"},{id:"trees",value:"38,400",label:"Trees Planted",sublabel:"One tree planted for every order placed — partnered with One Tree Planted",icon:"Globe",color:"#2D7D3A"},{id:"recycled",value:"73%",label:"Recycled or Renewable Materials",sublabel:"Across our full product range by weight",icon:"Recycle",color:"#0A7A5A"},{id:"factories",value:"12",label:"Fair Trade Certified Factories",sublabel:"All partners pay living wages and hold SA8000 or Fair Trade certification",icon:"Shield",color:"#1A5C8A"},{id:"water",value:"2.4M",label:"Litres of Water Saved Per Year",sublabel:"Compared to conventional equivalents, using natural and closed-loop fibers",icon:"CheckCircle",color:"#2A6A8A"},{id:"packaging",value:"100%",label:"Plastic-Free Packaging",sublabel:"All packaging is compostable, recycled, or FSC-certified paper",icon:"Package",color:"#7A5A20"}],p={Leaf:t.Z,Globe:n,Recycle:o.Z,Shield:i.Z,CheckCircle:s.Z,Package:d};function m(e){let{stats:a=u,title:l="Your purchase impact",subtitle:c="Every order directly funds measurable environmental and social programmes.",variant:n="strip"}=e,o="full"===n;return(0,r.jsx)("section",{className:"py-20 px-6",style:{background:o?"var(--bg-primary)":"var(--bg-surface)"},children:(0,r.jsxs)("div",{className:"max-w-[1280px] mx-auto",children:[(0,r.jsxs)("div",{className:"mb-12 ".concat(o?"text-center":""),children:[(0,r.jsx)("p",{className:"text-[11px] font-semibold uppercase tracking-wide mb-3",style:{color:"var(--text-secondary)"},children:"Impact"}),(0,r.jsx)("h2",{className:"font-semibold tracking-[-0.01em] mb-3",style:{fontSize:"clamp(24px, 3vw, 36px)",color:"var(--text-primary)"},children:l}),(0,r.jsx)("p",{className:"text-sm leading-relaxed ".concat(o?"max-w-xl mx-auto":"max-w-xl"),style:{color:"var(--text-secondary)"},children:c})]}),(0,r.jsx)("div",{className:"grid gap-6 ".concat(o?"grid-cols-2 sm:grid-cols-3":"grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"),children:a.map(e=>{var a;let l=null!==(a=p[e.icon])&&void 0!==a?a:t.Z;return(0,r.jsxs)("div",{className:"".concat(o?"p-8 rounded-[6px]":"p-6 rounded-[6px]"),style:{background:"var(--bg-surface)"},children:[(0,r.jsx)("div",{className:"w-9 h-9 flex items-center justify-center rounded-full mb-4",style:{background:"var(--accent-light)"},children:(0,r.jsx)(l,{size:18,style:{color:e.color},strokeWidth:2})}),(0,r.jsx)("p",{className:"font-semibold leading-none mb-1",style:{fontSize:o?"clamp(28px, 3vw, 40px)":"clamp(22px, 2vw, 30px)",color:e.color},children:e.value}),(0,r.jsx)("p",{className:"text-sm font-medium mb-1",style:{color:"var(--text-primary)"},children:e.label}),o&&(0,r.jsx)("p",{className:"text-xs leading-relaxed mt-2",style:{color:"var(--text-secondary)"},children:e.sublabel})]},e.id)})})]})})}}},function(e){e.O(0,[742,971,23,744],function(){return e(e.s=3165)}),_N_E=e.O()}]);
