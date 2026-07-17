@@ -201,6 +201,7 @@ export function Compare({ go }: { go: (p: string) => void }) {
     setPlatformData(null);
     setLoading(true);
     setExpandedCard(null);
+    setVotes({});
     import("../../lib/library-platforms-locked").then(m => {
       const versions = m.platformVersions[prompt.slug ?? ""] ?? {};
       setPlatformData(versions);

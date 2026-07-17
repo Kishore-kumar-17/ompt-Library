@@ -2,6 +2,7 @@
 // Keyword extraction from raw user input — no AI, no API.
 
 import type { ParsedTextPrompt, TextCategory } from "./types.js"
+import { containsKeyword, findFirstMatch, detectCategoryByScore } from "../keyword-utils.js"
 
 const CATEGORY_KEYWORDS: Record<TextCategory, string[]> = {
   qa:             ["what is", "how do", "why does", "explain", "define", "difference between", "can you tell me"],
@@ -72,23 +73,7 @@ const AUDIENCE_KEYWORDS: Record<string, string> = {
 }
 
 function detectCategory(text: string): TextCategory {
-  const lower = text.toLowerCase()
-  const scores: Record<TextCategory, number> = { qa: 0, creative: 0, analysis: 0, summarization: 0, transformation: 0 }
-  for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
-    for (const kw of keywords) {
-      if (lower.includes(kw)) scores[cat as TextCategory]++
-    }
-  }
-  const sorted = (Object.entries(scores) as [TextCategory, number][]).sort((a, b) => b[1] - a[1])
-  return sorted[0][1] > 0 ? sorted[0][0] : "qa"
-}
-
-function findFirstMatch(text: string, keywords: string[]): string | null {
-  const lower = text.toLowerCase()
-  for (const kw of keywords) {
-    if (lower.includes(kw)) return kw
-  }
-  return null
+  return detectCategoryByScore(text, CATEGORY_KEYWORDS, "qa")
 }
 
 // Like findFirstMatch, but for alias maps (phrase → canonical dict key).
@@ -98,7 +83,7 @@ function findAliasMatch(text: string, aliasMap: Record<string, string>): string 
   const lower = text.toLowerCase()
   const phrases = Object.keys(aliasMap).sort((a, b) => b.length - a.length)
   for (const phrase of phrases) {
-    if (lower.includes(phrase)) return aliasMap[phrase]
+    if (containsKeyword(lower, phrase)) return aliasMap[phrase]
   }
   return null
 }

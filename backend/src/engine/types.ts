@@ -76,6 +76,7 @@ export interface ImproveRequest {
   prompt: string;
   platform: string;
   family?: Family;
+  category?: string;
 }
 
 export interface AnalyzeRequest {
@@ -129,6 +130,8 @@ export interface ImproveResult {
   scoreAfter: PromptScore | null;
   delta: number | null;
   tokensUsed: number;
+  // Rule engine's detected/used subject category (image family only).
+  category?: string | null;
 }
 
 export interface AnalysisSuggestion {

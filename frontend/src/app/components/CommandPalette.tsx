@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, CornerDownLeft, FileText, Library as LibraryIcon, Wand2, Sparkles, BarChart3, User, BookOpen, Upload } from "lucide-react";
 import { imageLibraryPrompts } from "../lib/library-data";
+import { useFocusTrap } from "../lib/useFocusTrap";
 
 type Item = {
   id: string;
@@ -30,6 +31,7 @@ export function CommandPalette({ open, onClose, go }: { open: boolean; onClose: 
   const [q, setQ] = useState("");
   const [cursor, setCursor] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useFocusTrap<HTMLDivElement>(open, onClose);
 
   useEffect(() => {
     if (open) {
@@ -77,6 +79,10 @@ export function CommandPalette({ open, onClose, go }: { open: boolean; onClose: 
           className="fixed inset-0 z-[100] bg-[#0a0a0a]/40 backdrop-blur-sm flex items-start justify-center pt-24 px-4"
         >
           <motion.div
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Command palette"
             onClick={(e) => e.stopPropagation()}
             initial={{ opacity: 0, y: -16, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}

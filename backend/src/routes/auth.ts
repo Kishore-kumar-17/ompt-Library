@@ -7,8 +7,14 @@ import { nanoid } from "nanoid";
 import { db } from "../db/client.js";
 import { users } from "../db/schema.js";
 import { signToken, requireAuth } from "../middleware/auth.js";
+import { authRateLimit } from "../middleware/rateLimit.js";
 
 const router = new Hono();
+
+// Exercised on the "no such user" login path so response timing doesn't
+// reveal whether an email is registered on top of the (accepted, standard)
+// 409-on-register enumeration signal.
+const DUMMY_HASH_PROMISE = bcrypt.hash("timing-safety-dummy-password", 12);
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -21,7 +27,7 @@ const loginSchema = z.object({
   password: z.string(),
 });
 
-router.post("/register", zValidator("json", registerSchema), async (c) => {
+router.post("/register", authRateLimit("register"), zValidator("json", registerSchema), async (c) => {
   const { email, password, displayName } = c.req.valid("json");
 
   const existing = await db.select().from(users).where(eq(users.email, email)).limit(1);
@@ -33,17 +39,23 @@ router.post("/register", zValidator("json", registerSchema), async (c) => {
   const [user] = await db
     .insert(users)
     .values({ id: nanoid(), email, passwordHash, displayName: displayName ?? email.split("@")[0] })
-    .returning({ id: users.id, email: users.email, displayName: users.displayName, isAdmin: users.isAdmin });
+    .returning({
+      id: users.id, email: users.email, displayName: users.displayName,
+      avatarUrl: users.avatarUrl, bio: users.bio, isAdmin: users.isAdmin,
+    });
 
   const token = await signToken({ sub: user.id, isAdmin: user.isAdmin });
   return c.json({ user, token }, 201);
 });
 
-router.post("/login", zValidator("json", loginSchema), async (c) => {
+router.post("/login", authRateLimit("login"), zValidator("json", loginSchema), async (c) => {
   const { email, password } = c.req.valid("json");
 
   const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
   if (!user || !user.passwordHash) {
+    // Still pay the bcrypt cost so response timing doesn't distinguish
+    // "no such user" from "wrong password."
+    await bcrypt.compare(password, await DUMMY_HASH_PROMISE);
     return c.json({ error: "Invalid credentials" }, 401);
   }
 

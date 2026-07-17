@@ -16,6 +16,7 @@ import { videoLibraryPrompts } from "../../lib/video-data";
 import { videoPlatformVersions } from "../../lib/video-platforms";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 import { PromptCard } from "../PromptCard";
+import { useSavedIds, invalidateSavedIds } from "../../lib/savedIds";
 
 const SAMPLE_REVIEWS = [
   { name: "Arjun S.",   initials: "AS", color: "#0a0a0a", stars: 5, helpful: 34, body: "Produced exactly what I needed - sharp, editorial output on the first try. Saved me 20 minutes of prompt tweaking." },
@@ -64,6 +65,7 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
   const isVideoPrompt = staticPrompt?.family === "video";
   const [platform, setPlatform] = useState(defaultPlatform ?? (isVideoPrompt ? "veo" : "chatgpt"));
   const [vars, setVars]         = useState<Record<string, string>>({});
+  const savedIds = useSavedIds();
   const [saved, setSaved]       = useState(false);
   const [saving, setSaving]     = useState(false);
   const [vote, setVote]         = useState<"up" | "down" | null>(null);
@@ -102,6 +104,8 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
 
   const p = prompt;
 
+  useEffect(() => { if (p) setSaved(savedIds.has(Number(p.id))); }, [savedIds, p?.id]);
+
   // Merge lazily-loaded platform data into the prompt's platforms map
   const resolvedPlatforms: Record<string, string> = {
     ...(p?.platforms ?? {}),
@@ -127,16 +131,21 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
 
   async function handleRegenerate() {
     if (!p || regenerating) return;
+    const requestedPlatform = platform;
     setRegenerating(true);
     try {
       const res = await variablesApi.expand({
         category: p.category ?? "",
-        platform,
+        platform: requestedPlatform,
         brief: vars,
         title: p.title,
       });
-      setRegenText(res.finalAssembledText);
-      toast.success("Regenerated with your values");
+      // The user may have switched platform tabs while this was in flight —
+      // a stale response for the old tab must not override the new tab's text.
+      if (requestedPlatform === platform) {
+        setRegenText(res.finalAssembledText);
+        toast.success("Regenerated with your values");
+      }
     } catch (e: any) {
       toast.error("Regeneration failed", { description: e?.message });
     } finally {
@@ -217,10 +226,12 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
 
   const handleSave = async () => {
     if (!authStore.getUser()) { toast.error("Sign in to save prompts"); return; }
+    if (saving) return;
     setSaving(true);
     try {
       const res = await libraryApi.save(p.id);
       setSaved(res.saved);
+      invalidateSavedIds();
       toast(res.saved ? "Saved to library" : "Removed from library", { description: p.title });
     } catch { toast.error("Could not save - is the backend running?"); }
     finally { setSaving(false); }
@@ -274,7 +285,13 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
           {(p.tags ?? []).length > 0 && (
             <div className="flex flex-wrap gap-2 mt-4 mb-4">
               {(p.tags ?? []).map(t => (
-                <span key={t} className="px-2 py-1 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#6b7280] text-[12px]">#{t}</span>
+                <button
+                  key={t}
+                  onClick={() => go(`library:${p.family ?? "image"}:${encodeURIComponent("#" + t)}`)}
+                  className="px-2 py-1 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#6b7280] text-[12px] hover:bg-[#0a0a0a]/10 hover:text-[#0a0a0a] transition-colors cursor-pointer"
+                >
+                  #{t}
+                </button>
               ))}
             </div>
           )}
@@ -338,7 +355,8 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
             </span>
             <button
               onClick={handleSave}
-              className={`inline-flex items-center gap-1 transition-colors ${saved ? "text-[#0a0a0a]" : "hover:text-[#0a0a0a]"}`}
+              disabled={saving}
+              className={`inline-flex items-center gap-1 transition-colors disabled:cursor-not-allowed ${saved ? "text-[#0a0a0a]" : "hover:text-[#0a0a0a]"}`}
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Heart className={`w-4 h-4 ${saved ? "fill-[#4FC3F7]" : ""}`} />}
               {saved ? "Saved" : "Save"}
@@ -427,7 +445,8 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
           </button>
           <button
             onClick={handleSave}
-            className={`w-full h-11 rounded-full border inline-flex items-center justify-center gap-2 transition-colors ${
+            disabled={saving}
+            className={`w-full h-11 rounded-full border inline-flex items-center justify-center gap-2 transition-colors disabled:cursor-not-allowed ${
               saved
                 ? "bg-[#4FC3F7]/10 border-[#4FC3F7]/30 text-[#0a0a0a]"
                 : "bg-[#0a0a0a]/5 border-[#0a0a0a]/20 text-[#0a0a0a] hover:bg-[#0a0a0a]/10"
@@ -469,7 +488,13 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
               <h2 className="text-[#0a0a0a] mb-4">Tags</h2>
               <div className="flex flex-wrap gap-2 mb-8">
                 {(p.tags ?? []).map(t => (
-                  <button key={t} onClick={() => go("library:image:#" + t)} className="px-2 py-1 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#6b7280] text-[13px] hover:bg-[#0a0a0a]/10 hover:text-[#0a0a0a] transition-colors cursor-pointer">#{t}</button>
+                  <button
+                    key={t}
+                    onClick={() => go(`library:${p.family ?? "image"}:${encodeURIComponent("#" + t)}`)}
+                    className="px-2 py-1 rounded-full bg-[#0a0a0a]/5 border border-[#0a0a0a]/20 text-[#6b7280] text-[13px] hover:bg-[#0a0a0a]/10 hover:text-[#0a0a0a] transition-colors cursor-pointer"
+                  >
+                    #{t}
+                  </button>
                 ))}
               </div>
             </>

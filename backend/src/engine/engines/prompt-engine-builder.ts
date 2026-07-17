@@ -17,12 +17,6 @@ export interface EnginePromptResult {
   wordCount: number
 }
 
-export interface AllPromptsResult {
-  idea: string
-  sceneJson: SceneJSON
-  prompts: Record<string, EnginePromptResult>
-}
-
 export class PromptEngineBuilder {
   private readonly platforms: PlatformKey[] = ["chatgpt", "gemini", "midjourney", "flux", "firefly", "grok"]
 
@@ -49,30 +43,6 @@ export class PromptEngineBuilder {
       philosophy: engine.philosophy,
       wordCount: generated.wordCount,
     }
-  }
-
-  generateAllPrompts(idea: string): AllPromptsResult {
-    // Build the scene JSON once — shared across all platform generations
-    const sceneJson = analyzeIdeaToScene(idea, "chatgpt")
-    const prompts: Record<string, EnginePromptResult> = {}
-
-    for (const platform of this.platforms) {
-      const engine = ENGINES[platform]
-      if (!engine) continue
-
-      const generated = generatePrompt(idea, platform)
-      prompts[platform] = {
-        model: engine.name,
-        platform,
-        sceneJson,
-        prompt: generated.prompt,
-        engineName: engine.name,
-        philosophy: engine.philosophy,
-        wordCount: generated.wordCount,
-      }
-    }
-
-    return { idea, sceneJson, prompts }
   }
 
   listAvailableModels() {

@@ -5,8 +5,8 @@ import { platforms, videoPlatforms, websitePlatforms } from "../theme";
 import { improverApi, variablesApi, authStore, type ImproverResult } from "../../lib/api";
 import { LockLayerPanel } from "../LockLayerPanel";
 import { VariablePanel } from "../VariablePanel";
-import { applyVariables } from "../../lib/variables";
 import { highlight } from "../../lib/highlight";
+import { useEngineOutput } from "../../lib/useEngineOutput";
 
 // ─── Family definitions ──────────────────────────────────────────────────────
 
@@ -34,6 +34,18 @@ function getDefaultPlatform(family: string) {
   }
 }
 
+// Mirrors backend CATEGORY_LABELS (routes/improver.ts) — the rule engine's
+// subject-category classifier can misdetect (e.g. defaulting a non-portrait
+// idea to "people"), so the detected category is shown and correctable here
+// rather than silently driving wardrobe/skin sections the user never asked for.
+const RULE_ENGINE_CATEGORIES = [
+  { key: "people",  label: "People & Portraits" },
+  { key: "fashion", label: "Fashion & Apparel" },
+  { key: "product", label: "Product & Ecommerce" },
+  { key: "art",     label: "Art & Illustration" },
+  { key: "social",  label: "Social & Content" },
+] as const;
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function Improver({ go }: { go: (p: string) => void }) {
@@ -44,24 +56,23 @@ export function Improver({ go }: { go: (p: string) => void }) {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied]   = useState(false);
   const [error, setError]     = useState("");
-  const [vars, setVars]       = useState<Record<string, string>>({});
-  const [regenText, setRegenText] = useState<string | null>(null);
+  const output = useEngineOutput(result, result?.improved ?? "");
+  const { vars, setVars, regenText, setRegenText, variableFields, displayText } = output;
   const [regenerating, setRegen]  = useState(false);
+  // Explicit category override — null means "trust the rule engine's own
+  // detection." Set when the user corrects a misclassified category.
+  const [categoryOverride, setCategoryOverride] = useState<string | null>(null);
   useEffect(() => { setRegenText(null); }, [platform]);
 
   // Reset platform when family changes
   useEffect(() => {
     setPlatform(getDefaultPlatform(family));
     setResult(null);
+    setError("");
+    setCategoryOverride(null);
   }, [family]);
 
   const activePlatforms = getPlatformsForFamily(family);
-
-  const variableFields = result?.variables ?? [];
-  // Single source of truth for "the current prompt text" — used for both the
-  // on-screen preview and Copy, so users never copy something they didn't see.
-  const baseText = result ? (result.finalAssembledText || result.improved) : "";
-  const displayText = regenText ?? applyVariables(baseText, vars);
 
   async function handleRegenerate() {
     if (regenerating || !result) return;
@@ -77,25 +88,30 @@ export function Improver({ go }: { go: (p: string) => void }) {
     }
   }
 
-  async function run() {
+  async function run(overrideCategory?: string) {
     if (!input.trim() || loading) return;
     setLoading(true);
     setError("");
     setResult(null);
-    setVars({});
-    setRegenText(null);
+    output.resetForNewRun();
 
     try {
-      const res = await improverApi.improve({ prompt: input, platform, family });
+      const category = overrideCategory ?? categoryOverride ?? undefined;
+      const res = await improverApi.improve({ prompt: input, platform, family, category });
       setResult(res);
-      // Pre-fill the brief with each variable's default.
-      setVars(Object.fromEntries((res.variables ?? []).filter(v => v.default).map(v => [v.name, v.default!])));
+      output.prefillFromResult(res);
     } catch (err: any) {
       setError(err?.message ?? "Improvement failed");
       toast.error("Improvement failed", { description: err?.message });
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleCategoryOverride(key: string) {
+    if (loading || key === result?.categoryId) return;
+    setCategoryOverride(key);
+    run(key);
   }
 
   function handleCopy() {
@@ -170,13 +186,13 @@ export function Improver({ go }: { go: (p: string) => void }) {
             id="improver-input"
             disabled={loading}
             value={input}
-            onChange={e => { setInput(e.target.value); setResult(null); setError(""); }}
+            onChange={e => { setInput(e.target.value); setResult(null); setError(""); setCategoryOverride(null); }}
             placeholder={"Paste your prompt here.\n\nExamples:\n\u2022 \"a cat sitting on a windowsill, golden hour\"\n\u2022 \"create a photo of a luxury watch on dark background\"\n\u2022 \"write a blog post about AI trends\""}
             className="flex-1 w-full p-4 rounded-xl bg-[#f5f5f5] border border-[#0a0a0a]/15 text-[#0a0a0a] outline-none focus:border-[#4FC3F7] font-mono text-[13px] resize-none min-h-[340px] disabled:opacity-60"
           />
           <div className="mt-4 flex items-center gap-3">
             <button
-              onClick={run}
+              onClick={() => run()}
               disabled={!input.trim() || loading}
               className="h-13 px-6 rounded-2xl bg-[#4FC3F7] text-[#0a0a0a] font-bold inline-flex items-center gap-2 hover:bg-[#4FC3F7]/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
               style={{ height: "52px" }}
@@ -195,7 +211,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
               <button
                 key={pl.key}
                 disabled={loading}
-                onClick={() => { setPlatform(pl.key); setResult(null); }}
+                onClick={() => { setPlatform(pl.key); setResult(null); setError(""); }}
                 className={`px-3 py-1.5 rounded-full border text-[13px] transition-all disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4FC3F7] focus-visible:outline-offset-2 ${
                   platform === pl.key
                     ? "bg-[#4FC3F7] text-[#0a0a0a] border-[#4FC3F7]"
@@ -209,6 +225,38 @@ export function Improver({ go }: { go: (p: string) => void }) {
           </div>
 
           <div className="text-[#6b7280] text-[13px] mb-2 font-semibold">Improved prompt</div>
+
+          {/* Detected subject category — image family only. Correctable: the
+              rule engine's keyword classifier can misdetect the subject, which
+              silently changes wardrobe/skin/composition sections. */}
+          {result && family === "image" && (
+            <div className="mb-3">
+              <div className="text-[11px] text-[#6b7280] mb-1.5">
+                Detected category <span className="text-[#6b7280]/50">— wrong? pick the right one</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {RULE_ENGINE_CATEGORIES.map(cat => {
+                  const active = (result.categoryId ?? "product") === cat.key;
+                  return (
+                    <button
+                      key={cat.key}
+                      disabled={loading}
+                      onClick={() => handleCategoryOverride(cat.key)}
+                      aria-pressed={active}
+                      className={`px-2.5 py-1 rounded-full text-[11.5px] border transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                        active
+                          ? "bg-[#4FC3F7] text-[#0a0a0a] border-[#4FC3F7]"
+                          : "bg-white border-[#0a0a0a]/15 text-[#6b7280] hover:border-[#0a0a0a]/40 hover:text-[#0a0a0a]"
+                      }`}
+                      style={active ? { fontWeight: 600 } : {}}
+                    >
+                      {cat.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Error */}
           {error && (

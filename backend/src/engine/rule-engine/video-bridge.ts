@@ -14,7 +14,7 @@ import {
   type VideoCategory,
 } from "./video/index.js";
 
-const VALID_VIDEO_PLATFORMS: VideoPlatformKey[] = ["kling", "sora", "runway", "pika", "luma", "veo"];
+const VALID_VIDEO_PLATFORMS: VideoPlatformKey[] = ["kling", "sora", "runway", "pika", "luma", "veo", "seedance", "higgsfield"];
 const VALID_VIDEO_CATEGORIES: VideoCategory[] = ["narrative", "product", "nature", "action", "abstract"];
 
 function resolveVideoPlatform(platform: string): VideoPlatformKey {

@@ -1,9 +1,21 @@
 import { Hono } from "hono";
 import { improvePrompt } from "../engine/modules/improver.js";
 import { optionalAuth, engineRateLimit } from "../middleware/rateLimit.js";
+import { assembleFromText } from "../engine/lock-engine/index.js";
 import type { ImprovePromptRequest } from "../engine/contracts.js";
 
 const router = new Hono();
+
+// Human-readable labels for the rule engine's detected subject category —
+// surfaced to the frontend so a misclassification is visible and correctable
+// instead of silently driving the wrong wardrobe/skin/composition sections.
+const CATEGORY_LABELS: Record<string, string> = {
+  people:  "People & Portraits",
+  fashion: "Fashion & Apparel",
+  product: "Product & Ecommerce",
+  art:     "Art & Illustration",
+  social:  "Social & Content",
+};
 
 router.post(
   "/improve",
@@ -24,21 +36,29 @@ router.post(
 
     try {
       const result = await improvePrompt(body, userId);
+      const categoryId = result.metadata.category ?? null;
+      const family = body.family ?? "image";
       // Same shape adaptation as routes/builder.ts: the frontend expects a
       // richer object (changes as {label, applied}, platform/family/tokensUsed,
-      // plus lock-layer fields the retired lock-engine used to produce) than
-      // the frozen public contract returns.
+      // plus lock-layer fields) than the frozen public contract returns. For
+      // images, run the real content-aware lock-engine (same one
+      // /api/variables/expand uses) over the improved text so the lock panel
+      // reflects what was actually produced, instead of a category-generic
+      // template.
+      const assembled = family === "image"
+        ? assembleFromText({ text: result.improved, category: categoryId ?? "", platform: body.platform, title: body.prompt })
+        : null;
       return c.json({
         original: result.original,
         improved: result.improved,
         changes: result.improvements.map((label) => ({ label, applied: true })),
         platform: body.platform,
-        family: (body as { family?: string }).family ?? "image",
+        family,
         tokensUsed: 0,
-        categoryId: null,
-        categoryLabel: null,
-        lockSection: [],
-        negativeLocks: [],
+        categoryId,
+        categoryLabel: categoryId ? (CATEGORY_LABELS[categoryId] ?? categoryId) : null,
+        lockSection: assembled?.lockSection ?? [],
+        negativeLocks: assembled?.negativeLockSection ?? [],
         variables: [],
         validation: null,
         finalAssembledText: result.improved,

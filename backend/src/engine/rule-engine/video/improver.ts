@@ -5,9 +5,12 @@
 import type { VideoImproveRequest, VideoRuleEngineResult } from "./types.js"
 import { parseVideoPrompt } from "./parser.js"
 import { expandCameraMove, expandLighting, expandSetting, expandColorGrade, expandSubject, getCameraNumericSpec } from "./context-expander.js"
-import { NEGATIVE_LOCKS, CATEGORY_DEFAULTS } from "./dictionaries.js"
+import { NEGATIVE_LOCKS, CATEGORY_DEFAULTS, CATEGORY_OUTPUT_DEFAULTS } from "./dictionaries.js"
 import { generateVideoLocks } from "./lock-generator.js"
-import { buildRefsSection, buildExcludeSection } from "./templates/narrative.js"
+import {
+  buildRefsSection, buildExcludeSection,
+  buildStyleSection, buildQualityTagSection, buildAudioSection, buildAspectRatioSection, buildDurationSection,
+} from "./templates/narrative.js"
 import { formatForVideoPlatform } from "./formatter.js"
 import { scoreVideoPrompt } from "./validator.js"
 
@@ -44,6 +47,8 @@ export function improveVideoWithRules(req: VideoImproveRequest): VideoRuleEngine
   const lightingExp   = expandLighting(parsed.lighting)     ?? expandLighting(defaults.lighting) ?? defaults.lighting
   const gradeExp      = expandColorGrade(parsed.colorGrade) ?? DEFAULTS.grade
 
+  const outputDefaults = CATEGORY_OUTPUT_DEFAULTS[cat] ?? CATEGORY_OUTPUT_DEFAULTS.narrative
+
   const lines: string[] = [
     `SUBJECT: ${subjectExp}`,
     `ACTION: ${trimmedInput}`,
@@ -51,6 +56,11 @@ export function improveVideoWithRules(req: VideoImproveRequest): VideoRuleEngine
     `CAMERA: ${cameraExp}`,
     `LIGHTING: ${lightingExp}`,
     `COLOR GRADE: ${gradeExp}`,
+    buildStyleSection(outputDefaults.style),
+    buildQualityTagSection(outputDefaults.qualityTag),
+    buildAudioSection(outputDefaults.audio),
+    buildAspectRatioSection(outputDefaults.aspectRatio),
+    buildDurationSection(defaults.duration),
     buildRefsSection("cinematic"),
   ]
 

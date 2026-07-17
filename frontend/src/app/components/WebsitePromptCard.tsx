@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useAnimation } from "motion/react";
-import { ThumbsUp, ThumbsDown, Copy, ExternalLink, Maximize2, X, Loader2 } from "lucide-react";
+import { ThumbsUp, ThumbsDown, ExternalLink, Maximize2, X, Loader2 } from "lucide-react";
 import { type WebsiteDesign } from "../lib/website-data";
 import { patchIframeLinks, guardIframeNavigation } from "../lib/patch-iframe-links";
 
@@ -303,12 +303,10 @@ export function WebsitePreviewModal({
 export function WebsitePromptCard({
   design,
   onClick,
-  onCopy,
   onPreviewExpand,
 }: {
   design: WebsiteDesign;
   onClick?: () => void;
-  onCopy?: () => void;
   onPreviewExpand?: () => void;
 }) {
   const controls = useAnimation();
@@ -484,13 +482,6 @@ export function WebsitePromptCard({
           >
             <ExternalLink className="w-3.5 h-3.5" />
             View Prompt
-          </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); onCopy?.(); }}
-            className="h-9 px-3 rounded-xl border-2 border-[#0a0a0a]/20 text-[#0a0a0a] text-[12px] font-semibold flex items-center gap-1.5 hover:border-[#4FC3F7] hover:bg-[#4FC3F7]/10 transition-colors"
-          >
-            <Copy className="w-3.5 h-3.5" />
-            Copy
           </button>
         </div>
       </div>

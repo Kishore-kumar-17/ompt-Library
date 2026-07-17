@@ -2,6 +2,7 @@
 // Keyword extraction from raw user input — no AI, no API.
 
 import type { ParsedVideoPrompt, VideoCategory } from "./types.js"
+import { findFirstMatch, detectCategoryByScore } from "../keyword-utils.js"
 
 const CATEGORY_KEYWORDS: Record<VideoCategory, string[]> = {
   narrative: ["person", "man", "woman", "character", "walking", "talking", "story", "scene", "actor"],
@@ -17,23 +18,7 @@ const COLOR_GRADE_KEYWORDS = ["teal orange", "kodak print", "bleach bypass", "co
 const SETTING_KEYWORDS = ["urban street", "forest", "ocean", "desert", "interior office", "mountain", "space", "underwater"]
 
 function detectCategory(text: string): VideoCategory {
-  const lower = text.toLowerCase()
-  const scores: Record<VideoCategory, number> = { narrative: 0, product: 0, nature: 0, action: 0, abstract: 0 }
-  for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
-    for (const kw of keywords) {
-      if (lower.includes(kw)) scores[cat as VideoCategory]++
-    }
-  }
-  const sorted = (Object.entries(scores) as [VideoCategory, number][]).sort((a, b) => b[1] - a[1])
-  return sorted[0][1] > 0 ? sorted[0][0] : "narrative"
-}
-
-function findFirstMatch(text: string, keywords: string[]): string | null {
-  const lower = text.toLowerCase()
-  for (const kw of keywords) {
-    if (lower.includes(kw)) return kw
-  }
-  return null
+  return detectCategoryByScore(text, CATEGORY_KEYWORDS, "narrative")
 }
 
 function getMissingComponents(parsed: Partial<ParsedVideoPrompt>, category: VideoCategory): string[] {

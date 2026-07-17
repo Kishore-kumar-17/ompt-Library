@@ -20,6 +20,11 @@ const NAV_LINKS = [
   { label: "Pricing",      route: "pricing"      },
 ];
 
+const ADMIN_LINKS = [
+  { label: "Admin",        route: "admin"        },
+  { label: "Review",       route: "image-review" },
+];
+
 /* Triangle logo — pointing right */
 const TriangleLogo = () => (
   <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -134,6 +139,25 @@ export function Nav({ current, onNavigate, onAuth, onBack, canGoBack }: Props) {
               </button>
             );
           })}
+          {user?.isAdmin && ADMIN_LINKS.map((item) => {
+            const active = isActive(current, item.route);
+            return (
+              <button
+                key={item.label}
+                onClick={() => nav(item.route)}
+                aria-current={active ? "page" : undefined}
+                className={`px-4 py-2 rounded-lg transition-colors hover:bg-[#0a0a0a]/5 ${focusRing}`}
+                style={{
+                  fontSize: "14px",
+                  fontWeight: active ? 600 : 500,
+                  color: active ? "#0a0a0a" : "#6b7280",
+                  background: active ? "#0a0a0a0d" : "transparent",
+                }}
+              >
+                {item.label}
+              </button>
+            );
+          })}
         </nav>
 
         {/* ── Right actions ── */}
@@ -200,6 +224,20 @@ export function Nav({ current, onNavigate, onAuth, onBack, canGoBack }: Props) {
           <div ref={menuRef} id="mobile-nav-menu" role="dialog" aria-modal="true" aria-label="Mobile navigation" className="lg:hidden absolute top-full left-0 right-0 bg-white border-t border-[#0a0a0a]/10 shadow-lg z-50">
             <div className="flex flex-col px-6 py-4 gap-1">
               {NAV_LINKS.map(item => {
+                const active = isActive(current, item.route);
+                return (
+                  <button
+                    key={item.label}
+                    onClick={() => nav(item.route)}
+                    aria-current={active ? "page" : undefined}
+                    className={`text-left py-2.5 transition-colors rounded ${focusRing}`}
+                    style={{ fontSize: "15px", fontWeight: active ? 600 : 500, color: active ? "#0a0a0a" : "#6b7280" }}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
+              {user?.isAdmin && ADMIN_LINKS.map(item => {
                 const active = isActive(current, item.route);
                 return (
                   <button

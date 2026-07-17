@@ -8,14 +8,22 @@ import { platforms, videoPlatforms, websitePlatforms } from "../theme";
 import { authStore, builderApi, variablesApi, type EngineLockFields, type BuilderResult } from "../../lib/api";
 import { LockLayerPanel } from "../LockLayerPanel";
 import { VariablePanel } from "../VariablePanel";
-import { applyVariables } from "../../lib/variables";
 import { highlight } from "../../lib/highlight";
+import { useEngineOutput } from "../../lib/useEngineOutput";
 
 // ─── Enhancement options ──────────────────────────────────────────────────────
 
 const STYLES  = ["Cinematic", "Minimalist", "Vintage", "Dark Moody", "Vibrant", "Hyperrealistic", "Anime", "Watercolor", "3D Render", "Sketch", "Oil Painting", "Neon"];
 const MOODS   = ["Dramatic", "Peaceful", "Energetic", "Mysterious", "Nostalgic", "Futuristic", "Romantic", "Eerie", "Epic", "Intimate"];
 const ASPECTS = ["1:1", "16:9", "9:16", "4:3", "2:3", "3:2", "21:9"];
+
+// Image-specific options — mirrors the rule engine's own keyword vocabulary
+// (engine/rule-engine/parser.ts LIGHTING_/CAMERA_/SETTING_/PALETTE_KEYWORDS)
+// so a chosen chip is actually meaningful to the engine, not arbitrary.
+const IMAGE_LIGHTING = ["Window Light", "Golden Hour", "Studio", "Ring Light", "Morning Light", "Blue Hour", "Overcast", "Candlelight", "Neon", "Rembrandt", "Backlight", "Dramatic", "Soft"];
+const IMAGE_CAMERA   = ["Portrait", "Close-Up", "Environmental", "Wide", "Editorial", "Product Shot", "Fashion Shot", "Chest-Up", "Head-and-Shoulders", "Full-Length"];
+const IMAGE_SETTING  = ["Office", "Studio", "Street", "Outdoor", "Indoor", "Nature", "Library", "Cafe", "Rooftop", "Desert", "Market", "Home"];
+const IMAGE_PALETTE  = ["Neutral", "Cool", "Warm", "Monochrome", "Dark", "Vibrant"];
 
 // Video-specific options
 const VIDEO_STYLES    = ["Cinematic", "Documentary", "Commercial", "Motion Graphics", "Animated", "Slow-Mo", "Timelapse", "Vlog", "Film Noir", "Music Video", "Drone Aerial", "Neon"];
@@ -145,6 +153,12 @@ export function Builder({ go }: { go: (p: string) => void }) {
   const [showEnhance, setShowEnhance] = useState(false);
   const [showAllPlatforms, setShowAllPlatforms] = useState(false);
 
+  // Image-specific enhancement state
+  const [imgLighting, setImgLighting] = useState("");
+  const [imgCamera, setImgCamera]     = useState("");
+  const [imgSetting, setImgSetting]   = useState("");
+  const [imgPalette, setImgPalette]   = useState("");
+
   // Video-specific state
   const [videoDuration, setVideoDuration]       = useState("");
   const [videoCamera, setVideoCamera]           = useState("");
@@ -168,9 +182,12 @@ export function Builder({ go }: { go: (p: string) => void }) {
   const [error, setError]           = useState("");
   const [category, setCategory]     = useState("people-portraits");
   const [lockData, setLockData]     = useState<EngineLockFields | null>(null);
-  const [vars, setVars]             = useState<Record<string, string>>({});
-  const [regenText, setRegenText]   = useState<string | null>(null);
   const [regenerating, setRegen]    = useState(false);
+
+  const isWebsite = family === "website";
+  const isVideo   = family === "video";
+  const output = useEngineOutput(lockData, generated, { skipVariables: isWebsite });
+  const { vars, setVars, regenText, setRegenText, variableFields, displayText: outputText } = output;
   useEffect(() => { setRegenText(null); }, [platform]);
 
   // Reset website subcategory when category changes
@@ -189,22 +206,17 @@ export function Builder({ go }: { go: (p: string) => void }) {
     }
     setStyle("");
     setMood("");
+    setImgLighting("");
+    setImgCamera("");
+    setImgSetting("");
+    setImgPalette("");
     setHasGenerated(false);
   }, [family]);
 
-  const isWebsite = family === "website";
-  const isVideo   = family === "video";
   const activePlatforms = isWebsite ? websitePlatforms : isVideo ? videoPlatforms : platforms;
   const selectedCategorySubs = WEBSITE_CATEGORIES.find(c => c.key === websiteCategory)?.subs ?? [];
 
   const canGenerate = idea.trim().length > 0;
-  const variableFields = lockData?.variables ?? [];
-  // Single source of truth for "the current prompt text" — used for both the
-  // on-screen preview and Copy/Download, so users never copy something they
-  // didn't see rendered.
-  const baseText = lockData?.finalAssembledText || generated;
-  const displayPrompt = regenText ?? applyVariables(baseText, vars);
-  const outputText = isWebsite ? generated : displayPrompt;
 
   // Current step indicator
   const currentStep = !canGenerate ? 0 : !hasGenerated ? 1 : 2;
@@ -229,9 +241,9 @@ export function Builder({ go }: { go: (p: string) => void }) {
     setError("");
     setHasGenerated(false);
     setAllPlatformResults({});
+    setShowAllPlatforms(false);
     setLockData(null);
-    setVars({});
-    setRegenText(null);
+    output.resetForNewRun();
 
     try {
       const payload: Parameters<typeof builderApi.generate>[0] = {
@@ -242,17 +254,20 @@ export function Builder({ go }: { go: (p: string) => void }) {
         category: isWebsite ? (websiteCategory || undefined) : isVideo ? (videoCategory || undefined) : (family === "image" ? category : undefined),
         subCategory: isWebsite ? (websiteSubCategory || undefined) : undefined,
         audience: isWebsite ? (websiteAudience || undefined) : undefined,
-        palette: isWebsite ? (websitePalette || undefined) : undefined,
+        palette: isWebsite ? (websitePalette || undefined) : (family === "image" ? (imgPalette || undefined) : undefined),
         pages: isWebsite && websitePages.length > 0 ? websitePages : undefined,
         duration: isVideo ? (videoDuration || undefined) : undefined,
         cameraMovement: isVideo ? (videoCamera || undefined) : undefined,
         pacing: isVideo ? (videoPacing || undefined) : undefined,
         soundDesign: isVideo ? (videoSound || undefined) : undefined,
+        lighting: family === "image" ? (imgLighting || undefined) : undefined,
+        cameraAngle: family === "image" ? (imgCamera || undefined) : undefined,
+        setting: family === "image" ? (imgSetting || undefined) : undefined,
       };
       const result = await builderApi.generate(payload);
       setGenerated(result.prompt);
       setLockData(result);
-      setVars(Object.fromEntries((result.variables ?? []).filter(v => v.default).map(v => [v.name, v.default!])));
+      output.prefillFromResult(result);
       setHasGenerated(true);
     } catch (err: any) {
       setError(err?.message ?? "Generation failed");
@@ -282,12 +297,15 @@ export function Builder({ go }: { go: (p: string) => void }) {
           category: isWebsite ? (websiteCategory || undefined) : isVideo ? (videoCategory || undefined) : (family === "image" ? category : undefined),
           subCategory: isWebsite ? (websiteSubCategory || undefined) : undefined,
           audience: isWebsite ? (websiteAudience || undefined) : undefined,
-          palette: isWebsite ? (websitePalette || undefined) : undefined,
+          palette: isWebsite ? (websitePalette || undefined) : (family === "image" ? (imgPalette || undefined) : undefined),
           pages: isWebsite && websitePages.length > 0 ? websitePages : undefined,
           duration: isVideo ? (videoDuration || undefined) : undefined,
           cameraMovement: isVideo ? (videoCamera || undefined) : undefined,
           pacing: isVideo ? (videoPacing || undefined) : undefined,
           soundDesign: isVideo ? (videoSound || undefined) : undefined,
+          lighting: family === "image" ? (imgLighting || undefined) : undefined,
+          cameraAngle: family === "image" ? (imgCamera || undefined) : undefined,
+          setting: family === "image" ? (imgSetting || undefined) : undefined,
         };
         const result = await builderApi.generate(payload);
         results[pl.key] = result.finalAssembledText || result.prompt;
@@ -306,7 +324,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
     if (currentPlatformResult) {
       setGenerated(currentPlatformResult.prompt);
       setLockData(currentPlatformResult);
-      setVars(Object.fromEntries((currentPlatformResult.variables ?? []).filter(v => v.default).map(v => [v.name, v.default!])));
+      output.prefillFromResult(currentPlatformResult);
     } else {
       setGenerated("");
       setLockData(null);
@@ -349,6 +367,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
   // Count active enhancements
   const videoEnhancementCount   = [style, mood, videoDuration, videoCamera, videoPacing, videoSound].filter(Boolean).length;
   const websiteEnhancementCount = [style, mood, websitePalette, websiteAudience].filter(Boolean).length + (websitePages.length > 0 ? 1 : 0);
+  const imageEnhancementCount   = [style, mood, imgLighting, imgCamera, imgSetting, imgPalette].filter(Boolean).length;
 
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-10 text-[#0a0a0a]">
@@ -598,9 +617,9 @@ export function Builder({ go }: { go: (p: string) => void }) {
               <span className="flex items-center gap-2">
                 Enhancements
                 <span className="text-[#6b7280] font-normal">optional</span>
-                {(isWebsite ? websiteEnhancementCount > 0 : isVideo ? videoEnhancementCount > 0 : (style || mood)) && (
+                {(isWebsite ? websiteEnhancementCount > 0 : isVideo ? videoEnhancementCount > 0 : family === "image" ? imageEnhancementCount > 0 : (style || mood)) && (
                   <span className="px-1.5 py-0.5 rounded-full bg-[#4FC3F7] text-[10px] text-[#0a0a0a]" style={{ fontWeight: 700 }}>
-                    {isWebsite ? websiteEnhancementCount : isVideo ? videoEnhancementCount : [style, mood].filter(Boolean).length}
+                    {isWebsite ? websiteEnhancementCount : isVideo ? videoEnhancementCount : family === "image" ? imageEnhancementCount : [style, mood].filter(Boolean).length}
                   </span>
                 )}
               </span>
@@ -631,7 +650,13 @@ export function Builder({ go }: { go: (p: string) => void }) {
                     <ChipGroup disabled={isLoading} label="Style"       options={STYLES}  value={style}  onChange={(v) => { setStyle(v);  setHasGenerated(false); }} />
                     <ChipGroup disabled={isLoading} label="Mood"        options={MOODS}   value={mood}   onChange={(v) => { setMood(v);   setHasGenerated(false); }} />
                     {family === "image" && (
-                      <ChipGroup disabled={isLoading} label="Aspect Ratio" options={ASPECTS} value={aspect} onChange={(v) => { setAspect(v); setHasGenerated(false); }} />
+                      <>
+                        <ChipGroup disabled={isLoading} label="Aspect Ratio"      options={ASPECTS}       value={aspect}      onChange={(v) => { setAspect(v);      setHasGenerated(false); }} />
+                        <ChipGroup disabled={isLoading} label="Lighting"         options={IMAGE_LIGHTING} value={imgLighting} onChange={(v) => { setImgLighting(v); setHasGenerated(false); }} />
+                        <ChipGroup disabled={isLoading} label="Camera / Shot Type" options={IMAGE_CAMERA}  value={imgCamera}   onChange={(v) => { setImgCamera(v);   setHasGenerated(false); }} />
+                        <ChipGroup disabled={isLoading} label="Setting"          options={IMAGE_SETTING}  value={imgSetting}  onChange={(v) => { setImgSetting(v);  setHasGenerated(false); }} />
+                        <ChipGroup disabled={isLoading} label="Palette"          options={IMAGE_PALETTE}  value={imgPalette}  onChange={(v) => { setImgPalette(v);  setHasGenerated(false); }} />
+                      </>
                     )}
                   </>
                 )}
@@ -807,6 +832,10 @@ export function Builder({ go }: { go: (p: string) => void }) {
                   {VIDEO_CATEGORIES.find(c => c.key === videoCategory)?.label}
                 </span>
               )}
+              {family === "image" && imgLighting && <span className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/15 text-[11px] text-[#0a0a0a]" style={{ fontWeight: 500 }}>{imgLighting}</span>}
+              {family === "image" && imgCamera   && <span className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/15 text-[11px] text-[#0a0a0a]" style={{ fontWeight: 500 }}>{imgCamera}</span>}
+              {family === "image" && imgSetting  && <span className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/15 text-[11px] text-[#0a0a0a]" style={{ fontWeight: 500 }}>{imgSetting}</span>}
+              {family === "image" && imgPalette  && <span className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/15 text-[11px] text-[#0a0a0a]" style={{ fontWeight: 500 }}>{imgPalette}</span>}
               {isWebsite && websitePalette && <span className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/15 text-[11px] text-[#0a0a0a]" style={{ fontWeight: 500 }}>{websitePalette}</span>}
               {isWebsite && websiteAudience && <span className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/15 text-[11px] text-[#0a0a0a]" style={{ fontWeight: 500 }}>{websiteAudience}</span>}
               {isWebsite && websiteCategory && (

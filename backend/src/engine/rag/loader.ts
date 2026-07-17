@@ -8,7 +8,11 @@ import { join, dirname } from "path"
 import { fileURLToPath } from "url"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const RAG_DIR = join(__dirname, "RAG")
+// Platform subfolders (ChatGPT/, Firefly/, ...) live directly under this
+// directory — there is no nested "RAG" subfolder. The old `join(__dirname,
+// "RAG")` path never existed, so every function below silently returned []
+// in every environment.
+const RAG_DIR = __dirname
 
 // Lines to strip (navigation/UI noise from scraped markdown)
 const NOISE_PATTERNS = [

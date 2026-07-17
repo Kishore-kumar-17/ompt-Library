@@ -11,6 +11,8 @@ import { buildVideoFallback } from "../rule-engine/video-bridge.js";
 import { buildTextFallback } from "../rule-engine/text-bridge.js";
 import { buildCodeFallback } from "../rule-engine/code-bridge.js";
 import { buildWebsiteFallback } from "../rule-engine/website-bridge.js";
+import { buildWebsiteWithAI } from "../website/ai-builder.js";
+import { buildVideoWithAI } from "../video/ai-builder.js";
 import type { PlatformKey } from "../rule-engine/types.js";
 import { PromptPipeline } from "../pipeline/index.js";
 import { getAIService } from "../ai/service.js";
@@ -66,6 +68,35 @@ function selectModelTier(quality?: "fast" | "balanced" | "premium") {
 // ─── Rule-engine fallback ──────────────────────────────────────────────────────
 
 const VALID_PLATFORMS: PlatformKey[] = ["chatgpt", "gemini", "midjourney", "flux", "firefly", "grok"]
+
+// The AI pipeline persists to built_prompts on success (below) — but the rule-
+// engine fallback is the ONLY path when no API key is configured, and it
+// previously wrote nothing. That silently dropped every build from
+// /api/engine/history on the free tier. Persist here too, non-fatally.
+async function persistRuleEngineBuild(request: BuildRequest, result: BuildResult, userId: string | null): Promise<void> {
+  try {
+    await db.insert(builtPrompts).values({
+      userId,
+      categoryId: request.category ?? null,
+      platformId: request.platform,
+      fieldValues: { idea: request.idea },
+      generatedPrompt: result.prompt,
+      qualityScore: result.score?.overall ?? null,
+      scoreGrade: result.score?.grade ?? null,
+      tokensUsed: result.tokensUsed,
+      durationMs: null,
+      runId: result.runId,
+    });
+  } catch {
+    // Non-fatal — generation already succeeded even if persistence fails
+  }
+}
+
+async function respondWithRuleEngine(request: BuildRequest, userId: string | null, platform: string): Promise<BuildPromptResponse> {
+  const result = ruleEngineFallback(request);
+  await persistRuleEngineBuild(request, result, userId);
+  return toPublicResponse(result, platform);
+}
 
 function ruleEngineFallback(request: BuildRequest): BuildResult {
   // The image rule engine below (Pro Formula v4.2) only knows the image
@@ -126,18 +157,45 @@ export async function buildPrompt(
 
   // Use rule engine when no valid API key is configured
   if (!hasApiKey()) {
-    return toPublicResponse(ruleEngineFallback(internal), request.platform);
+    return respondWithRuleEngine(internal, userId, request.platform);
   }
 
-  // The AI pipeline (platformRegistry, CategoryDetectorStage, etc.) has no
-  // concept of website-builder platforms yet — several website platform IDs
-  // (chatgpt, claude, gemini, grok) collide with already-registered IMAGE
-  // platform configs, so running website requests through the pipeline
-  // doesn't throw, it silently produces an image-style prompt. Route website
-  // straight to the verified Website Formula v1.0 rule engine until the
-  // pipeline has real website-domain stage support.
+  // The generic AI pipeline (platformRegistry, CategoryDetectorStage, etc.)
+  // has no concept of website-builder platforms — several website platform
+  // IDs (chatgpt, claude, gemini, grok, cursor) collide with already-
+  // registered image/text/code platform configs of the same name, so running
+  // website requests through the pipeline doesn't throw, it silently
+  // produces a wrong-domain prompt. Website gets its own dedicated AI call
+  // instead (engine/website/ai-builder.ts, using the Website Formula system
+  // prompt), bypassing the pipeline/platformRegistry entirely, with the
+  // zero-API rule engine as the fallback for no-key/failure — same
+  // AI-then-fallback shape as every other family below.
   if (internal.family === "website") {
-    return toPublicResponse(ruleEngineFallback(internal), request.platform);
+    try {
+      return toPublicResponse(
+        await buildWebsiteWithAI(internal, userId, request.platform),
+        request.platform
+      );
+    } catch (err: any) {
+      console.warn("Website AI build failed, using rule engine fallback:", err?.message ?? err);
+      return respondWithRuleEngine(internal, userId, request.platform);
+    }
+  }
+
+  // Same reasoning as website above: the generic pipeline has no concept of
+  // the 15-section video formula, and platformRegistry doesn't recognize 2 of
+  // the 5 platforms the UI actually offers (seedance, higgsfield) — video
+  // gets its own dedicated AI call too (engine/video/ai-builder.ts).
+  if (internal.family === "video") {
+    try {
+      return toPublicResponse(
+        await buildVideoWithAI(internal, userId, request.platform),
+        request.platform
+      );
+    } catch (err: any) {
+      console.warn("Video AI build failed, using rule engine fallback:", err?.message ?? err);
+      return respondWithRuleEngine(internal, userId, request.platform);
+    }
   }
 
   try {
@@ -230,6 +288,6 @@ export async function buildPrompt(
   } catch (err: any) {
     // AI pipeline failed (bad key, quota, network) — fall back to rule engine
     console.warn("AI pipeline failed, using rule engine fallback:", err?.message ?? err)
-    return toPublicResponse(ruleEngineFallback(internal), request.platform);
+    return respondWithRuleEngine(internal, userId, request.platform);
   }
 }

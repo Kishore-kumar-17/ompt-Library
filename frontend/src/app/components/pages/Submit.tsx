@@ -8,7 +8,7 @@ const steps = ["Category", "Platform", "Prompt", "Variables", "Example", "Review
 
 export function Submit({ go, onAuth }: { go: (p: string) => void; onAuth?: () => void }) {
   const [step, setStep] = useState(0);
-  const [data, setData] = useState<any>({ category: "", family: "", platform: "chatgpt", prompt: "", vars: "", example: "" });
+  const [data, setData] = useState<any>({ category: "", family: "", platform: "chatgpt", title: "", prompt: "", vars: "", example: "" });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const all = [
@@ -23,6 +23,7 @@ export function Submit({ go, onAuth }: { go: (p: string) => void; onAuth?: () =>
 
   function canAdvance(): string | null {
     if (step === 0 && !data.category) return "Please select a category to continue.";
+    if (step === 2 && !data.title.trim()) return "Please give your prompt a title to continue.";
     if (step === 2 && !data.prompt.trim()) return "Please enter your prompt text to continue.";
     return null;
   }
@@ -39,7 +40,7 @@ export function Submit({ go, onAuth }: { go: (p: string) => void; onAuth?: () =>
         ? data.vars.split(",").map((v: string) => ({ name: v.trim(), placeholder: v.trim() }))
         : [];
       await submissionsApi.submit({
-        title: data.category + " Prompt",
+        title: data.title.trim(),
         family: data.family || "text",
         basePrompt: data.prompt,
         platformIds: [data.platform],
@@ -75,7 +76,7 @@ export function Submit({ go, onAuth }: { go: (p: string) => void; onAuth?: () =>
           <div className="ml-auto flex gap-2 shrink-0">
             <button
               onClick={() => {
-                setData({ category: "", family: "", platform: "chatgpt", prompt: "", vars: "", example: "" });
+                setData({ category: "", family: "", platform: "chatgpt", title: "", prompt: "", vars: "", example: "" });
                 setStep(0);
                 setSubmitted(false);
               }}
@@ -151,6 +152,15 @@ export function Submit({ go, onAuth }: { go: (p: string) => void; onAuth?: () =>
         )}
         {step === 2 && (
           <div>
+            <label htmlFor="submit-title" className="block text-[#0a0a0a] mb-2" style={{ fontWeight: 600 }}>Title</label>
+            <input
+              id="submit-title"
+              value={data.title}
+              onChange={e => update("title", e.target.value)}
+              placeholder="A short, specific title for this prompt"
+              maxLength={200}
+              className="w-full h-10 px-3 mb-4 rounded-lg bg-[#0a0a0a]/5 border border-[#0a0a0a]/15 text-[#0a0a0a] placeholder:text-[#6b7280] outline-none focus:border-[#4FC3F7]"
+            />
             <label htmlFor="submit-prompt" className="block text-[#0a0a0a] mb-3" style={{ fontWeight: 600 }}>Prompt text</label>
             <textarea
               id="submit-prompt"
@@ -200,6 +210,7 @@ export function Submit({ go, onAuth }: { go: (p: string) => void; onAuth?: () =>
         {step === 5 && (
           <div className="space-y-3">
             <div className="text-[#0a0a0a]" style={{ fontWeight: 700 }}>Review & submit</div>
+            <div><span className="text-[#6b7280]">Title:</span> <span className="text-[#0a0a0a]">{data.title || "-"}</span></div>
             <div><span className="text-[#6b7280]">Category:</span> <span className="text-[#0a0a0a]">{data.category || "-"}</span></div>
             <div><span className="text-[#6b7280]">Platform:</span> <span className="text-[#0a0a0a]">{activePlatform?.name ?? data.platform}</span></div>
             <div><span className="text-[#6b7280]">Variables:</span> <span className="text-[#0a0a0a]">{data.vars || "-"}</span></div>
@@ -235,7 +246,7 @@ export function Submit({ go, onAuth }: { go: (p: string) => void; onAuth?: () =>
         ) : (
           <button
             onClick={handleSubmit}
-            disabled={submitting || submitted || !data.prompt.trim()}
+            disabled={submitting || submitted || !data.title.trim() || !data.prompt.trim()}
             className="h-10 px-5 rounded-full bg-[#4FC3F7] text-white inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ fontWeight: 700 }}
           >

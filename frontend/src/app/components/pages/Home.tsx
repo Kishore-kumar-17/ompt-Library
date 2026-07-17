@@ -88,6 +88,30 @@ export function Home({ go }: { go: (p: string) => void }) {
             From stunning images to production code, from viral videos to full websites - one prompt is all it takes. Browse what works, copy it, make it yours.
           </p>
           </ScrollReveal>
+
+          {/* Builder / Improver entry points — the two flagship tools, one CTA each */}
+          <div className="mt-10 flex flex-wrap items-stretch justify-center gap-4">
+            <button
+              onClick={() => go("builder")}
+              className="group text-left w-full sm:w-[300px] rounded-2xl border border-[#0a0a0a]/15 bg-white p-6 transition-all hover:border-[#4FC3F7] hover:shadow-[0_12px_32px_rgba(79,195,247,0.16)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4FC3F7]"
+            >
+              <div className="text-[#0a0a0a] mb-1.5" style={{ fontSize: 18, fontWeight: 600 }}>Start from an idea</div>
+              <div className="text-[#6b7280] mb-4" style={{ fontSize: 14, lineHeight: 1.5 }}>Describe what you want — the Builder assembles a platform-ready prompt for you.</div>
+              <span className="inline-flex items-center gap-1.5 text-[#0a0a0a] group-hover:text-[#4FC3F7] transition-colors" style={{ fontSize: 13.5, fontWeight: 600 }}>
+                Open Prompt Builder <span aria-hidden="true">&rarr;</span>
+              </span>
+            </button>
+            <button
+              onClick={() => go("improver")}
+              className="group text-left w-full sm:w-[300px] rounded-2xl border border-[#0a0a0a]/15 bg-white p-6 transition-all hover:border-[#4FC3F7] hover:shadow-[0_12px_32px_rgba(79,195,247,0.16)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4FC3F7]"
+            >
+              <div className="text-[#0a0a0a] mb-1.5" style={{ fontSize: 18, fontWeight: 600 }}>Already have a prompt?</div>
+              <div className="text-[#6b7280] mb-4" style={{ fontSize: 14, lineHeight: 1.5 }}>Paste it in and the Improver upgrades it to pro quality with lock blocks and platform formatting.</div>
+              <span className="inline-flex items-center gap-1.5 text-[#0a0a0a] group-hover:text-[#4FC3F7] transition-colors" style={{ fontSize: 13.5, fontWeight: 600 }}>
+                Open Prompt Improver <span aria-hidden="true">&rarr;</span>
+              </span>
+            </button>
+          </div>
         </div>
       </div>
       </SectionReveal>

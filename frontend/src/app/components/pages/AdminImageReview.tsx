@@ -30,15 +30,16 @@ export function AdminImageReview() {
 
   function handleImageInput(slug: string, original: string, val: string) {
     const trimmed = val.trim();
-    if (!trimmed || trimmed === original) {
+    // Accept bare number "42" or full path "/images/image42.png" — resolve
+    // to the real path FIRST, then compare against `original` (also a full
+    // path), so re-typing the current image's own number is correctly
+    // treated as a no-op instead of being recorded as a correction.
+    const path = /^\d+$/.test(trimmed) ? `/images/image${trimmed}.png` : trimmed;
+    if (!trimmed || path === original) {
       const next = { ...corrections };
       delete next[slug];
       setCorrections(next);
     } else {
-      // Accept bare number "42" or full path "/images/image42.png"
-      const path = /^\d+$/.test(trimmed)
-        ? `/images/image${trimmed}.png`
-        : trimmed;
       setCorrections({ ...corrections, [slug]: path });
     }
   }

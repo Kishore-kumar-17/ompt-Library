@@ -7,11 +7,18 @@
 import { Hono } from "hono"
 import { improveWithRules, scorePrompt, getMissingSections, parsePrompt, generatePrompt } from "../engine/rule-engine"
 import type { RuleEngineBuildRequest, RuleEngineImproveRequest, PlatformKey } from "../engine/rule-engine/types"
+import { optionalAuth, engineRateLimit } from "../middleware/rateLimit.js"
 
 const app = new Hono()
 
+// Unlike the LLM-backed /api/builder and /api/improver, this router is
+// zero-API (no external cost per request) — but it's still unauthenticated,
+// unbounded compute otherwise, so it gets the same rate-limit treatment as
+// every other engine route.
+app.use("*", optionalAuth)
+
 // ─── POST /build ──────────────────────────────────────────────────────────────
-app.post("/build", async (c) => {
+app.post("/build", engineRateLimit("build"), async (c) => {
   try {
     const body = await c.req.json()
 
@@ -33,7 +40,7 @@ app.post("/build", async (c) => {
 })
 
 // ─── POST /improve ────────────────────────────────────────────────────────────
-app.post("/improve", async (c) => {
+app.post("/improve", engineRateLimit("improve"), async (c) => {
   try {
     const body = await c.req.json()
 
@@ -56,7 +63,7 @@ app.post("/improve", async (c) => {
 })
 
 // ─── POST /analyze ────────────────────────────────────────────────────────────
-app.post("/analyze", async (c) => {
+app.post("/analyze", engineRateLimit("analyze"), async (c) => {
   try {
     const body = await c.req.json()
 
@@ -66,7 +73,7 @@ app.post("/analyze", async (c) => {
 
     const parsed  = parsePrompt(body.promptText)
     const score   = scorePrompt(body.promptText, parsed.detectedCategory)
-    const missing = getMissingSections(body.promptText)
+    const missing = getMissingSections(body.promptText, parsed.detectedCategory)
 
     return c.json({
       ok: true,

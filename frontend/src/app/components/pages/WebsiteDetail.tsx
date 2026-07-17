@@ -40,13 +40,22 @@ async function downloadAllScaffoldFiles(slug: string, title: string) {
   try {
     const files = [...DOCS.map(d => d.file), `${slug}.md`];
     const sections: string[] = [];
+    let missing = 0;
     for (const file of files) {
       const res = await fetch(`/scaffolds/${slug}/${file}`);
       if (res.ok) {
         const text = await res.text();
         sections.push(text);
+      } else {
+        missing++;
       }
     }
+
+    if (sections.length === 0) {
+      toast.error("Download failed", { description: "No scaffold files were found for this design." });
+      return;
+    }
+
     const combined = sections.join("\n\n---\n\n");
     const blob = new Blob([combined], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
@@ -55,7 +64,14 @@ async function downloadAllScaffoldFiles(slug: string, title: string) {
     a.download = `${slug}-scaffold.md`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("Downloaded", { description: `${slug}-scaffold.md (${files.length} files)` });
+
+    if (missing > 0) {
+      toast.warning("Downloaded with missing sections", {
+        description: `${slug}-scaffold.md includes ${sections.length} of ${files.length} files — ${missing} weren't found.`,
+      });
+    } else {
+      toast.success("Downloaded", { description: `${slug}-scaffold.md (${sections.length} files)` });
+    }
   } catch {
     toast.error("Download failed");
   }
@@ -147,7 +163,13 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
               <button onClick={() => window.open(previewUrl, "_blank")} className="text-[#6b7280] hover:text-[#0a0a0a] p-0.5 rounded transition-colors" title="Open in new tab" aria-label="Open preview in new tab">
                 <ExternalLink className="w-3.5 h-3.5" />
               </button>
-              <button onClick={() => setFullscreen(true)} className="text-[#6b7280] hover:text-[#0a0a0a] p-0.5 rounded transition-colors" title="Expand fullscreen" aria-label="Expand preview fullscreen">
+              <button
+                onClick={() => iframeLoaded && !iframeError && setFullscreen(true)}
+                disabled={!iframeLoaded || iframeError}
+                className="text-[#6b7280] hover:text-[#0a0a0a] p-0.5 rounded transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                title="Expand fullscreen"
+                aria-label="Expand preview fullscreen"
+              >
                 <Maximize2 className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -175,6 +197,12 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
                 <WebsiteDetailPlaceholder design={design} previewUrl={previewUrl} />
               ) : (
                 <>
+                  {/* sandbox="allow-scripts allow-same-origin" is a documented sandbox-bypass
+                      combination — accepted here because guardIframeNavigation/patchIframeLinks
+                      below reach into iframe.contentDocument, which requires the iframe to be
+                      same-origin in the first place. Preview HTML is static, developer-authored
+                      content under frontend/public/previews/, not user-generated — revisit this
+                      if that ever changes. */}
                   <iframe
                     ref={iframeRef}
                     src={previewUrl}
@@ -281,12 +309,12 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
 
           {/* Prompt preview */}
           <div className="relative bg-white border-2 border-[#0a0a0a] rounded-2xl p-4 mb-4 shadow-[6px_6px_0_0_#0a0a0a]">
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2">
               <span className="text-[11px] text-[#6b7280] uppercase font-bold tracking-widest">{activePl?.name} prompt</span>
-              <button onClick={handleCopy} className="p-1.5 rounded-lg bg-[#0a0a0a]/5 hover:bg-[#0a0a0a]/10 text-[#6b7280] hover:text-[#0a0a0a] transition-colors" title="Copy prompt" aria-label="Copy prompt">
-                <Copy className="w-4 h-4" />
-              </button>
             </div>
+            <button onClick={handleCopy} className="absolute top-3 right-3 p-1.5 rounded-lg bg-[#0a0a0a]/5 hover:bg-[#0a0a0a]/10 text-[#6b7280] hover:text-[#0a0a0a] transition-colors" title="Copy prompt">
+              <Copy className="w-4 h-4" />
+            </button>
             <pre className="whitespace-pre-wrap text-[#0a0a0a] font-mono text-[12px] leading-relaxed max-h-72 overflow-y-auto">{promptText}</pre>
           </div>
 

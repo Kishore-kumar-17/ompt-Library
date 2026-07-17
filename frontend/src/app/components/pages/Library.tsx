@@ -14,7 +14,7 @@ import { videoPlatformVersions } from "../../lib/video-platforms";
 import { PromptCard } from "../PromptCard";
 import { WebsitePromptCard, WebsitePreviewModal } from "../WebsitePromptCard";
 import { websiteDesigns } from "../../lib/website-data";
-import { websitePlatformVersions } from "../../lib/website-platforms";
+import { useSavedIds, invalidateSavedIds } from "../../lib/savedIds";
 
 const PAGE_SIZE = 20;
 
@@ -36,9 +36,11 @@ const FEATURED_WEBSITE_IDS = [
 // ─── Masonry Image Card (Pinterest-style) ────────────────────────────────────
 
 function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
-  const [loaded, setLoaded] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const savedIds = useSavedIds();
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => { setSaved(savedIds.has(Number(p.id))); }, [savedIds, p.id]);
 
   const handleSave = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -46,6 +48,7 @@ function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
     try {
       const res = await libraryApi.save(p.id);
       setSaved(res.saved);
+      invalidateSavedIds();
       toast(res.saved ? "Saved to library" : "Removed from library", { description: p.title });
     } catch { toast.error("Could not save"); }
   };
@@ -76,9 +79,9 @@ function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
           <img
             src={p.image}
             alt={p.title}
+            loading="lazy"
+            decoding="async"
             className="w-full block transition-transform duration-700 ease-out group-hover:scale-[1.06]"
-            style={{ opacity: loaded ? 1 : 0, transition: "opacity 0.4s ease" }}
-            onLoad={() => setLoaded(true)}
           />
         ) : (
           <div className="w-full aspect-[4/3] bg-gradient-to-br from-[#f0f0f0] to-[#e8e8e8] flex items-center justify-center">
@@ -182,11 +185,12 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
       .catch(() => setUseFallback(true));
   }, []);
 
-  // ── Reset filters when family changes ────────────────────────────────────
-  useEffect(() => {
-    if (searchTimer.current) clearTimeout(searchTimer.current);
-    setCat(null); setPlatform(null); setPage(1); setQuery(""); setInputVal("");
-  }, [family]);
+  // No "reset filters on family change" effect needed here — Library is
+  // remounted with key={route} on every navigation (App.tsx), including
+  // family changes, so useState's initial values already start fresh. An
+  // effect keyed on [family] would also fire once on the very first mount
+  // and wipe out the initialCategory-derived hashtag search before it's
+  // ever shown.
 
   // Cancel any pending debounced search on unmount.
   useEffect(() => () => { if (searchTimer.current) clearTimeout(searchTimer.current); }, []);
@@ -261,7 +265,8 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
     const filtered = fallbackSource.filter(p =>
       (!cat || p.category === cat) &&
       (!query || p.title.toLowerCase().includes(query.toLowerCase()) ||
-                 p.description.toLowerCase().includes(query.toLowerCase()))
+                 p.description.toLowerCase().includes(query.toLowerCase()) ||
+                 (p.tags ?? []).some((t: string) => t.toLowerCase().includes(query.toLowerCase())))
     );
     // Featured images first within every category
     if (isImageFamily && !query) {
@@ -327,6 +332,21 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
     if (isWebsiteFamily) return themeCats.website.map(c => ({ category: c.name, count: websiteDesigns.filter(d => d.category === c.name).length }));
     return categories.length > 0 ? categories : [];
   }, [isImageFamily, isVideoFamily, isWebsiteFamily, categories]);
+
+  // A recognized family renders `meta`; an unrecognized one (a mistyped or
+  // stale route string) previously fell through to a generic API fetch with
+  // no family filter and a blank/undefined header — signal it clearly instead.
+  if (family && !meta) {
+    return (
+      <div className="max-w-[900px] mx-auto px-6 py-24 text-center">
+        <button onClick={() => go("library")} className="inline-flex items-center gap-1.5 text-[#6b7280] hover:text-[#0a0a0a] text-[13px] mb-6 transition-colors">
+          <ArrowLeft className="w-3.5 h-3.5" /> Back to Library
+        </button>
+        <h1 className="text-[#0a0a0a] mb-2" style={{ fontSize: 24, fontWeight: 700 }}>Unknown category</h1>
+        <p className="text-[#6b7280]" style={{ fontSize: 14 }}>"{family}" isn't a category we recognize. Pick one from the Library instead.</p>
+      </div>
+    );
+  }
 
   return (
   <>
@@ -463,11 +483,6 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
                     key={d.id}
                     design={d}
                     onClick={() => go("website-detail:" + d.slug)}
-                    onCopy={() => {
-                      const prompt = websitePlatformVersions[d.slug]?.lovable ?? d.description;
-                      navigator.clipboard?.writeText(prompt);
-                      toast.success("Copied Lovable prompt", { description: "Open the design for other platform versions." });
-                    }}
                     onPreviewExpand={() => setExpandedSlug(d.slug)}
                   />
                 ))}
@@ -549,6 +564,7 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
                             e.stopPropagation();
                             navigator.clipboard?.writeText((p as any).description ?? "");
                             toast.success("Prompt copied", { description: p.title });
+                            if (authStore.getUser()) libraryApi.copy(p.id).catch(() => {});
                           }}
                           className="p-1 rounded-md hover:bg-[#0a0a0a]/10 transition-colors"
                         >

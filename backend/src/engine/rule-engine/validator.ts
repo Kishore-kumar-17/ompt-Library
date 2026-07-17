@@ -26,6 +26,23 @@ const SECTION_WEIGHTS: Record<string, number> = {
   "LOCKS - LIGHT":       4,
 }
 
+// WARDROBE/SKIN only get written for portrait subjects (people/fashion — see
+// engine/rule-engine/improver.ts's isPortraitSubject gate). Scoring a non-
+// portrait prompt against the full weight table would cap it below 100 for
+// sections it was never supposed to have — exclude them per category instead.
+const PORTRAIT_ONLY_SECTIONS = new Set(["WARDROBE", "SKIN"])
+
+function isPortraitCategory(category: RuleEngineCategory): boolean {
+  return category === "people" || category === "fashion"
+}
+
+function weightsForCategory(category: RuleEngineCategory): Record<string, number> {
+  if (isPortraitCategory(category)) return SECTION_WEIGHTS
+  return Object.fromEntries(
+    Object.entries(SECTION_WEIGHTS).filter(([section]) => !PORTRAIT_ONLY_SECTIONS.has(section))
+  )
+}
+
 function detectSection(prompt: string, section: string): boolean {
   const lower = prompt.toLowerCase()
   const sec = section.toLowerCase()
@@ -39,11 +56,11 @@ function detectSection(prompt: string, section: string): boolean {
   )
 }
 
-export function scorePrompt(prompt: string, _category: RuleEngineCategory): number {
+export function scorePrompt(prompt: string, category: RuleEngineCategory): number {
   let total = 0
   let earned = 0
 
-  for (const [section, weight] of Object.entries(SECTION_WEIGHTS)) {
+  for (const [section, weight] of Object.entries(weightsForCategory(category))) {
     total += weight
     if (detectSection(prompt, section)) earned += weight
   }
@@ -57,16 +74,16 @@ export function scorePrompt(prompt: string, _category: RuleEngineCategory): numb
   return Math.min(100, Math.max(0, raw))
 }
 
-export function getScoreDetails(prompt: string): ScoreDetail[] {
-  return Object.entries(SECTION_WEIGHTS).map(([section, weight]) => ({
+export function getScoreDetails(prompt: string, category: RuleEngineCategory): ScoreDetail[] {
+  return Object.entries(weightsForCategory(category)).map(([section, weight]) => ({
     section,
     present: detectSection(prompt, section),
     weight,
   }))
 }
 
-export function getMissingSections(prompt: string): string[] {
-  return getScoreDetails(prompt)
+export function getMissingSections(prompt: string, category: RuleEngineCategory): string[] {
+  return getScoreDetails(prompt, category)
     .filter(d => !d.present)
     .map(d => d.section)
 }

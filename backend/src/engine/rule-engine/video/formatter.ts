@@ -27,6 +27,11 @@ function formatKling(raw: string): string {
   const setting  = extractValue(raw, "SETTING")
   const camera   = extractValue(raw, "CAMERA")
   const lighting = extractValue(raw, "LIGHTING")
+  const style    = extractValue(raw, "STYLE")
+  const quality  = extractValue(raw, "QUALITY TAG")
+  const audio    = extractValue(raw, "AUDIO")
+  const aspect   = extractValue(raw, "ASPECT RATIO")
+  const duration = extractValue(raw, "DURATION")
 
   return [
     `${subject}.`,
@@ -35,6 +40,10 @@ function formatKling(raw: string): string {
     camera   ? `Camera: ${camera}.` : "",
     lighting ? `${lighting}.` : "",
     "Realistic human motion and physics, natural weight and momentum throughout.",
+    style    ? `${style} style.` : "",
+    quality  ? `${quality}.` : "",
+    audio    ? `Audio: ${audio}.` : "",
+    (duration || aspect) ? `Duration: ${duration || "N/A"}. Aspect ratio: ${aspect || "N/A"}.` : "",
   ].filter(Boolean).join(" ")
 }
 
@@ -45,13 +54,21 @@ function formatSora(raw: string): string {
   const camera   = extractValue(raw, "CAMERA")
   const lighting = extractValue(raw, "LIGHTING")
   const grade    = extractValue(raw, "COLOR GRADE")
+  const style    = extractValue(raw, "STYLE")
+  const quality  = extractValue(raw, "QUALITY TAG")
+  const audio    = extractValue(raw, "AUDIO")
+  const aspect   = extractValue(raw, "ASPECT RATIO")
+  const duration = extractValue(raw, "DURATION")
 
   return [
-    `A cinematic shot of ${subject}, set in ${setting || "a richly detailed environment"}.`,
+    `A ${style || "cinematic"} shot of ${subject}, set in ${setting || "a richly detailed environment"}.`,
     action ? `${action}.` : "",
     camera ? `Camera: ${camera}.` : "",
     lighting ? `Lit with ${lighting}.` : "",
     grade ? `Graded with a ${grade} look.` : "",
+    audio ? `Audio: ${audio}.` : "",
+    quality ? `Quality: ${quality}.` : "",
+    (duration || aspect) ? `Duration: ${duration || "N/A"}, aspect ratio ${aspect || "N/A"}.` : "",
   ].filter(Boolean).join(" ")
 }
 
@@ -62,6 +79,11 @@ function formatRunway(raw: string): string {
   const camera   = extractValue(raw, "CAMERA")
   const lighting = extractValue(raw, "LIGHTING")
   const grade    = extractValue(raw, "COLOR GRADE")
+  const style    = extractValue(raw, "STYLE")
+  const quality  = extractValue(raw, "QUALITY TAG")
+  const audio    = extractValue(raw, "AUDIO")
+  const aspect   = extractValue(raw, "ASPECT RATIO")
+  const duration = extractValue(raw, "DURATION")
   const locks    = raw.match(/(\*\*LOCKS.*?)(?=\n\n|\*\*LOCKS|$)/gis)?.join("\n") ?? ""
 
   return [
@@ -70,18 +92,29 @@ function formatRunway(raw: string): string {
     `Camera movement: ${camera}.`,
     lighting ? `Lighting: ${lighting}.` : "",
     grade ? `Color grade: ${grade}.` : "",
+    style ? `Style: ${style}.` : "",
+    quality ? `Quality: ${quality}.` : "",
+    audio ? `Audio: ${audio}.` : "",
+    duration ? `Duration: ${duration}.` : "",
+    aspect ? `Aspect ratio: ${aspect}.` : "",
     "",
     locks,
   ].filter((l) => l !== undefined).join("\n")
 }
 
 function formatPika(raw: string): string {
-  const subject = extractValue(raw, "SUBJECT")
-  const action  = extractValue(raw, "ACTION")
-  const camera  = extractValue(raw, "CAMERA")
+  const subject  = extractValue(raw, "SUBJECT")
+  const action   = extractValue(raw, "ACTION")
+  const camera   = extractValue(raw, "CAMERA")
+  const quality  = extractValue(raw, "QUALITY TAG")
+  const duration = extractValue(raw, "DURATION")
+  const aspect   = extractValue(raw, "ASPECT RATIO")
 
   // Pika rewards short, punchy prompts over long prose.
-  return [subject, action, camera ? `-camera ${camera}` : ""].filter(Boolean).join(", ")
+  return [
+    subject, action, camera ? `-camera ${camera}` : "", quality,
+    duration ? `${duration}` : "", aspect ? `${aspect}` : "",
+  ].filter(Boolean).join(", ")
 }
 
 function formatLuma(raw: string): string {
@@ -90,6 +123,11 @@ function formatLuma(raw: string): string {
   const setting  = extractValue(raw, "SETTING")
   const camera   = extractValue(raw, "CAMERA")
   const lighting = extractValue(raw, "LIGHTING")
+  const style    = extractValue(raw, "STYLE")
+  const quality  = extractValue(raw, "QUALITY TAG")
+  const audio    = extractValue(raw, "AUDIO")
+  const aspect   = extractValue(raw, "ASPECT RATIO")
+  const duration = extractValue(raw, "DURATION")
 
   return [
     `Subject: ${subject}`,
@@ -97,6 +135,11 @@ function formatLuma(raw: string): string {
     setting  ? `Environment: ${setting}` : "",
     `Camera: ${camera}`,
     lighting ? `Lighting: ${lighting}` : "",
+    style    ? `Style: ${style}` : "",
+    quality  ? `Quality: ${quality}` : "",
+    audio    ? `Audio: ${audio}` : "",
+    duration ? `Duration: ${duration}` : "",
+    aspect   ? `Aspect ratio: ${aspect}` : "",
   ].filter(Boolean).join("\n")
 }
 
@@ -106,12 +149,21 @@ function formatVeo(raw: string): string {
   const setting  = extractValue(raw, "SETTING")
   const camera   = extractValue(raw, "CAMERA")
   const lighting = extractValue(raw, "LIGHTING")
+  const style    = extractValue(raw, "STYLE")
+  const quality  = extractValue(raw, "QUALITY TAG")
+  const audio    = extractValue(raw, "AUDIO")
+  const aspect   = extractValue(raw, "ASPECT RATIO")
+  const duration = extractValue(raw, "DURATION")
 
   return [
     action ? `${subject}, ${action}.` : `${subject}.`,
     setting  ? `The scene takes place in ${setting}.` : "",
     camera   ? `Camera: ${camera}.` : "",
     lighting ? `Lighting is ${lighting}.` : "",
+    style    ? `Shot in a ${style} style.` : "",
+    audio    ? `Audio: ${audio}.` : "",
+    quality  ? `${quality}.` : "",
+    (duration || aspect) ? `Duration: ${duration || "N/A"}. Aspect ratio: ${aspect || "N/A"}.` : "",
   ].filter(Boolean).join(" ")
 }
 

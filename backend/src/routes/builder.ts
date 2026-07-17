@@ -4,6 +4,7 @@ import { promptEngineBuilder } from "../engine/engines/prompt-engine-builder.js"
 import { PLATFORM_KNOWLEDGE } from "../engine/rag/knowledge.js";
 import { getRAGFileList } from "../engine/rag/loader.js";
 import { optionalAuth, engineRateLimit } from "../middleware/rateLimit.js";
+import { assembleFromText } from "../engine/lock-engine/index.js";
 import type { BuildPromptRequest, PromptMode } from "../engine/contracts.js";
 
 const router = new Hono();
@@ -30,6 +31,9 @@ interface FrontendBuildPayload {
   cameraMovement?: string;
   pacing?: string;
   soundDesign?: string;
+  lighting?: string;
+  cameraAngle?: string;
+  setting?: string;
   options?: BuildPromptRequest["options"];
 }
 
@@ -62,6 +66,9 @@ function normalizeBuildRequest(body: FrontendBuildPayload): BuildPromptRequest |
     body.cameraMovement && `camera movement: ${body.cameraMovement}`,
     body.pacing && `pacing: ${body.pacing}`,
     body.soundDesign && `sound design: ${body.soundDesign}`,
+    body.lighting && `lighting: ${body.lighting}`,
+    body.cameraAngle && `camera/shot type: ${body.cameraAngle}`,
+    body.setting && `setting: ${body.setting}`,
   ].filter(Boolean) as string[];
   const input = hints.length ? `${rawInput.trim()} (${hints.join("; ")})` : rawInput.trim();
 
@@ -92,19 +99,30 @@ router.post(
 
     try {
       const result = await buildPrompt(body, userId);
-      // The pipeline engine has no lock-layer/variable concept (that belonged to
-      // the retired lock-engine) — send safe empty defaults so the frontend's
-      // LockLayerPanel/VariablePanel (which assume these arrays always exist)
-      // don't crash on undefined.
+      // The pipeline engine has no lock-layer/variable concept of its own. For
+      // the image family, run the real content-aware lock-engine (same one
+      // /api/variables/expand uses) over the generated prompt text so the
+      // frontend's LockLayerPanel reflects what was actually built, instead of
+      // a category-generic template; other families still get safe empty
+      // defaults. finalAssembledText stays the plain prompt — the lock/negative
+      // text is rendered as its own panel, not appended into the copy text.
+      // body.input has Builder's enrichment hints folded in as a trailing
+      // "(style: ...; category: ...)" annotation (see normalizeBuildRequest) —
+      // strip it back off before using it as the lock-engine's subject-fallback
+      // title, or that annotation leaks into the Subject lock value verbatim.
+      const cleanTitle = body.input.replace(/\s*\([^()]*\)\s*$/, "").trim();
+      const assembled = body.mode === "image"
+        ? assembleFromText({ text: result.prompt, category: body.category ?? "", platform: result.metadata.platform, title: cleanTitle })
+        : null;
       return c.json({
         prompt: result.prompt,
         platform: result.metadata.platform,
         family: body.mode,
         tokensUsed: 0,
-        categoryId: null,
-        categoryLabel: null,
-        lockSection: [],
-        negativeLocks: [],
+        categoryId: assembled?.categoryId ?? null,
+        categoryLabel: assembled?.categoryLabel ?? null,
+        lockSection: assembled?.lockSection ?? [],
+        negativeLocks: assembled?.negativeLockSection ?? [],
         variables: [],
         validation: null,
         finalAssembledText: result.prompt,
@@ -112,40 +130,6 @@ router.post(
     } catch (err: any) {
       console.error("Builder error:", err?.message ?? err);
       return c.json({ error: err?.message ?? "AI generation failed. Please try again." }, 500);
-    }
-  }
-);
-
-// ─── POST /generate-all — all 6 platforms in one shot ─────────────────────────
-// Uses the PromptEngineBuilder pipeline: idea → SceneJSON → per-engine prompt.
-// Zero API calls, <10ms, replaces 6 parallel frontend requests.
-router.post(
-  "/generate-all",
-  optionalAuth,
-  engineRateLimit("build"),
-  async (c) => {
-    const body = await c.req.json<{
-      idea: string
-      style?: string
-      mood?: string
-    }>();
-
-    if (!body.idea?.trim()) {
-      return c.json({ error: "idea is required" }, 400);
-    }
-
-    try {
-      // Combine idea + optional style/mood hints into one idea string
-      const ideaParts = [body.idea.trim()]
-      if (body.style) ideaParts.push(body.style)
-      if (body.mood)  ideaParts.push(body.mood)
-      const fullIdea = ideaParts.join(", ")
-
-      const result = promptEngineBuilder.generateAllPrompts(fullIdea)
-      return c.json({ ok: true, data: result })
-    } catch (err: any) {
-      console.error("Generate-all error:", err?.message ?? err);
-      return c.json({ error: err?.message ?? "Generation failed" }, 500);
     }
   }
 );
