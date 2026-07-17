@@ -1,6 +1,6 @@
 import { db } from "../../db/client.js";
 import { improvedPrompts } from "../../db/schema.js";
-import { improveWithRules } from "../rule-engine/index.js";
+import { improveWithRules, parsePrompt } from "../rule-engine/index.js";
 import { improveGenericFallback } from "../rule-engine/generic-fallback.js";
 import { improveVideoFallback } from "../rule-engine/video-bridge.js";
 import { improveTextFallback } from "../rule-engine/text-bridge.js";
@@ -366,8 +366,15 @@ export async function improvePrompt(
     });
   } catch { /* non-fatal */ }
 
+  // The AI path has no rule-engine category classification of its own — unlike
+  // ruleEngineFallback above, which always sets one. Without this, every
+  // AI-improved image request would report category: null, silently breaking
+  // both the "detected category" UI badge and the image lock layer (which
+  // needs a category to look up its lock template).
+  const category = family === "image" ? parsePrompt(parsed.improved).detectedCategory : undefined;
+
   return toPublicResponse(
-    { improved: parsed.improved, changes: parsed.changes, platform: internal.platform, family, scoreBefore, scoreAfter, delta, tokensUsed },
+    { improved: parsed.improved, changes: parsed.changes, platform: internal.platform, family, scoreBefore, scoreAfter, delta, tokensUsed, category },
     request.prompt
   );
 }

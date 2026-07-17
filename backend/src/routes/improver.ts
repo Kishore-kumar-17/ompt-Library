@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { improvePrompt } from "../engine/modules/improver.js";
 import { optionalAuth, engineRateLimit } from "../middleware/rateLimit.js";
-import { computeImageLocks } from "./image-locks.js";
+import { assembleFromText } from "../engine/lock-engine/index.js";
 import type { ImprovePromptRequest } from "../engine/contracts.js";
 
 const router = new Hono();
@@ -40,12 +40,14 @@ router.post(
       const family = body.family ?? "image";
       // Same shape adaptation as routes/builder.ts: the frontend expects a
       // richer object (changes as {label, applied}, platform/family/tokensUsed,
-      // plus lock-layer fields the lock-engine used to produce for this flow
-      // before build/improve moved off it (it's still live for /api/variables,
-      // see routes/variables.ts) — than the frozen public contract returns.
-      // For images, compute real lock/negative-lock text additively from the
-      // detected/overridden category instead of leaving the panel empty.
-      const locks = family === "image" ? computeImageLocks(categoryId) : null;
+      // plus lock-layer fields) than the frozen public contract returns. For
+      // images, run the real content-aware lock-engine (same one
+      // /api/variables/expand uses) over the improved text so the lock panel
+      // reflects what was actually produced, instead of a category-generic
+      // template.
+      const assembled = family === "image"
+        ? assembleFromText({ text: result.improved, category: categoryId ?? "", platform: body.platform, title: body.prompt })
+        : null;
       return c.json({
         original: result.original,
         improved: result.improved,
@@ -55,8 +57,8 @@ router.post(
         tokensUsed: 0,
         categoryId,
         categoryLabel: categoryId ? (CATEGORY_LABELS[categoryId] ?? categoryId) : null,
-        lockSection: locks?.lockSection ?? [],
-        negativeLocks: locks?.negativeLocks ?? [],
+        lockSection: assembled?.lockSection ?? [],
+        negativeLocks: assembled?.negativeLockSection ?? [],
         variables: [],
         validation: null,
         finalAssembledText: result.improved,

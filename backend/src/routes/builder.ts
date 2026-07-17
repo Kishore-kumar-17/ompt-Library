@@ -4,7 +4,7 @@ import { promptEngineBuilder } from "../engine/engines/prompt-engine-builder.js"
 import { PLATFORM_KNOWLEDGE } from "../engine/rag/knowledge.js";
 import { getRAGFileList } from "../engine/rag/loader.js";
 import { optionalAuth, engineRateLimit } from "../middleware/rateLimit.js";
-import { computeImageLocks } from "./image-locks.js";
+import { assembleFromText } from "../engine/lock-engine/index.js";
 import type { BuildPromptRequest, PromptMode } from "../engine/contracts.js";
 
 const router = new Hono();
@@ -99,23 +99,30 @@ router.post(
 
     try {
       const result = await buildPrompt(body, userId);
-      // The pipeline engine has no lock-layer/variable concept (that belonged to
-      // the lock-engine, which build/improve no longer use — it's still live
-      // for /api/variables, see routes/variables.ts). For the image family,
-      // compute real lock/negative-lock text additively via computeImageLocks
-      // (uses the same rule-engine dictionaries the improve path already
-      // relies on) so the frontend's LockLayerPanel isn't empty; other
-      // families still get safe empty defaults.
-      const locks = body.mode === "image" ? computeImageLocks(body.category ?? null) : null;
+      // The pipeline engine has no lock-layer/variable concept of its own. For
+      // the image family, run the real content-aware lock-engine (same one
+      // /api/variables/expand uses) over the generated prompt text so the
+      // frontend's LockLayerPanel reflects what was actually built, instead of
+      // a category-generic template; other families still get safe empty
+      // defaults. finalAssembledText stays the plain prompt — the lock/negative
+      // text is rendered as its own panel, not appended into the copy text.
+      // body.input has Builder's enrichment hints folded in as a trailing
+      // "(style: ...; category: ...)" annotation (see normalizeBuildRequest) —
+      // strip it back off before using it as the lock-engine's subject-fallback
+      // title, or that annotation leaks into the Subject lock value verbatim.
+      const cleanTitle = body.input.replace(/\s*\([^()]*\)\s*$/, "").trim();
+      const assembled = body.mode === "image"
+        ? assembleFromText({ text: result.prompt, category: body.category ?? "", platform: result.metadata.platform, title: cleanTitle })
+        : null;
       return c.json({
         prompt: result.prompt,
         platform: result.metadata.platform,
         family: body.mode,
         tokensUsed: 0,
-        categoryId: null,
-        categoryLabel: null,
-        lockSection: locks?.lockSection ?? [],
-        negativeLocks: locks?.negativeLocks ?? [],
+        categoryId: assembled?.categoryId ?? null,
+        categoryLabel: assembled?.categoryLabel ?? null,
+        lockSection: assembled?.lockSection ?? [],
+        negativeLocks: assembled?.negativeLockSection ?? [],
         variables: [],
         validation: null,
         finalAssembledText: result.prompt,
