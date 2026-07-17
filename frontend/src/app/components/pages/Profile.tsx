@@ -28,14 +28,19 @@ export function Profile({ go }: { go: (p: string) => void }) {
     setStatsLoaded(false);
     setSubmissionsLoaded(false);
     if (!user) return;
+    // A slow response for a since-replaced user must not overwrite the
+    // next user's (or the reset) state — ignore it if this effect's user
+    // is no longer current by the time the request resolves.
+    let stale = false;
     profileApi.stats()
-      .then(setStats)
+      .then((s) => { if (!stale) setStats(s); })
       .catch(() => {/* backend not running - keep zeros */})
-      .finally(() => setStatsLoaded(true));
+      .finally(() => { if (!stale) setStatsLoaded(true); });
     submissionsApi.mine()
-      .then(setSubmissions)
-      .catch(() => setSubmissions([]))
-      .finally(() => setSubmissionsLoaded(true));
+      .then((s) => { if (!stale) setSubmissions(s); })
+      .catch(() => { if (!stale) setSubmissions([]); })
+      .finally(() => { if (!stale) setSubmissionsLoaded(true); });
+    return () => { stale = true; };
   }, [user]);
 
   const statCards = [

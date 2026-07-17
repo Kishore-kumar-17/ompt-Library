@@ -8,6 +8,12 @@ import { authStore, libraryApi, AUTH_CHANGED_EVENT } from "./api";
 // page shares one fetch instead of one each.
 let cache: Promise<Set<number>> | null = null;
 
+// Fired whenever invalidateSavedIds() runs, so every mounted useSavedIds()
+// instance re-fetches — not just the one that triggered the invalidation.
+// Without this, saving a prompt in one PromptCard left every other
+// already-mounted PromptCard for the same prompt showing the stale icon.
+const SAVED_IDS_CHANGED_EVENT = "pv-saved-ids-changed";
+
 function fetchSavedIds(): Promise<Set<number>> {
   if (!authStore.getUser()) return Promise.resolve(new Set());
   return libraryApi.savedIds().then((r) => new Set(r.ids)).catch(() => new Set<number>());
@@ -15,6 +21,7 @@ function fetchSavedIds(): Promise<Set<number>> {
 
 export function invalidateSavedIds(): void {
   cache = null;
+  window.dispatchEvent(new Event(SAVED_IDS_CHANGED_EVENT));
 }
 
 export function useSavedIds(): Set<number> {
@@ -28,9 +35,14 @@ export function useSavedIds(): Set<number> {
     };
     load();
 
-    const onAuthChange = () => { invalidateSavedIds(); load(); };
+    const onAuthChange = () => invalidateSavedIds();
     window.addEventListener(AUTH_CHANGED_EVENT, onAuthChange);
-    return () => { active = false; window.removeEventListener(AUTH_CHANGED_EVENT, onAuthChange); };
+    window.addEventListener(SAVED_IDS_CHANGED_EVENT, load);
+    return () => {
+      active = false;
+      window.removeEventListener(AUTH_CHANGED_EVENT, onAuthChange);
+      window.removeEventListener(SAVED_IDS_CHANGED_EVENT, load);
+    };
   }, []);
 
   return ids;

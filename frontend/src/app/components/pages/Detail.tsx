@@ -131,16 +131,21 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
 
   async function handleRegenerate() {
     if (!p || regenerating) return;
+    const requestedPlatform = platform;
     setRegenerating(true);
     try {
       const res = await variablesApi.expand({
         category: p.category ?? "",
-        platform,
+        platform: requestedPlatform,
         brief: vars,
         title: p.title,
       });
-      setRegenText(res.finalAssembledText);
-      toast.success("Regenerated with your values");
+      // The user may have switched platform tabs while this was in flight —
+      // a stale response for the old tab must not override the new tab's text.
+      if (requestedPlatform === platform) {
+        setRegenText(res.finalAssembledText);
+        toast.success("Regenerated with your values");
+      }
     } catch (e: any) {
       toast.error("Regeneration failed", { description: e?.message });
     } finally {
@@ -221,6 +226,7 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
 
   const handleSave = async () => {
     if (!authStore.getUser()) { toast.error("Sign in to save prompts"); return; }
+    if (saving) return;
     setSaving(true);
     try {
       const res = await libraryApi.save(p.id);
@@ -349,7 +355,8 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
             </span>
             <button
               onClick={handleSave}
-              className={`inline-flex items-center gap-1 transition-colors ${saved ? "text-[#0a0a0a]" : "hover:text-[#0a0a0a]"}`}
+              disabled={saving}
+              className={`inline-flex items-center gap-1 transition-colors disabled:cursor-not-allowed ${saved ? "text-[#0a0a0a]" : "hover:text-[#0a0a0a]"}`}
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Heart className={`w-4 h-4 ${saved ? "fill-[#4FC3F7]" : ""}`} />}
               {saved ? "Saved" : "Save"}
@@ -438,7 +445,8 @@ export function Detail({ id, go, defaultPlatform }: { id: string; go: (p: string
           </button>
           <button
             onClick={handleSave}
-            className={`w-full h-11 rounded-full border inline-flex items-center justify-center gap-2 transition-colors ${
+            disabled={saving}
+            className={`w-full h-11 rounded-full border inline-flex items-center justify-center gap-2 transition-colors disabled:cursor-not-allowed ${
               saved
                 ? "bg-[#4FC3F7]/10 border-[#4FC3F7]/30 text-[#0a0a0a]"
                 : "bg-[#0a0a0a]/5 border-[#0a0a0a]/20 text-[#0a0a0a] hover:bg-[#0a0a0a]/10"

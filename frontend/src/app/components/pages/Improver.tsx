@@ -68,6 +68,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
   useEffect(() => {
     setPlatform(getDefaultPlatform(family));
     setResult(null);
+    setError("");
     setCategoryOverride(null);
   }, [family]);
 
@@ -210,7 +211,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
               <button
                 key={pl.key}
                 disabled={loading}
-                onClick={() => { setPlatform(pl.key); setResult(null); }}
+                onClick={() => { setPlatform(pl.key); setResult(null); setError(""); }}
                 className={`px-3 py-1.5 rounded-full border text-[13px] transition-all disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4FC3F7] focus-visible:outline-offset-2 ${
                   platform === pl.key
                     ? "bg-[#4FC3F7] text-[#0a0a0a] border-[#4FC3F7]"

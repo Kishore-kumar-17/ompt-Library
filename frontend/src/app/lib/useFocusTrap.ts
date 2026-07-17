@@ -6,6 +6,12 @@ import { useEffect, useRef } from "react";
 export function useFocusTrap<T extends HTMLElement>(active: boolean, onEscape?: () => void) {
   const containerRef = useRef<T | null>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
+  // Keep the latest onEscape in a ref so the keydown listener (bound once
+  // per `active` toggle, not per render) never calls a stale closure —
+  // callers like AuthModal pass an inline `() => { if (!loading) onClose(); }`
+  // that changes every render as `loading` flips.
+  const onEscapeRef = useRef(onEscape);
+  onEscapeRef.current = onEscape;
 
   useEffect(() => {
     if (!active) return;
@@ -22,7 +28,7 @@ export function useFocusTrap<T extends HTMLElement>(active: boolean, onEscape?: 
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        onEscape?.();
+        onEscapeRef.current?.();
         return;
       }
       if (e.key !== "Tab") return;

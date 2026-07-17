@@ -12,6 +12,12 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState("");
 
+  // A previous run's error/typed values must not survive a close+reopen —
+  // otherwise a stale error banner sits above a form the user hasn't touched yet.
+  useEffect(() => {
+    if (open) { setName(""); setEmail(""); setPassword(""); setError(""); }
+  }, [open]);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && !loading) onClose(); };
