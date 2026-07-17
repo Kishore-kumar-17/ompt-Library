@@ -241,6 +241,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
     setError("");
     setHasGenerated(false);
     setAllPlatformResults({});
+    setShowAllPlatforms(false);
     setLockData(null);
     output.resetForNewRun();
 
@@ -831,6 +832,10 @@ export function Builder({ go }: { go: (p: string) => void }) {
                   {VIDEO_CATEGORIES.find(c => c.key === videoCategory)?.label}
                 </span>
               )}
+              {family === "image" && imgLighting && <span className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/15 text-[11px] text-[#0a0a0a]" style={{ fontWeight: 500 }}>{imgLighting}</span>}
+              {family === "image" && imgCamera   && <span className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/15 text-[11px] text-[#0a0a0a]" style={{ fontWeight: 500 }}>{imgCamera}</span>}
+              {family === "image" && imgSetting  && <span className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/15 text-[11px] text-[#0a0a0a]" style={{ fontWeight: 500 }}>{imgSetting}</span>}
+              {family === "image" && imgPalette  && <span className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/15 text-[11px] text-[#0a0a0a]" style={{ fontWeight: 500 }}>{imgPalette}</span>}
               {isWebsite && websitePalette && <span className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/15 text-[11px] text-[#0a0a0a]" style={{ fontWeight: 500 }}>{websitePalette}</span>}
               {isWebsite && websiteAudience && <span className="px-2 py-0.5 rounded-full bg-[#4FC3F7]/15 text-[11px] text-[#0a0a0a]" style={{ fontWeight: 500 }}>{websiteAudience}</span>}
               {isWebsite && websiteCategory && (

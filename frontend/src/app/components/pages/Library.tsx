@@ -14,7 +14,6 @@ import { videoPlatformVersions } from "../../lib/video-platforms";
 import { PromptCard } from "../PromptCard";
 import { WebsitePromptCard, WebsitePreviewModal } from "../WebsitePromptCard";
 import { websiteDesigns } from "../../lib/website-data";
-import { websitePlatformVersions } from "../../lib/website-platforms";
 import { useSavedIds, invalidateSavedIds } from "../../lib/savedIds";
 
 const PAGE_SIZE = 20;
@@ -80,6 +79,8 @@ function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
           <img
             src={p.image}
             alt={p.title}
+            loading="lazy"
+            decoding="async"
             className="w-full block transition-transform duration-700 ease-out group-hover:scale-[1.06]"
           />
         ) : (
@@ -184,11 +185,12 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
       .catch(() => setUseFallback(true));
   }, []);
 
-  // ── Reset filters when family changes ────────────────────────────────────
-  useEffect(() => {
-    if (searchTimer.current) clearTimeout(searchTimer.current);
-    setCat(null); setPlatform(null); setPage(1); setQuery(""); setInputVal("");
-  }, [family]);
+  // No "reset filters on family change" effect needed here — Library is
+  // remounted with key={route} on every navigation (App.tsx), including
+  // family changes, so useState's initial values already start fresh. An
+  // effect keyed on [family] would also fire once on the very first mount
+  // and wipe out the initialCategory-derived hashtag search before it's
+  // ever shown.
 
   // Cancel any pending debounced search on unmount.
   useEffect(() => () => { if (searchTimer.current) clearTimeout(searchTimer.current); }, []);
@@ -481,11 +483,6 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
                     key={d.id}
                     design={d}
                     onClick={() => go("website-detail:" + d.slug)}
-                    onCopy={() => {
-                      const prompt = websitePlatformVersions[d.slug]?.lovable ?? d.description;
-                      navigator.clipboard?.writeText(prompt);
-                      toast.success("Copied Lovable prompt", { description: "Open the design for other platform versions." });
-                    }}
                     onPreviewExpand={() => setExpandedSlug(d.slug)}
                   />
                 ))}

@@ -163,7 +163,13 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
               <button onClick={() => window.open(previewUrl, "_blank")} className="text-[#6b7280] hover:text-[#0a0a0a] p-0.5 rounded transition-colors" title="Open in new tab" aria-label="Open preview in new tab">
                 <ExternalLink className="w-3.5 h-3.5" />
               </button>
-              <button onClick={() => setFullscreen(true)} className="text-[#6b7280] hover:text-[#0a0a0a] p-0.5 rounded transition-colors" title="Expand fullscreen" aria-label="Expand preview fullscreen">
+              <button
+                onClick={() => iframeLoaded && !iframeError && setFullscreen(true)}
+                disabled={!iframeLoaded || iframeError}
+                className="text-[#6b7280] hover:text-[#0a0a0a] p-0.5 rounded transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                title="Expand fullscreen"
+                aria-label="Expand preview fullscreen"
+              >
                 <Maximize2 className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -306,6 +312,9 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
             <div className="mb-2">
               <span className="text-[11px] text-[#6b7280] uppercase font-bold tracking-widest">{activePl?.name} prompt</span>
             </div>
+            <button onClick={handleCopy} className="absolute top-3 right-3 p-1.5 rounded-lg bg-[#0a0a0a]/5 hover:bg-[#0a0a0a]/10 text-[#6b7280] hover:text-[#0a0a0a] transition-colors" title="Copy prompt">
+              <Copy className="w-4 h-4" />
+            </button>
             <pre className="whitespace-pre-wrap text-[#0a0a0a] font-mono text-[12px] leading-relaxed max-h-72 overflow-y-auto">{promptText}</pre>
           </div>
 
