@@ -349,6 +349,31 @@ export const improverApi = {
     }),
 };
 
+// ─── Admin ────────────────────────────────────────────────────────────────────
+
+export interface BulkImportColumnMap {
+  title: string;
+  family: string;
+  basePrompt: string;
+  categoryId?: string;
+  qualityScore?: string;
+}
+
+export interface BulkImportResult {
+  importId: string;
+  imported: number;
+  errors: { row: number; error: string }[];
+  truncated: boolean;
+}
+
+export const adminApi = {
+  bulkImport: (payload: { filename: string; columnMap: BulkImportColumnMap; rows: Record<string, string>[] }) =>
+    apiFetch<BulkImportResult>("/api/admin/import/start", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+};
+
 // ─── Variable layer — Regenerate with my values (Option B) ───────────────────
 
 export interface ExpandResult extends EngineLockFields {
