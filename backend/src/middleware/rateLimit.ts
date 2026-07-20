@@ -1,11 +1,12 @@
 import type { Context, Next } from "hono";
 import { jwtSecret } from "../lib/jwt.js";
 
-type EngineOperation = "build" | "improve" | "analyze" | "optimize" | "convert" | "explain" | "expand" | "libraryRead" | "submit";
+type EngineOperation = "build" | "improve" | "refine" | "analyze" | "optimize" | "convert" | "explain" | "expand" | "libraryRead" | "submit";
 
 const LIMITS: Record<EngineOperation, { auth: number; anon: number; windowMs: number }> = {
   build:       { auth: 20,  anon: 5,   windowMs: 60_000 },
   improve:     { auth: 20,  anon: 5,   windowMs: 60_000 },
+  refine:      { auth: 20,  anon: 5,   windowMs: 60_000 },
   analyze:     { auth: 50,  anon: 10,  windowMs: 60_000 },
   optimize:    { auth: 20,  anon: 5,   windowMs: 60_000 },
   convert:     { auth: 20,  anon: 5,   windowMs: 60_000 },

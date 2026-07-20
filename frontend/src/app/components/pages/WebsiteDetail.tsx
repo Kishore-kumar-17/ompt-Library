@@ -312,9 +312,6 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
             <div className="mb-2">
               <span className="text-[11px] text-[#6b7280] uppercase font-bold tracking-widest">{activePl?.name} prompt</span>
             </div>
-            <button onClick={handleCopy} className="absolute top-3 right-3 p-1.5 rounded-lg bg-[#0a0a0a]/5 hover:bg-[#0a0a0a]/10 text-[#6b7280] hover:text-[#0a0a0a] transition-colors" title="Copy prompt">
-              <Copy className="w-4 h-4" />
-            </button>
             <pre className="whitespace-pre-wrap text-[#0a0a0a] font-mono text-[12px] leading-relaxed max-h-72 overflow-y-auto">{promptText}</pre>
           </div>
 

@@ -5,9 +5,11 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { platforms, videoPlatforms, websitePlatforms } from "../theme";
-import { authStore, builderApi, variablesApi, type EngineLockFields, type BuilderResult } from "../../lib/api";
+import { authStore, builderApi, variablesApi, refineApi, type EngineLockFields, type BuilderResult, type RefineTurn, type PromptFormat } from "../../lib/api";
+import { buildClientJsonPrompt } from "../../lib/jsonPrompt";
 import { LockLayerPanel } from "../LockLayerPanel";
 import { VariablePanel } from "../VariablePanel";
+import { RefineChat } from "../RefineChat";
 import { highlight } from "../../lib/highlight";
 import { useEngineOutput } from "../../lib/useEngineOutput";
 
@@ -184,11 +186,28 @@ export function Builder({ go }: { go: (p: string) => void }) {
   const [lockData, setLockData]     = useState<EngineLockFields | null>(null);
   const [regenerating, setRegen]    = useState(false);
 
+  // Chat-driven refinement — an alternative to the blind "Regenerate" re-roll.
+  // Seeded with the freshly generated prompt as the first assistant turn.
+  const [refineChat, setRefineChat] = useState<RefineTurn[]>([]);
+  const [refining, setRefining]     = useState(false);
+
   const isWebsite = family === "website";
   const isVideo   = family === "video";
   const output = useEngineOutput(lockData, generated, { skipVariables: isWebsite });
   const { vars, setVars, regenText, setRegenText, variableFields, displayText: outputText } = output;
   useEffect(() => { setRegenText(null); }, [platform]);
+
+  // "JSON Prompting" — image family only. Derived from the same lock fields
+  // the Lock Layer panel shows, restructured as JSON instead of prose.
+  const [promptFormat, setPromptFormat] = useState<PromptFormat>("text");
+  useEffect(() => { setPromptFormat("text"); }, [family]);
+  const isJsonMode = family === "image" && promptFormat === "json";
+  const clientJsonPrompt = lockData
+    ? lockData.jsonPrompt ?? buildClientJsonPrompt(lockData.categoryLabel, lockData.lockSection, lockData.negativeLocks, platform)
+    : null;
+  const effectiveOutputText = isJsonMode && clientJsonPrompt
+    ? JSON.stringify(clientJsonPrompt, null, 2)
+    : outputText;
 
   // Reset website subcategory when category changes
   useEffect(() => { setWebsiteSubCategory(""); }, [websiteCategory]);
@@ -243,6 +262,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
     setAllPlatformResults({});
     setShowAllPlatforms(false);
     setLockData(null);
+    setRefineChat([]);
     output.resetForNewRun();
 
     try {
@@ -263,10 +283,12 @@ export function Builder({ go }: { go: (p: string) => void }) {
         lighting: family === "image" ? (imgLighting || undefined) : undefined,
         cameraAngle: family === "image" ? (imgCamera || undefined) : undefined,
         setting: family === "image" ? (imgSetting || undefined) : undefined,
+        promptFormat: family === "image" ? promptFormat : undefined,
       };
       const result = await builderApi.generate(payload);
       setGenerated(result.prompt);
       setLockData(result);
+      setRefineChat([{ role: "assistant", content: result.prompt }]);
       output.prefillFromResult(result);
       setHasGenerated(true);
     } catch (err: any) {
@@ -274,6 +296,41 @@ export function Builder({ go }: { go: (p: string) => void }) {
       toast.error("Generation failed", { description: err?.message });
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function handleRefineSend(instruction: string) {
+    if (refining || refineChat.length === 0) return;
+    const nextHistory: RefineTurn[] = [...refineChat, { role: "user", content: instruction }];
+    setRefineChat(nextHistory);
+    setRefining(true);
+    try {
+      const result = await refineApi.refine({
+        family,
+        platform,
+        category: isWebsite ? (websiteCategory || undefined) : isVideo ? (videoCategory || undefined) : (family === "image" ? category : undefined),
+        history: nextHistory,
+        promptFormat: family === "image" ? promptFormat : undefined,
+      });
+      setGenerated(result.revised);
+      setLockData((prev) => ({
+        categoryId: result.categoryId,
+        categoryLabel: result.categoryLabel,
+        lockSection: result.lockSection,
+        negativeLocks: result.negativeLocks,
+        variables: prev?.variables ?? [],
+        validation: prev?.validation ?? null,
+        finalAssembledText: result.revised,
+        jsonPrompt: result.jsonPrompt,
+      }));
+      setRefineChat([...nextHistory, { role: "assistant", content: result.revised }]);
+    } catch (err: any) {
+      toast.error("Refinement failed", { description: err?.message });
+      // Roll back the optimistic user turn so a failed attempt doesn't
+      // pollute the history sent on the next try.
+      setRefineChat(refineChat);
+    } finally {
+      setRefining(false);
     }
   }
 
@@ -306,6 +363,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
           lighting: family === "image" ? (imgLighting || undefined) : undefined,
           cameraAngle: family === "image" ? (imgCamera || undefined) : undefined,
           setting: family === "image" ? (imgSetting || undefined) : undefined,
+          promptFormat: family === "image" ? promptFormat : undefined,
         };
         const result = await builderApi.generate(payload);
         results[pl.key] = result.finalAssembledText || result.prompt;
@@ -324,10 +382,12 @@ export function Builder({ go }: { go: (p: string) => void }) {
     if (currentPlatformResult) {
       setGenerated(currentPlatformResult.prompt);
       setLockData(currentPlatformResult);
+      setRefineChat([{ role: "assistant", content: currentPlatformResult.prompt }]);
       output.prefillFromResult(currentPlatformResult);
     } else {
       setGenerated("");
       setLockData(null);
+      setRefineChat([]);
       setVars({});
     }
     setRegenText(null);
@@ -344,7 +404,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
 
   function handleCopy() {
     if (!generated) return;
-    navigator.clipboard?.writeText(outputText);
+    navigator.clipboard?.writeText(effectiveOutputText);
     setCopied(true);
     toast.success("Prompt copied");
     setTimeout(() => setCopied(false), 2000);
@@ -352,16 +412,16 @@ export function Builder({ go }: { go: (p: string) => void }) {
 
   function handleDownload() {
     if (!generated) return;
-    const blob = new Blob([outputText], { type: "text/markdown" });
+    const blob = new Blob([effectiveOutputText], { type: isJsonMode ? "application/json" : "text/markdown" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${family}-prompt-${platform}.md`;
+    a.download = `${family}-prompt-${platform}.${isJsonMode ? "json" : "md"}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast.success("Downloaded as .md file");
+    toast.success(isJsonMode ? "Downloaded as .json file" : "Downloaded as .md file");
   }
 
   // Count active enhancements
@@ -607,6 +667,30 @@ export function Builder({ go }: { go: (p: string) => void }) {
             </div>
           </div>
 
+          {/* Prompt format — Zero-shot text vs JSON prompting (image only) */}
+          {family === "image" && (
+            <div>
+              <div className="text-[13px] text-[#6b7280] mb-2">Prompt Format</div>
+              <div className="inline-flex rounded-xl border border-[#0a0a0a]/15 p-1 bg-white">
+                {(["text", "json"] as PromptFormat[]).map((fmt) => (
+                  <button
+                    key={fmt}
+                    disabled={isLoading}
+                    onClick={() => setPromptFormat(fmt)}
+                    className={`px-3.5 py-1.5 rounded-lg text-[12px] transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                      promptFormat === fmt
+                        ? "bg-[#4FC3F7] text-[#0a0a0a]"
+                        : "text-[#6b7280] hover:text-[#0a0a0a]"
+                    }`}
+                    style={promptFormat === fmt ? { fontWeight: 600 } : {}}
+                  >
+                    {fmt === "text" ? "Text (Zero-shot)" : "JSON"}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Enhancements - collapsed by default */}
           <div className="bg-white border border-[#0a0a0a]/10 rounded-2xl overflow-hidden">
             <button
@@ -757,7 +841,9 @@ export function Builder({ go }: { go: (p: string) => void }) {
                 </div>
               ) : hasGenerated ? (
                 <pre className="whitespace-pre-wrap break-words font-mono text-[13px] leading-relaxed text-[#0a0a0a]">
-                  {!isWebsite && variableFields.length > 0 ? highlight(outputText, variableFields.map(v => v.name)) : outputText}
+                  {!isJsonMode && !isWebsite && variableFields.length > 0
+                    ? highlight(outputText, variableFields.map(v => v.name))
+                    : effectiveOutputText}
                 </pre>
               ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center px-6">
@@ -816,6 +902,11 @@ export function Builder({ go }: { go: (p: string) => void }) {
               onRegenerate={handleRegenerate}
               regenerating={regenerating}
             />
+          )}
+
+          {/* Chat-driven refinement */}
+          {hasGenerated && !showAllPlatforms && refineChat.length > 0 && (
+            <RefineChat history={refineChat} onSend={handleRefineSend} sending={refining} />
           )}
 
           {/* Active tags */}
@@ -896,12 +987,12 @@ export function Builder({ go }: { go: (p: string) => void }) {
             ) : (
               <>
                 <button
-                  onClick={handleRegenerate}
+                  onClick={() => { if (variableFields.length > 0) handleRegenerate(); else handleGenerate(); }}
                   disabled={!hasGenerated || isLoading || regenerating}
                   className="h-11 rounded-xl border border-[#0a0a0a]/15 text-[#0a0a0a] text-[13px] flex items-center justify-center gap-2 hover:bg-[#0a0a0a]/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                   style={{ fontWeight: 600 }}
                 >
-                  <RefreshCw className={`w-4 h-4 ${regenerating ? "animate-spin" : ""}`} />
+                  <RefreshCw className={`w-4 h-4 ${regenerating || isLoading ? "animate-spin" : ""}`} />
                   {regenerating ? "Regenerating..." : "Regenerate"}
                 </button>
 

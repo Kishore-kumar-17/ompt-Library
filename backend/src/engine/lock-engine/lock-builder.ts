@@ -21,6 +21,17 @@ function fallbackValue(key: string): string | null {
   }
 }
 
+// A "required" lock exists to tell the user this dimension matters for
+// consistency — silently omitting it when the parser can't find a value
+// breaks that contract more than showing an honest "not specified" line
+// does. Field-specific fallbacks (above) win when one exists; this generic
+// one is the backstop for every other required field (lighting, composition,
+// background, etc. across the other 6 categories) so a mandatory lock never
+// just vanishes because the AI phrased something in a way no pattern caught.
+function genericFallback(label: string): string {
+  return `${label} not explicitly specified in the generated prompt — keep consistent with the reference intent.`;
+}
+
 function toItem(
   key: string,
   label: string,
@@ -39,8 +50,7 @@ function toItem(
 
   if (!required) return null;
 
-  const fallback = fallbackValue(key);
-  if (!fallback) return null;
+  const fallback = fallbackValue(key) ?? genericFallback(label);
 
   return {
     key,

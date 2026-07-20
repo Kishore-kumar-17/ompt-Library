@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { Wand2, Copy, Check, RefreshCw, ArrowLeft, Image, Video, FileText, PenTool, Globe, Save } from "lucide-react";
 import { toast } from "sonner";
 import { platforms, videoPlatforms, websitePlatforms } from "../theme";
-import { improverApi, variablesApi, authStore, type ImproverResult } from "../../lib/api";
+import { improverApi, variablesApi, refineApi, authStore, type ImproverResult, type RefineTurn, type PromptFormat } from "../../lib/api";
+import { buildClientJsonPrompt } from "../../lib/jsonPrompt";
 import { LockLayerPanel } from "../LockLayerPanel";
 import { VariablePanel } from "../VariablePanel";
+import { RefineChat } from "../RefineChat";
 import { highlight } from "../../lib/highlight";
 import { useEngineOutput } from "../../lib/useEngineOutput";
 
@@ -64,12 +66,30 @@ export function Improver({ go }: { go: (p: string) => void }) {
   const [categoryOverride, setCategoryOverride] = useState<string | null>(null);
   useEffect(() => { setRegenText(null); }, [platform]);
 
+  // Chat-driven refinement — an alternative to the blind "Regenerate" re-roll.
+  // Seeded with the freshly improved prompt as the first assistant turn.
+  const [refineChat, setRefineChat] = useState<RefineTurn[]>([]);
+  const [refining, setRefining]     = useState(false);
+
+  // "JSON Prompting" — image family only. Derived from the same lock fields
+  // the Lock Layer panel shows, restructured as JSON instead of prose.
+  const [promptFormat, setPromptFormat] = useState<PromptFormat>("text");
+  const isJsonMode = family === "image" && promptFormat === "json";
+  const clientJsonPrompt = result
+    ? result.jsonPrompt ?? buildClientJsonPrompt(result.categoryLabel, result.lockSection, result.negativeLocks, platform)
+    : null;
+  const effectiveDisplayText = isJsonMode && clientJsonPrompt
+    ? JSON.stringify(clientJsonPrompt, null, 2)
+    : displayText;
+
   // Reset platform when family changes
   useEffect(() => {
     setPlatform(getDefaultPlatform(family));
     setResult(null);
     setError("");
     setCategoryOverride(null);
+    setRefineChat([]);
+    setPromptFormat("text");
   }, [family]);
 
   const activePlatforms = getPlatformsForFamily(family);
@@ -97,14 +117,47 @@ export function Improver({ go }: { go: (p: string) => void }) {
 
     try {
       const category = overrideCategory ?? categoryOverride ?? undefined;
-      const res = await improverApi.improve({ prompt: input, platform, family, category });
+      const res = await improverApi.improve({ prompt: input, platform, family, category, promptFormat: family === "image" ? promptFormat : undefined });
       setResult(res);
+      setRefineChat([{ role: "assistant", content: res.improved }]);
       output.prefillFromResult(res);
     } catch (err: any) {
       setError(err?.message ?? "Improvement failed");
       toast.error("Improvement failed", { description: err?.message });
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleRefineSend(instruction: string) {
+    if (refining || refineChat.length === 0 || !result) return;
+    const nextHistory: RefineTurn[] = [...refineChat, { role: "user", content: instruction }];
+    setRefineChat(nextHistory);
+    setRefining(true);
+    try {
+      const res = await refineApi.refine({
+        family,
+        platform,
+        category: result.categoryId ?? undefined,
+        history: nextHistory,
+        promptFormat: family === "image" ? promptFormat : undefined,
+      });
+      setResult({
+        ...result,
+        improved: res.revised,
+        categoryId: res.categoryId,
+        categoryLabel: res.categoryLabel,
+        lockSection: res.lockSection,
+        negativeLocks: res.negativeLocks,
+        finalAssembledText: res.revised,
+        jsonPrompt: res.jsonPrompt,
+      });
+      setRefineChat([...nextHistory, { role: "assistant", content: res.revised }]);
+    } catch (err: any) {
+      toast.error("Refinement failed", { description: err?.message });
+      setRefineChat(refineChat);
+    } finally {
+      setRefining(false);
     }
   }
 
@@ -116,7 +169,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
 
   function handleCopy() {
     if (!result?.improved) return;
-    navigator.clipboard?.writeText(displayText);
+    navigator.clipboard?.writeText(effectiveDisplayText);
     setCopied(true);
     toast.success("Prompt copied");
     setTimeout(() => setCopied(false), 2000);
@@ -258,6 +311,30 @@ export function Improver({ go }: { go: (p: string) => void }) {
             </div>
           )}
 
+          {/* Prompt format — Zero-shot text vs JSON prompting (image only) */}
+          {family === "image" && (
+            <div className="mb-3">
+              <div className="text-[11px] text-[#6b7280] mb-1.5">Prompt Format</div>
+              <div className="inline-flex rounded-xl border border-[#0a0a0a]/15 p-1 bg-white">
+                {(["text", "json"] as PromptFormat[]).map((fmt) => (
+                  <button
+                    key={fmt}
+                    disabled={loading}
+                    onClick={() => setPromptFormat(fmt)}
+                    className={`px-3.5 py-1.5 rounded-lg text-[12px] transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                      promptFormat === fmt
+                        ? "bg-[#4FC3F7] text-[#0a0a0a]"
+                        : "text-[#6b7280] hover:text-[#0a0a0a]"
+                    }`}
+                    style={promptFormat === fmt ? { fontWeight: 600 } : {}}
+                  >
+                    {fmt === "text" ? "Text (Zero-shot)" : "JSON"}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Error */}
           {error && (
             <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-[13px] text-red-600 mb-3">
@@ -279,7 +356,9 @@ export function Improver({ go }: { go: (p: string) => void }) {
               </div>
             ) : result ? (
               <pre className="whitespace-pre-wrap break-words text-[#0a0a0a] font-mono text-[13px] leading-relaxed">
-                {variableFields.length > 0 ? highlight(displayText, variableFields.map(v => v.name)) : displayText}
+                {!isJsonMode && variableFields.length > 0
+                  ? highlight(displayText, variableFields.map(v => v.name))
+                  : effectiveDisplayText}
               </pre>
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
@@ -352,6 +431,13 @@ export function Improver({ go }: { go: (p: string) => void }) {
             onRegenerate={handleRegenerate}
             regenerating={regenerating}
           />
+        </div>
+      )}
+
+      {/* Chat-driven refinement */}
+      {refineChat.length > 0 && (
+        <div className="mt-6">
+          <RefineChat history={refineChat} onSend={handleRefineSend} sending={refining} />
         </div>
       )}
 

@@ -288,7 +288,13 @@ export interface EngineLockFields {
   // Full canonical output: descriptive prompt + LOCK LAYER + NEGATIVE LOCKS.
   // Falls back to the plain prompt for non-image families.
   finalAssembledText: string;
+  // "JSON Prompting" — the same lock fields restructured as a JSON object
+  // instead of prose. Only populated when promptFormat: "json" was requested
+  // (image family only); null otherwise.
+  jsonPrompt?: Record<string, unknown> | null;
 }
+
+export type PromptFormat = "text" | "json";
 
 // ─── Builder ─────────────────────────────────────────────────────────────────
 
@@ -319,6 +325,7 @@ export const builderApi = {
     lighting?: string;
     cameraAngle?: string;
     setting?: string;
+    promptFormat?: PromptFormat;
   }) =>
     apiFetch<BuilderResult>("/api/builder/generate", {
       method: "POST",
@@ -342,7 +349,7 @@ export interface ImproverResult extends EngineLockFields {
 }
 
 export const improverApi = {
-  improve: (payload: { prompt: string; platform: string; family?: string; category?: string }) =>
+  improve: (payload: { prompt: string; platform: string; family?: string; category?: string; promptFormat?: PromptFormat }) =>
     apiFetch<ImproverResult>("/api/improver/improve", {
       method: "POST",
       body: JSON.stringify(payload),
@@ -386,6 +393,31 @@ export interface ExpandResult extends EngineLockFields {
 export const variablesApi = {
   expand: (payload: { category: string; platform: string; brief: Record<string, string>; title?: string }) =>
     apiFetch<ExpandResult>("/api/variables/expand", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+};
+
+// ─── Refine — chat-driven revision of a generated/improved prompt ────────────
+
+export interface RefineTurn {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface RefineResult {
+  revised: string;
+  categoryId: string | null;
+  categoryLabel: string | null;
+  lockSection: LockSectionItem[];
+  negativeLocks: string[];
+  tokensUsed: number;
+  jsonPrompt?: Record<string, unknown> | null;
+}
+
+export const refineApi = {
+  refine: (payload: { family: string; platform: string; category?: string; history: RefineTurn[]; promptFormat?: PromptFormat }) =>
+    apiFetch<RefineResult>("/api/refine", {
       method: "POST",
       body: JSON.stringify(payload),
     }),
