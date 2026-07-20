@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { improvePrompt } from "../engine/modules/improver.js";
 import { optionalAuth, engineRateLimit } from "../middleware/rateLimit.js";
 import { assembleFromText } from "../engine/lock-engine/index.js";
+import { buildJsonPrompt } from "../engine/lock-engine/json-prompt.js";
 import type { ImprovePromptRequest } from "../engine/contracts.js";
 
 const router = new Hono();
@@ -22,7 +23,7 @@ router.post(
   optionalAuth,
   engineRateLimit("improve"),
   async (c) => {
-    const body = await c.req.json<ImprovePromptRequest>();
+    const body = await c.req.json<ImprovePromptRequest & { promptFormat?: "text" | "json" }>();
 
     if (!body.prompt?.trim()) {
       return c.json({ error: "prompt is required" }, 400);
@@ -48,6 +49,9 @@ router.post(
       const assembled = family === "image"
         ? assembleFromText({ text: result.improved, category: categoryId ?? "", platform: body.platform, title: body.prompt })
         : null;
+      const jsonPrompt = assembled && body.promptFormat === "json"
+        ? buildJsonPrompt(assembled, body.platform)
+        : null;
       return c.json({
         original: result.original,
         improved: result.improved,
@@ -62,6 +66,7 @@ router.post(
         variables: [],
         validation: null,
         finalAssembledText: result.improved,
+        jsonPrompt,
       });
     } catch (err: any) {
       console.error("Improver error:", err?.message ?? err);

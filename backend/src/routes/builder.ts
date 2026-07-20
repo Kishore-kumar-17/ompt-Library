@@ -5,6 +5,7 @@ import { PLATFORM_KNOWLEDGE } from "../engine/rag/knowledge.js";
 import { getRAGFileList } from "../engine/rag/loader.js";
 import { optionalAuth, engineRateLimit } from "../middleware/rateLimit.js";
 import { assembleFromText } from "../engine/lock-engine/index.js";
+import { buildJsonPrompt } from "../engine/lock-engine/json-prompt.js";
 import type { BuildPromptRequest, PromptMode } from "../engine/contracts.js";
 
 const router = new Hono();
@@ -35,6 +36,10 @@ interface FrontendBuildPayload {
   cameraAngle?: string;
   setting?: string;
   options?: BuildPromptRequest["options"];
+  // "JSON Prompting" — restructures the same extracted lock fields as a
+  // structured object instead of prose. Image family only (see promptFormat
+  // handling in the /generate handler below).
+  promptFormat?: "text" | "json";
 }
 
 const VALID_MODES: PromptMode[] = ["image", "video", "text", "code", "website"];
@@ -114,6 +119,9 @@ router.post(
       const assembled = body.mode === "image"
         ? assembleFromText({ text: result.prompt, category: body.category ?? "", platform: result.metadata.platform, title: cleanTitle })
         : null;
+      const jsonPrompt = assembled && rawBody.promptFormat === "json"
+        ? buildJsonPrompt(assembled, result.metadata.platform)
+        : null;
       return c.json({
         prompt: result.prompt,
         platform: result.metadata.platform,
@@ -126,6 +134,7 @@ router.post(
         variables: [],
         validation: null,
         finalAssembledText: result.prompt,
+        jsonPrompt,
       });
     } catch (err: any) {
       console.error("Builder error:", err?.message ?? err);

@@ -2,7 +2,9 @@ import type { ExtractedPromptFields, PromptRecord } from "./types.js";
 
 const EXPRESSION_PATTERNS: Array<[RegExp, string]> = [
   [/\b(confident|confidence)\b/i, "Confident"],
-  [/\b(focused|focus)\b/i, "Focused"],
+  // "focused" (adjective, facial expression) only — bare "focus" is usually a
+  // camera/composition term ("soft focus", "shallow focus"), not an emotion.
+  [/\bfocused\b/i, "Focused"],
   [/\b(serene|calm)\b/i, "Calm"],
   [/\b(smile|smiling|soft smile|half-smile)\b/i, "Soft smile"],
   [/\b(intense|dramatic)\b/i, "Intense"],
@@ -111,12 +113,79 @@ function compactWhitespace(value: string): string {
   return value.replace(/\s+/g, " ").trim();
 }
 
+const CLAUSE_MIN_LEN = 10;
+const CLAUSE_MAX_LEN = 160;
+
+// A matched keyword (e.g. "moody") on its own only tells us the canned label
+// ("Moody portrait light") — the real detail the AI actually wrote ("soft
+// directional moody light falling across the left side of the face") lives in
+// the comma/period-delimited clause around it. Widen out to that clause and
+// use it in place of the canned label whenever it's genuinely more
+// descriptive than the label alone.
+function extractMatchClause(source: string, matchIndex: number, matchLen: number): string | undefined {
+  const isBoundary = (ch: string | undefined) => ch === undefined || /[,.;\n]/.test(ch);
+  let start = matchIndex;
+  while (start > 0 && !isBoundary(source[start - 1])) start--;
+  let end = matchIndex + matchLen;
+  while (end < source.length && !isBoundary(source[end])) end++;
+
+  const clause = compactWhitespace(source.slice(start, end)).replace(/^(?:and|with|featuring|including)\s+/i, "");
+  if (clause.length < CLAUSE_MIN_LEN || clause.length > CLAUSE_MAX_LEN) return undefined;
+  return clause;
+}
+
+// A clause only replaces the canned label when it's SUBSTANTIALLY more
+// descriptive — not just a few characters longer. A short incidental match
+// (e.g. "vibrant" inside "a vibrant park", nothing to do with the actual
+// color palette) can otherwise out-rank a correct canned label by a handful
+// of characters and attach unrelated sentence text to the wrong lock field.
+function isRicherThanLabel(clause: string, label: string): boolean {
+  if (clause.toLowerCase() === label.toLowerCase()) return false;
+  return clause.length >= Math.max(label.length * 2, label.length + 20);
+}
+
+// A keyword can appear more than once (e.g. "moody meadow" AND "moody light" in
+// the same prompt) with only one occurrence actually carrying the descriptive
+// detail — scan every occurrence of the matching pattern and keep the richest
+// clause rather than settling for whichever comes first in the text.
+function bestClauseForPattern(source: string, pattern: RegExp): string | undefined {
+  const flags = pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`;
+  const global = new RegExp(pattern.source, flags);
+  let match: RegExpExecArray | null;
+  let best: string | undefined;
+  while ((match = global.exec(source)) !== null) {
+    const clause = extractMatchClause(source, match.index, match[0].length);
+    if (clause && (!best || clause.length > best.length)) best = clause;
+    if (match[0].length === 0) global.lastIndex++;
+  }
+  return best;
+}
+
 function firstMatch(source: string, patterns: Array<[RegExp, string]>): string | undefined {
-  for (const [pattern, value] of patterns) {
-    if (pattern.test(source)) return value;
+  for (const [pattern, label] of patterns) {
+    if (!pattern.test(source)) continue;
+    const clause = bestClauseForPattern(source, pattern);
+    if (clause && isRicherThanLabel(clause, label)) return clause;
+    return label;
   }
   return undefined;
 }
+
+// Last-resort extraction when NONE of a field's curated phrase patterns hit —
+// e.g. the AI wrote "soft diffused lighting", and no LIGHTING_PATTERNS entry
+// covers "diffused". Rather than the field silently going missing, search for
+// the field's generic domain word (any mention of "light"/"lighting") and
+// capture the real clause around it. Curated patterns are tried first because
+// they're more precise; this only fires when they all miss.
+function anchorClause(source: string, anchor: RegExp): string | undefined {
+  if (!anchor.test(source)) return undefined;
+  return bestClauseForPattern(source, anchor);
+}
+
+const LIGHTING_ANCHOR = /\blight(?:ing)?\b/i;
+const COMPOSITION_ANCHOR = /\b(?:composition|framing|frame|shot|crop|angle)\b/i;
+const BACKGROUND_ANCHOR = /\b(?:background|backdrop|setting|environment|surroundings|scene|behind (?:her|him|them))\b/i;
+const PALETTE_ANCHOR = /\b(?:palette|colou?rs?|tones?)\b/i;
 
 function extractAfterLabel(source: string, label: string): string | undefined {
   const pattern = new RegExp(`${label}:\\s*([^\\.\\n]+)`, "i");
@@ -147,9 +216,10 @@ function extractBackground(source: string): string | undefined {
   if (/\bseamless\b/i.test(source)) return "Seamless backdrop";
   if (/\bgradient\b/i.test(source)) return "Gradient background";
   if (/\bstudio\b/i.test(source)) return "Studio background";
-  // any explicit mention of a background still counts as a defined backdrop lock
-  if (/\b(?:background|backdrop)\b/i.test(source)) return "Defined background";
-  return undefined;
+  // Last resort: any mention of background/backdrop/setting/environment/scene
+  // that the specific patterns above missed — capture the real surrounding
+  // clause instead of a generic "Defined background" placeholder.
+  return anchorClause(source, BACKGROUND_ANCHOR);
 }
 
 function extractSubject(source: string, fallbackTitle: string): string {
@@ -167,29 +237,33 @@ function extractSubject(source: string, fallbackTitle: string): string {
   return normalizedTitle || fallbackTitle;
 }
 
+const POSE_PATTERNS: Array<[RegExp, string]> = [
+  [/\bhands casually in pockets\b/i, "Relaxed half-turn with hands in pockets"],
+  [/\bhands resting on stainless counter\b/i, "Standing portrait with hands resting on counter"],
+  [/\bdual-monitor workstation\b/i, "Seated workstation portrait"],
+  [/\bhalf-turn\b/i, "Relaxed half-turn portrait"],
+  [/\b(?:shoulders-up|head[- ]and[- ]shoulders|bust[- ]crop)\b/i, "Upright head-and-shoulders pose"],
+  [/\bthree-quarter\b/i, "Three-quarter pose"],
+  [/\bhead tilt\b/i, "Slight head-tilt pose"],
+  [/\bstanding\b.*\bportrait\b/i, "Standing portrait"],
+  [/\bseated\b/i, "Seated pose"],
+  [/\bstanding\b/i, "Standing pose"],
+];
+
 function extractPose(source: string): string | undefined {
-  if (/\bhands casually in pockets\b/i.test(source)) return "Relaxed half-turn with hands in pockets";
-  if (/\bhands resting on stainless counter\b/i.test(source)) return "Standing portrait with hands resting on counter";
-  if (/\bdual-monitor workstation\b/i.test(source)) return "Seated workstation portrait";
-  if (/\bstanding\b/i.test(source) && /\bportrait\b/i.test(source)) return "Standing portrait";
-  if (/\bhalf-turn\b/i.test(source)) return "Relaxed half-turn portrait";
-  if (/\b(?:shoulders-up|head[- ]and[- ]shoulders|bust[- ]crop)\b/i.test(source)) return "Upright head-and-shoulders pose";
-  if (/\bthree-quarter\b/i.test(source)) return "Three-quarter pose";
-  if (/\bseated\b/i.test(source)) return "Seated pose";
-  if (/\bstanding\b/i.test(source)) return "Standing pose";
-  if (/\bhead tilt\b/i.test(source)) return "Slight head-tilt pose";
-  return undefined;
+  return firstMatch(source, POSE_PATTERNS);
 }
 
+const HAND_POSITION_PATTERNS: Array<[RegExp, string]> = [
+  [/\bhands casually in pockets\b/i, "Hands in pockets"],
+  [/\bhands resting on stainless counter\b/i, "Hands resting on counter"],
+  [/\bhands on keyboard\b/i, "Hands on keyboard"],
+];
+
 function extractHandPosition(source: string): string | undefined {
-  if (/\bhands casually in pockets\b/i.test(source)) return "Hands in pockets";
-  if (/\bhands resting on stainless counter\b/i.test(source)) return "Hands resting on counter";
-  if (/\bhands on keyboard\b/i.test(source)) return "Hands on keyboard";
-  if (/\bholding\b/i.test(source)) {
-    const holding = source.match(/\bholding ([^,\.]+)/i)?.[1];
-    if (holding) return `Holding ${compactWhitespace(holding)}`;
-  }
-  return undefined;
+  const holding = source.match(/\bholding ([^,\.]+)/i)?.[1];
+  if (holding) return `Holding ${compactWhitespace(holding)}`;
+  return firstMatch(source, HAND_POSITION_PATTERNS);
 }
 
 function extractCrop(source: string): string | undefined {
@@ -243,7 +317,8 @@ function extractComposition(source: string): string | undefined {
 
   return firstMatch(source, COMPOSITION_PATTERNS)
     ?? (/\bcentered hero vertical\b/i.test(source) ? "Centered vertical portrait" : undefined)
-    ?? (/\bhero vertical\b/i.test(source) ? "Vertical portrait composition" : undefined);
+    ?? (/\bhero vertical\b/i.test(source) ? "Vertical portrait composition" : undefined)
+    ?? anchorClause(source, COMPOSITION_ANCHOR);
 }
 
 export function parsePeoplePortraitPrompt(
@@ -263,7 +338,7 @@ export function parsePeoplePortraitPrompt(
     composition: extractComposition(source),
     crop: extractCrop(source),
     cameraAngle: extractCameraAngle(source),
-    lighting: firstMatch(source, LIGHTING_PATTERNS),
+    lighting: firstMatch(source, LIGHTING_PATTERNS) ?? anchorClause(source, LIGHTING_ANCHOR),
     styleDna: firstMatch(source, STYLE_PATTERNS) ?? extractLeadingDescriptor(source),
     material: /skin physics|skin:/i.test(source) ? "Realistic skin and material behavior" : undefined,
     surface: /visible pores|micro-textures|paper grain|fabric/i.test(source)
@@ -368,7 +443,8 @@ function extractProductBackground(source: string): string | undefined {
     ?? (() => {
       const m = source.match(/\b([a-z][\w-]*(?: [\w-]+){0,2}) (?:background|backdrop)\b/i)?.[1];
       return m ? `${compactWhitespace(m)} background` : undefined;
-    })();
+    })()
+    ?? anchorClause(source, BACKGROUND_ANCHOR);
 }
 
 function extractProduct(source: string, fallbackTitle: string): string {
@@ -398,7 +474,7 @@ export function parseProductEcommercePrompt(
     scale: firstMatch(source, SCALE_PATTERNS),
     productPosition: firstMatch(source, POSITION_PATTERNS),
     productVisibility: firstMatch(source, VISIBILITY_PATTERNS),
-    composition: firstMatch(source, PRODUCT_COMPOSITION_PATTERNS),
+    composition: firstMatch(source, PRODUCT_COMPOSITION_PATTERNS) ?? anchorClause(source, COMPOSITION_ANCHOR),
     background: extractProductBackground(source),
     lighting: extractGenericLighting(source),
     material: firstMatch(source, MATERIAL_PATTERNS),
@@ -533,7 +609,8 @@ function extractFashionBackground(source: string): string | undefined {
     ?? (/\brunway\b/i.test(source) ? "Runway" : undefined)
     ?? (/\bstreet\b/i.test(source) ? "Street setting" : undefined)
     ?? (/\brooftop\b/i.test(source) ? "Rooftop setting" : undefined)
-    ?? (/\bstudio\b/i.test(source) ? "Studio backdrop" : undefined);
+    ?? (/\bstudio\b/i.test(source) ? "Studio backdrop" : undefined)
+    ?? anchorClause(source, BACKGROUND_ANCHOR);
 }
 
 function extractGarment(source: string, fallbackTitle: string): string {
@@ -563,7 +640,7 @@ export function parseFashionApparelPrompt(
     garmentFit: firstMatch(source, FIT_PATTERNS),
     pose: firstMatch(source, FASHION_POSE_PATTERNS),
     handPosition: extractFashionHand(source),
-    composition: firstMatch(source, FASHION_COMPOSITION_PATTERNS),
+    composition: firstMatch(source, FASHION_COMPOSITION_PATTERNS) ?? anchorClause(source, COMPOSITION_ANCHOR),
     lighting: firstMatch(source, FASHION_LIGHTING_PATTERNS) ?? extractGenericLighting(source),
     material: firstMatch(source, FABRIC_PATTERNS),
     styleDna: firstMatch(source, FASHION_STYLE_PATTERNS) ?? extractLeadingDescriptor(source),
@@ -578,7 +655,9 @@ export function parseFashionApparelPrompt(
 // ─── Shared lighting + brand colors (marketing / art / trending / social) ──────
 
 function extractGenericLighting(source: string): string | undefined {
-  return firstMatch(source, PRODUCT_LIGHTING_PATTERNS) ?? firstMatch(source, LIGHTING_PATTERNS);
+  return firstMatch(source, PRODUCT_LIGHTING_PATTERNS)
+    ?? firstMatch(source, LIGHTING_PATTERNS)
+    ?? anchorClause(source, LIGHTING_ANCHOR);
 }
 
 function extractBrandColors(source: string): string | undefined {
@@ -631,7 +710,7 @@ export function parseMarketingAdsPrompt(
     product: extractAfterLabel(source, "Product") ?? extractAfterLabel(source, "Subject"),
     action: extractAction(source),
     expression: firstMatch(source, EXPRESSION_PATTERNS),
-    composition: firstMatch(source, MARKETING_COMPOSITION_PATTERNS),
+    composition: firstMatch(source, MARKETING_COMPOSITION_PATTERNS) ?? anchorClause(source, COMPOSITION_ANCHOR),
     ctaSpace: extractCtaSpace(source),
     brandColors: extractBrandColors(source),
     lighting: extractGenericLighting(source),
@@ -717,7 +796,8 @@ function extractArtBackground(source: string): string | undefined {
     ?? (/\bsky\b/i.test(source) ? "Sky" : undefined)
     ?? (/\b(?:ocean|sea)\b/i.test(source) ? "Ocean" : undefined)
     ?? (/\bmountains?\b/i.test(source) ? "Mountains" : undefined)
-    ?? (/\b(?:void|plain background)\b/i.test(source) ? "Plain background" : undefined);
+    ?? (/\b(?:void|plain background)\b/i.test(source) ? "Plain background" : undefined)
+    ?? anchorClause(source, BACKGROUND_ANCHOR);
 }
 
 export function parseArtIllustrationPrompt(
@@ -737,11 +817,12 @@ export function parseArtIllustrationPrompt(
     palette:
       extractAfterLabel(source, "Palette")
       ?? firstMatch(source, ART_PALETTE_PATTERNS)
-      ?? (/#[0-9a-f]{6}/i.test(source) ? "Defined hex palette" : undefined),
+      ?? (/#[0-9a-f]{6}/i.test(source) ? "Defined hex palette" : undefined)
+      ?? anchorClause(source, PALETTE_ANCHOR),
     lighting: extractGenericLighting(source) ?? (/\bglow\b/i.test(source) ? "Soft glow" : undefined),
     renderingStyle: firstMatch(source, RENDERING_PATTERNS),
     background: extractArtBackground(source),
-    composition: firstMatch(source, ART_COMPOSITION_PATTERNS),
+    composition: firstMatch(source, ART_COMPOSITION_PATTERNS) ?? anchorClause(source, COMPOSITION_ANCHOR),
     gaze: firstMatch(source, GAZE_PATTERNS),
     crop: extractCrop(source),
   };
@@ -796,11 +877,11 @@ export function parseTrendingViralPrompt(
     visualHook: extractVisualHook(source),
     expression: firstMatch(source, EXPRESSION_PATTERNS),
     action: extractAction(source),
-    composition: firstMatch(source, TRENDING_COMPOSITION_PATTERNS),
+    composition: firstMatch(source, TRENDING_COMPOSITION_PATTERNS) ?? anchorClause(source, COMPOSITION_ANCHOR),
     lighting:
       extractGenericLighting(source)
       ?? (/\b(?:bright|midday|pop)\b/i.test(source) ? "Bright high-impact light" : undefined),
-    palette: firstMatch(source, COLOR_IMPACT_PATTERNS) ?? extractAfterLabel(source, "Palette"),
+    palette: firstMatch(source, COLOR_IMPACT_PATTERNS) ?? extractAfterLabel(source, "Palette") ?? anchorClause(source, PALETTE_ANCHOR),
     styleDna: firstMatch(source, VIRAL_STYLE_PATTERNS),
     background: extractBackground(source),
     crop: extractCrop(source),
@@ -850,7 +931,7 @@ export function parseSocialMediaPrompt(
     subject: extractAfterLabel(source, "Subject") ?? extractSubject(source, prompt.title),
     action: extractAction(source),
     expression: firstMatch(source, EXPRESSION_PATTERNS),
-    composition: firstMatch(source, SOCIAL_COMPOSITION_PATTERNS),
+    composition: firstMatch(source, SOCIAL_COMPOSITION_PATTERNS) ?? anchorClause(source, COMPOSITION_ANCHOR),
     crop: firstMatch(source, PLATFORM_CROP_PATTERNS),
     lighting: extractGenericLighting(source),
     brandColors: extractBrandColors(source),

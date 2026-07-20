@@ -16,6 +16,7 @@ import improverRouter from "./routes/improver.js";
 import engineRouter from "./routes/engine.js";
 import ruleEngineRouter from "./routes/rule-engine.js";
 import variablesRouter from "./routes/variables.js";
+import refineRouter from "./routes/refine.js";
 
 const app = new Hono();
 
@@ -63,6 +64,7 @@ app.route("/api/improver", improverRouter);
 app.route("/api/engine", engineRouter);
 app.route("/api/rule-engine", ruleEngineRouter);
 app.route("/api/variables", variablesRouter);
+app.route("/api/refine", refineRouter);
 
 app.get("/health", (c) => c.json({ status: "ok", ts: new Date().toISOString() }));
 
