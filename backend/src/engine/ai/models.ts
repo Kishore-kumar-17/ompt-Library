@@ -1,7 +1,7 @@
 export const MODEL_TIER = {
-  FAST:    "openai/gpt-3.5-turbo",
-  QUALITY: "openai/gpt-4o-mini",
-  PREMIUM: "openai/gpt-4o",
+  FAST:    process.env.OPENROUTER_MODEL || "nvidia/nemotron-3-nano-30b-a3b:free",
+  QUALITY: process.env.OPENROUTER_MODEL || "nvidia/nemotron-3-super-120b-a12b:free",
+  PREMIUM: process.env.OPENROUTER_MODEL || "nvidia/nemotron-3-super-120b-a12b:free",
 } as const;
 
-export type ModelTier = typeof MODEL_TIER[keyof typeof MODEL_TIER];
+export type ModelTier = string;

@@ -16,7 +16,9 @@ const require = createRequire(import.meta.url);
 const XLSX = require("xlsx");
 
 process.env.DATABASE_URL ??= "postgresql://smoke:smoke@localhost:5432/smoke";
-const { assembleFromRecord } = await import("../src/engine/index.js");
+// assembleFromRecord lives in lock-engine/index.ts, not the top-level engine
+// barrel (engine/index.ts only re-exports builder/improver/analyzer/etc.).
+const { assembleFromRecord } = await import("../src/engine/lock-engine/index.js");
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const EXCEL_PATH = path.resolve(__dirname, "../../prompts_master.xlsx");

@@ -4197,7 +4197,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "",
+    "image": "/images/image168.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -4222,7 +4222,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "tested": false,
     "rating": 5,
     "reviews": 0,
-    "image": "",
+    "image": "/images/image169.png",
     "author": "Prompt Bot",
     "variables": [],
     "platforms": {}
@@ -6327,31 +6327,7 @@ export const imageLibraryPrompts: PromptItem[] = [
     "variables": [],
     "platforms": {}
   },
-  {
-    "id": "254",
-    "slug": "ART-TRD-014",
-    "title": "Classical Male Figure Study",
-    "description": "Charcoal drawing of classical male figure study",
-    "category": "Art & Illustration",
-    "subCategory": "Traditional",
-    "family": "image",
-    "tags": [
-      "charcoal",
-      "figure study",
-      "classical",
-      "academic",
-      "atelier",
-      "traditional",
-      "art"
-    ],
-    "tested": false,
-    "rating": 5,
-    "reviews": 0,
-    "image": "/images/image202.png",
-    "author": "Prompt Bot",
-    "variables": [],
-    "platforms": {}
-  },
+
   {
     "id": "255",
     "slug": "ART-TRD-015",

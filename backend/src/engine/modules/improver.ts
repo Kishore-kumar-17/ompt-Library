@@ -52,6 +52,13 @@ function resolveFamily(request: ImproveRequest): Family {
 
 // ─── System prompt builders ───────────────────────────────────────────────────
 
+// Without this, a pasted-back JSON prompt (e.g. the user's own prior output,
+// round-tripped through the improver) tends to get echoed unchanged — the
+// model sees every "required component" already filled in and treats the
+// input as a target to reproduce rather than material to elevate.
+const ANTI_ECHO_INSTRUCTION = `
+IMPORTANT: Even if the input already looks complete, well-structured, or high-quality — including when it's provided as JSON or structured field data rather than prose — you must still meaningfully elevate it: tighten weak phrasing, add missing specificity, refine word choices, strengthen technical detail. Never return the input unchanged, and never just restate or reformat it without making it genuinely better.`;
+
 function buildSystemPrompt(family: Family, platformId: string): string {
   // If we have a dedicated engine for this platform, use its model-specific
   // system prompt instead of the generic family-level one. The engine prompt
@@ -60,7 +67,8 @@ function buildSystemPrompt(family: Family, platformId: string): string {
   if (engine) {
     return `${engine.systemPrompt}
 
-The user is giving you a weak or basic prompt to improve. Transform it into a high-quality version following all the rules above.
+The user is giving you a prompt to improve — it may be plain prose, or it may be structured JSON data (e.g. a previously-generated prompt they're refining further). Either way, transform it into a materially higher-quality version following all the rules above.
+${ANTI_ECHO_INSTRUCTION}
 
 RESPONSE FORMAT: You MUST respond with valid JSON only. No markdown, no code fences, no extra text.
 {
@@ -118,6 +126,7 @@ Transform the weak prompt into a structured, production-ready content brief with
 
   return `${baseRules[family]}
 ${platformRules}
+${ANTI_ECHO_INSTRUCTION}
 
 RESPONSE FORMAT: You MUST respond with valid JSON only. No markdown, no code fences, no extra text.
 {
@@ -157,6 +166,46 @@ function parseResponse(text: string): { improved: string; changes: ImproverChang
       { label: "Enhanced with platform-specific formatting", applied: true },
     ],
   };
+}
+
+// ─── JSON-prompt input handling ────────────────────────────────────────────────
+
+// Flattens a parsed JSON prompt (e.g. the improver's own prior JSON output,
+// pasted back in) into readable "Field: value" lines, so the model works
+// from legible field data instead of a raw JSON blob that looks like it
+// might already be the expected response shape.
+function flattenJsonForImprovement(value: unknown, prefix = ""): string[] {
+  if (value === null || value === undefined) return [];
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    const str = String(value).trim();
+    return str ? [`${prefix}: ${str}`] : [];
+  }
+  if (Array.isArray(value)) {
+    const allScalar = value.every((v) => typeof v === "string" || typeof v === "number" || typeof v === "boolean");
+    if (allScalar) return value.length ? [`${prefix}: ${value.join(", ")}`] : [];
+    return value.flatMap((v, i) => flattenJsonForImprovement(v, prefix ? `${prefix}[${i}]` : `[${i}]`));
+  }
+  if (typeof value === "object") {
+    return Object.entries(value as Record<string, unknown>).flatMap(([k, v]) =>
+      flattenJsonForImprovement(v, prefix ? `${prefix}.${k}` : k)
+    );
+  }
+  return [];
+}
+
+// Detects a pasted-back JSON prompt and flattens it to prose-like field
+// lines for the AI call. Returns null if the input isn't parseable JSON
+// (the overwhelmingly common case — plain prose passes straight through).
+function tryFlattenJsonPrompt(rawPrompt: string): string | null {
+  const trimmed = rawPrompt.trim();
+  if (!trimmed.startsWith("{") && !trimmed.startsWith("[")) return null;
+  try {
+    const parsed = JSON.parse(trimmed);
+    const lines = flattenJsonForImprovement(parsed);
+    return lines.length ? lines.join("\n") : null;
+  } catch {
+    return null;
+  }
 }
 
 // ─── Rule-engine fallback ──────────────────────────────────────────────────────
@@ -321,6 +370,15 @@ export async function improvePrompt(
     scoreBefore = await scorePrompt(internal.prompt, internal.platform, family);
   } catch { /* non-fatal */ }
 
+  // A user round-tripping the improver's own JSON output back in as new
+  // input is common — flatten it to legible field lines so the model works
+  // from readable data instead of a raw JSON blob (see buildSystemPrompt's
+  // ANTI_ECHO_INSTRUCTION and tryFlattenJsonPrompt for why this matters).
+  const flattenedJson = tryFlattenJsonPrompt(internal.prompt);
+  const userMessage = flattenedJson
+    ? `The prompt below was previously generated and is provided as structured field data (already broken into its component parts). Treat this as the CURRENT ${internal.platform} prompt to improve — do not just restate the fields back to me. Elevate the wording, add missing specificity, and produce a materially better result:\n\n${flattenedJson}`
+    : `Improve this ${internal.platform} prompt:\n\n${internal.prompt}`;
+
   const ai = getAIService();
   let tokensUsed = 0;
   let res;
@@ -328,7 +386,7 @@ export async function improvePrompt(
     res = await ai.complete({
       model: MODEL_TIER.QUALITY,
       system,
-      messages: [{ role: "user", content: `Improve this ${internal.platform} prompt:\n\n${internal.prompt}` }],
+      messages: [{ role: "user", content: userMessage }],
       maxTokens: 1500,
     });
   } catch (err: any) {
@@ -339,6 +397,30 @@ export async function improvePrompt(
   tokensUsed += res.inputTokens + res.outputTokens;
 
   const parsed = parseResponse(res.text);
+
+  // Safety net: if the model returned the input verbatim (a no-op — the
+  // most common way this silently fails), give it one more chance with an
+  // explicit correction instead of quietly reporting fake "applied" changes.
+  if (parsed.improved.trim() === internal.prompt.trim() || (flattenedJson && parsed.improved.trim() === flattenedJson.trim())) {
+    try {
+      const retryRes = await ai.complete({
+        model: MODEL_TIER.QUALITY,
+        system,
+        messages: [
+          { role: "user", content: userMessage },
+          { role: "assistant", content: res.text },
+          { role: "user", content: "That response was identical to the input — you did not actually improve anything. Rewrite it now with concrete, material changes: tighten weak wording, add missing specificity, fix vague descriptors. Respond again in the same JSON envelope." },
+        ],
+        maxTokens: 1500,
+      });
+      tokensUsed += retryRes.inputTokens + retryRes.outputTokens;
+      const retryParsed = parseResponse(retryRes.text);
+      if (retryParsed.improved.trim() !== internal.prompt.trim() && retryParsed.improved.trim() !== (flattenedJson ?? "").trim()) {
+        parsed.improved = retryParsed.improved;
+        parsed.changes = retryParsed.changes;
+      }
+    } catch { /* keep the original (unchanged) result if the retry itself fails */ }
+  }
 
   // Score improved prompt (non-fatal)
   let scoreAfter = null;
@@ -371,7 +453,20 @@ export async function improvePrompt(
   // AI-improved image request would report category: null, silently breaking
   // both the "detected category" UI badge and the image lock layer (which
   // needs a category to look up its lock template).
-  const category = family === "image" ? parsePrompt(parsed.improved).detectedCategory : undefined;
+  //
+  // Honor an explicit category override from the caller first — same as
+  // ruleEngineFallback above already does. Without this, an explicit
+  // "fashion"/"art"/"social"/"people" selection was silently discarded and
+  // replaced by keyword auto-detection over the improved text, which (via
+  // parser.ts's detectCategoryByScore default) falls back to "product" for
+  // any text that doesn't strongly match a category's keywords — so most
+  // non-product category selections were quietly resolving to the wrong
+  // lock dictionary.
+  const category = family === "image"
+    ? (VALID_RULE_ENGINE_CATEGORIES.includes(request.category as any)
+        ? (request.category as RuleEngineCategory)
+        : parsePrompt(parsed.improved).detectedCategory)
+    : undefined;
 
   return toPublicResponse(
     { improved: parsed.improved, changes: parsed.changes, platform: internal.platform, family, scoreBefore, scoreAfter, delta, tokensUsed, category },

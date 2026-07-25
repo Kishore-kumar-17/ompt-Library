@@ -19,7 +19,9 @@ import type { PromptRecord } from "../src/engine/types.js";
 // module. Must be set BEFORE the dynamic import below.
 process.env.DATABASE_URL ??= "postgresql://smoke:smoke@localhost:5432/smoke";
 
-const { assembleFromRecord } = await import("../src/engine/index.js");
+// assembleFromRecord lives in lock-engine/index.ts, not the top-level engine
+// barrel (engine/index.ts only re-exports builder/improver/analyzer/etc.).
+const { assembleFromRecord } = await import("../src/engine/lock-engine/index.js");
 
 // ─── Fixtures ───────────────────────────────────────────────────────────────
 

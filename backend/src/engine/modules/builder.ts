@@ -241,14 +241,16 @@ export async function buildPrompt(
   if (engine) {
     try {
       const ai = getAIService();
+      const systemDirective = `${engine.systemPrompt}\n\nCRITICAL INSTRUCTION: Output ONLY the final generated prompt text. Do NOT output internal reasoning, commentary, preamble, or <unk> tokens. Start immediately with the prompt.`;
       const polish = await ai.complete({
         model: modelTier,
-        system: engine.systemPrompt,
+        system: systemDirective,
         messages: [{ role: "user", content: result.assembledPrompt }],
         maxTokens: 1000,
       });
-      if (polish.text.trim()) {
-        result.assembledPrompt = polish.text.trim();
+      const cleanPolish = polish.text.trim();
+      if (cleanPolish && !cleanPolish.includes("Pro Formula v4.2") && !cleanPolish.startsWith("We need to") && !cleanPolish.includes("<unk>")) {
+        result.assembledPrompt = cleanPolish;
         result.tokensUsed += polish.inputTokens + polish.outputTokens;
       }
     } catch {

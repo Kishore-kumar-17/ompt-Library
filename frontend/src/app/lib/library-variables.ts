@@ -214,22 +214,7 @@ export const promptVariables: Record<string, VariableField[]> = {
       "default": "bright studio-yellow-wall #F6D24E plain-color seamless backdrop"
     }
   ],
-  "ART-TRD-014": [
-    {
-      "name": "THEME",
-      "label": "Theme",
-      "type": "text",
-      "placeholder": "e.g. festival of lights",
-      "default": "Classical Male Figure Study"
-    },
-    {
-      "name": "SUBJECT",
-      "label": "Subject",
-      "type": "text",
-      "placeholder": "person: age, skin, hair, expression",
-      "default": "a classical male nude figure"
-    }
-  ],
+
   "PRD-PKG-006": [
     {
       "name": "BRAND",
@@ -6711,5 +6696,499 @@ export const promptVariables: Record<string, VariableField[]> = {
       "placeholder": "person: age, skin, hair, expression",
       "default": "young Indian woman"
     }
-  ]
+  ],
+  "VRL-001": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "person: age, hair, expression",
+        "default": "young trendy person (age 21, wavy hair, wide-eyed fun smile)"
+    },
+    {
+        "name": "CHARACTERS",
+        "label": "Characters",
+        "type": "text",
+        "placeholder": "pop-culture characters in background",
+        "default": "Spider-Man, Shrek, and SpongeBob crowding behind"
+    },
+    {
+        "name": "LOCATION",
+        "label": "Location",
+        "type": "text",
+        "placeholder": "setting",
+        "default": "messy neon-lit bathroom mirror"
+    }
+],
+  "VRL-013": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "model description",
+        "default": "ethereal woman sitting in wooden rowboat"
+    },
+    {
+        "name": "OUTFIT",
+        "label": "Outfit",
+        "type": "text",
+        "placeholder": "gown style and material",
+        "default": "flowing silk white gown trailing in water"
+    },
+    {
+        "name": "LOCATION",
+        "label": "Location",
+        "type": "text",
+        "placeholder": "environment",
+        "default": "tranquil lotus pond at dawn"
+    }
+],
+  "VRL-014": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "model details",
+        "default": "high-fashion spanish model posing dynamic"
+    },
+    {
+        "name": "OUTFIT",
+        "label": "Outfit",
+        "type": "text",
+        "placeholder": "dress details",
+        "default": "dramatic red tiered flamenco ruffle gown"
+    }
+],
+  "VRL-020": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "person description",
+        "default": "young adult seated on floor"
+    },
+    {
+        "name": "CHARACTERS",
+        "label": "Characters",
+        "type": "text",
+        "placeholder": "animated toys",
+        "default": "giant friendly 3D cartoon plushies surrounding"
+    }
+],
+  "VRL-021": [
+    {
+        "name": "CHARACTERS",
+        "label": "Characters",
+        "type": "text",
+        "placeholder": "character group",
+        "default": "Angry Birds flock (Red, Chuck, Bomb) holding smartphone selfie"
+    },
+    {
+        "name": "BACKGROUND",
+        "label": "Background",
+        "type": "text",
+        "placeholder": "setting",
+        "default": "tropical Piggy Island backdrop"
+    }
+],
+  "VRL-023": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "character details",
+        "default": "cool teenager with hoodie"
+    },
+    {
+        "name": "ART_STYLE",
+        "label": "Art Style",
+        "type": "text",
+        "placeholder": "animation style",
+        "default": "Spider-Verse halftone comic-book rendering"
+    }
+],
+  "VRL-024": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "portrait subject",
+        "default": "expressive side-profile portrait"
+    },
+    {
+        "name": "MEDIUM",
+        "label": "Medium",
+        "type": "text",
+        "placeholder": "art medium",
+        "default": "bold red watercolor marker with ink splatters"
+    }
+],
+  "VRL-029": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "model description",
+        "default": "model glowing in warm sunset light"
+    },
+    {
+        "name": "UI_ELEMENTS",
+        "label": "UI Elements",
+        "type": "text",
+        "placeholder": "overlay cards",
+        "default": "floating translucent Spotify music player cards"
+    }
+],
+  "VRL-030": [
+    {
+        "name": "DESTINATION",
+        "label": "Destination",
+        "type": "text",
+        "placeholder": "travel location",
+        "default": "Bali, Indonesia"
+    },
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "tourist details",
+        "default": "backpacker looking over lush rice terraces"
+    }
+],
+  "VRL-034": [
+    {
+        "name": "TITLE",
+        "label": "Title",
+        "type": "text",
+        "placeholder": "poster title",
+        "default": "0 TO 100K AI CREATOR ROADMAP"
+    },
+    {
+        "name": "THEME",
+        "label": "Theme",
+        "type": "text",
+        "placeholder": "infographic theme",
+        "default": "neon tech flowchart with milestone cards"
+    }
+],
+  "VRL-035": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "person description",
+        "default": "handsome man with soft gaze holding bouquet"
+    },
+    {
+        "name": "FLOWERS",
+        "label": "Flowers",
+        "type": "text",
+        "placeholder": "flower type",
+        "default": "fresh white roses and baby breath"
+    }
+],
+  "VRL-036": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "person description",
+        "default": "thoughtful man holding flowers close"
+    },
+    {
+        "name": "PALETTE",
+        "label": "Palette",
+        "type": "text",
+        "placeholder": "color mood",
+        "default": "romantic warm pastel tones"
+    }
+],
+  "VRL-037": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "person description",
+        "default": "gentle woman holding white blooms"
+    },
+    {
+        "name": "STYLE",
+        "label": "Style",
+        "type": "text",
+        "placeholder": "art style",
+        "default": "soft digital oil painting with ambient glow"
+    }
+],
+  "VRL-038": [
+    {
+        "name": "COUPLE",
+        "label": "Couple",
+        "type": "text",
+        "placeholder": "couple details",
+        "default": "young couple holding hands walking away"
+    },
+    {
+        "name": "LOCATION",
+        "label": "Location",
+        "type": "text",
+        "placeholder": "setting",
+        "default": "autumn park with falling golden leaves"
+    }
+],
+  "VRL-041": [
+    {
+        "name": "COUPLE",
+        "label": "Couple",
+        "type": "text",
+        "placeholder": "couple pose",
+        "default": "stylish couple posing in golden hour light"
+    },
+    {
+        "name": "OUTFIT",
+        "label": "Outfit",
+        "type": "text",
+        "placeholder": "clothing style",
+        "default": "baggy black streetwear with silver chains"
+    }
+],
+  "VRL-049": [
+    {
+        "name": "CELEBRITY",
+        "label": "Celebrity",
+        "type": "text",
+        "placeholder": "celebrity subject",
+        "default": "Katrina Kaif"
+    },
+    {
+        "name": "STYLE",
+        "label": "Style",
+        "type": "text",
+        "placeholder": "painting style",
+        "default": "royal digital oil painting with gold accent framing"
+    }
+],
+  "VRL-052": [
+    {
+        "name": "CELEBRITY",
+        "label": "Celebrity",
+        "type": "text",
+        "placeholder": "celebrity subject",
+        "default": "Salman Khan"
+    },
+    {
+        "name": "STYLE",
+        "label": "Style",
+        "type": "text",
+        "placeholder": "doodle style",
+        "default": "bold red-and-yellow ink line art with pop sketches"
+    }
+],
+  "VRL-054": [
+    {
+        "name": "CELEBRITY",
+        "label": "Celebrity",
+        "type": "text",
+        "placeholder": "celebrity subject",
+        "default": "Anupama Parameswaran"
+    },
+    {
+        "name": "STYLE",
+        "label": "Style",
+        "type": "text",
+        "placeholder": "scrapbook style",
+        "default": "cute handwritten doodle scrapbook collage"
+    }
+],
+  "VRL-055": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "model description",
+        "default": "glowing muse in sunlit editorial pose"
+    },
+    {
+        "name": "MAGAZINE",
+        "label": "Magazine",
+        "type": "text",
+        "placeholder": "cover style",
+        "default": "Vogue cover typography and golden light"
+    }
+],
+  "VRL-056": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "person description",
+        "default": "adult man looking back at child self"
+    },
+    {
+        "name": "CONCEPT",
+        "label": "Concept",
+        "type": "text",
+        "placeholder": "emotional concept",
+        "default": "split-screen emotional nostalgia portrait"
+    }
+],
+  "VRL-058": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "model description",
+        "default": "avant-garde fashion model"
+    },
+    {
+        "name": "SURREAL_ELEMENT",
+        "label": "Surreal Element",
+        "type": "text",
+        "placeholder": "surreal object",
+        "default": "giant floating chrome sphere over desert"
+    }
+],
+  "VRL-059": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "main subject",
+        "default": "stylish portrait subject smiling"
+    },
+    {
+        "name": "MINIS",
+        "label": "Mini Versions",
+        "type": "text",
+        "placeholder": "chibi versions",
+        "default": "3 tiny 3D chibi mini versions sitting on shoulders"
+    }
+],
+  "VRL-060": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "model description",
+        "default": "indian woman in elegant silk saree"
+    },
+    {
+        "name": "EFFECT",
+        "label": "Effect",
+        "type": "text",
+        "placeholder": "double exposure motif",
+        "default": "double-exposure overlay with temple architecture"
+    }
+],
+  "VRL-061": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "portrait subject",
+        "default": "aesthetic portrait in warm tones"
+    },
+    {
+        "name": "ELEMENTS",
+        "label": "Elements",
+        "type": "text",
+        "placeholder": "scrapbook items",
+        "default": "polaroid frames, dried flowers, and tape stickers"
+    }
+],
+  "VRL-062": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "portrait subject",
+        "default": "moody dark aesthetic portrait"
+    },
+    {
+        "name": "THEME",
+        "label": "Theme",
+        "type": "text",
+        "placeholder": "music theme",
+        "default": "dark Spotify player UI with song lyric quotes"
+    }
+],
+  "VRL-063": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "miniature person",
+        "default": "tiny miniature figure standing in giant palm"
+    },
+    {
+        "name": "MOOD",
+        "label": "Mood",
+        "type": "text",
+        "placeholder": "surreal mood",
+        "default": "dreamy ethereal lighting with soft mist"
+    }
+],
+  "VRL-068": [
+    {
+        "name": "SUBJECT",
+        "label": "Subject",
+        "type": "text",
+        "placeholder": "model description",
+        "default": "young woman in traditional langa voni half-saree"
+    },
+    {
+        "name": "LOCATION",
+        "label": "Location",
+        "type": "text",
+        "placeholder": "setting",
+        "default": "illuminated South Indian temple courtyard at night"
+    }
+],
+  "MKT-ADC-001": [
+    {
+        "name": "PRODUCT",
+        "label": "Product",
+        "type": "text",
+        "placeholder": "beverage item",
+        "default": "steaming artisanal coffee cup"
+    },
+    {
+        "name": "ANGLE",
+        "label": "Angle",
+        "type": "text",
+        "placeholder": "camera angle",
+        "default": "flat-lay overhead shot on dark wooden table"
+    }
+],
+  "MKT-POS-016": [
+    {
+        "name": "DESTINATION",
+        "label": "Destination",
+        "type": "text",
+        "placeholder": "city/country",
+        "default": "Amalfi Coast, Italy"
+    },
+    {
+        "name": "STYLE",
+        "label": "Style",
+        "type": "text",
+        "placeholder": "poster style",
+        "default": "retro 1950s travel poster with bold typography"
+    }
+],
+  "PEO-AVT-015": [
+    {
+        "name": "AVATAR",
+        "label": "Avatar",
+        "type": "text",
+        "placeholder": "character features",
+        "default": "cool gamer wearing headset"
+    },
+    {
+        "name": "STYLE",
+        "label": "Style",
+        "type": "text",
+        "placeholder": "pixel art style",
+        "default": "16-bit retro arcade pixel art portrait"
+    }
+]
 };

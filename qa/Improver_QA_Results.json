@@ -1,0 +1,376 @@
+[
+  {
+    "family": "image",
+    "platform": "midjourney",
+    "promptFormat": "text",
+    "input": "a woman standing near a window",
+    "categoryOverride": "fashion",
+    "echoRegression": true,
+    "ok": true,
+    "ms": 31831,
+    "error": null,
+    "response": {
+      "improvedLen": 630,
+      "categoryId": "people",
+      "categoryLabel": "People & Portraits",
+      "appliedChanges": 6,
+      "totalChanges": 6,
+      "hasLockSection": true,
+      "hasJsonPrompt": false,
+      "improvedSnippet": "a woman standing near a window, contemporary business casual — slim-fit dark trousers, open-collar shirt, clean leather shoes, clean professional studio environment, seamless grey-white backdrop, controlled neutral backg"
+    },
+    "echoCheck": {
+      "ok": true,
+      "inputLen": 630,
+      "outputLen": 584,
+      "identical": false,
+      "tooSimilar": false,
+      "inputSnippet": "a woman standing near a window, contemporary business casual — slim-fit dark trousers, open-collar shirt, clean leather shoes, clean professional studio environment, seamless grey-white backdrop, controlled neutral background, professional studio strobe, 5600K, 45° above camera-right, 90cm octabox key light, silver reflector fill camera-left, 1 ratio :: ORIENTATION primary-subject-facing-20deg-cam",
+      "outputSnippet": "a woman standing near a window, professional photography studio, seamless grey-white backdrop, controlled lighting environment, clean minimal aesthetic, professional studio strobe, 5600K, 45° above camera-right, 90cm octabox key light, silver reflector fill camera-left, clean defined shadows at 5, 1 ratio :: ORIENTATION primary-subject-facing-25deg-camera-right :: FRAMING orthographic-gallery-view"
+    },
+    "overrideResult": {
+      "categoryId": "fashion",
+      "categoryLabel": "Fashion & Apparel",
+      "improvedLen": 630,
+      "changedFromBefore": true
+    }
+  },
+  {
+    "family": "image",
+    "platform": "chatgpt",
+    "promptFormat": "text",
+    "input": "product shot of a watch",
+    "categoryOverride": "art",
+    "echoRegression": false,
+    "ok": true,
+    "ms": 31271,
+    "error": null,
+    "response": {
+      "improvedLen": 1361,
+      "categoryId": "product",
+      "categoryLabel": "Product & Ecommerce",
+      "appliedChanges": 6,
+      "totalChanges": 6,
+      "hasLockSection": true,
+      "hasJsonPrompt": false,
+      "improvedSnippet": "A professional editorial photograph of product shot of a watch. The scene is set in clean professional studio environment, seamless grey-white backdrop, controlled neutral background. professional studio strobe, 5600K, 4"
+    },
+    "echoCheck": null,
+    "overrideResult": {
+      "categoryId": "art",
+      "categoryLabel": "Art & Illustration",
+      "improvedLen": 1364,
+      "changedFromBefore": true
+    }
+  },
+  {
+    "family": "image",
+    "platform": "flux",
+    "promptFormat": "text",
+    "input": "a painting of a mountain landscape",
+    "categoryOverride": "product",
+    "echoRegression": false,
+    "ok": true,
+    "ms": 31531,
+    "error": null,
+    "response": {
+      "improvedLen": 1591,
+      "categoryId": "art",
+      "categoryLabel": "Art & Illustration",
+      "appliedChanges": 6,
+      "totalChanges": 6,
+      "hasLockSection": true,
+      "hasJsonPrompt": false,
+      "improvedSnippet": "SUBJECT: a painting of a mountain landscape\n\nSETTING: clean professional studio environment, seamless grey-white backdrop, controlled neutral background\n\nCOMPOSITION: subject centred with balanced negative space, 55mm-eq"
+    },
+    "echoCheck": null,
+    "overrideResult": {
+      "categoryId": "product",
+      "categoryLabel": "Product & Ecommerce",
+      "improvedLen": 1692,
+      "changedFromBefore": true
+    }
+  },
+  {
+    "family": "image",
+    "platform": "gemini",
+    "promptFormat": "text",
+    "input": "instagram post about a new sneaker drop",
+    "categoryOverride": "people",
+    "echoRegression": false,
+    "ok": true,
+    "ms": 31280,
+    "error": null,
+    "response": {
+      "improvedLen": 1102,
+      "categoryId": "social",
+      "categoryLabel": "Social Media",
+      "appliedChanges": 6,
+      "totalChanges": 6,
+      "hasLockSection": true,
+      "hasJsonPrompt": false,
+      "improvedSnippet": "Subject: instagram post about a new sneaker drop\n\nSetting: clean professional studio environment, seamless grey-white backdrop, controlled neutral background\nLighting: professional studio strobe, 5600K, 45° above camera-"
+    },
+    "echoCheck": null,
+    "overrideResult": {
+      "categoryId": "people",
+      "categoryLabel": "People & Portraits",
+      "improvedLen": 1208,
+      "changedFromBefore": true
+    }
+  },
+  {
+    "family": "image",
+    "platform": "grok",
+    "promptFormat": "text",
+    "input": "a model wearing a leather jacket on the street",
+    "categoryOverride": "social",
+    "echoRegression": false,
+    "ok": true,
+    "ms": 31345,
+    "error": null,
+    "response": {
+      "improvedLen": 499,
+      "categoryId": "people",
+      "categoryLabel": "People & Portraits",
+      "appliedChanges": 6,
+      "totalChanges": 6,
+      "hasLockSection": true,
+      "hasJsonPrompt": false,
+      "improvedSnippet": "Professional photo: a model wearing a leather jacket on the street, wearing contemporary business casual — slim-fit dark trousers, open-collar shirt, clean leather shoes, in city street environment, rain-slicked pavement"
+    },
+    "echoCheck": null,
+    "overrideResult": {
+      "categoryId": "social",
+      "categoryLabel": "Social Media",
+      "improvedLen": 396,
+      "changedFromBefore": true
+    }
+  },
+  {
+    "family": "image",
+    "platform": "midjourney",
+    "promptFormat": "json",
+    "input": "{\"subject\":\"a chef plating a dish\",\"style\":\"editorial photography\",\"lighting\":\"studio\"}",
+    "echoRegression": true,
+    "ok": true,
+    "ms": 31707,
+    "error": null,
+    "response": {
+      "improvedLen": 783,
+      "categoryId": "fashion",
+      "categoryLabel": "Fashion & Apparel",
+      "appliedChanges": 6,
+      "totalChanges": 6,
+      "hasLockSection": true,
+      "hasJsonPrompt": true,
+      "improvedSnippet": "executive chef, white chef's coat, toque or no hat, confident kitchen environment, hands-on working pose or authoritative crossed-arms, contemporary business casual — slim-fit dark trousers, open-collar shirt, clean leat"
+    },
+    "echoCheck": {
+      "ok": true,
+      "inputLen": 783,
+      "outputLen": 817,
+      "identical": false,
+      "tooSimilar": false,
+      "inputSnippet": "executive chef, white chef's coat, toque or no hat, confident kitchen environment, hands-on working pose or authoritative crossed-arms, contemporary business casual — slim-fit dark trousers, open-collar shirt, clean leather shoes, professional photography studio, seamless grey-white backdrop, controlled lighting environment, clean minimal aesthetic, professional studio strobe, 5600K, 45° above cam",
+      "outputSnippet": "corporate executive, 40s, authoritative posture, tailored business suit, power-dress attire, calm commanding expression, navy slim-fit chinos, white or light-blue Oxford shirt — two buttons open, no tie, brown leather belt, leather loafers or clean white sneakers, professional photography studio, seamless grey-white backdrop, controlled lighting environment, clean minimal aesthetic, professional s"
+    }
+  },
+  {
+    "family": "image",
+    "platform": "chatgpt",
+    "promptFormat": "json",
+    "input": "{\"subject\":\"a lighthouse in a storm\",\"style\":\"oil painting\"}",
+    "echoRegression": false,
+    "ok": true,
+    "ms": 31270,
+    "error": null,
+    "response": {
+      "improvedLen": 1340,
+      "categoryId": "art",
+      "categoryLabel": "Art & Illustration",
+      "appliedChanges": 6,
+      "totalChanges": 6,
+      "hasLockSection": true,
+      "hasJsonPrompt": true,
+      "improvedSnippet": "A professional editorial photograph of {\"subject\":\"a lighthouse in a storm\". The scene is set in clean professional studio environment, seamless grey-white backdrop, controlled neutral background. professional studio str"
+    },
+    "echoCheck": null
+  },
+  {
+    "family": "video",
+    "platform": "veo",
+    "input": "a lone astronaut walking across a red desert",
+    "echoRegression": true,
+    "ok": true,
+    "ms": 32452,
+    "error": null,
+    "response": {
+      "improvedLen": 616,
+      "categoryId": null,
+      "categoryLabel": null,
+      "appliedChanges": 2,
+      "totalChanges": 2,
+      "hasLockSection": false,
+      "hasJsonPrompt": false,
+      "improvedSnippet": "a lone astronaut walking across a red desert. The scene takes place in arid desert landscape, heat-shimmer at the horizon, sparse vegetation, vast negative space and open sky. Camera: steadicam follow, smooth floating st"
+    },
+    "echoCheck": {
+      "ok": false,
+      "inputLen": 616,
+      "outputLen": 747,
+      "identical": false,
+      "tooSimilar": true,
+      "inputSnippet": "a lone astronaut walking across a red desert. The scene takes place in arid desert landscape, heat-shimmer at the horizon, sparse vegetation, vast negative space and open sky. Camera: steadicam follow, smooth floating stabilized movement tracking the subject at a consistent following distance, 35mm-equivalent, 24fps. Lighting is warm practical interior lighting from visible lamps and fixtures, sof",
+      "outputSnippet": "a lone astronaut walking across a red desert. The scene takes place in arid desert landscape, heat-shimmer at the horizon, sparse vegetation, vast negative space and open sky.. The scene takes place in arid desert landscape, heat-shimmer at the horizon, sparse vegetation, vast negative space and open sky. Camera: steadicam follow, smooth floating stabilized movement tracking the subject at a consi"
+    }
+  },
+  {
+    "family": "video",
+    "platform": "kling",
+    "input": "a sneaker rotating on a pedestal with light trails",
+    "echoRegression": false,
+    "ok": true,
+    "ms": 31091,
+    "error": null,
+    "response": {
+      "improvedLen": 631,
+      "categoryId": null,
+      "categoryLabel": null,
+      "appliedChanges": 2,
+      "totalChanges": 2,
+      "hasLockSection": false,
+      "hasJsonPrompt": false,
+      "improvedSnippet": "a sneaker rotating on a pedestal with light trails. Set in a clearly defined environment with visible time-of-day and background detail. Camera: steadicam follow, smooth floating stabilized movement tracking the subject "
+    },
+    "echoCheck": null
+  },
+  {
+    "family": "video",
+    "platform": "seedance",
+    "input": "a barista making latte art in slow motion",
+    "echoRegression": false,
+    "ok": true,
+    "ms": 31077,
+    "error": null,
+    "response": {
+      "improvedLen": 2220,
+      "categoryId": null,
+      "categoryLabel": null,
+      "appliedChanges": 2,
+      "totalChanges": 2,
+      "hasLockSection": false,
+      "hasJsonPrompt": false,
+      "improvedSnippet": "SUBJECT: a barista making latte art in slow motion\n\nACTION: a barista making latte art in slow motion\n\nSETTING: a clearly defined environment with visible time-of-day and background detail\n\nCAMERA: steadicam follow, smoo"
+    },
+    "echoCheck": null
+  },
+  {
+    "family": "video",
+    "platform": "higgsfield",
+    "input": "a dancer moving through a field of fireflies at dusk",
+    "echoRegression": false,
+    "ok": true,
+    "ms": 30989,
+    "error": null,
+    "response": {
+      "improvedLen": 2252,
+      "categoryId": null,
+      "categoryLabel": null,
+      "appliedChanges": 2,
+      "totalChanges": 2,
+      "hasLockSection": false,
+      "hasJsonPrompt": false,
+      "improvedSnippet": "SUBJECT: a dancer moving through a field of fireflies\n\nACTION: a dancer moving through a field of fireflies at dusk\n\nSETTING: a clearly defined environment with visible time-of-day and background detail\n\nCAMERA: steadica"
+    },
+    "echoCheck": null
+  },
+  {
+    "family": "website",
+    "platform": "lovable",
+    "input": "A premium Japanese restaurant in Mumbai with omakase dining and a sake bar",
+    "echoRegression": true,
+    "ok": true,
+    "ms": 31457,
+    "error": null,
+    "response": {
+      "improvedLen": 7226,
+      "categoryId": null,
+      "categoryLabel": null,
+      "appliedChanges": 2,
+      "totalChanges": 2,
+      "hasLockSection": false,
+      "hasJsonPrompt": false,
+      "improvedSnippet": "Build this as a fully responsive React + Tailwind CSS site, component-driven, mobile-first. Follow every section below exactly — do not skip, reorder, or invent sections.\n\n### Section 1 - Role\n\nYou are a senior brand and"
+    },
+    "echoCheck": {
+      "ok": false,
+      "inputLen": 7226,
+      "outputLen": 7321,
+      "identical": false,
+      "tooSimilar": true,
+      "inputSnippet": "Build this as a fully responsive React + Tailwind CSS site, component-driven, mobile-first. Follow every section below exactly — do not skip, reorder, or invent sections.\n\n### Section 1 - Role\n\nYou are a senior brand and conversion designer with 12+ years of experience building trust-led websites for restaurant / cafe businesses. You understand high-consideration local-purchase behavior: credibili",
+      "outputSnippet": "Build this as a fully responsive React + Tailwind CSS site, component-driven, mobile-first. Follow every section below exactly — do not skip, reorder, or invent sections.\n\n### Section 1 - Role\n\nYou are a senior brand and conversion designer with 12+ years of experience building trust-led websites for restaurant / cafe businesses. You understand high-consideration local-purchase behavior: credibili"
+    }
+  },
+  {
+    "family": "website",
+    "platform": "bolt",
+    "input": "An online store selling handmade ceramics",
+    "echoRegression": false,
+    "ok": true,
+    "ms": 31255,
+    "error": null,
+    "response": {
+      "improvedLen": 1251,
+      "categoryId": null,
+      "categoryLabel": null,
+      "appliedChanges": 2,
+      "totalChanges": 2,
+      "hasLockSection": false,
+      "hasJsonPrompt": false,
+      "improvedSnippet": "Scaffold a production website. Next.js 14 + TypeScript + Tailwind + CSS vars.\n\n```css\n:root {\n  --bg: #12071F;\n  --surface: #1C0E30;\n  --tint: #26123F;\n  --ink: #FBF6FF;\n  --muted: #C6B4E6;\n  --border: rgba(251,246,255,0"
+    },
+    "echoCheck": null
+  },
+  {
+    "family": "website",
+    "platform": "v0",
+    "input": "A photographer's portfolio site with a dark, minimal aesthetic",
+    "echoRegression": false,
+    "ok": true,
+    "ms": 31044,
+    "error": null,
+    "response": {
+      "improvedLen": 1660,
+      "categoryId": null,
+      "categoryLabel": null,
+      "appliedChanges": 2,
+      "totalChanges": 2,
+      "hasLockSection": false,
+      "hasJsonPrompt": false,
+      "improvedSnippet": "Generate a Next.js App Router site using shadcn/ui + Tailwind CSS for a portfolio / creator site.\n\nContext: You are a senior portfolio and personal-brand designer with 9+ years of experience building sites for photograph"
+    },
+    "echoCheck": null
+  },
+  {
+    "family": "website",
+    "platform": "cursor",
+    "input": "A SaaS dashboard for managing freelance invoices and contracts",
+    "echoRegression": false,
+    "ok": true,
+    "ms": 31034,
+    "error": null,
+    "response": {
+      "improvedLen": 2420,
+      "categoryId": null,
+      "categoryLabel": null,
+      "appliedChanges": 2,
+      "totalChanges": 2,
+      "hasLockSection": false,
+      "hasJsonPrompt": false,
+      "improvedSnippet": "TASK: Build the following website in this codebase.\n\nTech stack: React + TypeScript + Tailwind CSS (or the stack already in this repo if one exists — match existing conventions over introducing a new one).\n\nImplementatio"
+    },
+    "echoCheck": null
+  }
+]

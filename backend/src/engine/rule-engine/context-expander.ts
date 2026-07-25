@@ -7,13 +7,27 @@ import {
   WARDROBE, HAND_POSITION, STYLE_PHOTO, PALETTE,
 } from "./dictionaries"
 
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+}
+
+// Word-boundary-aware containment — a raw `.includes()` check lets a short
+// dictionary key like "cat" false-positive-match inside an unrelated longer
+// word (e.g. "category", folded into the idea text as an enrichment hint
+// like "category: cinematic"), silently swapping the whole subject/setting/
+// etc. for that keyword's dictionary entry.
+function includesWord(haystack: string, needle: string): boolean {
+  if (!needle) return false
+  return new RegExp(`(?:^|[^a-z0-9])${escapeRegExp(needle)}(?:$|[^a-z0-9])`, "i").test(haystack)
+}
+
 function lookup(dict: Record<string, string>, term: string | null): string | null {
   if (!term) return null
   const lower = term.toLowerCase().trim()
   if (dict[lower]) return dict[lower]
   // Partial match
   for (const [key, val] of Object.entries(dict)) {
-    if (lower.includes(key) || key.includes(lower)) return val
+    if (includesWord(lower, key) || includesWord(key, lower)) return val
   }
   return term
 }

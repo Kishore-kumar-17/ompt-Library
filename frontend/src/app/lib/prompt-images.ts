@@ -255,7 +255,6 @@ export const promptImageMap: Record<string, string> = {
   "ART-TRD-011": "/images/image251.png",
   "ART-TRD-012": "/images/image252.png",
   "ART-TRD-013": "/images/image253.png",
-  "ART-TRD-014": "/images/image254.png",
   "ART-TRD-015": "/images/image255.png",
   "FAS-ACC-006": "/images/image256.png",
   "FAS-ACC-007": "/images/image257.png",

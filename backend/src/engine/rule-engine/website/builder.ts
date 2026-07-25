@@ -56,6 +56,22 @@ function stripHintSuffix(text: string): string {
   return looksLikeHintSuffix ? m[1].trim() : trimmed
 }
 
+// Caps how much of a long paste gets embedded as the literal "business idea"
+// description in APPLICATION OVERVIEW. A genuine idea/business description is
+// a sentence or two; well past that is far more likely to be this engine's
+// own previous full output fed back in (e.g. pasted into Improver for
+// another round) than a fresh description — every other section below
+// (features, design specs, content/technical/SEO/interaction guidelines)
+// regenerates fresh regardless, so keeping the whole thing verbatim here
+// only duplicates content that's already represented elsewhere. Cutting at
+// the last full sentence within the cap avoids chopping off mid-word.
+function capIdeaLength(text: string, maxLen = 300): string {
+  if (text.length <= maxLen) return text
+  const capped = text.slice(0, maxLen)
+  const lastBoundary = Math.max(capped.lastIndexOf(". "), capped.lastIndexOf("! "), capped.lastIndexOf("? "))
+  return lastBoundary > 40 ? capped.slice(0, lastBoundary + 1).trim() : capped.trim() + "…"
+}
+
 export function buildWebsiteFromRules(req: WebsiteBuildRequest): WebsiteRuleEngineResult {
   const cat = req.category ?? "business"
   const template = CATEGORY_TEMPLATES[cat] ?? CATEGORY_TEMPLATES.business
@@ -65,7 +81,7 @@ export function buildWebsiteFromRules(req: WebsiteBuildRequest): WebsiteRuleEngi
   const paletteInput = req.palette ?? defaults.defaultPalette
   const audience = req.audience ?? defaults.defaultAudience
   const pages = req.pages ?? []
-  const ideaClean = req.idea?.trim() ? stripHintSuffix(req.idea) : ""
+  const ideaClean = req.idea?.trim() ? capIdeaLength(stripHintSuffix(req.idea)) : ""
 
   const sections: string[] = [
     buildRoleSection(cat, subcategory),
@@ -84,7 +100,10 @@ export function buildWebsiteFromRules(req: WebsiteBuildRequest): WebsiteRuleEngi
   // just the same idea text already folded into APPLICATION OVERVIEW above
   // (the common case, since the bridge passes the same idea as both idea and
   // extraNotes), repeating it verbatim again here would be pure duplication.
-  const extraNotesClean = req.extraNotes?.trim() ? stripHintSuffix(req.extraNotes) : ""
+  // Capped the same way as ideaClean — otherwise a long extraNotes would
+  // never match the (now-capped) ideaClean and get pushed here in full,
+  // reintroducing the exact duplication this cap exists to prevent.
+  const extraNotesClean = req.extraNotes?.trim() ? capIdeaLength(stripHintSuffix(req.extraNotes)) : ""
   if (extraNotesClean && extraNotesClean !== ideaClean) sections.push(`NOTES: ${extraNotesClean}`)
 
   const locks = generateWebsiteLocks(paletteInput, cat)

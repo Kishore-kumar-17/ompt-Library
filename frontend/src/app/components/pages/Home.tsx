@@ -9,18 +9,10 @@ import RotatingText from "../RotatingText";
 import ScrollReveal from "../ScrollReveal";
 import SectionReveal from "../SectionReveal";
 import ScrollStack, { ScrollStackItem } from "../ScrollStack";
+import { PromptFactory } from "../PromptFactory";
 
-// ── Category images (user-supplied) ──────────────────────────────────────────
-import imgSocialMedia   from "../../../imports/WhatsApp_Image_2026-04-27_at_1.12.44_PM.jpeg";
-import imgEcommerce     from "../../../imports/WhatsApp_Image_2026-04-27_at_1.14.01_PM.jpeg";
-import imgProduct       from "../../../imports/WhatsApp_Image_2026-04-27_at_1.15.29_PM.jpeg";
-import imgMarketing     from "../../../imports/WhatsApp_Image_2026-04-27_at_1.17.54_PM.jpeg";
-import imgPortraits     from "../../../imports/WhatsApp_Image_2026-04-27_at_1.23.30_PM.jpeg";
-import imgPeople        from "../../../imports/WhatsApp_Image_2026-04-27_at_1.24.37_PM.jpeg";
-import imgAdvertising   from "../../../imports/WhatsApp_Image_2026-04-27_at_1.56.38_PM.jpeg";
-import imgApparel       from "../../../imports/WhatsApp_Image_2026-04-27_at_2.04.05_PM.jpeg";
-import imgFashion       from "../../../imports/WhatsApp_Image_2026-04-27_at_2.07.53_PM.jpeg";
-import imgIllustration  from "../../../imports/WhatsApp_Image_2026-04-27_at_2.29.43_PM-2.jpeg";
+// ── Category images ──────────────────────────────────────────────────────────
+import imgSocialMedia from "../../../imports/WhatsApp_Image_2026-04-27_at_1.12.44_PM.jpeg";
 
 export function Home({ go }: { go: (p: string) => void }) {
   return (
@@ -51,8 +43,9 @@ export function Home({ go }: { go: (p: string) => void }) {
       </div>
       </SectionReveal>
 
-      {/* Story Showcase - Discover / Learn / Create */}
-      <StoryShowcase go={go} />
+      {/* Prompt Factory - Discover / Learn / Build / Generate / Create */}
+      {/* StoryShowcase (Discover / Learn / Create) is kept below, unmounted — swap this line back to re-enable it. */}
+      <PromptFactory go={go} />
 
       {/* Breathing space 2 */}
       <SectionReveal>
@@ -607,17 +600,17 @@ function StoryShowcase({ go }: { go: (p: string) => void }) {
 // ─── BrowseByCategory ────────────────────────────────────────────────────────
 
 const browseCategories = [
-  { name: "Illustration",  img: imgIllustration, desc: "Hand-drawn styles, vector art, and digital illustrations for any project.", libraryCategory: "Art & Illustration" },
-  { name: "Fashion",       img: imgFashion,      desc: "High-fashion editorials, runway looks, and trendsetting style imagery.", libraryCategory: "Fashion & Apparel" },
-  { name: "Apparel",       img: imgApparel,      desc: "Clothing mockups, fabric textures, and product shots for apparel brands.", libraryCategory: "Fashion & Apparel" },
-  { name: "Advertising",   img: imgAdvertising,  desc: "Campaign-ready visuals, ad creatives, and attention-grabbing brand imagery.", libraryCategory: "Marketing & Ads" },
-  { name: "People",        img: imgPeople,       desc: "Lifestyle scenes, candid moments, and diverse human subjects for any context.", libraryCategory: "People & Portraits" },
-  { name: "Portraits",     img: imgPortraits,    desc: "Studio-quality headshots, creative portraits, and expressive character shots.", libraryCategory: "People & Portraits" },
-  { name: "Marketing",     img: imgMarketing,    desc: "Social ads, banners, and promotional visuals that convert.", libraryCategory: "Marketing & Ads" },
-  { name: "Product",       img: imgProduct,      desc: "Clean product photography, lifestyle placements, and commercial compositions.", libraryCategory: "Product & E-com" },
-  { name: "E-commerce",    img: imgEcommerce,    desc: "Storefront imagery, catalog shots, and conversion-optimized product visuals.", libraryCategory: "Product & E-com" },
-  { name: "Social Media",  img: imgSocialMedia,  desc: "Scroll-stopping content for Instagram, TikTok, Pinterest, and beyond.", libraryCategory: "Social Media" },
-  { name: "Art",           img: "https://images.unsplash.com/photo-1762865417591-e9d09a06de32?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", desc: "Fine art, abstract, and experimental AI-generated artwork.", libraryCategory: "Art & Illustration" },
+  { name: "Illustration",  img: "/images/image2.jpeg",   desc: "Hand-drawn styles, vector art, and digital illustrations for any project.", libraryCategory: "Art & Illustration" },
+  { name: "Fashion",       img: "/images/image47.jpeg",  desc: "High-fashion editorials, runway looks, and trendsetting style imagery.", libraryCategory: "Fashion & Apparel" },
+  { name: "Apparel",       img: "/images/image48.jpeg",  desc: "Clothing mockups, fabric textures, and product shots for apparel brands.", libraryCategory: "Fashion & Apparel" },
+  { name: "Advertising",   img: "/images/image73.jpeg",  desc: "Campaign-ready visuals, ad creatives, and attention-grabbing brand imagery.", libraryCategory: "Marketing & Ads" },
+  { name: "People",        img: "/images/image50.jpeg",  desc: "Lifestyle scenes, candid moments, and diverse human subjects for any context.", libraryCategory: "People & Portraits" },
+  { name: "Portraits",     img: "/images/image21.jpeg",  desc: "Studio-quality headshots, creative portraits, and expressive character shots.", libraryCategory: "People & Portraits" },
+  { name: "Marketing",     img: "/images/image71.jpeg",  desc: "Social ads, banners, and promotional visuals that convert.", libraryCategory: "Marketing & Ads" },
+  { name: "Product",       img: "/images/image75.jpeg",  desc: "Clean product photography, lifestyle placements, and commercial compositions.", libraryCategory: "Product & E-com" },
+  { name: "E-commerce",    img: "/images/image42.jpeg",  desc: "Storefront imagery, catalog shots, and conversion-optimized product visuals.", libraryCategory: "Product & E-com" },
+  { name: "Social Media",  img: imgSocialMedia,          desc: "Scroll-stopping content for Instagram, TikTok, Pinterest, and beyond.", libraryCategory: "Social Media" },
+  { name: "Art",           img: "/images/image6.jpeg",   desc: "Fine art, abstract, and experimental AI-generated artwork.", libraryCategory: "Art & Illustration" },
 ];
 
 function BrowseByCategory({ go }: { go: (p: string) => void }) {

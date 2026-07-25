@@ -1,0 +1,17 @@
+[
+  {
+    "slug": "VRL-064",
+    "fixes": {
+      "grok": "4-frame soft aesthetic collage of [SUBJECT] with a Spotify glassmorphism player overlay at the bottom, pastel vintage filter.",
+      "firefly": "A soft aesthetic 4-frame portrait collage of [SUBJECT] with a Spotify glassmorphism music player overlay at the bottom in a pastel vintage aesthetic."
+    }
+  },
+  {
+    "slug": "VRL-069",
+    "fixes": {
+      "grok": "Cinematic portrait of [SUBJECT] in a vintage library café during rain, chandelier glow, misty windows, dreamy intellectual mood. 8K.",
+      "midjourney": "cinematic ultra-detailed portrait, [SUBJECT], vintage library cafe, glowing chandeliers, tall wooden bookshelves, candle lights, misty rain giant glass windows, amber floor reflections, dreamy elegant mysterious --ar 4:5 --v6 --style raw --q 2",
+      "firefly": "A cinematic portrait of [SUBJECT] inside a glowing vintage library café during rain, with chandelier light and misty windows."
+    }
+  }
+]

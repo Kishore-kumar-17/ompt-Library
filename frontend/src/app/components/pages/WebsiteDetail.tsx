@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Copy, ThumbsUp, ThumbsDown, ExternalLink, ChevronDown, ChevronUp, Loader2, Maximize2, X, Lock, ArrowLeft, Download } from "lucide-react";
+import { Copy, ThumbsUp, ThumbsDown, ExternalLink, ChevronDown, ChevronUp, Loader2, Maximize2, X, Lock, ArrowLeft, Download, Check, Heart, Share2 } from "lucide-react";
 import { toast } from "sonner";
+import JSZip from "jszip";
 import { websiteDesigns } from "../../lib/website-data";
 import { websitePlatformVersions } from "../../lib/website-platforms";
 import { websitePlatforms } from "../theme";
@@ -38,42 +39,45 @@ async function downloadScaffoldFile(slug: string, fileName: string, displayLabel
 
 async function downloadAllScaffoldFiles(slug: string, title: string) {
   try {
+    toast.loading("Preparing scaffold zip...", { id: "scaffold-download" });
+    const zip = new JSZip();
+    const folderName = `${slug}-scaffold`;
+    const folder = zip.folder(folderName);
+
     const files = [...DOCS.map(d => d.file), `${slug}.md`];
-    const sections: string[] = [];
-    let missing = 0;
+    let fetchedCount = 0;
+
     for (const file of files) {
-      const res = await fetch(`/scaffolds/${slug}/${file}`);
-      if (res.ok) {
-        const text = await res.text();
-        sections.push(text);
-      } else {
-        missing++;
+      try {
+        const res = await fetch(`/scaffolds/${slug}/${file}`);
+        if (res.ok) {
+          const text = await res.text();
+          folder?.file(file, text);
+          fetchedCount++;
+        }
+      } catch {
+        // continue with next file
       }
     }
 
-    if (sections.length === 0) {
-      toast.error("Download failed", { description: "No scaffold files were found for this design." });
+    if (fetchedCount === 0) {
+      toast.error("Download failed", { id: "scaffold-download", description: "No scaffold files were found for this design." });
       return;
     }
 
-    const combined = sections.join("\n\n---\n\n");
-    const blob = new Blob([combined], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
+    const content = await zip.generateAsync({ type: "blob" });
+    const url = URL.createObjectURL(content);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${slug}-scaffold.md`;
+    a.download = `${folderName}.zip`;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    if (missing > 0) {
-      toast.warning("Downloaded with missing sections", {
-        description: `${slug}-scaffold.md includes ${sections.length} of ${files.length} files — ${missing} weren't found.`,
-      });
-    } else {
-      toast.success("Downloaded", { description: `${slug}-scaffold.md (${sections.length} files)` });
-    }
+    toast.success("Downloaded scaffold folder", { id: "scaffold-download", description: `${folderName}.zip containing ${fetchedCount} files` });
   } catch {
-    toast.error("Download failed");
+    toast.error("Download failed", { id: "scaffold-download" });
   }
 }
 
@@ -85,6 +89,8 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
   const [iframeError, setIframeError] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [vote, setVote] = useState<"up" | "down" | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [saved, setSaved] = useState(false);
   const castVote = (dir: "up" | "down") => {
     setVote(v => (v === dir ? null : dir));
     if (vote !== dir) toast.success(dir === "up" ? "Thanks for the feedback!" : "Thanks — we'll take a look.");
@@ -131,9 +137,33 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(promptText);
+      setCopied(true);
       toast.success("Prompt copied", { description: `${design.title} - ${activePl?.name}` });
+      setTimeout(() => setCopied(false), 2000);
     } catch {
       toast.error("Failed to copy to clipboard");
+    }
+  };
+
+  const handleSave = () => {
+    setSaved(v => !v);
+    toast.success(saved ? "Removed from saved" : "Saved to your library");
+  };
+
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: design.title,
+          text: design.description,
+          url: window.location.href,
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success("Link copied to clipboard!");
+      }
+    } catch {
+      // User cancelled share
     }
   };
 
@@ -277,14 +307,38 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
               <button
                 onClick={() => castVote("up")}
                 aria-label="This design was helpful"
+                title="Helpful"
                 className={`p-1 rounded-md transition-colors ${vote === "up" ? "bg-[#4FC3F7]/20 text-[#4FC3F7]" : "text-[#6b7280] hover:text-[#4FC3F7] hover:bg-[#4FC3F7]/10"}`}
               ><ThumbsUp className="w-4 h-4" /></button>
               <button
                 onClick={() => castVote("down")}
                 aria-label="This design was not helpful"
+                title="Not helpful"
                 className={`p-1 rounded-md transition-colors ${vote === "down" ? "bg-red-100 text-red-500" : "text-[#6b7280] hover:text-red-500 hover:bg-red-50"}`}
               ><ThumbsDown className="w-4 h-4" /></button>
+              <button
+                onClick={() => downloadAllScaffoldFiles(design.slug, design.title)}
+                aria-label="Download project files"
+                title="Download Project Files"
+                className="p-1 rounded-md transition-colors text-[#6b7280] hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/10"
+              ><Download className="w-4 h-4" /></button>
             </span>
+            <button
+              onClick={handleSave}
+              className={`inline-flex items-center gap-1 text-[13px] transition-colors ${saved ? "text-[#0a0a0a]" : "text-[#6b7280] hover:text-[#0a0a0a]"}`}
+              title={saved ? "Saved" : "Save design"}
+            >
+              <Heart className={`w-4 h-4 ${saved ? "fill-[#4FC3F7] text-[#4FC3F7]" : ""}`} />
+              {saved ? "Saved" : "Save"}
+            </button>
+            <button
+              onClick={handleShare}
+              className="inline-flex items-center gap-1 text-[13px] text-[#6b7280] hover:text-[#0a0a0a] transition-colors"
+              title="Share design"
+            >
+              <Share2 className="w-4 h-4" />
+              Share
+            </button>
           </div>
 
           {/* Platform selector */}
@@ -309,8 +363,16 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
 
           {/* Prompt preview */}
           <div className="relative bg-white border-2 border-[#0a0a0a] rounded-2xl p-4 mb-4 shadow-[6px_6px_0_0_#0a0a0a]">
-            <div className="mb-2">
+            <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] text-[#6b7280] uppercase font-bold tracking-widest">{activePl?.name} prompt</span>
+              <button
+                onClick={handleCopy}
+                title={`Copy ${activePl?.name} Prompt`}
+                aria-label={`Copy ${activePl?.name} prompt`}
+                className="p-1 rounded-md text-[#6b7280] hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/5 transition-colors flex items-center gap-1"
+              >
+                {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+              </button>
             </div>
             <pre className="whitespace-pre-wrap text-[#0a0a0a] font-mono text-[12px] leading-relaxed max-h-72 overflow-y-auto">{promptText}</pre>
           </div>
@@ -318,17 +380,9 @@ export function WebsiteDetail({ slug, go }: { slug: string; go: (p: string) => v
           {/* Copy button */}
           <button
             onClick={handleCopy}
-            className="w-full h-11 rounded-full bg-[#4FC3F7] text-[#0a0a0a] font-bold flex items-center justify-center gap-2 hover:bg-[#4FC3F7]/90 transition-colors mb-3"
+            className="w-full h-11 rounded-full bg-[#4FC3F7] text-[#0a0a0a] font-bold flex items-center justify-center gap-2 hover:bg-[#4FC3F7]/90 transition-colors mb-6"
           >
-            <Copy className="w-4 h-4" /> Copy {activePl?.name} Prompt
-          </button>
-
-          {/* Download button */}
-          <button
-            onClick={() => downloadAllScaffoldFiles(design.slug, design.title)}
-            className="w-full h-11 rounded-full border-2 border-[#0a0a0a] text-[#0a0a0a] font-bold flex items-center justify-center gap-2 hover:bg-[#0a0a0a]/5 transition-colors mb-6"
-          >
-            <Download className="w-4 h-4" /> Download Project Files
+            {copied ? <Check className="w-4 h-4 text-green-700" /> : <Copy className="w-4 h-4" />} {copied ? "Copied!" : `Copy ${activePl?.name} Prompt`}
           </button>
 
           {/* Supporting docs accordion */}

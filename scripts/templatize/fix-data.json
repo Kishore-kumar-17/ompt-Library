@@ -1,0 +1,515 @@
+{
+  "PEO-CUL-012": {
+    "tokens": [
+      {
+        "name": "OUTFIT",
+        "default": "full traditional formal Highland dress — a hand-woven 16oz worsted-wool kilt in tartan-royal-stewart-red #7A1820 and tartan-forest-green #244432 sett, eight-yard hand-basted pleats, thick cream kilt-hose with Stewart-red flashes, brogued ghillie shoes, a leather sporran with silver Celtic-knot cantle, a cream linen wing-collar jabot shirt with bone buttons, a jacket-charcoal-tweed #2C2F34 Prince Charlie tweed jacket and five-button waistcoat with polished staghorn buttons, clan badge at lapel, a blue glengarry bonnet with silver cap badge, cradling a Great Highland Bagpipe with Royal Stewart bag cover",
+        "missingPlatforms": {
+          "gemini": "EDINBURGH PIPER AW26 Medium Shot Cultural Heritage Portrait 4:5 [SUBJECT] white beard ruddy Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. [SETTING]. McCullin Harris Tweed Nat Geo. Exclude: harsh flash, plastic skin, AI hallucination artifacts, cropped extremities, muddy shadows.",
+          "grok": "EDINBURGH PIPER AW26 Medium Shot Cultural [SUBJECT] white beard ruddy Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. [SETTING]. McCullin Harris Tweed. Exclude: harsh flash, plastic skin, AI hallucination artifacts, cropped extremities.",
+          "firefly": "EDINBURGH PIPER AW26 Medium Shot Cultural Heritage Portrait 4:5 [SUBJECT] white beard ruddy Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. [SETTING]. McCullin Harris Tweed. Exclude: harsh flash, plastic skin, AI hallucination artifacts, cropped extremities, muddy shadows."
+        }
+      }
+    ]
+  },
+  "PEO-CUL-015": {
+    "tokens": [
+      {
+        "name": "OUTFIT",
+        "default": "full traje de charro de gala — a charro-black #141418 fine-wool charro suit with rows of silver-conchos #C4C6CA silver botonadura button-set running down the bolero jacket and down the outside seam of the trousers, silver-embroidered águila on the back of the jacket, a wide botonadura-matching concho belt, a crisp white pecherón ruffled shirt, a red silk moño lavallière bow-tie, a wide-brimmed sombrero-charcoal #2E2E34 felt sombrero de charro with galoneado silver-wire ala trim, silver-tipped ankle boots, cradling a Paracho-built vihuela guitar with a mother-of-pearl rosette",
+        "missingPlatforms": {
+          "gemini": "GUADALAJARA SON AW26 Medium Shot Cultural [SUBJECT] tan Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. [SETTING]. Graciela Iturbide Vogue México Nat Geo. Exclude: harsh flash, plastic skin, AI hallucination artifacts, cropped extremities, muddy shadows.",
+          "grok": "GUADALAJARA SON AW26 Medium Shot Cultural [SUBJECT] tan Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. [SETTING]. Graciela Iturbide Vogue México. Exclude: harsh flash, plastic skin, AI hallucination artifacts, cropped extremities.",
+          "firefly": "GUADALAJARA SON AW26 Medium Shot Cultural [SUBJECT] tan Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. [SETTING]. Graciela Iturbide Vogue México Nat Geo. Exclude: harsh flash, plastic skin, AI hallucination artifacts, cropped extremities, muddy shadows."
+        }
+      }
+    ]
+  },
+  "PEO-PRO-012": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "male architect, 40s warm olive skin, rolled-sleeve denim-shirt #3E5A78 chambray with exposed forearms, graphite pencil tucked behind ear, both hands on drafting-cream #EADFC8 vellum blueprints marked architect-blueprint-blue #1E4C7A linework, slight forward lean studying the sheet, brief side glance to lens",
+        "missingPlatforms": {
+          "gemini": "Architect at Drafting Table Environmental Editorial Portrait 3:4. Subject: [SETTING] shade. Rule of Thirds eyes 38% x 36% y Eye-Level 0° 6° tilt 3:4 vertical waist-up 55% frame. Sony A7R V 50mm G Master f/2.5 1/125s ISO 320 handheld. Desk Lamp Key + Window Ambient Anglepoise 3000K 8-inch diffusion sock camera-right 40° 0.6m key motivated, 4×6ft silk north window camera-left 2.2m ambient fill, 2×3ft negative flag camera-right 1.0m contrast. Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. Capture One Warm-10 grain 8 +0.1 EV. Blueprint 34% cream 22% denim 18% concrete 16% brass 10%. Platon WSJ Teller i-D Dezeen. Exclude: plastic skin, flat lighting, cluttered desk, color cast, logo distortion.",
+          "grok": "Architect at Drafting Table Environmental Editorial Portrait 3:4. Subject: [SETTING]. Rule of Thirds eyes 38% x 36% y Eye-Level 0° 6° tilt 3:4 waist-up 55% frame. Sony A7R V 50mm G Master f/2.5 1/125s ISO 320 handheld. Desk Lamp Key + Window Ambient Anglepoise 3000K 8-inch diffusion sock camera-right 40° 0.6m key, 4×6ft silk window camera-left 2.2m fill, 2×3ft negative flag camera-right 1.0m contrast. Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. Capture One Warm-10 grain 8. Blueprint 34% cream 22% denim 18% concrete 16% brass 10%. Platon Teller Dezeen. Exclude: plastic skin, flat lighting, cluttered desk, color cast, logo distortion.",
+          "firefly": "Architect at Drafting Table Environmental Editorial Portrait 3:4. Subject: [SETTING]. Rule of Thirds eyes 38% x 36% y Eye-Level 0° 6° tilt 3:4 waist-up 55% frame. Sony A7R V 50mm G Master f/2.5 1/125s ISO 320 handheld. Desk Lamp Key + Window Ambient Anglepoise 3000K 8-inch diffusion sock camera-right 40° 0.6m key, 4×6ft silk window camera-left 2.2m fill, 2×3ft negative flag camera-right 1.0m contrast. Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. Capture One Warm-10 grain 8. Blueprint cream denim concrete brass palette. Platon Teller Dezeen. Exclude: plastic skin, flat lighting, cluttered desk, color cast, logo distortion."
+        }
+      }
+    ]
+  },
+  "PEO-PRO-015": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "male software engineer, 30s fair-skin #E7C7A8, short messy hair, thin wire-frame glasses reflecting faint code, heather-grey-hoodie #8C8E93 zipped half-up over a plain tee, slight stubble, three-quarter seat at desk-matte-black #1A1A1A workstation with dual 27-inch monitors angled in an arc, hands on mechanical keyboard, code visible as soft blurred lines, turning head toward lens with relaxed half-smile",
+        "missingPlatforms": {
+          "gemini": "Software Engineer Portrait Environmental Editorial Portrait 4:5. Subject: [SETTING]. Rule of Thirds eyes 44% x 36% y Eye-Level 0° 4° downtilt 4:5 chest-up 55% frame. Sony A7R V 50mm G Master f/2.0 1/125s ISO 640 handheld. Window Key + Screen-Glow Fill 4×6ft silk window camera-left 55° 1.8m 5600K key, dual monitor-blue-glow #2E6CE0 panels front 0.6m fill wash jaw, amber-desk-lamp practical camera-right 0.5m warm rim, 4×4ft black flag overhead. Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. Capture One Neutral-06 grain 7 +0.1 EV. Monitor-blue 32% heather-grey 24% desk-black 20% fair-skin 14% amber 10%. Platon Hasbun Verge. Exclude: plastic skin, flat lighting, cluttered desk, color cast, logo distortion.",
+          "grok": "Software Engineer Portrait Environmental Editorial Portrait 4:5. Subject: [SETTING]. Rule of Thirds eyes 44% x 36% y Eye-Level 0° 4° downtilt 4:5 chest-up 55% frame. Sony A7R V 50mm G Master f/2.0 1/125s ISO 640 handheld. Window Key + Screen-Glow Fill 4×6ft silk window camera-left 55° 1.8m 5600K key, monitor-blue-glow #2E6CE0 panels front 0.6m fill, amber-desk-lamp practical camera-right 0.5m rim, 4×4ft black flag overhead. Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. Capture One Neutral-06 grain 7. Monitor-blue 32% heather-grey 24% black 20% skin 14% amber 10%. Platon Hasbun Verge. Exclude: plastic skin, flat lighting, cluttered desk, color cast, logo distortion.",
+          "firefly": "Software Engineer Portrait Environmental Editorial Portrait 4:5. Subject: [SETTING]. Rule of Thirds eyes 44% x 36% y Eye-Level 0° 4° downtilt 4:5 chest-up 55% frame. Sony A7R V 50mm G Master f/2.0 1/125s ISO 640 handheld. Window Key + Screen-Glow Fill 4×6ft silk window camera-left 55° 1.8m 5600K key, monitor-blue-glow #2E6CE0 panels front 0.6m fill, amber-desk-lamp practical camera-right 0.5m rim, 4×4ft black flag overhead. Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. Capture One Neutral-06 grain 7. Monitor-blue heather-grey black skin amber palette. Platon Hasbun Verge. Exclude: plastic skin, flat lighting, cluttered desk, color cast, logo distortion."
+        }
+      }
+    ]
+  },
+  "VRL-005": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "two versions of the same person side by side. On the left: a child version (around 6-8 years old) with curly hair",
+        "missingPlatforms": {
+          "grok": "Black-and-white studio split portrait: child version (1974) sitting with innocent smile on left, adult (2026) chin on hands smiling warmly at the child on right. Plain backdrop, cinematic lighting. 4:5.",
+          "firefly": "A soft emotional black-and-white studio split portrait showing a child version (\"1974\") with an innocent smile on the left and the adult version (\"2026\") looking warmly at the child on the right, in cinematic diffused studio lighting."
+        }
+      }
+    ]
+  },
+  "VRL-006": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "young woman with soft glowing skin, subtle freckles, and glossy nude lips. She has long dark brown hair in loose waves with face-framing strands, wearing traditional gold jhumka earrings and a delicate necklace, dressed",
+        "missingPlatforms": {
+          "gemini": "Warm-toned cinematic portrait collage of a young woman with gold jhumkas, deep maroon outfit, sheer dupatta, multiple face close-ups (eyes, lips, side profile) arranged aesthetically, beige-orange lily flowers around the frame, blurred music player overlay. Golden-hour lighting, editorial aesthetic, 4K.",
+          "grok": "Warm cinematic portrait collage of young woman, gold jhumkas, maroon outfit, multiple close-up face crops, lily flowers, blurred music player overlay, golden-hour lighting, 4K.",
+          "firefly": "A warm-toned cinematic portrait collage of a young woman in gold jhumkas and a deep maroon outfit, featuring multiple face close-ups, orange lily flowers, and a blurred music player overlay in golden-hour lighting."
+        }
+      }
+    ]
+  },
+  "VRL-009": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "person with glasses laughing with their head slightly tilted back, one hand brushing away a dangling vine, leaning against an ivy-covered stone wall of an old countryside cottage during golden hour. They are",
+        "missingPlatforms": {
+          "grok": "Overhead selfie of laughing person at ivy-covered stone cottage wall, golden hour, earth-tone knit sweater, blooming vines in foreground, warm light, shallow DOF, 9:16."
+        }
+      }
+    ]
+  },
+  "VRL-011": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "She wears an elaborate ice-gray couture gown with intricate embroidery, crystal embellishments, and structured shoulders, evoking regal power and quiet intimacy. Her hair is in a sleek raised updo adorned with refined statement jewelry",
+        "missingPlatforms": {
+          "grok": "Luxury editorial portrait of woman in ice-gray couture gown resting forehead against majestic dragon, cold silver-ash palette, cinematic fantasy realism, Vogue-level aesthetic. No text."
+        }
+      }
+    ]
+  },
+  "VRL-012": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "She wears a magnificent floor-length gown in dusty rose silk taffeta, its bodice richly embroidered with intricate Persian arabesque patterns in gold thread, ruby red, and deep turquoise beading. Her hair is adorned with a cascading crown of fresh roses",
+        "missingPlatforms": {
+          "gemini": "Luxurious high-fashion editorial of a woman in a dusty rose silk taffeta gown with Persian arabesque gold and turquoise embroidery, seated beside an ancient fountain with rose-scattered reflective water. Rose crown in hair, warm afternoon golden light, Paolo Roversi-inspired painterly aesthetic. No text.",
+          "grok": "Luxury editorial of woman in dusty rose silk gown with Persian arabesque embroidery by ancient fountain, rose petals on water, rose crown, warm afternoon gold light, Hasselblad painterly aesthetic. No text.",
+          "firefly": "A luxurious high-fashion editorial of an elegant woman in a dusty rose silk taffeta gown with Persian arabesque gold embroidery, seated beside an ancient garden fountain with rose-scattered reflective water and a cascading rose crown in her hair."
+        }
+      }
+    ]
+  },
+  "VRL-015": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "The subject's original clothing, hairstyle, accessories, pose, skin tone, and expression should be recognizable but reinterpreted as part of Shin-chan's friend group",
+        "missingPlatforms": {
+          "grok": "Character portrait in Crayon Shin-chan anime style — stubby proportions, big oval eyes, bold outlines, flat cel colors. Original clothing and hairstyle maintained. Transparent background.",
+          "firefly": "A full-body character portrait in the official Crayon Shin-chan anime style with exaggerated cartoon humor, stubby proportions, big oval eyes, bold outlines, flat cel coloring, and original clothing maintained on a transparent background."
+        }
+      }
+    ]
+  },
+  "VRL-016": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "He has wavy medium-length hair, a well-groomed beard, and a serious confident expression while holding a smartphone in front of a mirror. Add a small chibi/cartoon version of the same person standing at the bottom-left, holding a phone in the same pose",
+        "missingPlatforms": {
+          "firefly": "An ultra-realistic mirror selfie of a stylish man in a black suit in a modern bathroom, with a small chibi cartoon version of himself in the same outfit standing at the bottom-left, in warm golden sunlight. 9:16."
+        }
+      }
+    ]
+  },
+  "VRL-018": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "A group of five people and a dog are reacting in fear inside an old gothic library. Central man in front: middle-aged, winter jacket with fur hood, glasses, shocked expression, pointing backwards. Left foreground: woman with short brown hair and glasses in orange sweater, scared. Next to her: red-haired woman in purple dress holding book, concerned",
+        "missingPlatforms": {
+          "firefly": "A cinematic haunted gothic library group selfie with five people and a dog reacting in fear, central man in fur-hood jacket pointing back, cold moonlight contrasting warm candlelight, hyper-realistic cinematic horror atmosphere."
+        }
+      }
+    ]
+  },
+  "VRL-020": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "A young man sits cross-legged on a wooden floor wearing a blue t-shirt, smiling naturally with a relaxed confident expression",
+        "missingPlatforms": {
+          "gemini": "Cinematic medium shot of young man in blue t-shirt sitting cross-legged on wooden floor in children's bedroom, surrounded by original animated toy characters (cheerful rabbit, adventurer, robotic cat, cat-and-mouse duo), toy cars, blocks, pink teddy bear. Warm sunlight, shallow DOF, stylized 3D characters, ultra-detailed.",
+          "grok": "Cinematic medium shot of young man sitting cross-legged in a toy-room surrounded by original animated characters (rabbit, adventurer, robotic cat), warm sunlight, shallow DOF.",
+          "firefly": "A cinematic warm medium shot of a young man in a blue t-shirt sitting cross-legged in a children's bedroom surrounded by original colorful animated toy characters, toy cars, blocks, and a pink teddy bear in warm sunlight."
+        }
+      }
+    ]
+  },
+  "VRL-021": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "Exact character layout: Red bird in left foreground touching shoulder, Yellow bird at bottom center close to camera, Pink bird behind left shoulder, Black bird behind right shoulder with fuse spark, Green pigs at various depths in the background. Environment: 3D-styled wooden structures and stone tower, floating blocks in air, debris frozen mid-air",
+        "missingPlatforms": {
+          "grok": "Selfie of man in black t-shirt surrounded by exact-position Angry Birds characters (Red, Yellow, Pink, Black with fuse, Green pigs), 3D game wooden structure environment, shallow DOF, cinematic realism.",
+          "firefly": "A cinematic handheld selfie of a man in a black t-shirt surrounded by stylized Angry Birds characters in exact compositional positions — Red, Yellow, Pink, and Black birds plus Green pigs in a 3D wooden structure environment with debris frozen mid-air."
+        }
+      }
+    ]
+  },
+  "VRL-023": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "Use distorted facial geometry and expressive asymmetry intentionally breaking realism while preserving general identity cues such as skin tone and hairstyle",
+        "missingPlatforms": {
+          "gemini": "Spider-Verse inspired painterly cartoon portrait with sculpted 3D anatomy, hand-painted textures, intentional geometric facial distortion, bold linework mixed with painted shadows, halftone textures, color splashes, solid pink studio background, frontal expressive pose, high-end hybrid cartoon render.",
+          "grok": "Spider-Verse inspired cartoon portrait, 3D anatomy with hand-painted textures, intentional facial distortion, bold line work, halftone textures, color splashes, solid pink background, hybrid animated graphic render.",
+          "firefly": "A Spider-Verse inspired painterly cartoon portrait combining sculpted 3D anatomy with hand-painted textures, intentional geometric facial distortion, bold line work, halftone patterns, color splashes, and a solid pink studio background."
+        }
+      }
+    ]
+  },
+  "VRL-024": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "Use only the red color family in contrasting shades: a bright vivid red for crucial contour lines and details, and a very light pastel red for soft shadow volumes. Maximize the use of white paper as negative space. No dark colors anywhere. Marker strokes should not overlap — use long smooth dynamic lines where possible",
+        "missingPlatforms": {
+          "grok": "Dynamic watercolor marker portrait using only red — vivid red for contour lines, light pastel red for shadows, maximum white negative space, long smooth strokes, no dark colors, bold graphic style.",
+          "midjourney": "stylized watercolor marker portrait, red color family only, bright vivid red contour lines and details, very light pastel red soft shadow volumes, maximum white paper negative space, no dark colors, non-overlapping long smooth dynamic lines, stylish perspective and camera angle, essential details only, slight paper texture visible, clean white background, bold graphic juicy aesthetic --ar 4:5 --v6 --style raw --q 2",
+          "firefly": "A bold stylized watercolor marker portrait using only the red color family — vivid red for contours and details, light pastel red for shadows — with maximum white negative space, long smooth dynamic strokes, and slight visible paper texture."
+        }
+      }
+    ]
+  },
+  "VRL-025": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "Apply strong contrast between a deep blue background and vibrant highlights in cyan, yellow, orange, and magenta",
+        "missingPlatforms": {
+          "gemini": "Stylized digital painting with neon lighting — deep blue background, cyan, yellow, orange, and magenta rim lighting and glow effects on face, hair, and shoulders. Airbrushed skin with painterly texture, dynamic glowing hair strands, subtle energy light trails, high-contrast cinematic mood. Artstation trending quality."
+        }
+      }
+    ]
+  },
+  "VRL-029": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "young man standing on a rural road during golden hour, looking down with a calm introspective expression",
+        "missingPlatforms": {
+          "gemini": "Cinematic golden-hour outdoor portrait of young man on a rural road in a beige t-shirt, surrounded by floating frosted-glass music player UI cards in circular orbit with golden light trails. Warm sunlight, shallow DOF, dreamy emotional music-inspired mood, vertical 9:16, 4K.",
+          "grok": "Golden-hour outdoor portrait of young man, floating frosted-glass music player UI cards orbiting in circular arrangement with golden light trails, warm sunlight, shallow DOF, dreamy music vibe, vertical 9:16.",
+          "firefly": "A cinematic golden-hour outdoor portrait of a young man on a rural road surrounded by floating frosted-glass music player UI cards in circular orbit with golden light trails, warm sunlight, and a dreamy emotional music-inspired mood."
+        }
+      }
+    ]
+  },
+  "VRL-032": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "The subject wears a uniform or attire related to AI content creation",
+        "missingPlatforms": {
+          "grok": "Content Creator AI professional pride wallpaper, subject in AI creative attire, happy expression, AI tools and tech motifs around, 'PROUD TO BE CONTENT CREATOR AI' typography, cinematic 8K, premium 4:5."
+        }
+      }
+    ]
+  },
+  "VRL-034": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "Design a bold high-end graphic illustration with a photorealistic central portrait of the creator in a confident pose holding a smartphone or AI tools",
+        "missingPlatforms": {
+          "gemini": "Visually rich infographic poster for an AI Instagram content creator (62K followers) — central photorealistic portrait, growth timeline 0-62K, content ecosystem diagram, AI tools stack (ChatGPT, MidJourney, CapCut), performance stats callouts, signature formula Hook→Value→CTA, audience impact section, post thumbnails. Bold tech palette, halftone textures, futuristic UI accents, 4:5.",
+          "grok": "AI content creator infographic poster — central photorealistic portrait, growth timeline, content ecosystem diagram, AI tools stack, performance stats, signature formula, post thumbnails. Bold tech palette, futuristic UI accents, 4:5.",
+          "firefly": "A visually rich infographic poster for an AI Instagram content creator with a photorealistic central portrait, growth timeline from 0 to 62K followers, content ecosystem diagram, AI tools stack, performance stats, and bold tech palette with futuristic UI accents."
+        }
+      }
+    ]
+  },
+  "VRL-035": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "He has stylish voluminous brown-black hair, a light beard and goatee, and wears a white casual striped shirt with open collar, a gold chain necklace, a ring, and a smartwatch",
+        "missingPlatforms": {
+          "grok": "Warm romantic digital illustration of Indian man with white flower bouquet, eyes closed, gold chain, white shirt, beige bokeh background with hearts and doodles, dreamy cartoon painting style, 4:5.",
+          "firefly": "A warm aesthetic digital illustration poster of a handsome young Indian man holding a white flower bouquet close to his face with eyes closed and a soft smile, wearing a white shirt and gold chain, with a bokeh background filled with hand-drawn hearts and sparkles."
+        }
+      }
+    ]
+  },
+  "VRL-036": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "He has stylish thick black hair, a well-groomed beard, and a calm dreamy expression. He wears a light cream or white casual shirt with subtle stripes, slightly open collar, gold chain, a ring, and a smartwatch",
+        "missingPlatforms": {
+          "grok": "Romantic digital illustration poster, Indian man holding white flowers near face, eyes closed, cream shirt, gold chain, bokeh background with hearts and doodles, 'Just you and me' handwritten text, semi-realistic warm style, 4:5.",
+          "firefly": "A warm romantic digital illustration poster of a young Indian man holding a white flower bouquet close to his face with eyes closed and a peaceful smile, surrounded by golden bokeh fairy lights and hand-drawn hearts with the handwritten text 'Just you and me'."
+        }
+      }
+    ]
+  },
+  "VRL-037": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "She has long silky black-brown hair with soft waves, light natural makeup, elegant expressive eyes, wearing a white soft aesthetic dress with delicate details, small earrings, a thin bracelet, and a ring",
+        "missingPlatforms": {
+          "grok": "Warm romantic digital illustration of young Indian woman holding white flower bouquet, eyes closed, white dress, beige bokeh background with hearts and doodles, dreamy cartoon painting style, 4:5.",
+          "firefly": "A warm aesthetic digital illustration poster of a beautiful young Indian woman holding a white flower bouquet near her face with eyes closed and a soft smile, wearing a white dress, with a beige bokeh background filled with hand-drawn hearts and sparkles."
+        }
+      }
+    ]
+  },
+  "VRL-038": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "couple walking side by side through a park pathway lined with trees, captured from behind as if someone is following them casually. Their hands are either loosely touching or almost holding. Both",
+        "missingPlatforms": {
+          "gemini": "Extremely realistic candid iPhone photo from behind of a couple walking in a tree-lined park pathway, hands loosely touching, baggy black outfits, sunlight filtering through leaves creating light patches and lens flare, slight motion blur, natural iPhone grain, soft bokeh background. 9:16.",
+          "grok": "Candid iPhone-style photo from behind of couple walking in park, baggy black outfits, hands nearly touching, sunlight through leaves, motion blur, natural grain, soft bokeh, 9:16.",
+          "firefly": "An extremely realistic candid iPhone-style photo from behind of a couple walking in a tree-lined park pathway with loosely touching hands, baggy black outfits, sunlight filtering through the leaves, slight motion blur, and natural film grain."
+        }
+      }
+    ]
+  },
+  "VRL-039": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "girl in a light purple dress, the boy in casual shirt and jeans",
+        "missingPlatforms": {
+          "firefly": "An extremely realistic 3-panel vertical iPhone couple collage: top panel at a rustic flower door in soft daylight, middle panel heart-hand selfie in bright sky, and bottom panel a nighttime hug with warm fairy lights bokeh and foreheads almost touching."
+        }
+      }
+    ]
+  },
+  "VRL-043": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "young couple standing close together during golden hour. Both",
+        "missingPlatforms": {
+          "midjourney": "extremely realistic candid iPhone couple photo, oversized black hoodies minimal streetwear, girl slightly behind leaning toward boy arm resting on his shoulder, looking at him softly warm affectionate smile, boy looking slightly away calm relaxed expression, emotional contrast, warm golden sunlight from behind rim lighting around hair, subtle lens flare, slight breeze hair movement, blurred urban rooftop sunset tones background, natural grain realistic skin texture --ar 9:16 --v6 --style raw --q 2"
+        }
+      }
+    ]
+  },
+  "VRL-046": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "field with overall softness and glowing haze. Scene set",
+        "missingPlatforms": {
+          "firefly": "A soft low-resolution indoor candid couple portrait with slight blur, film grain, and creamy diffusion glow, high-key warm exposure, strong right-side daylight, fully illuminated faces, subtle halation, and both subjects seated in a traditional curved-arch window alcove. 9:16."
+        }
+      }
+    ]
+  },
+  "VRL-047": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "couple walking under dim streetlights at night, slightly wet road reflecting neon lights. Both",
+        "missingPlatforms": {
+          "grok": "Candid iPhone night street couple photo, wet road with neon reflections, streetlights, casual hoodie and denim, girl holding arm, motion blur, grain, cinematic low-light mood, bokeh, 9:16."
+        }
+      }
+    ]
+  },
+  "VRL-049": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "She has long wavy brown hair with a center part and braided twists, wears large gold jhumka earrings and a solid black top, and holds a bouquet of bright yellow flowers close to her chest",
+        "missingPlatforms": {
+          "grok": "Oil painting portrait of Katrina Kaif, exact face, yellow flower bouquet, teal floral background, impasto style, motivational text overlay. 4:5.",
+          "firefly": "A digital oil painting portrait of Katrina Kaif holding yellow flowers with a teal wildflower background, thick impasto brush strokes, and the text \"Everything happens for a reason.\" at the top."
+        }
+      }
+    ]
+  },
+  "VRL-051": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "handsome young South Asian man in a relaxed candid pose, gently running his hand through his hair while looking sideways with a calm confident expression. Short voluminous textured hair, defined jawline, light beard and mustache",
+        "missingPlatforms": {
+          "firefly": "A detailed hand-drawn pencil and ink sketch of a confident young South Asian man in a candid pose running his hand through his hair, with fine cross-hatching and sepia shading on an off-white textured background."
+        }
+      }
+    ]
+  },
+  "VRL-053": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "traditional geometric patterns in earthy red and brown tones, paired with a black V-neck blouse. She wears a turquoise and pearl choker necklace",
+        "missingPlatforms": {
+          "firefly": "An elegant Indian woman in a white geometric-bordered saree standing beside her animated cartoon younger self against a dark wall, with cinematic lighting and a warm stylish composition."
+        }
+      }
+    ]
+  },
+  "VRL-054": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "smiling young Indian woman with the exact face of Anupama Parameswaran, 100% match. She has dark curly hair pulled into a messy bun with loose strands, a small black bindi, strong eyebrows",
+        "missingPlatforms": {
+          "gemini": "Semi-realistic portrait of Anupama Parameswaran, exact face, dark curly messy bun, navy blouse, white ikat saree, oxidized silver turquoise choker, white notebook doodle background with \"Dream Big\" and \"Inspire\" motivational text. 8K, 4:5.",
+          "grok": "Portrait of Anupama Parameswaran, exact face, curly messy bun, ikat saree, oxidized jewelry, colorful doodle notebook background with motivational words. 4:5.",
+          "midjourney": "semi-realistic digital illustration of Anupama Parameswaran, exact face 100% match, dark curly hair messy bun, navy blue blouse, white ikat saree, oxidized silver turquoise choker, black bindi, notebook paper background, colorful doodles stars hearts lightning bolts, Dream Big Inspire Create Shine text, scrapbook portrait hybrid, bright lighting, soft shading --ar 4:5 --v6 --style raw --q 2",
+          "firefly": "A semi-realistic portrait of Anupama Parameswaran in a navy blouse and ikat saree with oxidized jewelry, set against a white notebook background filled with colorful doodles and motivational words."
+        }
+      }
+    ]
+  },
+  "VRL-055": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "Hair: soft loose waves with natural volume and a golden warm glow on strands. Makeup: dewy luminous skin, golden highlighter, peach eyeshadow, fluffy lashes, rosy watercolor blush, glossy peach-rose lips. Outfit: cream or soft beige off-shoulder knit top with exposed collarbone, thin gold necklace, tiny pearl earrings, subtle gold rings",
+        "missingPlatforms": {
+          "gemini": "Romantic golden-hour portrait, soft wavy hair with golden glow, dewy makeup with peach eyeshadow and rosy blush, cream off-shoulder top, gold jewelry, full oil painting self-portrait background in warm golden-peach-blush tones. Canon EOS R5, 50mm f/1.2, 8K.",
+          "grok": "Golden-hour muse portrait, soft wavy hair, dewy glowing skin, cream off-shoulder top, oil painting background in peach-gold tones, mid-shot, 8K.",
+          "firefly": "A romantic golden-hour Vogue-style portrait with soft wavy hair, dewy glowing makeup, a cream off-shoulder top, and a large oil painting self-portrait background in warm golden and peach tones."
+        }
+      }
+    ]
+  },
+  "VRL-056": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "Left side: a child version of the subject seated and looking to the right with an innocent, soft smile. Label \"THEN\" above her. Right side: the present-day version, seated with hands gently placed under her chin, smiling calmly and looking at the child. Label \"NOW\" above her. Center: an elegant birthday cake on a table between them",
+        "missingPlatforms": {
+          "grok": "Split portrait of a child labeled \"THEN\" and adult labeled \"NOW\" seated facing each other with a birthday cake between them, warm studio lighting, cinematic emotional photography.",
+          "firefly": "An emotional realistic split portrait of the same woman as a child (\"THEN\") and in the present day (\"NOW\") seated facing each other with an elegant birthday cake centered between them."
+        }
+      }
+    ]
+  },
+  "VRL-058": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "Maintain realistic lighting, natural skin texture, correct proportions, authentic reflections, and natural shadows throughout",
+        "missingPlatforms": {
+          "gemini": "Luxury fashion campaign with subject in three surreal environments: glass platform over calm reflective water, white marble gallery with floating light structures, and golden desert with large reflective mirrors. Realistic lighting, natural skin, shallow DOF, editorial style.",
+          "firefly": "A cinematic luxury fashion campaign portrait in three surreal but physically realistic environments: a glass platform above calm water, a white marble gallery with floating lights, and a golden desert with large reflective mirrors."
+        }
+      }
+    ]
+  },
+  "VRL-059": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "Maintain the same background",
+        "missingPlatforms": {
+          "gemini": "Portrait with multiple 3D chibi mini versions of the subject in playful poses (jumping, waving, sitting, holding drink), white doodle elements (stars, hearts, sparkles), aesthetic handwriting like \"shine\" and \"happy\", soft pastel Korean Instagrammable aesthetic. 4:5.",
+          "grok": "Main portrait surrounded by chibi 3D mini versions in playful poses, white doodle elements, aesthetic handwriting, soft pastel Korean aesthetic. 4:5.",
+          "midjourney": "portrait with mini 3D chibi cute versions, jumping waving sitting relaxed holding drink poses, preserved facial features, white hand-drawn doodles, stars hearts sparkles motion lines, shine bright day happy smile handwriting, white sticker outline, soft pastel color tone, glossy 3D chibi look, Korean Instagrammable aesthetic, clean composition --ar 4:5 --v6 --style raw --q 2",
+          "firefly": "A portrait surrounded by playful 3D chibi mini versions of the subject in various poses with white doodle elements, aesthetic handwriting, and a soft pastel Korean Instagrammable aesthetic.",
+          "flux": "An immaculately produced high-detail digital composite portrait in the trending Korean Instagrammable aesthetic. The main subject occupies the center as a full clear portrait with soft warm cinematic lighting — gentle key from above, clean fill eliminating harsh shadows, natural skin luminance. Around this central figure, multiple perfectly crafted 3D glossy chibi mini-versions of the same subject are arranged playfully: one version mid-leap with joyful arms raised, one waving enthusiastically with a wide smile, one seated cross-legged in a relaxed cute pose, one holding a bubble tea cup with two hands. Each chibi maintains the recognizable facial features, hair, and expression translated into adorable chibi proportion language — large head, sparkly eyes, smooth rounded forms, glossy render. Hand-drawn white line art doodles scattered throughout: outlined stars, simple hearts, four-point sparkle bursts, curving motion lines, small cute icons. Aesthetic casual handwritten typography reads \"shine\", \"bright day\", \"happy\", \"smile\" in light brushpen doodle font. Clean white sticker-outline borders surround chibi figures. Soft pastel color grading — lavender, blush pink, mint, cream. 8K high-detail digital rendering, 4:5 aspect ratio."
+        }
+      }
+    ]
+  },
+  "VRL-060": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "beautiful young Indian woman. On the right: a full-body shot of her standing gracefully in a premium light pink floral organza saree with a delicate silver sequin border. On the left: a large ethereal close-up profile of her face blended seamlessly into a golden hour sky",
+        "missingPlatforms": {
+          "gemini": "Cinematic double exposure portrait — full-body in light pink floral organza saree on right, large ethereal face profile blended into golden hour sky on left, silver jhumkas, small bindi, soft fluffy clouds, birds in flight, dreamy sunset bokeh background. 8K.",
+          "grok": "Double exposure portrait — full-body in pink organza saree blended with ethereal face profile in golden hour sky, silver jhumkas, dreamy sunset bokeh background. 8K."
+        }
+      }
+    ]
+  },
+  "VRL-061": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "Large main portrait on the right with 3-4 smaller cutout portraits arranged creatively around it. One black-and-white polaroid-style photo frame at the top left. Candid poses (looking down, side profile, smiling), traditional oxidized jhumka earrings and bangles",
+        "missingPlatforms": {
+          "gemini": "Aesthetic scrapbook collage of a young South Indian girl with large main portrait, 3-4 smaller cutouts, polaroid frame, candid poses, oxidized jhumkas, daisy flowers, vintage newspaper textures, handwritten quotes, and a music player UI. Soft beige background, warm Pinterest aesthetic.",
+          "grok": "Scrapbook-style collage of South Indian girl, large portrait and smaller cutouts, polaroid frame, flowers, torn paper, handwritten notes, music player UI, warm beige aesthetic.",
+          "firefly": "An aesthetic Pinterest-style scrapbook collage of a young South Indian girl with a large main portrait, smaller cutouts, daisy flowers, torn paper textures, vintage newspaper cutouts, handwritten quotes, and a music player UI."
+        }
+      }
+    ]
+  },
+  "VRL-062": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "Maintain strict face preservation. Large main portrait on the right, 2-3 smaller cutout portraits layered at bottom/left, one black-and-white polaroid-style frame at the top",
+        "missingPlatforms": {
+          "grok": "Dark scrapbook collage of South Indian girl with authentic Spotify dark-mode UI, black charcoal background, cinematic moody lighting, multiple portrait cutouts.",
+          "midjourney": "dark aesthetic scrapbook collage, young South Indian girl, strict face preservation, charcoal black textured background, cinematic moody lighting, vintage grunge vignette, realistic Spotify dark mode music player UI, song title artist name album art, progress bar timestamp, play pause previous next shuffle repeat heart icons, polaroid frame top, multiple portrait cutouts --ar 4:5 --v6 --style raw --q 2",
+          "firefly": "A dark aesthetic scrapbook collage of a young South Indian girl with a pixel-accurate Spotify dark-mode music player UI, charcoal background, cinematic moody lighting, and layered portrait cutouts."
+        }
+      }
+    ]
+  },
+  "VRL-063": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "The miniature figure must maintain an exact pouting, defiant facial expression with furrowed brows and arms crossed tightly in a meditative-yet-annoyed pose",
+        "missingPlatforms": {
+          "grok": "Miniature person sitting cross-legged and pouting in a giant hand, arms crossed, cheek pinched, night city bokeh background in orange, green, red, blue, cinematic lighting.",
+          "firefly": "A photorealistic miniature human figure sitting cross-legged and pouting in a giant human palm, with the thumb and forefinger pinching her cheek and a colorful bokeh night cityscape in the blurred background."
+        }
+      }
+    ]
+  },
+  "VRL-064": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "Four equal square frames: (1) close-up smile, (2) hand-on-face candid, (3) side profile with earrings, (4) natural front portrait",
+        "missingPlatforms": {
+          "grok": "4-frame soft aesthetic collage of an Indian woman in various poses with a Spotify glassmorphism player overlay at the bottom, pastel vintage filter, natural smile, long black hair.",
+          "firefly": "A soft aesthetic 4-frame portrait collage of a young Indian woman in four candid poses with a Spotify glassmorphism music player overlay at the bottom in a pastel vintage aesthetic."
+        }
+      }
+    ]
+  },
+  "VRL-069": {
+    "tokens": [
+      {
+        "name": "SUBJECT",
+        "default": "She wears a contemporary black silk saree with deep emerald green velvet borders and subtle antique gold embroidery, paired with a sleeveless designer blouse. Her long wavy hair flows naturally with rain-kissed texture, adorned with tiny jasmine flowers. She holds an old hardcover book in one hand and a warm coffee mug in the other, looking sideways thoughtfully",
+        "missingPlatforms": {
+          "grok": "Cinematic portrait of a South Indian woman in a black silk saree in a vintage library café during rain, holding a book and coffee mug, chandelier glow, misty windows, dreamy intellectual mood. 8K.",
+          "midjourney": "cinematic ultra-detailed portrait, modern South Indian woman, black silk saree deep emerald green velvet borders antique gold embroidery, sleeveless designer blouse, rain-kissed wavy hair tiny jasmine flowers, hardcover book one hand, warm coffee mug other hand, sideways thoughtful look, vintage library cafe, glowing chandeliers, tall wooden bookshelves, candle lights, misty rain giant glass windows, amber floor reflections, dreamy elegant mysterious --ar 4:5 --v6 --style raw --q 2",
+          "firefly": "A cinematic portrait of a South Indian woman in a black silk saree with emerald velvet borders, holding a book and coffee mug inside a glowing vintage library café during rain, with chandelier light and misty windows."
+        }
+      }
+    ]
+  }
+}

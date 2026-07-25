@@ -123,11 +123,21 @@ const CLAUSE_MAX_LEN = 160;
 // use it in place of the canned label whenever it's genuinely more
 // descriptive than the label alone.
 function extractMatchClause(source: string, matchIndex: number, matchLen: number): string | undefined {
-  const isBoundary = (ch: string | undefined) => ch === undefined || /[,.;\n]/.test(ch);
+  // Compact "keyword :: keyword :: --flag value" formats (Midjourney and
+  // similar) have NO comma/period delimiters at all — without also treating
+  // "::" as a boundary, the scan below runs unbounded to the end of the
+  // platform text, corrupting the lock field with the entire remaining
+  // prompt (including unrelated --flag params) instead of a short clause.
+  const isBoundary = (i: number): boolean => {
+    if (i < 0 || i >= source.length) return true;
+    if (/[,.;\n]/.test(source[i])) return true;
+    if (source[i] === ":" && (source[i - 1] === ":" || source[i + 1] === ":")) return true;
+    return false;
+  };
   let start = matchIndex;
-  while (start > 0 && !isBoundary(source[start - 1])) start--;
+  while (start > 0 && !isBoundary(start - 1)) start--;
   let end = matchIndex + matchLen;
-  while (end < source.length && !isBoundary(source[end])) end++;
+  while (end < source.length && !isBoundary(end)) end++;
 
   const clause = compactWhitespace(source.slice(start, end)).replace(/^(?:and|with|featuring|including)\s+/i, "");
   if (clause.length < CLAUSE_MIN_LEN || clause.length > CLAUSE_MAX_LEN) return undefined;

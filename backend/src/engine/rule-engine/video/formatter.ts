@@ -16,14 +16,35 @@ interface Locks {
 }
 
 function extractValue(text: string, label: string): string {
-  const regex = new RegExp(`${label}:\\s*(.+?)(?=\\n[A-Z]|\\*\\*LOCKS|$)`, "si")
+  // Section labels are always emitted in UPPERCASE at the start of their own
+  // line (builder.ts joins sections with "\n\n"). Matching case-insensitively
+  // without a line-start anchor let this accidentally match a lowercase
+  // "style:"/"category:" occurrence embedded mid-line inside an enrichment
+  // hint annotation folded into SUBJECT/ACTION (e.g. "... (style: Cinematic;
+  // category: ...)"), pulling the wrong text into that section entirely.
+  const regex = new RegExp(`(?:^|\\n)${label}:\\s*(.+?)(?=\\n[A-Z][A-Z ]*:|\\n\\*\\*LOCKS|$)`, "s")
   const m = text.match(regex)
   return m?.[1]?.trim() ?? ""
 }
 
+// SUBJECT is frequently a plain, undictionaried short prefix of the exact
+// same text ACTION carries in full (e.g. any idea the SUBJECT dictionary
+// doesn't recognize) — printing both back-to-back then reads as the same
+// words twice ("a lone astronaut walking, a lone astronaut walking across a
+// red desert"). When ACTION already starts with SUBJECT, collapse them into
+// one clause instead of repeating it.
+function extractSubjectAction(raw: string): { subject: string; action: string } {
+  const subject = extractValue(raw, "SUBJECT")
+  const action = extractValue(raw, "ACTION")
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9\s]/g, "").trim()
+  if (subject && action && norm(action).startsWith(norm(subject))) {
+    return { subject: action, action: "" }
+  }
+  return { subject, action }
+}
+
 function formatKling(raw: string): string {
-  const subject  = extractValue(raw, "SUBJECT")
-  const action   = extractValue(raw, "ACTION")
+  const { subject, action } = extractSubjectAction(raw)
   const setting  = extractValue(raw, "SETTING")
   const camera   = extractValue(raw, "CAMERA")
   const lighting = extractValue(raw, "LIGHTING")
@@ -48,8 +69,7 @@ function formatKling(raw: string): string {
 }
 
 function formatSora(raw: string): string {
-  const subject  = extractValue(raw, "SUBJECT")
-  const action   = extractValue(raw, "ACTION")
+  const { subject, action } = extractSubjectAction(raw)
   const setting  = extractValue(raw, "SETTING")
   const camera   = extractValue(raw, "CAMERA")
   const lighting = extractValue(raw, "LIGHTING")
@@ -73,8 +93,7 @@ function formatSora(raw: string): string {
 }
 
 function formatRunway(raw: string): string {
-  const subject  = extractValue(raw, "SUBJECT")
-  const action   = extractValue(raw, "ACTION")
+  const { subject, action } = extractSubjectAction(raw)
   const setting  = extractValue(raw, "SETTING")
   const camera   = extractValue(raw, "CAMERA")
   const lighting = extractValue(raw, "LIGHTING")
@@ -103,8 +122,7 @@ function formatRunway(raw: string): string {
 }
 
 function formatPika(raw: string): string {
-  const subject  = extractValue(raw, "SUBJECT")
-  const action   = extractValue(raw, "ACTION")
+  const { subject, action } = extractSubjectAction(raw)
   const camera   = extractValue(raw, "CAMERA")
   const quality  = extractValue(raw, "QUALITY TAG")
   const duration = extractValue(raw, "DURATION")
@@ -118,8 +136,7 @@ function formatPika(raw: string): string {
 }
 
 function formatLuma(raw: string): string {
-  const subject  = extractValue(raw, "SUBJECT")
-  const action   = extractValue(raw, "ACTION")
+  const { subject, action } = extractSubjectAction(raw)
   const setting  = extractValue(raw, "SETTING")
   const camera   = extractValue(raw, "CAMERA")
   const lighting = extractValue(raw, "LIGHTING")
@@ -144,8 +161,7 @@ function formatLuma(raw: string): string {
 }
 
 function formatVeo(raw: string): string {
-  const subject  = extractValue(raw, "SUBJECT")
-  const action   = extractValue(raw, "ACTION")
+  const { subject, action } = extractSubjectAction(raw)
   const setting  = extractValue(raw, "SETTING")
   const camera   = extractValue(raw, "CAMERA")
   const lighting = extractValue(raw, "LIGHTING")

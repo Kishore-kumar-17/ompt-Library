@@ -1,0 +1,389 @@
+[
+  {
+    "slug": "PEO-CUL-012",
+    "token": "OUTFIT",
+    "def": "full traditional formal Highland dress — a hand-woven 16oz worsted-wool kilt in tartan-royal-stewart-red #7A1820 and tartan-forest-green #244432 sett, eight-yard hand-basted pleats, thick cream kilt-hose with Stewart-red flashes, brogued ghillie shoes, a leather sporran with silver Celtic-knot cantle, a cream linen wing-collar jabot shirt with bone buttons, a jacket-charcoal-tweed #2C2F34 Prince Charlie tweed jacket and five-button waistcoat with polished staghorn buttons, clan badge at lapel, a blue glengarry bonnet with silver cap badge, cradling a Great Highland Bagpipe with Royal Stewart bag cover",
+    "missing": [
+      "gemini",
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "PEO-CUL-015",
+    "token": "OUTFIT",
+    "def": "full traje de charro de gala — a charro-black #141418 fine-wool charro suit with rows of silver-conchos #C4C6CA silver botonadura button-set running down the bolero jacket and down the outside seam of the trousers, silver-embroidered águila on the back of the jacket, a wide botonadura-matching concho belt, a crisp white pecherón ruffled shirt, a red silk moño lavallière bow-tie, a wide-brimmed sombrero-charcoal #2E2E34 felt sombrero de charro with galoneado silver-wire ala trim, silver-tipped ankle boots, cradling a Paracho-built vihuela guitar with a mother-of-pearl rosette",
+    "missing": [
+      "gemini",
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "PEO-PRO-012",
+    "token": "SUBJECT",
+    "def": "male architect, 40s warm olive skin, rolled-sleeve denim-shirt #3E5A78 chambray with exposed forearms, graphite pencil tucked behind ear, both hands on drafting-cream #EADFC8 vellum blueprints marked architect-blueprint-blue #1E4C7A linework, slight forward lean studying the sheet, brief side glance to lens",
+    "missing": [
+      "gemini",
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "PEO-PRO-015",
+    "token": "SUBJECT",
+    "def": "male software engineer, 30s fair-skin #E7C7A8, short messy hair, thin wire-frame glasses reflecting faint code, heather-grey-hoodie #8C8E93 zipped half-up over a plain tee, slight stubble, three-quarter seat at desk-matte-black #1A1A1A workstation with dual 27-inch monitors angled in an arc, hands on mechanical keyboard, code visible as soft blurred lines, turning head toward lens with relaxed half-smile",
+    "missing": [
+      "gemini",
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-005",
+    "token": "SUBJECT",
+    "def": "two versions of the same person side by side. On the left: a child version (around 6-8 years old) with curly hair",
+    "missing": [
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-006",
+    "token": "SUBJECT",
+    "def": "young woman with soft glowing skin, subtle freckles, and glossy nude lips. She has long dark brown hair in loose waves with face-framing strands, wearing traditional gold jhumka earrings and a delicate necklace, dressed",
+    "missing": [
+      "gemini",
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-009",
+    "token": "SUBJECT",
+    "def": "person with glasses laughing with their head slightly tilted back, one hand brushing away a dangling vine, leaning against an ivy-covered stone wall of an old countryside cottage during golden hour. They are",
+    "missing": [
+      "grok"
+    ]
+  },
+  {
+    "slug": "VRL-011",
+    "token": "SUBJECT",
+    "def": "She wears an elaborate ice-gray couture gown with intricate embroidery, crystal embellishments, and structured shoulders, evoking regal power and quiet intimacy. Her hair is in a sleek raised updo adorned with refined statement jewelry",
+    "missing": [
+      "grok"
+    ]
+  },
+  {
+    "slug": "VRL-012",
+    "token": "SUBJECT",
+    "def": "She wears a magnificent floor-length gown in dusty rose silk taffeta, its bodice richly embroidered with intricate Persian arabesque patterns in gold thread, ruby red, and deep turquoise beading. Her hair is adorned with a cascading crown of fresh roses",
+    "missing": [
+      "gemini",
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-015",
+    "token": "SUBJECT",
+    "def": "The subject's original clothing, hairstyle, accessories, pose, skin tone, and expression should be recognizable but reinterpreted as part of Shin-chan's friend group",
+    "missing": [
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-016",
+    "token": "SUBJECT",
+    "def": "He has wavy medium-length hair, a well-groomed beard, and a serious confident expression while holding a smartphone in front of a mirror. Add a small chibi/cartoon version of the same person standing at the bottom-left, holding a phone in the same pose",
+    "missing": [
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-018",
+    "token": "SUBJECT",
+    "def": "A group of five people and a dog are reacting in fear inside an old gothic library. Central man in front: middle-aged, winter jacket with fur hood, glasses, shocked expression, pointing backwards. Left foreground: woman with short brown hair and glasses in orange sweater, scared. Next to her: red-haired woman in purple dress holding book, concerned",
+    "missing": [
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-020",
+    "token": "SUBJECT",
+    "def": "A young man sits cross-legged on a wooden floor wearing a blue t-shirt, smiling naturally with a relaxed confident expression",
+    "missing": [
+      "gemini",
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-021",
+    "token": "SUBJECT",
+    "def": "Exact character layout: Red bird in left foreground touching shoulder, Yellow bird at bottom center close to camera, Pink bird behind left shoulder, Black bird behind right shoulder with fuse spark, Green pigs at various depths in the background. Environment: 3D-styled wooden structures and stone tower, floating blocks in air, debris frozen mid-air",
+    "missing": [
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-023",
+    "token": "SUBJECT",
+    "def": "Use distorted facial geometry and expressive asymmetry intentionally breaking realism while preserving general identity cues such as skin tone and hairstyle",
+    "missing": [
+      "gemini",
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-024",
+    "token": "SUBJECT",
+    "def": "Use only the red color family in contrasting shades: a bright vivid red for crucial contour lines and details, and a very light pastel red for soft shadow volumes. Maximize the use of white paper as negative space. No dark colors anywhere. Marker strokes should not overlap — use long smooth dynamic lines where possible",
+    "missing": [
+      "grok",
+      "midjourney",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-025",
+    "token": "SUBJECT",
+    "def": "Apply strong contrast between a deep blue background and vibrant highlights in cyan, yellow, orange, and magenta",
+    "missing": [
+      "gemini"
+    ]
+  },
+  {
+    "slug": "VRL-029",
+    "token": "SUBJECT",
+    "def": "young man standing on a rural road during golden hour, looking down with a calm introspective expression",
+    "missing": [
+      "gemini",
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-032",
+    "token": "SUBJECT",
+    "def": "The subject wears a uniform or attire related to AI content creation",
+    "missing": [
+      "grok"
+    ]
+  },
+  {
+    "slug": "VRL-034",
+    "token": "SUBJECT",
+    "def": "Design a bold high-end graphic illustration with a photorealistic central portrait of the creator in a confident pose holding a smartphone or AI tools",
+    "missing": [
+      "gemini",
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-035",
+    "token": "SUBJECT",
+    "def": "He has stylish voluminous brown-black hair, a light beard and goatee, and wears a white casual striped shirt with open collar, a gold chain necklace, a ring, and a smartwatch",
+    "missing": [
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-036",
+    "token": "SUBJECT",
+    "def": "He has stylish thick black hair, a well-groomed beard, and a calm dreamy expression. He wears a light cream or white casual shirt with subtle stripes, slightly open collar, gold chain, a ring, and a smartwatch",
+    "missing": [
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-037",
+    "token": "SUBJECT",
+    "def": "She has long silky black-brown hair with soft waves, light natural makeup, elegant expressive eyes, wearing a white soft aesthetic dress with delicate details, small earrings, a thin bracelet, and a ring",
+    "missing": [
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-038",
+    "token": "SUBJECT",
+    "def": "couple walking side by side through a park pathway lined with trees, captured from behind as if someone is following them casually. Their hands are either loosely touching or almost holding. Both",
+    "missing": [
+      "gemini",
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-039",
+    "token": "SUBJECT",
+    "def": "girl in a light purple dress, the boy in casual shirt and jeans",
+    "missing": [
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-043",
+    "token": "SUBJECT",
+    "def": "young couple standing close together during golden hour. Both",
+    "missing": [
+      "midjourney"
+    ]
+  },
+  {
+    "slug": "VRL-046",
+    "token": "SUBJECT",
+    "def": "field with overall softness and glowing haze. Scene set",
+    "missing": [
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-047",
+    "token": "SUBJECT",
+    "def": "couple walking under dim streetlights at night, slightly wet road reflecting neon lights. Both",
+    "missing": [
+      "grok"
+    ]
+  },
+  {
+    "slug": "VRL-049",
+    "token": "SUBJECT",
+    "def": "She has long wavy brown hair with a center part and braided twists, wears large gold jhumka earrings and a solid black top, and holds a bouquet of bright yellow flowers close to her chest",
+    "missing": [
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-051",
+    "token": "SUBJECT",
+    "def": "handsome young South Asian man in a relaxed candid pose, gently running his hand through his hair while looking sideways with a calm confident expression. Short voluminous textured hair, defined jawline, light beard and mustache",
+    "missing": [
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-053",
+    "token": "SUBJECT",
+    "def": "traditional geometric patterns in earthy red and brown tones, paired with a black V-neck blouse. She wears a turquoise and pearl choker necklace",
+    "missing": [
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-054",
+    "token": "SUBJECT",
+    "def": "smiling young Indian woman with the exact face of Anupama Parameswaran, 100% match. She has dark curly hair pulled into a messy bun with loose strands, a small black bindi, strong eyebrows",
+    "missing": [
+      "gemini",
+      "grok",
+      "midjourney",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-055",
+    "token": "SUBJECT",
+    "def": "Hair: soft loose waves with natural volume and a golden warm glow on strands. Makeup: dewy luminous skin, golden highlighter, peach eyeshadow, fluffy lashes, rosy watercolor blush, glossy peach-rose lips. Outfit: cream or soft beige off-shoulder knit top with exposed collarbone, thin gold necklace, tiny pearl earrings, subtle gold rings",
+    "missing": [
+      "gemini",
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-056",
+    "token": "SUBJECT",
+    "def": "Left side: a child version of the subject seated and looking to the right with an innocent, soft smile. Label \"THEN\" above her. Right side: the present-day version, seated with hands gently placed under her chin, smiling calmly and looking at the child. Label \"NOW\" above her. Center: an elegant birthday cake on a table between them",
+    "missing": [
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-058",
+    "token": "SUBJECT",
+    "def": "Maintain realistic lighting, natural skin texture, correct proportions, authentic reflections, and natural shadows throughout",
+    "missing": [
+      "gemini",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-059",
+    "token": "SUBJECT",
+    "def": "Maintain the same background",
+    "missing": [
+      "gemini",
+      "grok",
+      "midjourney",
+      "firefly",
+      "flux"
+    ]
+  },
+  {
+    "slug": "VRL-060",
+    "token": "SUBJECT",
+    "def": "beautiful young Indian woman. On the right: a full-body shot of her standing gracefully in a premium light pink floral organza saree with a delicate silver sequin border. On the left: a large ethereal close-up profile of her face blended seamlessly into a golden hour sky",
+    "missing": [
+      "gemini",
+      "grok"
+    ]
+  },
+  {
+    "slug": "VRL-061",
+    "token": "SUBJECT",
+    "def": "Large main portrait on the right with 3-4 smaller cutout portraits arranged creatively around it. One black-and-white polaroid-style photo frame at the top left. Candid poses (looking down, side profile, smiling), traditional oxidized jhumka earrings and bangles",
+    "missing": [
+      "gemini",
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-062",
+    "token": "SUBJECT",
+    "def": "Maintain strict face preservation. Large main portrait on the right, 2-3 smaller cutout portraits layered at bottom/left, one black-and-white polaroid-style frame at the top",
+    "missing": [
+      "grok",
+      "midjourney",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-063",
+    "token": "SUBJECT",
+    "def": "The miniature figure must maintain an exact pouting, defiant facial expression with furrowed brows and arms crossed tightly in a meditative-yet-annoyed pose",
+    "missing": [
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-064",
+    "token": "SUBJECT",
+    "def": "Four equal square frames: (1) close-up smile, (2) hand-on-face candid, (3) side profile with earrings, (4) natural front portrait",
+    "missing": [
+      "grok",
+      "firefly"
+    ]
+  },
+  {
+    "slug": "VRL-069",
+    "token": "SUBJECT",
+    "def": "She wears a contemporary black silk saree with deep emerald green velvet borders and subtle antique gold embroidery, paired with a sleeveless designer blouse. Her long wavy hair flows naturally with rain-kissed texture, adorned with tiny jasmine flowers. She holds an old hardcover book in one hand and a warm coffee mug in the other, looking sideways thoughtfully",
+    "missing": [
+      "grok",
+      "midjourney",
+      "firefly"
+    ]
+  }
+]

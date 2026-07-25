@@ -1,0 +1,870 @@
+[
+  {
+    "family": "image",
+    "promptFormat": "text",
+    "category": "people-portraits",
+    "idea": "a samurai standing in rain at night",
+    "platform": "midjourney",
+    "enhancements": {
+      "Lighting": "Neon",
+      "Mood": "Dramatic"
+    },
+    "ok": true,
+    "ms": 31969,
+    "error": null,
+    "response": {
+      "promptLen": 325,
+      "categoryLabel": "People & Portraits",
+      "hasLockSection": true,
+      "hasNegativeLocks": true,
+      "hasJsonPrompt": false,
+      "promptSnippet": "a samurai standing in rain at night (mood: Dramatic; aspect ratio: 16:9; category: people-portraits; lighting: Neon), neon-lit cyberpunk aesthetic, atmospheric nighttime environment with ambient light, dramatic chiaroscu"
+    }
+  },
+  {
+    "family": "image",
+    "promptFormat": "text",
+    "category": "product-ecommerce",
+    "idea": "luxury perfume bottle on marble surface",
+    "platform": "chatgpt",
+    "enhancements": {
+      "Setting": "Studio",
+      "Palette": "Warm"
+    },
+    "ok": true,
+    "ms": 31575,
+    "error": null,
+    "response": {
+      "promptLen": 1132,
+      "categoryLabel": "Product & Ecommerce",
+      "hasLockSection": true,
+      "hasNegativeLocks": true,
+      "hasJsonPrompt": false,
+      "promptSnippet": "A photorealistic, high-quality photography, professional colour grade depicting luxury perfume bottle on marble surface (aspect ratio: 16:9; category: product-ecommerce; palette: Warm; setting: Studio). The scene is set "
+    }
+  },
+  {
+    "family": "image",
+    "promptFormat": "text",
+    "category": "fashion-apparel",
+    "idea": "model wearing a flowing red silk gown",
+    "platform": "flux",
+    "enhancements": {
+      "Camera / Shot Type": "Editorial",
+      "Style": "Cinematic"
+    },
+    "ok": true,
+    "ms": 32112,
+    "error": null,
+    "response": {
+      "promptLen": 826,
+      "categoryLabel": "Fashion & Apparel",
+      "hasLockSection": true,
+      "hasNegativeLocks": true,
+      "hasJsonPrompt": false,
+      "promptSnippet": "model wearing a flowing red silk gown (style: Cinematic; aspect ratio: 16:9; category: fashion-apparel; camera/shot type: Editorial). Subject: model wearing a flowing red silk gown (style: Cinematic; aspect ratio: 16:9; "
+    }
+  },
+  {
+    "family": "image",
+    "promptFormat": "text",
+    "category": "marketing-ads",
+    "idea": "energy drink can splashing with ice",
+    "platform": "gemini",
+    "enhancements": {
+      "Palette": "Vibrant",
+      "Mood": "Energetic"
+    },
+    "ok": true,
+    "ms": 31578,
+    "error": null,
+    "response": {
+      "promptLen": 849,
+      "categoryLabel": "Marketing & Ads",
+      "hasLockSection": true,
+      "hasNegativeLocks": true,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Main Subject: energy drink can splashing with ice (mood: Energetic; aspect ratio: 16:9; category: marketing-ads; palette: Vibrant)\nScene Context: energy drink can splashing with ice (mood: Energetic; aspect ratio: 16:9; "
+    }
+  },
+  {
+    "family": "image",
+    "promptFormat": "text",
+    "category": "art-illustration",
+    "idea": "a floating city above the clouds",
+    "platform": "midjourney",
+    "enhancements": {
+      "Style": "Watercolor",
+      "Mood": "Peaceful"
+    },
+    "ok": true,
+    "ms": 31705,
+    "error": null,
+    "response": {
+      "promptLen": 316,
+      "categoryLabel": "Art & Illustration",
+      "hasLockSection": true,
+      "hasNegativeLocks": true,
+      "hasJsonPrompt": false,
+      "promptSnippet": "a floating city above the clouds (style: Watercolor; mood: Peaceful; aspect ratio: 16:9; category: art-illustration), soft watercolour wash, vibrant urban cityscape with streets and buildings, soft natural ambient lighti"
+    }
+  },
+  {
+    "family": "image",
+    "promptFormat": "text",
+    "category": "trending-viral",
+    "idea": "a cat wearing sunglasses on a skateboard",
+    "platform": "grok",
+    "enhancements": {
+      "Style": "3D Render"
+    },
+    "ok": true,
+    "ms": 31408,
+    "error": null,
+    "response": {
+      "promptLen": 668,
+      "categoryLabel": "Trending & Viral",
+      "hasLockSection": true,
+      "hasNegativeLocks": true,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Picture this: a cat wearing sunglasses on a skateboard (style: 3D Render; aspect ratio: 16:9; category: trending-viral) — a cat wearing sunglasses on a skateboard (style: 3D Render; aspect ratio: 16:9; category: trending"
+    }
+  },
+  {
+    "family": "image",
+    "promptFormat": "text",
+    "category": "social-media",
+    "idea": "influencer filming a morning routine",
+    "platform": "firefly",
+    "enhancements": {
+      "Setting": "Home",
+      "Lighting": "Morning Light"
+    },
+    "ok": true,
+    "ms": 31520,
+    "error": null,
+    "response": {
+      "promptLen": 940,
+      "categoryLabel": "Social Media",
+      "hasLockSection": true,
+      "hasNegativeLocks": true,
+      "hasJsonPrompt": false,
+      "promptSnippet": "A visual story of influencer filming a morning routine (aspect ratio: 16:9; category: social-media; lighting: Morning Light; setting: Home) — influencer filming a morning routine (aspect ratio: 16:9; category: social-med"
+    }
+  },
+  {
+    "family": "image",
+    "promptFormat": "json",
+    "category": "people-portraits",
+    "idea": "a chef plating a dish in an open kitchen",
+    "platform": "midjourney",
+    "ok": true,
+    "ms": 31219,
+    "error": null,
+    "response": {
+      "promptLen": 438,
+      "categoryLabel": "People & Portraits",
+      "hasLockSection": true,
+      "hasNegativeLocks": true,
+      "hasJsonPrompt": true,
+      "promptSnippet": "a chef plating a dish in an open kitchen (aspect ratio: 16:9; category: people-portraits), photorealistic, a chef plating a dish in an open kitchen (aspect ratio: 16:9; category: people-portraits) in a fitting atmospheri"
+    }
+  },
+  {
+    "family": "image",
+    "promptFormat": "json",
+    "category": "product-ecommerce",
+    "idea": "wireless headphones floating on a gradient background",
+    "platform": "chatgpt",
+    "ok": true,
+    "ms": 31216,
+    "error": null,
+    "response": {
+      "promptLen": 1211,
+      "categoryLabel": "Product & Ecommerce",
+      "hasLockSection": true,
+      "hasNegativeLocks": true,
+      "hasJsonPrompt": true,
+      "promptSnippet": "A photorealistic, high-quality photography, professional colour grade depicting wireless headphones floating on a gradient background (aspect ratio: 16:9; category: product-ecommerce). The scene is set in wireless headph"
+    }
+  },
+  {
+    "family": "image",
+    "promptFormat": "json",
+    "category": "art-illustration",
+    "idea": "a lighthouse in a storm, oil painting style",
+    "platform": "flux",
+    "ok": true,
+    "ms": 31300,
+    "error": null,
+    "response": {
+      "promptLen": 557,
+      "categoryLabel": "Art & Illustration",
+      "hasLockSection": true,
+      "hasNegativeLocks": true,
+      "hasJsonPrompt": true,
+      "promptSnippet": "a lighthouse in a storm. Subject: a lighthouse in a storm captured with precise technical detail. Action: posed naturally in scene. Environment: a lighthouse in a storm in a fitting atmospheric environment. Style: tradit"
+    }
+  },
+  {
+    "family": "video",
+    "category": "cinematic",
+    "idea": "a lone astronaut walking across a red desert",
+    "platform": "veo",
+    "enhancements": {
+      "Camera Movement": "Drone Ascent",
+      "Style": "Cinematic"
+    },
+    "ok": true,
+    "ms": 34500,
+    "error": null,
+    "response": {
+      "promptLen": 803,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "a lone astronaut walking across a red desert (style: Cinematic; aspect ratio: 16:9; category: cinematic; camera movement: Drone Ascent), walking at a natural human pace, steady rhythmic gait, weight shifting naturally be"
+    }
+  },
+  {
+    "family": "video",
+    "category": "commercial",
+    "idea": "a sneaker rotating on a pedestal with light trails",
+    "platform": "kling",
+    "enhancements": {
+      "Duration": "10s",
+      "Pacing": "Fast & Dynamic"
+    },
+    "ok": true,
+    "ms": 31462,
+    "error": null,
+    "response": {
+      "promptLen": 792,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "a sneaker rotating on a pedestal with light trails (aspect ratio: 16:9; category: commercial; duration: 10s; pacing: Fast & Dynamic). smooth constant-speed rotation on a fixed axis, no wobble, consistent surface detail v"
+    }
+  },
+  {
+    "family": "video",
+    "category": "social-media",
+    "idea": "a barista latte art time-lapse",
+    "platform": "veo",
+    "enhancements": {
+      "Sound Design": "Music Only",
+      "Duration": "15s"
+    },
+    "ok": true,
+    "ms": 42849,
+    "error": null,
+    "response": {
+      "promptLen": 614,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "a barista latte art time-lapse (aspect ratio: 16:9; category: social-media; duration: 15s; sound design: Music Only). The scene takes place in a clearly defined environment. Camera: steadicam follow, smooth floating stab"
+    }
+  },
+  {
+    "family": "video",
+    "category": "product",
+    "idea": "a smartwatch showcasing its display features",
+    "platform": "seedance",
+    "enhancements": {
+      "Camera Movement": "Dolly In"
+    },
+    "ok": true,
+    "ms": 31484,
+    "error": null,
+    "response": {
+      "promptLen": 2882,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "SUBJECT: a smartwatch showcasing its display features (aspect ratio: 16:9; category: product; camera movement: Dolly In)\n\nROTATION: product rotates smoothly on a fixed vertical axis at constant angular speed, one clean r"
+    }
+  },
+  {
+    "family": "video",
+    "category": "education",
+    "idea": "explaining how photosynthesis works with animation",
+    "platform": "veo",
+    "enhancements": {
+      "Style": "Motion Graphics"
+    },
+    "ok": true,
+    "ms": 31364,
+    "error": null,
+    "response": {
+      "promptLen": 596,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "explaining how photosynthesis works with animation (style: Motion Graphics; aspect ratio: 16:9; category: education). The scene takes place in a clearly defined environment. Camera: locked-off static camera, zero movemen"
+    }
+  },
+  {
+    "family": "video",
+    "category": "creative",
+    "idea": "a dancer moving through a field of fireflies at dusk",
+    "platform": "higgsfield",
+    "enhancements": {
+      "Mood": "Mysterious",
+      "Pacing": "Slow & Dreamy"
+    },
+    "ok": true,
+    "ms": 32741,
+    "error": null,
+    "response": {
+      "promptLen": 2871,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "SUBJECT: a dancer moving through a field of fireflies at dusk (mood: Mysterious; aspect ratio: 16:9; category: creative; pacing: Slow & Dreamy)\n\nACTION: a dancer moving through a field of fireflies at dusk (mood: Mysteri"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Business Website",
+    "subCategory": "Restaurant / Cafe",
+    "idea": "A modern local business needing an online presence — Restaurant / Cafe",
+    "platform": "lovable",
+    "enhancements": {
+      "Style": "Minimal",
+      "Palette": "Light"
+    },
+    "ok": true,
+    "ms": 32013,
+    "error": null,
+    "response": {
+      "promptLen": 7194,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Build this as a fully responsive React + Tailwind CSS site, component-driven, mobile-first. Follow every section below exactly — do not skip, reorder, or invent sections.\n\n### Section 1 - Role\n\nYou are a senior brand and"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Business Website",
+    "subCategory": "Clinic / Healthcare",
+    "idea": "A modern local business needing an online presence — Clinic / Healthcare",
+    "platform": "lovable",
+    "enhancements": {
+      "Style": "Bold",
+      "Audience": "B2C"
+    },
+    "ok": true,
+    "ms": 31602,
+    "error": null,
+    "response": {
+      "promptLen": 7213,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Build this as a fully responsive React + Tailwind CSS site, component-driven, mobile-first. Follow every section below exactly — do not skip, reorder, or invent sections.\n\n### Section 1 - Role\n\nYou are a senior brand and"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Business Website",
+    "subCategory": "Educational Institute",
+    "idea": "A modern local business needing an online presence — Educational Institute",
+    "platform": "lovable",
+    "enhancements": {
+      "Mood": "Elegant",
+      "Palette": "Dark"
+    },
+    "ok": true,
+    "ms": 31578,
+    "error": null,
+    "response": {
+      "promptLen": 7181,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Build this as a fully responsive React + Tailwind CSS site, component-driven, mobile-first. Follow every section below exactly — do not skip, reorder, or invent sections.\n\n### Section 1 - Role\n\nYou are a senior brand and"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Business Website",
+    "subCategory": "Boutique / Retail",
+    "idea": "A modern local business needing an online presence — Boutique / Retail",
+    "platform": "lovable",
+    "enhancements": {
+      "Style": "Corporate",
+      "Audience": "B2B"
+    },
+    "ok": true,
+    "ms": 31648,
+    "error": null,
+    "response": {
+      "promptLen": 7133,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Build this as a fully responsive React + Tailwind CSS site, component-driven, mobile-first. Follow every section below exactly — do not skip, reorder, or invent sections.\n\n### Section 1 - Role\n\nYou are a senior brand and"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Business Website",
+    "subCategory": "Real Estate",
+    "idea": "A modern local business needing an online presence — Real Estate",
+    "platform": "lovable",
+    "enhancements": {
+      "Pages": [
+        "Home",
+        "Pricing",
+        "Contact"
+      ]
+    },
+    "ok": true,
+    "ms": 31632,
+    "error": null,
+    "response": {
+      "promptLen": 7172,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Build this as a fully responsive React + Tailwind CSS site, component-driven, mobile-first. Follow every section below exactly — do not skip, reorder, or invent sections.\n\n### Section 1 - Role\n\nYou are a senior brand and"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Business Website",
+    "subCategory": "Legal / Law Firm",
+    "idea": "A modern local business needing an online presence — Legal / Law Firm",
+    "platform": "lovable",
+    "enhancements": {
+      "Style": "Minimal",
+      "Palette": "Light"
+    },
+    "ok": true,
+    "ms": 31526,
+    "error": null,
+    "response": {
+      "promptLen": 7194,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Build this as a fully responsive React + Tailwind CSS site, component-driven, mobile-first. Follow every section below exactly — do not skip, reorder, or invent sections.\n\n### Section 1 - Role\n\nYou are a senior brand and"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Business Website",
+    "subCategory": "Service Business",
+    "idea": "A modern local business needing an online presence — Service Business",
+    "platform": "lovable",
+    "enhancements": {
+      "Style": "Bold",
+      "Audience": "B2C"
+    },
+    "ok": true,
+    "ms": 31574,
+    "error": null,
+    "response": {
+      "promptLen": 7136,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Build this as a fully responsive React + Tailwind CSS site, component-driven, mobile-first. Follow every section below exactly — do not skip, reorder, or invent sections.\n\n### Section 1 - Role\n\nYou are a senior brand and"
+    }
+  },
+  {
+    "family": "website",
+    "category": "E-Commerce",
+    "subCategory": "Single Product",
+    "idea": "An online store selling curated goods — Single Product",
+    "platform": "bolt",
+    "enhancements": {
+      "Style": "Minimal",
+      "Palette": "Light"
+    },
+    "ok": true,
+    "ms": 31521,
+    "error": null,
+    "response": {
+      "promptLen": 1248,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Scaffold a production website. Next.js 14 + TypeScript + Tailwind + CSS vars.\n\n```css\n:root {\n  --bg: #F8FAFD;\n  --surface: #FFFFFF;\n  --tint: #EEF3FA;\n  --ink: #16202E;\n  --muted: #55647A;\n  --border: rgba(22,32,46,0.12"
+    }
+  },
+  {
+    "family": "website",
+    "category": "E-Commerce",
+    "subCategory": "Multi-Product",
+    "idea": "An online store selling curated goods — Multi-Product",
+    "platform": "bolt",
+    "enhancements": {
+      "Style": "Bold",
+      "Audience": "B2C"
+    },
+    "ok": true,
+    "ms": 32072,
+    "error": null,
+    "response": {
+      "promptLen": 1244,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Scaffold a production website. Next.js 14 + TypeScript + Tailwind + CSS vars.\n\n```css\n:root {\n  --bg: #12071F;\n  --surface: #1C0E30;\n  --tint: #26123F;\n  --ink: #FBF6FF;\n  --muted: #C6B4E6;\n  --border: rgba(251,246,255,0"
+    }
+  },
+  {
+    "family": "website",
+    "category": "E-Commerce",
+    "subCategory": "Fashion Store",
+    "idea": "An online store selling curated goods — Fashion Store",
+    "platform": "bolt",
+    "enhancements": {
+      "Mood": "Elegant",
+      "Palette": "Dark"
+    },
+    "ok": true,
+    "ms": 31762,
+    "error": null,
+    "response": {
+      "promptLen": 1235,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Scaffold a production website. Next.js 14 + TypeScript + Tailwind + CSS vars.\n\n```css\n:root {\n  --bg: #0B0D12;\n  --surface: #12151C;\n  --tint: #171B24;\n  --ink: #F4F6FA;\n  --muted: #9AA3B2;\n  --border: rgba(244,246,250,0"
+    }
+  },
+  {
+    "family": "website",
+    "category": "E-Commerce",
+    "subCategory": "Subscription Box",
+    "idea": "An online store selling curated goods — Subscription Box",
+    "platform": "bolt",
+    "enhancements": {
+      "Style": "Corporate",
+      "Audience": "B2B"
+    },
+    "ok": true,
+    "ms": 31558,
+    "error": null,
+    "response": {
+      "promptLen": 1260,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Scaffold a production website. Next.js 14 + TypeScript + Tailwind + CSS vars.\n\n```css\n:root {\n  --bg: #12071F;\n  --surface: #1C0E30;\n  --tint: #26123F;\n  --ink: #FBF6FF;\n  --muted: #C6B4E6;\n  --border: rgba(251,246,255,0"
+    }
+  },
+  {
+    "family": "website",
+    "category": "E-Commerce",
+    "subCategory": "Digital Products",
+    "idea": "An online store selling curated goods — Digital Products",
+    "platform": "bolt",
+    "enhancements": {
+      "Pages": [
+        "Home",
+        "Pricing",
+        "Contact"
+      ]
+    },
+    "ok": true,
+    "ms": 31709,
+    "error": null,
+    "response": {
+      "promptLen": 1251,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Scaffold a production website. Next.js 14 + TypeScript + Tailwind + CSS vars.\n\n```css\n:root {\n  --bg: #12071F;\n  --surface: #1C0E30;\n  --tint: #26123F;\n  --ink: #FBF6FF;\n  --muted: #C6B4E6;\n  --border: rgba(251,246,255,0"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Portfolio / Creator Site",
+    "subCategory": "Photographer",
+    "idea": "A creative professional showcasing their work — Photographer",
+    "platform": "v0",
+    "enhancements": {
+      "Style": "Minimal",
+      "Palette": "Light"
+    },
+    "ok": true,
+    "ms": 31967,
+    "error": null,
+    "response": {
+      "promptLen": 1660,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Generate a Next.js App Router site using shadcn/ui + Tailwind CSS for a portfolio / creator site.\n\nContext: You are a senior portfolio and personal-brand designer with 9+ years of experience building sites for photograph"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Portfolio / Creator Site",
+    "subCategory": "Designer",
+    "idea": "A creative professional showcasing their work — Designer",
+    "platform": "v0",
+    "enhancements": {
+      "Style": "Bold",
+      "Audience": "B2C"
+    },
+    "ok": true,
+    "ms": 31800,
+    "error": null,
+    "response": {
+      "promptLen": 1582,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Generate a Next.js App Router site using shadcn/ui + Tailwind CSS for a portfolio / creator site.\n\nContext: You are a senior portfolio and personal-brand designer with 9+ years of experience building sites for designer p"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Portfolio / Creator Site",
+    "subCategory": "Writer / Blogger",
+    "idea": "A creative professional showcasing their work — Writer / Blogger",
+    "platform": "v0",
+    "enhancements": {
+      "Mood": "Elegant",
+      "Palette": "Dark"
+    },
+    "ok": true,
+    "ms": 31577,
+    "error": null,
+    "response": {
+      "promptLen": 1606,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Generate a Next.js App Router site using shadcn/ui + Tailwind CSS for a portfolio / creator site.\n\nContext: You are a senior portfolio and personal-brand designer with 9+ years of experience building sites for writer / b"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Portfolio / Creator Site",
+    "subCategory": "Developer",
+    "idea": "A creative professional showcasing their work — Developer",
+    "platform": "v0",
+    "enhancements": {
+      "Style": "Corporate",
+      "Audience": "B2B"
+    },
+    "ok": true,
+    "ms": 31543,
+    "error": null,
+    "response": {
+      "promptLen": 1576,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Generate a Next.js App Router site using shadcn/ui + Tailwind CSS for a portfolio / creator site.\n\nContext: You are a senior portfolio and personal-brand designer with 9+ years of experience building sites for developer "
+    }
+  },
+  {
+    "family": "website",
+    "category": "Portfolio / Creator Site",
+    "subCategory": "Artist",
+    "idea": "A creative professional showcasing their work — Artist",
+    "platform": "v0",
+    "enhancements": {
+      "Pages": [
+        "Home",
+        "Pricing",
+        "Contact"
+      ]
+    },
+    "ok": true,
+    "ms": 31702,
+    "error": null,
+    "response": {
+      "promptLen": 1630,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Generate a Next.js App Router site using shadcn/ui + Tailwind CSS for a portfolio / creator site.\n\nContext: You are a senior portfolio and personal-brand designer with 9+ years of experience building sites for artist pro"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Apps & SaaS Interface",
+    "subCategory": "Dashboard",
+    "idea": "A SaaS product for managing team workflows — Dashboard",
+    "platform": "cursor",
+    "enhancements": {
+      "Style": "Minimal",
+      "Palette": "Light"
+    },
+    "ok": true,
+    "ms": 31571,
+    "error": null,
+    "response": {
+      "promptLen": 2417,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "TASK: Build the following website in this codebase.\n\nTech stack: React + TypeScript + Tailwind CSS (or the stack already in this repo if one exists — match existing conventions over introducing a new one).\n\nImplementatio"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Apps & SaaS Interface",
+    "subCategory": "Landing + App",
+    "idea": "A SaaS product for managing team workflows — Landing + App",
+    "platform": "cursor",
+    "enhancements": {
+      "Style": "Bold",
+      "Audience": "B2C"
+    },
+    "ok": true,
+    "ms": 31503,
+    "error": null,
+    "response": {
+      "promptLen": 2411,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "TASK: Build the following website in this codebase.\n\nTech stack: React + TypeScript + Tailwind CSS (or the stack already in this repo if one exists — match existing conventions over introducing a new one).\n\nImplementatio"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Apps & SaaS Interface",
+    "subCategory": "Developer Tool",
+    "idea": "A SaaS product for managing team workflows — Developer Tool",
+    "platform": "cursor",
+    "enhancements": {
+      "Mood": "Elegant",
+      "Palette": "Dark"
+    },
+    "ok": true,
+    "ms": 31653,
+    "error": null,
+    "response": {
+      "promptLen": 2373,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "TASK: Build the following website in this codebase.\n\nTech stack: React + TypeScript + Tailwind CSS (or the stack already in this repo if one exists — match existing conventions over introducing a new one).\n\nImplementatio"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Landing Page",
+    "subCategory": "SaaS Product",
+    "idea": "A high-converting landing page launch — SaaS Product",
+    "platform": "lovable",
+    "enhancements": {
+      "Style": "Minimal",
+      "Palette": "Light"
+    },
+    "ok": true,
+    "ms": 31559,
+    "error": null,
+    "response": {
+      "promptLen": 7025,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Build this as a fully responsive React + Tailwind CSS site, component-driven, mobile-first. Follow every section below exactly — do not skip, reorder, or invent sections.\n\n### Section 1 - Role\n\nYou are a senior conversio"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Landing Page",
+    "subCategory": "Personal Brand",
+    "idea": "A high-converting landing page launch — Personal Brand",
+    "platform": "lovable",
+    "enhancements": {
+      "Style": "Bold",
+      "Audience": "B2C"
+    },
+    "ok": true,
+    "ms": 32663,
+    "error": null,
+    "response": {
+      "promptLen": 6992,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Build this as a fully responsive React + Tailwind CSS site, component-driven, mobile-first. Follow every section below exactly — do not skip, reorder, or invent sections.\n\n### Section 1 - Role\n\nYou are a senior conversio"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Landing Page",
+    "subCategory": "Course / Info Product",
+    "idea": "A high-converting landing page launch — Course / Info Product",
+    "platform": "lovable",
+    "enhancements": {
+      "Mood": "Elegant",
+      "Palette": "Dark"
+    },
+    "ok": true,
+    "ms": 32235,
+    "error": null,
+    "response": {
+      "promptLen": 7007,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Build this as a fully responsive React + Tailwind CSS site, component-driven, mobile-first. Follow every section below exactly — do not skip, reorder, or invent sections.\n\n### Section 1 - Role\n\nYou are a senior conversio"
+    }
+  },
+  {
+    "family": "website",
+    "category": "Landing Page",
+    "subCategory": "Event / Conference",
+    "idea": "A high-converting landing page launch — Event / Conference",
+    "platform": "lovable",
+    "enhancements": {
+      "Style": "Corporate",
+      "Audience": "B2B"
+    },
+    "ok": true,
+    "ms": 31540,
+    "error": null,
+    "response": {
+      "promptLen": 7072,
+      "categoryLabel": null,
+      "hasLockSection": false,
+      "hasNegativeLocks": false,
+      "hasJsonPrompt": false,
+      "promptSnippet": "Build this as a fully responsive React + Tailwind CSS site, component-driven, mobile-first. Follow every section below exactly — do not skip, reorder, or invent sections.\n\n### Section 1 - Role\n\nYou are a senior conversio"
+    }
+  }
+]

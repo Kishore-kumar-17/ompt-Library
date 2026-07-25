@@ -15,7 +15,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   fashion: "Fashion & Apparel",
   product: "Product & Ecommerce",
   art:     "Art & Illustration",
-  social:  "Social & Content",
+  social:  "Social Media",
 };
 
 router.post(
@@ -46,8 +46,18 @@ router.post(
       // /api/variables/expand uses) over the improved text so the lock panel
       // reflects what was actually produced, instead of a category-generic
       // template.
+      //
+      // Deliberately NOT passing `title` here (unlike builder.ts, which
+      // passes the user's short idea string as a subject-fallback hint):
+      // `body.prompt` is the *entire original prompt being improved*, not a
+      // short idea — and it can itself be JSON (a prior JSON-mode output
+      // pasted back in for another round of improvement). Feeding that into
+      // the parser's title-derived fallbacks leaks raw JSON/prose into the
+      // extracted lock fields (e.g. "subject" or "lighting" ending up as a
+      // literal JSON fragment). result.improved is already rich enough for
+      // extraction on its own.
       const assembled = family === "image"
-        ? assembleFromText({ text: result.improved, category: categoryId ?? "", platform: body.platform, title: body.prompt })
+        ? assembleFromText({ text: result.improved, category: categoryId ?? "", platform: body.platform })
         : null;
       const jsonPrompt = assembled && body.promptFormat === "json"
         ? buildJsonPrompt(assembled, body.platform)

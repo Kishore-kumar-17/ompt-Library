@@ -2,8 +2,9 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  LayoutGrid, List, Copy, X,
+  LayoutGrid, List, Copy, X, Lock,
   Search, ChevronLeft, ChevronRight, Loader2, ArrowRight, ArrowLeft,
+  Image as ImageIcon, Clapperboard, Type, Code2, FileText,
 } from "lucide-react";
 import { platforms, videoPlatforms, websitePlatforms, familyMeta, categories as themeCats, type Family } from "../theme";
 import { libraryApi, authStore, type LibraryPrompt } from "../../lib/api";
@@ -74,7 +75,7 @@ function MasonryImageCard({ p, onClick }: { p: any; onClick: () => void }) {
       }}
     >
       {/* Image */}
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden bg-[#f0f0f0] min-h-[220px]">
         {p.image ? (
           <img
             src={p.image}
@@ -168,10 +169,12 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
     initialCategory?.startsWith("#") ? initialCategory.slice(1) : ""
   );
 
+  const isStaticFamily = !family || family === "image" || family === "video" || family === "website";
+
   const [prompts, setPrompts]     = useState<LibraryPrompt[]>([]);
   const [total, setTotal]         = useState(0);
   const [pages, setPages]         = useState(0);
-  const [loading, setLoading]     = useState(true);
+  const [loading, setLoading]     = useState(!isStaticFamily);
   const [categories, setCategories] = useState<CategoryRow[]>([]);
   const [useFallback, setUseFallback] = useState(false);
   const [searchMode, setSearchMode]   = useState<string | null>(null);
@@ -185,12 +188,15 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
       .catch(() => setUseFallback(true));
   }, []);
 
-  // No "reset filters on family change" effect needed here — Library is
-  // remounted with key={route} on every navigation (App.tsx), including
-  // family changes, so useState's initial values already start fresh. An
-  // effect keyed on [family] would also fire once on the very first mount
-  // and wipe out the initialCategory-derived hashtag search before it's
-  // ever shown.
+  // Sync filters when initialCategory changes from navigation
+  useEffect(() => {
+    const isHashtag = initialCategory?.startsWith("#");
+    setCat(isHashtag ? null : (initialCategory ?? null));
+    const newQuery = isHashtag ? (initialCategory?.slice(1) ?? "") : "";
+    setQuery(newQuery);
+    setInputVal(newQuery);
+    setPage(1);
+  }, [initialCategory]);
 
   // Cancel any pending debounced search on unmount.
   useEffect(() => () => { if (searchTimer.current) clearTimeout(searchTimer.current); }, []);
@@ -206,8 +212,6 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
   };
 
   // ── Fetch prompts when deps change ───────────────────────────────────────
-  const isStaticFamily = !family || family === "image" || family === "video" || family === "website";
-
   const fetchPrompts = useCallback(async () => {
     // Static families (image, video, website) use local data - skip API call
     if (isStaticFamily) { setLoading(false); return; }
@@ -255,10 +259,10 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
   const activePlatforms = isWebsiteFamily ? websitePlatforms : isVideoFamily ? videoPlatforms : platforms;
 
   // ── Fallback: filter static prompts locally ───────────────────────────────
-  const videoWithPlatforms = videoLibraryPrompts.map(p => ({
+  const videoWithPlatforms = useMemo(() => videoLibraryPrompts.map(p => ({
     ...p,
     platforms: videoPlatformVersions[p.slug ?? ""] ?? {},
-  }));
+  })), []);
 
   const fallbackSource = isImageFamily ? imageLibraryPrompts : isVideoFamily ? videoWithPlatforms : [];
   const fallbackFiltered = useMemo(() => {
@@ -467,8 +471,30 @@ export function Library({ go, family, initialCategory }: { go: (p: string) => vo
 
       {/* ── Prompt grid / list ───────────────────────────────────────── */}
       <div>
-          {/* Website Library */}
-          {isWebsiteFamily ? (
+          {/* Video Library Locked */}
+          {isVideoFamily ? (
+            <div className="flex flex-col items-center justify-center py-20 px-6 rounded-3xl border border-[#0a0a0a]/10 bg-gradient-to-br from-[#ff7aac]/10 via-white to-[#7f5af0]/10 text-center relative overflow-hidden my-4 shadow-sm">
+              <div className="w-16 h-16 rounded-2xl bg-[#ff7aac]/20 text-[#c53d76] flex items-center justify-center mb-4 shadow-sm">
+                <Lock className="w-8 h-8" />
+              </div>
+              <span className="px-3 py-1 rounded-full bg-[#ff7aac] text-white text-[12px] mb-3" style={{ fontWeight: 700 }}>
+                COMING SOON
+              </span>
+              <h3 className="text-[#0a0a0a] text-2xl mb-2" style={{ fontWeight: 800 }}>
+                Video Library is Locked
+              </h3>
+              <p className="text-[#6b7280] text-sm max-w-md mb-6" style={{ lineHeight: 1.6 }}>
+                We are curating high-fidelity video prompt templates for Veo, Kling, Pika, and Seedance. Stay tuned!
+              </p>
+              <button
+                onClick={() => go("library:image")}
+                className="px-5 py-2.5 rounded-xl bg-[#0a0a0a] text-white text-xs hover:bg-[#0a0a0a]/80 transition-colors shadow-md"
+                style={{ fontWeight: 600 }}
+              >
+                Explore Image Library →
+              </button>
+            </div>
+          ) : isWebsiteFamily ? (
             websiteFiltered.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-24 gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-[#0a0a0a]/10 flex items-center justify-center">
@@ -640,220 +666,191 @@ const FAMILY_CARDS = [
   {
     key: "image",
     title: "Image Library",
-    tagline: "Craft stunning visuals for Midjourney, Firefly, FLUX and more",
-    count: "420+",
-    label: "prompts",
-    chips: ["Midjourney", "Firefly", "FLUX", "ChatGPT", "Gemini"],
-    comingSoon: false,
-  },
-  {
-    key: "video",
-    title: "Video Library",
-    tagline: "Direct AI-generated videos across Veo, Kling, Seedance and more",
-    count: "30",
-    label: "prompts",
-    chips: ["Veo", "Kling", "Seedance", "Higgsfield", "Pika"],
+    tagline: "High-quality prompts for stunning images, art, and visuals.",
+    chips: ["Photography", "Illustration", "3D Render"],
     comingSoon: false,
   },
   {
     key: "website",
     title: "Website Library",
-    tagline: "Full-stack UI prompts for Lovable, Bolt, Claude Code and more",
-    count: "90+",
-    label: "designs",
-    chips: ["Lovable", "Bolt", "Claude Code", "Codex", "Replit"],
+    tagline: "Developer prompts for full-stack apps, UI, and technical builds.",
+    chips: ["Lovable", "Bolt", "Claude Code"],
     comingSoon: false,
+  },
+  {
+    key: "video",
+    title: "Video Library",
+    tagline: "Engaging prompts for cinematic videos and reels.",
+    chips: ["Cinematic", "Shorts", "Animation"],
+    comingSoon: true,
   },
   {
     key: "text",
     title: "Text Library",
-    tagline: "Structured prompts for developers, marketers, analysts and more",
-    count: "Coming",
-    label: "soon",
-    chips: ["ChatGPT", "Gemini", "Grok", "Claude"],
+    tagline: "Smart prompts for text generation, ideas, and explanations.",
+    chips: ["Ideas", "Stories", "Scripts"],
     comingSoon: true,
   },
   {
     key: "content",
     title: "Content Library",
-    tagline: "Campaigns, copy, and content for every channel and format",
-    count: "Coming",
-    label: "soon",
-    chips: ["ChatGPT", "Gemini", "Claude", "Grok"],
+    tagline: "Powerful prompts for blogs, articles, copy and more.",
+    chips: ["Blog", "Copywriting", "Social Media"],
     comingSoon: true,
   },
 ];
 
-export function LibraryLanding({ go }: { go: (p: string) => void }) {
-  return (
-    <div className="max-w-[1400px] mx-auto px-6 py-12 text-[#0a0a0a]">
-      <div className="mb-10 text-center">
-        <h1
-          className="text-[#0a0a0a] mb-2"
-          style={{ fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 800, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
-        >
-          Prompt Library
-        </h1>
-        <p className="text-[#6b7280] text-lg max-w-lg mx-auto">Choose a category to explore curated, tested prompts.</p>
-      </div>
+const FAMILY_STYLES: Record<string, {
+  bg: string; iconBg: string; iconColor: string; pillBg: string; icon: typeof ImageIcon;
+}> = {
+  image:   { bg: "#3ddabe", iconBg: "#e3fbf6", iconColor: "#0f8a72", pillBg: "rgba(255,255,255,0.45)", icon: ImageIcon },
+  video:   { bg: "#ff7aac", iconBg: "#ffe3ee", iconColor: "#c53d76", pillBg: "rgba(255,255,255,0.45)", icon: Clapperboard },
+  text:    { bg: "#ffd803", iconBg: "#fff6c2", iconColor: "#8a6d00", pillBg: "rgba(255,255,255,0.45)", icon: Type },
+  website: { bg: "#7f5af0", iconBg: "#ece6fd", iconColor: "#5b32d6", pillBg: "rgba(255,255,255,0.28)", icon: Code2 },
+  content: { bg: "#ff8906", iconBg: "#ffe6c2", iconColor: "#b35a00", pillBg: "rgba(255,255,255,0.38)", icon: FileText },
+};
 
-      {/* ── Bento Grid - PayFlow-style layout ── */}
-      <div
-        className="grid grid-cols-1 md:grid-cols-3 gap-3"
-        style={{ gridTemplateRows: "220px 220px 220px" }}
-      >
-        {/* Image Library - tall left (1 col × rows 1-2) */}
-        <BentoTile
-          card={FAMILY_CARDS[0]}
-          go={go}
-          className="md:row-span-2"
-          images={["/images/families/image.png"]}
-        />
-        {/* Video Library - top middle (1 col × row 1) */}
-        <BentoTile
-          card={FAMILY_CARDS[1]}
-          go={go}
-          className=""
-          images={["/images/families/video.png"]}
-        />
-        {/* Content Library - top right (1 col × row 1) */}
-        <BentoTile
-          card={FAMILY_CARDS[4]}
-          go={go}
-          className=""
-          images={["/images/families/content.png"]}
-        />
-        {/* Website Library - wide right (2 cols × rows 2-3) */}
-        <BentoTile
-          card={FAMILY_CARDS[2]}
-          go={go}
-          className="md:col-span-2 md:row-span-2"
-          images={["/images/families/website.png"]}
-        />
-        {/* Text Library - bottom left (1 col × row 3) */}
-        <BentoTile
-          card={FAMILY_CARDS[3]}
-          go={go}
-          className=""
-          images={["/images/families/text.png"]}
-        />
-      </div>
+function DoodleSquiggleArrow({ className, flip = false }: { className?: string; flip?: boolean }) {
+  return (
+    <svg width="90" height="70" viewBox="0 0 90 70" fill="none" className={className} style={flip ? { transform: "scaleX(-1)" } : undefined}>
+      <path d="M5 14 C 30 8, 18 44, 46 38 C 62 35, 55 16, 76 22" stroke="#7f5af0" strokeWidth="2" strokeLinecap="round" fill="none" />
+      <path d="M68 14 L77 22 L67 30" stroke="#7f5af0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  );
+}
+
+function DoodleSpark({ className }: { className?: string }) {
+  return (
+    <svg width="34" height="34" viewBox="0 0 34 34" fill="none" className={className}>
+      <path d="M9 3 L9 15 M3 9 L15 9" stroke="#7f5af0" strokeWidth="2" strokeLinecap="round" />
+      <path d="M25 15 L25 22" stroke="#7f5af0" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function DoodleDotGrid({ className }: { className?: string }) {
+  return (
+    <div className={className} style={{ display: "grid", gridTemplateColumns: "repeat(4, 7px)", gap: "8px" }}>
+      {Array.from({ length: 16 }).map((_, i) => (
+        <span key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: "#7f5af0", opacity: 0.55 }} />
+      ))}
     </div>
   );
 }
 
-function BentoTile({
-  card,
-  go,
-  className = "",
-  images,
-}: {
-  card: typeof FAMILY_CARDS[number];
-  go: (p: string) => void;
-  className?: string;
-  images: string[];
-}) {
+function ColorFamilyCard({ card, go, className = "", compact = false }: { card: typeof FAMILY_CARDS[number]; go: (p: string) => void; className?: string; compact?: boolean }) {
   const [hovered, setHovered] = useState(false);
+  const style = FAMILY_STYLES[card.key];
+  const Icon = style.icon;
 
   return (
     <motion.div
+      role="button"
+      tabIndex={0}
       onClick={() => {
         if (card.comingSoon) { toast("Coming Soon", { description: `${card.title} will be available soon.` }); return; }
         go("library:" + card.key);
       }}
-      role="button"
-      tabIndex={0}
       onKeyDown={(e) => { if (e.key === "Enter") { if (card.comingSoon) return; go("library:" + card.key); } }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      whileTap={{ scale: card.comingSoon ? 1 : 0.985 }}
-      className={`relative rounded-[20px] overflow-hidden ${card.comingSoon ? "cursor-not-allowed" : "cursor-pointer"} group ${className}`}
+      whileHover={{ y: -4 }}
+      whileTap={{ scale: 0.985 }}
+      transition={{ type: "spring", stiffness: 300, damping: 24 }}
+      className={`relative rounded-[28px] overflow-hidden cursor-pointer p-6 md:p-7 flex flex-col ${compact ? "min-h-[220px]" : "min-h-[280px]"} ${className}`}
       style={{
-        background: "#0a0a0a",
-        boxShadow: hovered
-          ? "0 24px 48px -12px rgba(10,10,10,0.25)"
-          : "0 2px 8px rgba(10,10,10,0.08)",
-        transition: "box-shadow 0.35s ease",
+        background: style.bg,
+        boxShadow: hovered ? "0 20px 40px -12px rgba(0,0,0,0.22)" : "0 4px 16px rgba(0,0,0,0.08)",
+        transition: "box-shadow 0.3s ease",
       }}
     >
-      {/* Background image */}
-      <div className="absolute inset-0">
-        <img
-          src={images[0]}
-          alt=""
-          className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-          style={{ filter: card.comingSoon ? "grayscale(0.5) brightness(0.85)" : "none" }}
-        />
-        {/* Gradient overlay - dark for readable light text */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+      {/* decorative blob */}
+      <div className="absolute -bottom-16 -right-10 w-56 h-56 rounded-full pointer-events-none" style={{ background: "rgba(255,255,255,0.22)" }} />
+      {/* decorative dot grid */}
+      <div className="absolute bottom-5 right-5 grid grid-cols-4 gap-1.5 pointer-events-none opacity-60">
+        {Array.from({ length: 16 }).map((_, i) => (
+          <span key={i} className="w-1.5 h-1.5 rounded-full" style={{ background: "#fff" }} />
+        ))}
       </div>
 
-      {/* Content overlay */}
-      <div className="relative z-10 h-full flex flex-col justify-end p-5 md:p-6">
-        {/* Coming soon badge */}
-        {card.comingSoon && (
-          <span className="absolute top-4 left-4 px-2.5 py-1 rounded-full bg-[#4FC3F7] text-white text-[11px]" style={{ fontWeight: 700 }}>
-            Coming soon
-          </span>
-        )}
+      {card.comingSoon && (
+        <span className="absolute top-6 right-[4.25rem] px-2.5 py-1 rounded-full bg-white/70 text-[#0a0a0a] text-[11px] z-10" style={{ fontWeight: 700 }}>
+          Coming soon
+        </span>
+      )}
 
-        {/* Count pill */}
-        <div className="mb-2">
-          <span
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px]"
-            style={{
-              background: "rgba(255,255,255,0.15)",
-              color: "#fff",
-              fontWeight: 700,
-              backdropFilter: "blur(8px)",
-            }}
-          >
-            {card.count} {card.label}
-          </span>
+      <div className={`relative z-10 flex items-start justify-between ${compact ? "mb-3" : "mb-5"}`}>
+        <div className="w-14 h-14 rounded-full flex items-center justify-center shrink-0" style={{ background: style.iconBg }}>
+          <Icon className="w-6 h-6" style={{ color: style.iconColor }} />
         </div>
-
-        {/* Title */}
-        <h3
-          className="text-white leading-tight mb-1"
-          style={{ fontSize: "clamp(18px, 2.5vw, 26px)", fontWeight: 800, letterSpacing: "-0.02em" }}
-        >
-          {card.title}
-        </h3>
-
-        {/* Tagline */}
-        <p className="text-white/60 text-[13px] leading-relaxed mb-3 max-w-md">{card.tagline}</p>
-
-        {/* Platform chips */}
-        <div className="flex flex-wrap gap-1.5">
-          {card.chips.map(chip => (
-            <span
-              key={chip}
-              className="px-2 py-0.5 rounded-full text-[10px] text-white/70"
-              style={{
-                background: "rgba(255,255,255,0.12)",
-                backdropFilter: "blur(4px)",
-                fontWeight: 600,
-              }}
-            >
-              {chip}
-            </span>
-          ))}
-        </div>
-
-        {/* Arrow */}
         <motion.div
-          className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center"
-          style={{
-            background: hovered ? "#4FC3F7" : "rgba(255,255,255,0.12)",
-            backdropFilter: "blur(8px)",
-            transition: "background 0.25s ease",
-          }}
+          className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0"
           animate={{ x: hovered ? 2 : 0 }}
         >
-          <ArrowRight className="w-4 h-4 text-white" />
+          <ArrowRight className="w-4 h-4" style={{ color: style.iconColor }} />
         </motion.div>
       </div>
+
+      <div className="relative z-10">
+        <h3 className="text-[#0a0a0a] mb-2" style={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.01em" }}>{card.title}</h3>
+        <p className={`text-[#0a0a0a]/75 ${compact ? "mb-3" : "mb-5"}`} style={{ fontSize: 14, lineHeight: 1.5, maxWidth: 320 }}>{card.tagline}</p>
+      </div>
+
+      <div className="relative z-10 mt-auto flex flex-wrap gap-2">
+        {card.chips.map(chip => (
+          <span key={chip} className="px-3 py-1.5 rounded-full text-[#0a0a0a] text-[12px]" style={{ background: style.pillBg, fontWeight: 600 }}>
+            {chip}
+          </span>
+        ))}
+      </div>
     </motion.div>
+  );
+}
+
+export function LibraryLanding({ go }: { go: (p: string) => void }) {
+  const topRow = FAMILY_CARDS.slice(0, 2);
+  const bottomRow = FAMILY_CARDS.slice(2);
+
+  return (
+    <div className="max-w-[1400px] mx-auto px-6 py-12 md:py-16 text-[#0a0a0a]">
+      {/* ── Header ─────────────────────────────────────────────────────── */}
+      <div className="relative mb-10 md:mb-14 text-center">
+
+        <h1
+          className="mb-3"
+          style={{ fontSize: "clamp(36px, 6vw, 56px)", fontWeight: 800, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+        >
+          <span className="text-[#0a0a0a]">Prompt </span>
+          <span style={{ color: "#7f5af0" }}>Library</span>
+        </h1>
+        <p className="text-[#6b7280] text-lg max-w-lg mx-auto">Choose a category to explore curated, tested prompts.</p>
+      </div>
+
+      {/* ── Category cards ─────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        {topRow.map(card => <ColorFamilyCard key={card.key} card={card} go={go} />)}
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        {bottomRow.map(card => <ColorFamilyCard key={card.key} card={card} go={go} compact />)}
+      </div>
+
+      {/* ── CTA ────────────────────────────────────────────────────────── */}
+      <div className="flex flex-col items-center text-center gap-4">
+        <button
+          onClick={() => go("library:image")}
+          className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-[#0a0a0a] text-white hover:bg-[#0a0a0a]/90 transition-colors"
+          style={{ fontWeight: 700, fontSize: 15 }}
+        >
+          Start exploring prompts <ArrowRight className="w-4 h-4" />
+        </button>
+        <p className="relative inline-block text-[#6b7280]">
+          Great prompts. Better results.
+          <svg width="150" height="10" viewBox="0 0 150 10" className="absolute -bottom-2.5 left-1/2" style={{ transform: "translateX(-50%)" }} fill="none">
+            <path d="M2 5 C 27 9, 48 1, 75 5 C 102 9, 123 1, 148 5" stroke="#7f5af0" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.5" />
+          </svg>
+        </p>
+      </div>
+    </div>
   );
 }
 

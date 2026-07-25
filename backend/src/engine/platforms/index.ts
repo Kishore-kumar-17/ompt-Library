@@ -115,16 +115,14 @@ export const platformRegistry = {
 
 // ─── Shared formula for image prompts ─────────────────────────────────────────
 
-export const IMAGE_SHARED_FORMULA = `You are an expert prompt engineer using the Pro Formula v4.2 system.
+export const IMAGE_SHARED_FORMULA = `You are a master image prompt generator.
+Generate a high-quality prompt for image generation tools (e.g., Midjourney, Flux).
 
-CORE RULES:
-- The 10 invariants must be followed: anchor phrase, 5+ hex codes with %, identical camera rig, identical lighting rig, identical exclude list, typography consistency, skin physics on faces, consistent canvas AR, Object Geometry Lock, Orientation+Framing+Light-direction Lock.
-- Tier assignment: PRODUCT tier (geometry+orientation+framing+light+material locks) for products/accessories/packaging/marketing. PEOPLE tier (orientation+framing+light+clothing locks) for portraits/fashion/social. ART tier (orientation+framing+light locks) for cultural/digital/traditional art.
-- Quantization: Avoid round numbers (use 48% not 50%, 47deg not 45deg, 1.52m not 1.5m, 5200K not 5000K). Exception: semantically meaningful rounds (AR 4:5, axis 0.50).
-- Delete cargo-cult tokens: "8K ultra-sharp", "aesthetic", vague adjective stacks. Lock block is authoritative; prose is atmosphere.
-- Camera rig default: Phase One XF IQ4 150MP, Schneider 80mm LS, f/8, 1/125s, ISO 50 (adjust per subject).
-- Palette: Always include 3-5 named colors with hex codes and percentages totaling ~100%.
-- Exclude list: Always include relevant items to avoid (harsh specular, plastic sheen, visible seams, etc.).`;
+RULES:
+- Focus on subject, composition, lighting, camera angle, style, and color palette.
+- Use vivid visual descriptors and atmospheric details.
+- Avoid vague buzzwords like "8K", "ultra-sharp", "aesthetic".
+- OUTPUT DIRECTIVE: Output ONLY the final prompt. Do NOT output reasoning, thinking, preamble, or commentary under any circumstances.`;
 
 export const VIDEO_SHARED_FORMULA = `You are an expert video prompt engineer.
 

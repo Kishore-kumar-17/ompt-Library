@@ -22,13 +22,28 @@ export function buildVideoFromRules(req: VideoBuildRequest): VideoRuleEngineResu
   const cat = req.category ?? "narrative"
   const defaults = CATEGORY_DEFAULTS[cat] ?? CATEGORY_DEFAULTS.narrative
 
+  // routes/builder.ts's normalizeBuildRequest() folds enrichment chips into
+  // the idea as a trailing "(key: value; key: value...)" block. Dictionary
+  // keyword-matching must never scan that block — a hint's own key name
+  // ("category") or a chip value ("Drone Ascent") can coincidentally contain
+  // a whole word that's also a SUBJECT/ACTION dictionary keyword, silently
+  // hijacking the real subject. Only the portion before the hint block is
+  // checked; if nothing matches there, the full original text (hints
+  // included) is still used as-is, unchanged from prior behavior.
+  const stripHints = (s: string) => s.replace(/\s*\([^()]*:[^()]*\)\s*$/, "").trim() || s
+  const expandGuarded = (expand: (t: string | null) => string | null, raw: string) => {
+    const core = stripHints(raw)
+    const match = expand(core)
+    return match && match !== core ? match : raw
+  }
+
   const subjectRaw    = req.subject ?? "the subject"
-  const subjectExp    = expandSubject(subjectRaw) ?? subjectRaw
+  const subjectExp    = expandGuarded(expandSubject, subjectRaw)
   // Short anchor form (first clause) for repeated use inside LOCKS text —
   // keeps lock sentences readable even when the SUBJECT dictionary expands
   // subjectRaw into a full descriptive clause.
   const subjectAnchor = subjectExp.split(",")[0].trim() || subjectExp
-  const actionExp     = expandAction(req.action ?? null)          ?? req.action ?? "moving naturally within the frame"
+  const actionExp     = req.action ? expandGuarded(expandAction, req.action) : "moving naturally within the frame"
   const settingExp    = expandSetting(req.setting ?? null)        ?? req.setting ?? "a clearly defined environment"
   const resolvedCameraMove = req.cameraMove ?? defaults.cameraMove
   const cameraSpec    = getCameraNumericSpec(resolvedCameraMove, req.platform)

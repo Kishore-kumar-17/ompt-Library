@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useAnimation } from "motion/react";
-import { ThumbsUp, ThumbsDown, ExternalLink, Maximize2, X, Loader2 } from "lucide-react";
+import { ThumbsUp, ThumbsDown, ExternalLink, Maximize2, X, Loader2, Heart, Share2 } from "lucide-react";
+import { toast } from "sonner";
 import { type WebsiteDesign } from "../lib/website-data";
 import { patchIframeLinks, guardIframeNavigation } from "../lib/patch-iframe-links";
 
@@ -359,6 +360,31 @@ export function WebsitePromptCard({
   };
 
   const previewUrl = `${design.slug.replaceAll("_", "-")}.vercel.app`;
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSaved(v => !v);
+    toast.success(saved ? "Removed from saved" : "Saved to your library");
+  };
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: design.title,
+          text: design.description,
+          url: `${window.location.origin}/website/${design.slug}`,
+        });
+      } else {
+        await navigator.clipboard.writeText(`${window.location.origin}/website/${design.slug}`);
+        toast.success("Link copied to clipboard!");
+      }
+    } catch {
+      // User cancelled share
+    }
+  };
 
   return (
     <motion.div
@@ -449,9 +475,19 @@ export function WebsitePromptCard({
             <div className="text-[#0a0a0a] font-bold text-[15px] leading-tight">{design.title}</div>
             <div className="text-[#6b7280] text-[11px] mt-0.5">{design.style}</div>
           </div>
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
             <ThumbsUp className="w-3.5 h-3.5 text-[#6b7280] hover:text-[#4FC3F7] cursor-pointer transition-colors" />
             <ThumbsDown className="w-3.5 h-3.5 text-[#6b7280] hover:text-red-500 cursor-pointer transition-colors" />
+            <Heart
+              className={`w-3.5 h-3.5 cursor-pointer transition-colors ${saved ? "fill-[#4FC3F7] text-[#4FC3F7]" : "text-[#6b7280] hover:text-[#4FC3F7]"}`}
+              onClick={handleSave}
+              title={saved ? "Saved" : "Save"}
+            />
+            <Share2
+              className="w-3.5 h-3.5 text-[#6b7280] hover:text-[#0a0a0a] cursor-pointer transition-colors"
+              onClick={handleShare}
+              title="Share"
+            />
             {design.tested && <span className="w-1.5 h-1.5 rounded-full bg-[#28c840] ml-1" />}
           </div>
         </div>

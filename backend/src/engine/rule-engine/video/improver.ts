@@ -27,18 +27,39 @@ export function improveVideoWithRules(req: VideoImproveRequest): VideoRuleEngine
   const defaults = CATEGORY_DEFAULTS[cat] ?? CATEGORY_DEFAULTS.narrative
 
   const trimmedInput = req.promptText.trim()
-  const firstClause = parsed.subject ?? trimmedInput.split(/[,\n]/)[0].trim()
-  // When the input is one unbroken clause (no comma), the "subject" the
-  // parser extracts is the whole sentence — use a short leading phrase
-  // instead so SUBJECT and ACTION don't repeat the same text verbatim.
-  const subjectShort = firstClause === trimmedInput
-    ? trimmedInput.split(/\s+/).slice(0, 6).join(" ")
-    : firstClause
+  // SUBJECT is always kept short (first few words) regardless of where a
+  // comma happens to land in the input — deriving it from "everything up to
+  // the first comma" broke down badly on long or already-structured pasted
+  // text (e.g. a previous Improve result fed back in), where the first comma
+  // can be hundreds of characters in, making SUBJECT swallow most of the
+  // text. ACTION separately still carries the full input verbatim; the
+  // formatter (formatForVideoPlatform) collapses the two back into one
+  // clause when SUBJECT turns out to be a plain prefix of ACTION, so this
+  // never prints the same words twice.
+  const subjectShort = trimmedInput.split(/\s+/).slice(0, 8).join(" ").replace(/[,.:;]+$/, "")
   const subjectExp    = expandSubject(subjectShort) ?? subjectShort
   // Short anchor form (first clause) for repeated use inside LOCKS text —
   // keeps lock sentences readable even when the SUBJECT dictionary expands
   // subjectShort into a full descriptive clause.
   const subjectAnchor = subjectExp.split(",")[0].trim() || subjectExp
+  // ACTION carries the literal input text — cap how much of it gets embedded
+  // so a long, already-structured paste (e.g. this engine's own previous
+  // output fed back in on a round-trip) can't balloon the result every time
+  // it's improved again. A genuine action/motion description is a sentence
+  // or two; well past that is far more likely to be prior generated output
+  // than a fresh idea, and every SETTING/CAMERA/LIGHTING/STYLE section below
+  // regenerates fresh regardless, so keeping the whole thing verbatim here
+  // only duplicates content that's already represented elsewhere. Cutting at
+  // the last full sentence (rather than a raw character cap) also keeps this
+  // from slicing into a "Camera:"/"Lighting is…" sentence mid-way, which
+  // would otherwise visibly overlap the freshly regenerated CAMERA/LIGHTING
+  // lines right below it.
+  const actionText = (() => {
+    if (trimmedInput.length <= 280) return trimmedInput
+    const capped = trimmedInput.slice(0, 280)
+    const lastBoundary = Math.max(capped.lastIndexOf(". "), capped.lastIndexOf("! "), capped.lastIndexOf("? "))
+    return lastBoundary > 40 ? capped.slice(0, lastBoundary + 1).trim() : capped.trim() + "…"
+  })()
   const settingExp    = expandSetting(parsed.setting)       ?? parsed.setting  ?? DEFAULTS.setting
   const resolvedCameraMove = parsed.cameraMove ?? defaults.cameraMove
   const cameraSpec    = getCameraNumericSpec(resolvedCameraMove, req.platform)
@@ -51,7 +72,7 @@ export function improveVideoWithRules(req: VideoImproveRequest): VideoRuleEngine
 
   const lines: string[] = [
     `SUBJECT: ${subjectExp}`,
-    `ACTION: ${trimmedInput}`,
+    `ACTION: ${actionText}`,
     `SETTING: ${settingExp}`,
     `CAMERA: ${cameraExp}`,
     `LIGHTING: ${lightingExp}`,
@@ -68,7 +89,7 @@ export function improveVideoWithRules(req: VideoImproveRequest): VideoRuleEngine
   lines.push(buildExcludeSection(negatives))
 
   const locks = generateVideoLocks(cat, subjectAnchor, {
-    action: trimmedInput,
+    action: actionText,
     setting: parsed.setting,
     cameraMove: parsed.cameraMove,
   })

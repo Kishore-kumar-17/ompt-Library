@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide Page - Redesign Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #fafafa; color: #0a0a0a; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
+
+  /* Back button */
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #6b7280; font-size: 13px; font-weight: 500;
+    text-decoration: none; margin-bottom: 12px; transition: color 0.2s;
+  }
+  .back-btn:hover { color: #0a0a0a; }
+
+  /* Hero Header */
+  .hero {
+    background: linear-gradient(135deg, #f8fdff 0%, #e8f7fe 50%, #f0f4ff 100%);
+    border: 1px solid rgba(10,10,10,0.08);
+    border-radius: 24px;
+    padding: 48px 40px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(79,195,247,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 30%;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(79,195,247,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero h1 { font-size: 36px; font-weight: 700; margin-bottom: 8px; position: relative; }
+  .hero h1 span { font-weight: 900; }
+  .hero p { color: #6b7280; font-size: 17px; line-height: 1.6; max-width: 600px; position: relative; }
+  .hero-stats {
+    display: flex; gap: 32px; margin-top: 24px; position: relative;
+  }
+  .hero-stat {
+    display: flex; flex-direction: column;
+  }
+  .hero-stat-value { font-size: 28px; font-weight: 800; color: #0a0a0a; }
+  .hero-stat-label { font-size: 12px; color: #6b7280; font-weight: 600; margin-top: 2px; }
+
+  /* Layout */
+  .layout { display: grid; grid-template-columns: 240px 1fr; gap: 32px; }
+
+  /* Sidebar */
+  .sidebar { position: sticky; top: 24px; align-self: start; }
+  .sidebar-nav {
+    background: #ffffff;
+    border: 1px solid rgba(10,10,10,0.1);
+    border-radius: 20px;
+    padding: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .sidebar-group-label {
+    padding: 8px 14px 6px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #6b7280;
+    font-weight: 700;
+  }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: none; background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    color: #6b7280;
+    font-weight: 500;
+  }
+  .sidebar-item:hover { background: rgba(10,10,10,0.04); color: #0a0a0a; }
+  .sidebar-item.active {
+    background: #4FC3F7;
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(79,195,247,0.3);
+  }
+  .sidebar-item .icon {
+    width: 18px; height: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .sidebar-item .chevron {
+    margin-left: auto;
+    opacity: 0.4;
+    font-size: 12px;
+  }
+  .sidebar-item.active .chevron { opacity: 1; }
+
+  /* Sidebar CTA */
+  .sidebar-cta {
+    margin-top: 16px;
+    background: linear-gradient(135deg, rgba(79,195,247,0.12), rgba(79,195,247,0.06));
+    border: 1px solid rgba(10,10,10,0.1);
+    border-radius: 20px;
+    padding: 20px;
+  }
+  .sidebar-cta-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .sidebar-cta-desc { color: #6b7280; font-size: 13px; margin-bottom: 12px; }
+  .sidebar-cta-btn {
+    display: inline-flex; align-items: center;
+    height: 36px; padding: 0 16px;
+    border-radius: 999px;
+    background: #4FC3F7;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .sidebar-cta-btn:hover { opacity: 0.85; }
+
+  /* Content area */
+  .content { min-width: 0; }
+
+  /* Section header */
+  .section-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px;
+  }
+  .section-header .icon-circle {
+    width: 36px; height: 36px;
+    background: rgba(79,195,247,0.12);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .section-header h2 { font-size: 22px; font-weight: 800; }
+
+  /* Cards */
+  .card {
+    background: #ffffff;
+    border: 1px solid rgba(10,10,10,0.1);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+  .card-title { font-weight: 700; font-size: 16px; margin-bottom: 8px; }
+  .card-desc { color: #6b7280; line-height: 1.7; font-size: 15px; }
+
+  /* Playground toggles - REDESIGNED */
+  .toggle-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .toggle-pill {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1.5px solid rgba(10,10,10,0.12);
+    background: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .toggle-pill:hover { border-color: rgba(10,10,10,0.25); color: #0a0a0a; }
+  .toggle-pill.on {
+    background: #4FC3F7;
+    color: #ffffff;
+    border-color: #4FC3F7;
+  }
+  .toggle-pill .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* Prompt block */
+  .prompt-block {
+    position: relative;
+    background: rgba(10,10,10,0.04);
+    border: 1px solid rgba(10,10,10,0.1);
+    border-radius: 14px;
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    color: #0a0a0a;
+  }
+  .prompt-line {
+    display: flex; align-items: flex-start; gap: 10px;
+    margin-bottom: 8px;
+    animation: fadeIn 0.3s ease;
+  }
+  .prompt-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid rgba(10,10,10,0.12);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: #6b7280;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { color: #0a0a0a; border-color: rgba(10,10,10,0.25); }
+
+  /* Quality score panel - REDESIGNED */
+  .score-panel {
+    background: linear-gradient(135deg, rgba(79,195,247,0.1), rgba(79,195,247,0.05));
+    border: 1px solid rgba(10,10,10,0.1);
+    border-radius: 16px;
+    padding: 20px;
+  }
+  .score-label { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.06em; }
+  .score-value { font-size: 40px; font-weight: 900; color: #0a0a0a; line-height: 1; margin-top: 6px; }
+  .score-value span { font-size: 16px; color: #6b7280; font-weight: 500; }
+  .score-bar { height: 6px; border-radius: 999px; background: rgba(10,10,10,0.08); margin: 14px 0; overflow: hidden; }
+  .score-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #4FC3F7, #2196F3); transition: width 0.5s; }
+  .score-meta { font-size: 12px; font-weight: 600; }
+  .score-hint { font-size: 12px; color: #6b7280; margin-top: 8px; line-height: 1.5; }
+
+  /* Step cards - REDESIGNED (consolidated) */
+  .step-card {
+    background: #ffffff;
+    border: 1px solid rgba(10,10,10,0.1);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+  .step-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 16px;
+  }
+  .step-number {
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    background: #4FC3F7;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-title { font-weight: 700; font-size: 16px; }
+  .step-subtitle { color: #6b7280; font-size: 12px; margin-top: 2px; }
+
+  /* Progress bar at top of how-to */
+  .progress-bar-container {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    background: #ffffff;
+    border: 1px solid rgba(10,10,10,0.1);
+    border-radius: 16px;
+  }
+  .progress-text { font-size: 12px; font-weight: 700; color: #6b7280; white-space: nowrap; }
+  .progress-track { flex: 1; height: 6px; border-radius: 999px; background: rgba(10,10,10,0.06); overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #4FC3F7, #2196F3); transition: width 0.4s; }
+  .progress-count { font-size: 13px; font-weight: 800; color: #0a0a0a; }
+
+  /* Tool badges - REDESIGNED */
+  .tool-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tool-badge {
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1.5px solid;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .tool-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Tag pills */
+  .tag-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag-pill {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(10,10,10,0.05);
+    color: #0a0a0a;
+  }
+  .tag-pill.accent {
+    background: rgba(79,195,247,0.12);
+    border: 1px solid rgba(79,195,247,0.3);
+  }
+
+  /* Anatomy grid */
+  .anatomy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .anatomy-item {
+    border: 1px solid rgba(10,10,10,0.1);
+    border-radius: 14px;
+    padding: 16px;
+    transition: border-color 0.2s;
+  }
+  .anatomy-item:hover { border-color: rgba(79,195,247,0.4); }
+  .anatomy-pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  /* Pro tip items - REDESIGNED */
+  .pro-tip {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(79,195,247,0.04);
+    border: 1px solid rgba(79,195,247,0.1);
+    margin-bottom: 8px;
+  }
+  .pro-tip-icon {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: #4FC3F7;
+    color: #ffffff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .pro-tip-text { font-size: 14px; line-height: 1.6; }
+
+  /* Checklist - REDESIGNED */
+  .checklist-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .checklist-item:hover { background: rgba(10,10,10,0.03); }
+  .check-circle {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid rgba(10,10,10,0.15);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .check-circle.done {
+    background: #4FC3F7;
+    border-color: #4FC3F7;
+    color: #ffffff;
+  }
+  .check-text { font-size: 14px; line-height: 1.5; }
+  .check-text.done { text-decoration: line-through; color: #6b7280; }
+
+  /* Mark done button - REDESIGNED */
+  .mark-done-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 18px;
+    border-radius: 12px;
+    background: #4FC3F7;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .mark-done-btn:hover { opacity: 0.85; }
+
+  /* Pattern cards */
+  .pattern-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pattern-card {
+    background: #ffffff;
+    border: 1px solid rgba(10,10,10,0.1);
+    border-radius: 16px;
+    padding: 20px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .pattern-card:hover {
+    border-color: rgba(79,195,247,0.3);
+    box-shadow: 0 4px 12px rgba(79,195,247,0.08);
+  }
+  .pattern-name { font-weight: 700; font-size: 15px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .pattern-desc { color: #6b7280; font-size: 13px; margin-bottom: 12px; line-height: 1.5; }
+  .pattern-example {
+    background: rgba(10,10,10,0.04);
+    border: 1px solid rgba(10,10,10,0.08);
+    border-radius: 10px;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 12px;
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+
+  /* Divider labels */
+  .divider-label {
+    display: flex; align-items: center; gap: 12px;
+    margin: 28px 0 16px;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b7280;
+  }
+  .divider-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(10,10,10,0.08);
+  }
+
+  /* Platform table - REDESIGNED */
+  .platform-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+  .platform-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: rgba(10,10,10,0.03);
+  }
+  .platform-table th:first-child { border-radius: 12px 0 0 12px; }
+  .platform-table th:last-child { border-radius: 0 12px 12px 0; }
+  .platform-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(10,10,10,0.06);
+    font-size: 14px;
+  }
+  .platform-table tr:last-child td { border-bottom: none; }
+  .platform-name {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 600;
+  }
+  .platform-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Compare: BEFORE / AFTER labels */
+  .compare-label {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 16px;
+  }
+  .compare-label.before { background: #fee2e2; color: #dc2626; }
+  .compare-label.after { background: #d1fae5; color: #059669; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Back -->
+  <a href="#" class="back-btn">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    Back
+  </a>
+
+  <!-- HERO - NEW -->
+  <div class="hero">
+    <h1>Prompt <span>Guide</span></h1>
+    <p>Master the art of AI prompting. Learn the anatomy, patterns, and platform-specific tricks that separate good prompts from great ones.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-value">12</div>
+        <div class="hero-stat-label">Sections</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">6</div>
+        <div class="hero-stat-label">Prompt Patterns</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">5</div>
+        <div class="hero-stat-label">How-To Guides</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- SIDEBAR - REDESIGNED -->
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <div class="sidebar-group-label">Prompt Craft</div>
+        <button class="sidebar-item active">
+          <span class="icon">&#9654;</span>
+          Playground
+          <span class="chevron">&#8250;</span>
+        </button>
+        <button class="sidebar-item">
+          <span class="icon">&#9638;</span>
+          Anatomy
+          <span class="chevron">&#8250;</span>
+        </button>
+        <button class="sidebar-item">
+          <span class="icon">&#10047;</span>
+          Variables
+          <span class="chevron">&#8250;</span>
+        </button>
+        <button class="sidebar-item">
+          <span class="icon">&#9878;</span>
+          Platforms
+          <span class="chevron">&#8250;</span>
+        </button>
+        <button class="sidebar-item">
+          <span class="icon">&#10024;</span>
+          Patterns
+          <span class="chevron">&#8250;</span>
+        </button>
+        <button class="sidebar-item">
+          <span class="icon">&#9745;</span>
+          Checklist
+          <span class="chevron">&#8250;</span>
+        </button>
+        <button class="sidebar-item">
+          <span class="icon">&#128161;</span>
+          Pro tips
+          <span class="chevron">&#8250;</span>
+        </button>
+
+        <div class="sidebar-group-label" style="margin-top: 8px;">How-To Guides</div>
+        <button class="sidebar-item">
+          <span class="icon">&#128248;</span>
+          Image
+          <span class="chevron">&#8250;</span>
+        </button>
+        <button class="sidebar-item">
+          <span class="icon">&#127760;</span>
+          Website
+          <span class="chevron">&#8250;</span>
+        </button>
+        <button class="sidebar-item">
+          <span class="icon">&#127909;</span>
+          Video
+          <span class="chevron">&#8250;</span>
+        </button>
+        <button class="sidebar-item">
+          <span class="icon">&#128187;</span>
+          Code
+          <span class="chevron">&#8250;</span>
+        </button>
+        <button class="sidebar-item">
+          <span class="icon">&#128196;</span>
+          Content
+          <span class="chevron">&#8250;</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-cta">
+        <div class="sidebar-cta-title">Ready to try?</div>
+        <div class="sidebar-cta-desc">Jump into the library and copy a tested prompt.</div>
+        <button class="sidebar-cta-btn">Browse prompts</button>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ==================== PLAYGROUND (REDESIGNED) ==================== -->
+      <div class="section-header">
+        <div class="icon-circle">&#9654;</div>
+        <h2>Playground</h2>
+      </div>
+
+      <div class="card">
+        <p class="card-desc" style="margin-bottom: 20px;">
+          Toggle prompt parts on and off - watch the prompt rebuild itself in real time.
+          The more complete the anatomy, the higher the quality score.
+        </p>
+
+        <div class="toggle-pills">
+          <button class="toggle-pill on"><span class="dot"></span> Role</button>
+          <button class="toggle-pill on"><span class="dot"></span> Task</button>
+          <button class="toggle-pill on"><span class="dot"></span> Context</button>
+          <button class="toggle-pill">+ Constraints</button>
+          <button class="toggle-pill">+ Format</button>
+          <button class="toggle-pill">+ Examples</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 200px; gap: 20px;">
+          <div class="prompt-block">
+            <button class="copy-btn" title="Copy">&#128203;</button>
+            <div class="prompt-line">
+              <span class="prompt-dot" style="background: #4FC3F7;"></span>
+              <span>You are a senior copywriter with 10 years of B2B SaaS experience.</span>
+            </div>
+            <div class="prompt-line">
+              <span class="prompt-dot" style="background: #0a0a0a;"></span>
+              <span>Write a 3-line LinkedIn hook announcing a new AI prompt library.</span>
+            </div>
+            <div class="prompt-line">
+              <span class="prompt-dot" style="background: #90b4ce;"></span>
+              <span>Audience: early-stage founders who skim feeds fast.</span>
+            </div>
+          </div>
+
+          <div class="score-panel">
+            <div class="score-label">Quality Score</div>
+            <div class="score-value">2.5 <span>/ 5</span></div>
+            <div class="score-bar"><div class="score-fill" style="width: 50%;"></div></div>
+            <div class="score-meta">3/6 parts included</div>
+            <div class="score-hint">Good start. Add constraints or format for more predictable output.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== IMAGE GEN (CONSOLIDATED 5 STEPS) ==================== -->
+      <div style="margin-top: 48px;">
+        <div class="section-header">
+          <div class="icon-circle">&#128248;</div>
+          <h2>Image Generation</h2>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="progress-bar-container">
+          <span class="progress-text">Progress</span>
+          <div class="progress-track">
+            <div class="progress-fill" style="width: 40%;"></div>
+          </div>
+          <span class="progress-count">2/5</span>
+        </div>
+
+        <!-- Step 1: Choose Tool -->
+        <div class="step-card" style="border-left: 3px solid #4FC3F7;">
+          <div class="step-header">
+            <div class="step-number">1</div>
+            <div>
+              <div class="step-title">Choose Your Tool</div>
+              <div class="step-subtitle">Pick an image generation platform and create an account</div>
+            </div>
+          </div>
+          <div class="tool-badges">
+            <span class="tool-badge" style="background: rgba(16,163,127,0.08); color: #10a37f; border-color: rgba(16,163,127,0.3);">
+              <span class="tool-dot" style="background: #10a37f;"></span> ChatGPT
+            </span>
+            <span class="tool-badge" style="background: rgba(124,58,237,0.08); color: #7C3AED; border-color: rgba(124,58,237,0.3);">
+              <span class="tool-dot" style="background: #7C3AED;"></span> Leonardo AI
+            </span>
+            <span class="tool-badge" style="background: rgba(10,10,10,0.06); color: #0a0a0a; border-color: rgba(10,10,10,0.15);">
+              <span class="tool-dot" style="background: #0a0a0a;"></span> Ideogram
+            </span>
+            <span class="tool-badge" style="background: rgba(79,195,247,0.08); color: #4FC3F7; border-color: rgba(79,195,247,0.3);">
+              <span class="tool-dot" style="background: #4FC3F7;"></span> Midjourney
+            </span>
+            <span class="tool-badge" style="background: rgba(144,180,206,0.1); color: #5a8aad; border-color: rgba(144,180,206,0.3);">
+              <span class="tool-dot" style="background: #90b4ce;"></span> Flux
+            </span>
+            <span class="tool-badge" style="background: rgba(79,195,247,0.08); color: #4FC3F7; border-color: rgba(79,195,247,0.3);">
+              <span class="tool-dot" style="background: #4FC3F7;"></span> Adobe Firefly
+            </span>
+          </div>
+          <div style="margin-top: 16px; display: flex; align-items: center; gap: 12px;">
+            <button class="mark-done-btn">Mark Done</button>
+            <span style="font-size: 12px; color: #6b7280; font-weight: 600;">2/5 completed</span>
+          </div>
+        </div>
+
+        <!-- Step 2: Build Your Prompt -->
+        <div class="step-card" style="border-left: 3px solid #4FC3F7;">
+          <div class="step-header">
+            <div class="step-number">2</div>
+            <div>
+              <div class="step-title">Build Your Prompt</div>
+              <div class="step-subtitle">Use the 4-part formula for consistent results</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px;">
+            <div style="border: 1px solid rgba(10,10,10,0.1); border-radius: 14px; padding: 14px; text-align: center;">
+              <div style="width: 28px; height: 28px; border-radius: 8px; background: #4FC3F7; color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-weight: 800; font-size: 12px;">1</div>
+              <div style="font-weight: 700; font-size: 13px;">Subject</div>
+            </div>
+            <div style="border: 1px solid rgba(10,10,10,0.1); border-radius: 14px; padding: 14px; text-align: center;">
+              <div style="width: 28px; height: 28px; border-radius: 8px; background: #4FC3F7; color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-weight: 800; font-size: 12px;">2</div>
+              <div style="font-weight: 700; font-size: 13px;">Style</div>
+            </div>
+            <div style="border: 1px solid rgba(10,10,10,0.1); border-radius: 14px; padding: 14px; text-align: center;">
+              <div style="width: 28px; height: 28px; border-radius: 8px; background: #4FC3F7; color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-weight: 800; font-size: 12px;">3</div>
+              <div style="font-weight: 700; font-size: 13px;">Background</div>
+            </div>
+            <div style="border: 1px solid rgba(10,10,10,0.1); border-radius: 14px; padding: 14px; text-align: center;">
+              <div style="width: 28px; height: 28px; border-radius: 8px; background: #4FC3F7; color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-weight: 800; font-size: 12px;">4</div>
+              <div style="font-weight: 700; font-size: 13px;">Quality</div>
+            </div>
+          </div>
+          <div class="prompt-block">
+            <button class="copy-btn" title="Copy">&#128203;</button>
+Luxury coffee cup,
+wooden table,
+cinematic lighting,
+ultra realistic</div>
+          <div style="margin-top: 16px; display: flex; align-items: center; gap: 12px;">
+            <button class="mark-done-btn">Mark Done</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Generate & Refine -->
+        <div class="step-card" style="border-left: 3px solid #4FC3F7;">
+          <div class="step-header">
+            <div class="step-number">3</div>
+            <div>
+              <div class="step-title">Generate & Refine</div>
+              <div class="step-subtitle">Paste, generate, then add details to improve</div>
+            </div>
+          </div>
+          <p style="color: #6b7280; margin-bottom: 12px; line-height: 1.6;">Add these details to refine your output:</p>
+          <div class="tag-pills">
+            <span class="tag-pill accent">Lighting</span>
+            <span class="tag-pill accent">Camera Angle</span>
+            <span class="tag-pill accent">Colors</span>
+            <span class="tag-pill accent">Mood</span>
+            <span class="tag-pill accent">Texture</span>
+            <span class="tag-pill accent">Time of Day</span>
+          </div>
+          <div style="margin-top: 16px; display: flex; align-items: center; gap: 12px;">
+            <button class="mark-done-btn">Mark Done</button>
+          </div>
+        </div>
+
+        <!-- Step 4: Download & Use -->
+        <div class="step-card" style="border-left: 3px solid rgba(10,10,10,0.08);">
+          <div class="step-header">
+            <div class="step-number" style="background: rgba(10,10,10,0.08); color: #6b7280;">4</div>
+            <div>
+              <div class="step-title">Download & Use</div>
+              <div class="step-subtitle">Export in your preferred format and use in projects</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 24px;">
+            <div>
+              <div style="font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; margin-bottom: 8px;">Formats</div>
+              <div class="tag-pills">
+                <span class="tag-pill">PNG</span>
+                <span class="tag-pill">JPG</span>
+                <span class="tag-pill">WebP</span>
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; margin-bottom: 8px;">Use for</div>
+              <div class="tag-pills">
+                <span class="tag-pill">Website</span>
+                <span class="tag-pill">Instagram</span>
+                <span class="tag-pill">Marketing</span>
+                <span class="tag-pill">Posters</span>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top: 16px; display: flex; align-items: center; gap: 12px;">
+            <button class="mark-done-btn">Mark Done</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== CHECKLIST (REDESIGNED) ==================== -->
+      <div style="margin-top: 48px;">
+        <div class="section-header">
+          <div class="icon-circle">&#9745;</div>
+          <h2>Quality Checklist</h2>
+        </div>
+
+        <div class="card">
+          <div class="checklist-item">
+            <div class="check-circle done">&#10003;</div>
+            <span class="check-text done">The task is a single, clear instruction.</span>
+          </div>
+          <div class="checklist-item">
+            <div class="check-circle done">&#10003;</div>
+            <span class="check-text done">The output format is specified (length, structure, tone).</span>
+          </div>
+          <div class="checklist-item">
+            <div class="check-circle"></div>
+            <span class="check-text">Context includes audience and intent.</span>
+          </div>
+          <div class="checklist-item">
+            <div class="check-circle"></div>
+            <span class="check-text">Constraints list what to avoid, not just what to do.</span>
+          </div>
+          <div class="checklist-item">
+            <div class="check-circle"></div>
+            <span class="check-text">Variables are named meaningfully and used consistently.</span>
+          </div>
+          <div class="checklist-item">
+            <div class="check-circle"></div>
+            <span class="check-text">An example of ideal output is included where possible.</span>
+          </div>
+          <div class="checklist-item">
+            <div class="check-circle"></div>
+            <span class="check-text">The prompt has been tested on at least two platforms.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== PATTERNS (REDESIGNED) ==================== -->
+      <div style="margin-top: 48px;">
+        <div class="section-header">
+          <div class="icon-circle">&#10024;</div>
+          <h2>Prompt Patterns</h2>
+        </div>
+
+        <div class="pattern-grid">
+          <div class="pattern-card">
+            <div class="pattern-name">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: #4FC3F7;"></span>
+              Role + Task
+            </div>
+            <div class="pattern-desc">Set a persona, then give a single clear task.</div>
+            <div class="pattern-example">You are a strict code reviewer. Review the function below for edge cases.</div>
+          </div>
+          <div class="pattern-card">
+            <div class="pattern-name">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: #4FC3F7;"></span>
+              Chain-of-thought
+            </div>
+            <div class="pattern-desc">Ask the model to reason step by step before answering.</div>
+            <div class="pattern-example">Think step by step. First list assumptions, then derive the answer.</div>
+          </div>
+          <div class="pattern-card">
+            <div class="pattern-name">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: #4FC3F7;"></span>
+              Few-shot
+            </div>
+            <div class="pattern-desc">Show 2-3 examples so the model imitates the shape you want.</div>
+            <div class="pattern-example">Input: apple -> Output: fruit.
+Input: carrot -> Output: vegetable.
+Input: banana -></div>
+          </div>
+          <div class="pattern-card">
+            <div class="pattern-name">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: #4FC3F7;"></span>
+              Structured output
+            </div>
+            <div class="pattern-desc">Demand JSON/markdown so results are parseable.</div>
+            <div class="pattern-example">Return strict JSON: { "title": string, "score": number }</div>
+          </div>
+          <div class="pattern-card">
+            <div class="pattern-name">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: #4FC3F7;"></span>
+              Self-critique
+            </div>
+            <div class="pattern-desc">Ask the model to critique & revise its own draft.</div>
+            <div class="pattern-example">Write the answer, then list 3 weaknesses, then rewrite.</div>
+          </div>
+          <div class="pattern-card">
+            <div class="pattern-name">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: #4FC3F7;"></span>
+              Negative prompting
+            </div>
+            <div class="pattern-desc">State what NOT to include.</div>
+            <div class="pattern-example">...minimal, clean. Avoid: text, watermarks, extra fingers.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== PRO TIPS (REDESIGNED) ==================== -->
+      <div style="margin-top: 48px;">
+        <div class="section-header">
+          <div class="icon-circle">&#128161;</div>
+          <h2>Pro Tips</h2>
+        </div>
+
+        <div>
+          <div class="pro-tip">
+            <div class="pro-tip-icon">&#10003;</div>
+            <span class="pro-tip-text"><strong>Start broad, narrow fast</strong> - First prompt gets you a draft; 2-3 refinements beat one "perfect" prompt.</span>
+          </div>
+          <div class="pro-tip">
+            <div class="pro-tip-icon">&#10003;</div>
+            <span class="pro-tip-text"><strong>Show, don't just tell</strong> - One example is worth three adjectives. Few-shot wins on tone.</span>
+          </div>
+          <div class="pro-tip">
+            <div class="pro-tip-icon">&#10003;</div>
+            <span class="pro-tip-text"><strong>Separate instructions from content</strong> - Use clear delimiters (---, ```). Models follow structure.</span>
+          </div>
+          <div class="pro-tip">
+            <div class="pro-tip-icon">&#10003;</div>
+            <span class="pro-tip-text"><strong>Name the failure mode</strong> - Tell it what NOT to do. "Avoid cliches." "No bullet points."</span>
+          </div>
+          <div class="pro-tip">
+            <div class="pro-tip-icon">&#10003;</div>
+            <span class="pro-tip-text"><strong>Version your prompts</strong> - Save what works. Track the change + the output improvement.</span>
+          </div>
+          <div class="pro-tip">
+            <div class="pro-tip-icon">&#10003;</div>
+            <span class="pro-tip-text"><strong>Temperature matters</strong> - Lower for code/JSON, higher for creative. If the app lets you set it.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== PLATFORM TABLE (REDESIGNED) ==================== -->
+      <div style="margin-top: 48px;">
+        <div class="section-header">
+          <div class="icon-circle">&#9878;</div>
+          <h2>Platform Differences</h2>
+        </div>
+
+        <div class="card" style="overflow: auto;">
+          <p class="card-desc" style="margin-bottom: 16px;">The same prompt rarely performs the same across platforms. Start with a text-first phrasing, then tune per platform.</p>
+          <table class="platform-table">
+            <thead>
+              <tr>
+                <th>Platform</th>
+                <th>Best at</th>
+                <th>How to prompt</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="platform-name"><span class="platform-dot" style="background: #10a37f;"></span> ChatGPT</span></td>
+                <td style="color: #6b7280;">Reasoning, long-form, code</td>
+                <td>Use system role + step-by-step tasks.</td>
+              </tr>
+              <tr>
+                <td><span class="platform-name"><span class="platform-dot" style="background: #4285f4;"></span> Gemini</span></td>
+                <td style="color: #6b7280;">Multimodal, web-aware</td>
+                <td>Give explicit sources and formats.</td>
+              </tr>
+              <tr>
+                <td><span class="platform-name"><span class="platform-dot" style="background: #0a0a0a;"></span> Grok</span></td>
+                <td style="color: #6b7280;">Conversational, current events</td>
+                <td>Add tone cues; tolerates casual prompts.</td>
+              </tr>
+              <tr>
+                <td><span class="platform-name"><span class="platform-dot" style="background: #4FC3F7;"></span> Midjourney</span></td>
+                <td style="color: #6b7280;">Stylized imagery, aesthetics</td>
+                <td>Use commas; end with --ar and --s.</td>
+              </tr>
+              <tr>
+                <td><span class="platform-name"><span class="platform-dot" style="background: #4FC3F7;"></span> Firefly</span></td>
+                <td style="color: #6b7280;">Brand-safe, commercial</td>
+                <td>Short descriptive phrases beat paragraphs.</td>
+              </tr>
+              <tr>
+                <td><span class="platform-name"><span class="platform-dot" style="background: #90b4ce;"></span> FLUX</span></td>
+                <td style="color: #6b7280;">Photoreal, fine control</td>
+                <td>Natural language, specify lens + lighting.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

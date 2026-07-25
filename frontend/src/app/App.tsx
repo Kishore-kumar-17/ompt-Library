@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useRef, useCallback, lazy, Suspense } from "react";
+import { useEffect, useState, useRef, useCallback, lazy, Suspense } from "react";
 import { Toaster } from "sonner";
 import LoadingScreen from "./components/LoadingScreen";
 import { Nav } from "./components/Nav";
@@ -8,10 +8,9 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { Home } from "./components/pages/Home";
 import { authStore } from "./lib/api";
 
+import { Library, LibraryLanding } from "./components/pages/Library";
+import { Detail } from "./components/pages/Detail";
 const CommandPalette   = lazy(() => import("./components/CommandPalette").then(m => ({ default: m.CommandPalette })));
-const Library          = lazy(() => import("./components/pages/Library").then(m => ({ default: m.Library })));
-const LibraryLanding   = lazy(() => import("./components/pages/Library").then(m => ({ default: m.LibraryLanding })));
-const Detail           = lazy(() => import("./components/pages/Detail").then(m => ({ default: m.Detail })));
 const Builder          = lazy(() => import("./components/pages/Builder").then(m => ({ default: m.Builder })));
 const Improver         = lazy(() => import("./components/pages/Improver").then(m => ({ default: m.Improver })));
 const Compare          = lazy(() => import("./components/pages/Compare").then(m => ({ default: m.Compare })));
@@ -136,7 +135,7 @@ export default function App() {
           {route === "home" && <Home go={setRoute} />}
           <Suspense fallback={<PageFallback />}>
             {route === "library"   && <LibraryLanding go={setRoute} />}
-            {libraryFamily         && <Library key={route} go={setRoute} family={libraryFamily} initialCategory={libraryInitialCategory} />}
+            {libraryFamily         && <Library key={libraryFamily ?? "library"} go={setRoute} family={libraryFamily} initialCategory={libraryInitialCategory} />}
             {detailId              && <Detail key={detailId} id={detailId} defaultPlatform={detailPlatform} go={setRoute} />}
             {route === "builder"   && <Builder go={setRoute} />}
             {route === "improver"  && <Improver go={setRoute} />}

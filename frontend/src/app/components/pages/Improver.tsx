@@ -198,7 +198,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
         {FAMILIES.map(f => {
           const Icon = f.icon;
           const on = family === f.key;
-          const locked = f.key === "text" || f.key === "content";
+          const locked = f.key === "text" || f.key === "content" || f.key === "video";
           return (
             <button
               key={f.key}

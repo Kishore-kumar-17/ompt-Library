@@ -38,6 +38,18 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (skip || !visible) return;
+    // Without this, a wheel scroll during the splash hit-tests to this
+    // `fixed inset-0 z-[9999]` overlay (not whatever section is underneath),
+    // so any scroll-jacking listener below never fires — but the browser's
+    // native scroll still moves the page unintercepted, letting a user who
+    // scrolls immediately on load sail straight past a pinned section like
+    // PromptFactory before the splash even clears.
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, [skip, visible]);
+
   if (skip) return null;
 
   return (

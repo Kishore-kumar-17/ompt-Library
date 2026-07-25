@@ -14,13 +14,13 @@ const sections = [
   { key: "tips",       label: "Pro tips",             icon: Lightbulb, group: "craft" },
   { key: "image-gen",  label: "Image Generation",     icon: Image,     group: "how-to" },
   { key: "web-gen",    label: "Website Generation",   icon: Globe,     group: "how-to" },
-  { key: "video-gen",  label: "Video Generation",     icon: Video,     group: "how-to" },
-  { key: "code-gen",   label: "Code Generation",      icon: Code2,     group: "how-to" },
-  { key: "content-gen",label: "Content Generation",   icon: FileText,  group: "how-to" },
+  { key: "video-gen",  label: "Video Generation",     icon: Video,     group: "how-to", locked: true },
+  { key: "code-gen",   label: "Code Generation",      icon: Code2,     group: "how-to", locked: true },
+  { key: "content-gen",label: "Content Generation",   icon: FileText,  group: "how-to", locked: true },
 ];
 
 export function Guide({ go, initialSection }: { go: (p: string) => void; initialSection?: string }) {
-  const validInitial = initialSection && sections.some(s => s.key === initialSection) ? initialSection : "playground";
+  const validInitial = initialSection && sections.some(s => s.key === initialSection && !s.locked) ? initialSection : "playground";
   const [active, setActive] = useState(validInitial);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const activeSection = sections.find(s => s.key === active) ?? sections[0];
@@ -71,6 +71,20 @@ export function Guide({ go, initialSection }: { go: (p: string) => void; initial
               {sections.filter(s => s.group === "how-to").map((s) => {
                 const Icon = s.icon;
                 const on = active === s.key;
+                if (s.locked) {
+                  return (
+                    <button
+                      key={s.key}
+                      aria-disabled="true"
+                      onClick={() => toast("Coming Soon", { description: `${s.label} guide will be available soon.` })}
+                      className="w-full flex items-center gap-3 p-3 rounded-xl text-left transition text-[#6b7280]/50 cursor-not-allowed hover:bg-[#0a0a0a]/[0.02]"
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span style={{ fontWeight: 500 }}>{s.label}</span>
+                      <span className="ml-auto px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#4FC3F7]/15 text-[#0a0a0a]">SOON</span>
+                    </button>
+                  );
+                }
                 return (
                   <button
                     key={s.key}
@@ -758,8 +772,8 @@ function ToolBadge({ name, color }: { name: string; color: string }) {
 
 function ProTip({ text }: { text: string }) {
   return (
-    <div className="flex items-start gap-2">
-      <span className="text-[15px]">✅</span>
+    <div className="flex items-start gap-2.5">
+      <span className="w-1.5 h-1.5 rounded-full bg-[#4FC3F7] shrink-0" style={{ marginTop: 8 }} />
       <span className="text-[#0a0a0a]" style={{ lineHeight: 1.6 }}>{text}</span>
     </div>
   );
@@ -914,6 +928,7 @@ function FeaturedWebsiteCard({ design, onClick }: { design: WebsiteDesign; onCli
 }
 
 function WebGenGuide({ go }: { go: (p: string) => void }) {
+  const { done, toggle } = useStepDone(5);
   const featured = FEATURED_WEBSITE_IDS
     .map(id => websiteDesigns.find(d => d.id === id))
     .filter((d): d is WebsiteDesign => Boolean(d));
@@ -944,121 +959,141 @@ function WebGenGuide({ go }: { go: (p: string) => void }) {
 
   return (
     <Section title="Website Generation" icon={Globe}>
-      {/* Featured Websites Showcase */}
-      <div className="rounded-2xl border border-[#0a0a0a]/10 bg-gradient-to-br from-[#0a0a0a]/[0.03] to-[#4FC3F7]/[0.03] p-5 -mx-1">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <div className="text-[#0a0a0a] text-[15px]" style={{ fontWeight: 800 }}>Top Website Designs</div>
-            <div className="text-[#6b7280] text-[12px] mt-0.5">Hand-picked from our library - click to explore</div>
-          </div>
-          <button
-            onClick={() => go("library:website")}
-            className="text-[#0a0a0a] hover:text-[#4FC3F7] transition-colors text-[12px]"
-            style={{ fontWeight: 600 }}
-          >
-            View all →
-          </button>
-        </div>
-        <div
-          ref={marqueeRef}
-          className="overflow-x-auto overflow-y-hidden no-scrollbar"
-          style={{
-            maskImage: "linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%)",
-            WebkitOverflowScrolling: "touch",
-          }}
-          onMouseEnter={pauseMarquee}
-          onMouseLeave={() => resumeMarqueeSoon(0)}
-          onTouchStart={pauseMarquee}
-          onTouchEnd={() => resumeMarqueeSoon(2500)}
-          onPointerDown={pauseMarquee}
-          onPointerUp={() => resumeMarqueeSoon(1000)}
-          onPointerCancel={() => resumeMarqueeSoon(1000)}
-        >
-          <div className="flex gap-4 py-1" style={{ width: "max-content" }}>
-            {[...featured, ...featured].map((d, i) => (
-              <FeaturedWebsiteCard
-                key={`${d.id}-${i}`}
-                design={d}
-                onClick={() => go("website-detail:" + d.slug)}
-              />
-            ))}
-          </div>
-        </div>
-        <style>{`
-          .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
-          .no-scrollbar::-webkit-scrollbar { display: none; }
-        `}</style>
-      </div>
-
-      <Card>
-        <div className="text-[#0a0a0a] mb-2" style={{ fontWeight: 700 }}>What is Website Generation?</div>
-        <p className="text-[#6b7280]" style={{ lineHeight: 1.6 }}>
-          Website prompts help AI generate full landing pages, SaaS interfaces, portfolio sites, e-commerce
-          stores, and agency websites - complete with layout, components, and styling.
+      {/* Step 1 - Choose Your Tool & Set Up */}
+      <StepCard stepIndex={0} totalSteps={5} done={done} onToggle={toggle}>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 1 - Choose Your Tool & Set Up</div>
+        <p className="text-[#6b7280] mb-4" style={{ lineHeight: 1.6 }}>
+          Select a web AI tool or code generator. These platforms convert text prompts into full HTML/React layouts with responsive designs.
         </p>
-        <div className="flex flex-wrap gap-2 mt-4">
-          {["Landing pages", "SaaS websites", "Portfolio websites", "E-commerce stores", "Agency websites"].map(t => (
+        <div className="flex flex-wrap gap-2 mb-4">
+          <ToolBadge name="Lovable"   color="#4FC3F7" />
+          <ToolBadge name="Bolt.new"  color="#0a0a0a" />
+          <ToolBadge name="v0"        color="#0a0a0a" />
+          <ToolBadge name="Cursor"    color="#10a37f" />
+          <ToolBadge name="ChatGPT"   color="#10a37f" />
+          <ToolBadge name="Claude"    color="#7C3AED" />
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {["Landing Pages", "SaaS Websites", "Portfolio Sites", "E-commerce Stores", "Agency Websites"].map(t => (
             <span key={t} className="px-2.5 py-1 rounded-full bg-[#0a0a0a]/8 text-[#0a0a0a] text-[12px]" style={{ fontWeight: 600 }}>{t}</span>
           ))}
         </div>
-      </Card>
+      </StepCard>
 
-      <Card>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Popular Tools</div>
-        <div className="flex flex-wrap gap-2">
-          <ToolBadge name="Lovable"   color="#4FC3F7" />
-          <ToolBadge name="Bolt"      color="#0a0a0a" />
-          <ToolBadge name="v0"        color="#0a0a0a" />
-          <ToolBadge name="Replit AI" color="#4FC3F7" />
-          <ToolBadge name="Cursor"    color="#10a37f" />
-          <ToolBadge name="CodeSX"    color="#90b4ce" />
+      {/* Step 2 - Explore & Pick a Design */}
+      <StepCard stepIndex={1} totalSteps={5} done={done} onToggle={toggle}>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 2 - Explore & Pick a Design</div>
+        <p className="text-[#6b7280] mb-4" style={{ lineHeight: 1.6 }}>
+          Browse our hand-picked website design showcase below or pick a pre-tested prompt scaffold from the Website Library.
+        </p>
+        
+        {/* Featured Websites Showcase */}
+        <div className="rounded-2xl border border-[#0a0a0a]/10 bg-gradient-to-br from-[#0a0a0a]/[0.03] to-[#4FC3F7]/[0.03] p-5 mb-2">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="text-[#0a0a0a] text-[15px]" style={{ fontWeight: 800 }}>Top Website Designs</div>
+              <div className="text-[#6b7280] text-[12px] mt-0.5">Hand-picked from our library - click to explore</div>
+            </div>
+            <button
+              onClick={() => go("library:website")}
+              className="text-[#0a0a0a] hover:text-[#4FC3F7] transition-colors text-[12px]"
+              style={{ fontWeight: 600 }}
+            >
+              View all →
+            </button>
+          </div>
+          <div
+            ref={marqueeRef}
+            className="overflow-x-auto overflow-y-hidden no-scrollbar"
+            style={{
+              maskImage: "linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%)",
+              WebkitOverflowScrolling: "touch",
+            }}
+            onMouseEnter={pauseMarquee}
+            onMouseLeave={() => resumeMarqueeSoon(0)}
+            onTouchStart={pauseMarquee}
+            onTouchEnd={() => resumeMarqueeSoon(2500)}
+            onPointerDown={pauseMarquee}
+            onPointerUp={() => resumeMarqueeSoon(1000)}
+            onPointerCancel={() => resumeMarqueeSoon(1000)}
+          >
+            <div className="flex gap-4 py-1" style={{ width: "max-content" }}>
+              {[...featured, ...featured].map((d, i) => (
+                <FeaturedWebsiteCard
+                  key={`${d.id}-${i}`}
+                  design={d}
+                  onClick={() => go("website-detail:" + d.slug)}
+                />
+              ))}
+            </div>
+          </div>
+          <style>{`
+            .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+            .no-scrollbar::-webkit-scrollbar { display: none; }
+          `}</style>
         </div>
-      </Card>
+      </StepCard>
 
-      <Card>
-        <div className="text-[#0a0a0a] mb-4" style={{ fontWeight: 700 }}>How to Use</div>
-        <div className="space-y-4">
-          <HowToStep n={1} text="Choose a website prompt from the Library." />
-          <HowToStep n={2} text="Copy the prompt." />
-          <HowToStep n={3} text="Paste into Lovable, Bolt, or v0 and generate." />
-          <HowToStep n={4} text="Refine with follow-up prompts for colors, fonts, and spacing." />
-        </div>
-        <div className="mt-5">
+      {/* Step 3 - Structure Your Prompt */}
+      <StepCard stepIndex={2} totalSteps={5} done={done} onToggle={toggle}>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 3 - Structure Your Prompt</div>
+        <p className="text-[#6b7280] mb-3" style={{ lineHeight: 1.6 }}>
+          A strong website prompt defines layout sections, component requirements, color mode, and brand aesthetic.
+        </p>
+        <div className="mt-4 mb-4">
           <div className="text-[#6b7280] text-[12px] mb-2" style={{ fontWeight: 600 }}>EXAMPLE PROMPT</div>
           <PromptBlock>{`Create a modern AI SaaS landing page.
 
 Features:
 - Hero section with headline + CTA
-- Feature cards (3-column)
-- Pricing section
-- Testimonials
-- FAQ
-- Dark mode toggle
+- Feature cards (3-column layout)
+- Pricing section with monthly/yearly toggle
+- Testimonial grid
+- FAQ accordion
+- Dark mode support
 
 Style:
-- Minimal, Apple-inspired
-- Use Inter font
-- Premium SaaS aesthetic`}</PromptBlock>
+- Minimal, Apple-inspired layout
+- Inter font with clean line spacing
+- High-contrast primary CTA buttons`}</PromptBlock>
         </div>
-        <div className="mt-5">
-          <div className="text-[#6b7280] text-[12px] mb-2" style={{ fontWeight: 600 }}>REFINEMENT PROMPT</div>
-          <PromptBlock>{`Use purple gradients.
-Add glassmorphism to cards.
-Increase whitespace between sections.
-Make the CTA button 48px height.`}</PromptBlock>
-        </div>
-      </Card>
+      </StepCard>
 
-      <Card>
-        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Pro Tips</div>
-        <div className="space-y-3">
-          <ProTip text="Always specify layout - '3-column feature section', 'full-width hero'." />
-          <ProTip text="Name every component - Navbar, Hero, Features, Pricing, Footer." />
-          <ProTip text="Reference real design systems - 'Inspired by Linear and Figma'." />
-          <ProTip text="Iterate in small steps - one refinement prompt per change is easier to track." />
+      {/* Step 4 - Generate & Refine Interactively */}
+      <StepCard stepIndex={3} totalSteps={5} done={done} onToggle={toggle}>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 4 - Generate & Refine Interactively</div>
+        <p className="text-[#6b7280] mb-3" style={{ lineHeight: 1.6 }}>
+          Paste into your AI tool, inspect the generated live preview, and refine with targeted follow-up prompts.
+        </p>
+        <div className="mb-4">
+          <div className="text-[#6b7280] text-[12px] mb-2" style={{ fontWeight: 600 }}>REFINEMENT PROMPT EXAMPLE</div>
+          <PromptBlock>{`Add purple gradients to hero backdrop.
+Apply glassmorphism (backdrop blur) to feature cards.
+Increase spacing between landing page sections to 96px.
+Make the CTA button 48px height with smooth rounded corners.`}</PromptBlock>
         </div>
-      </Card>
+        <div className="space-y-3">
+          <ProTip text="Always specify layout structure - e.g., '3-column grid', 'full-bleed hero'." />
+          <ProTip text="Name every component - Navbar, Hero, Feature Cards, Pricing Table, Footer." />
+          <ProTip text="Reference established design systems - e.g., 'Inspired by Linear and Stripe'." />
+          <ProTip text="Iterate step-by-step - send one specific refinement per prompt for cleaner edits." />
+        </div>
+      </StepCard>
+
+      {/* Step 5 - Export & Deploy */}
+      <StepCard stepIndex={4} totalSteps={5} done={done} onToggle={toggle}>
+        <div className="text-[#0a0a0a] mb-3" style={{ fontWeight: 700 }}>Step 5 - Download Scaffold & Deploy</div>
+        <p className="text-[#6b7280] mb-4" style={{ lineHeight: 1.6 }}>
+          Download the 9 scaffold files (PRD, Architecture, Tasks, Design System) or connect your repository directly to Vercel/Netlify for deployment.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <ToolBadge name="Vercel"     color="#0a0a0a" />
+          <ToolBadge name="Netlify"    color="#10a37f" />
+          <ToolBadge name="GitHub"     color="#0a0a0a" />
+          <ToolBadge name="Cloudflare" color="#FF6B35" />
+        </div>
+      </StepCard>
     </Section>
   );
 }

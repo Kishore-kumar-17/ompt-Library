@@ -488,7 +488,7 @@ export function Builder({ go }: { go: (p: string) => void }) {
             <div className="text-[13px] text-[#6b7280] mb-2">What are you creating?</div>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
               {FAMILIES.map((f) => {
-                const locked = f.key === "text" || f.key === "content";
+                const locked = f.key === "text" || f.key === "content" || f.key === "video";
                 return (
                   <button
                     key={f.key}

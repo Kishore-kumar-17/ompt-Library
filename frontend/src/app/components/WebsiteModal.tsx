@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Copy, ThumbsUp, ThumbsDown } from "lucide-react";
+import { X, Copy, ThumbsUp, ThumbsDown, Check, Heart, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { type WebsiteDesign } from "../lib/website-data";
 import { websitePlatformVersions } from "../lib/website-platforms";
@@ -254,12 +254,39 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
   const promptText = versions[platform] ?? Object.values(versions)[0] ?? design.description;
   const activePl   = websitePlatforms.find(p => p.key === platform);
 
+  const [copied, setCopied] = useState(false);
+  const [saved, setSaved] = useState(false);
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(promptText);
+      setCopied(true);
       toast.success("Prompt copied", { description: `${design.title} - ${activePl?.name}` });
+      setTimeout(() => setCopied(false), 2000);
     } catch {
       toast.error("Failed to copy to clipboard");
+    }
+  };
+
+  const handleSave = () => {
+    setSaved(v => !v);
+    toast.success(saved ? "Removed from saved" : "Saved to your library");
+  };
+
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: design.title,
+          text: design.description,
+          url: window.location.href,
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success("Link copied to clipboard!");
+      }
+    } catch {
+      // User cancelled share
     }
   };
 
@@ -328,9 +355,19 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
                   <h2 className="text-[#0a0a0a] text-[18px] font-bold leading-tight">{design.title}</h2>
                   <p className="text-[#6b7280] text-[12px]">{design.style}</p>
                 </div>
-                <div className="flex items-center gap-1 shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0">
                   <ThumbsUp className="w-3.5 h-3.5 text-[#6b7280] hover:text-[#4FC3F7] cursor-pointer transition-colors" />
                   <ThumbsDown className="w-3.5 h-3.5 text-[#6b7280] hover:text-red-500 cursor-pointer transition-colors" />
+                  <Heart
+                    className={`w-3.5 h-3.5 cursor-pointer transition-colors ${saved ? "fill-[#4FC3F7] text-[#4FC3F7]" : "text-[#6b7280] hover:text-[#4FC3F7]"}`}
+                    onClick={handleSave}
+                    title={saved ? "Saved" : "Save"}
+                  />
+                  <Share2
+                    className="w-3.5 h-3.5 text-[#6b7280] hover:text-[#0a0a0a] cursor-pointer transition-colors"
+                    onClick={handleShare}
+                    title="Share"
+                  />
                   {design.tested && <span className="w-1.5 h-1.5 rounded-full bg-[#28c840] ml-1" />}
                 </div>
               </div>
@@ -365,8 +402,18 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
 
             {/* Prompt text */}
             <div className="flex-1 overflow-y-auto px-5 py-4">
-              <div className="text-[10px] text-[#6b7280] uppercase tracking-widest font-bold mb-2">
-                {activePl?.name} prompt
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-[10px] text-[#6b7280] uppercase tracking-widest font-bold">
+                  {activePl?.name} prompt
+                </div>
+                <button
+                  onClick={handleCopy}
+                  title={`Copy ${activePl?.name} Prompt`}
+                  aria-label={`Copy ${activePl?.name} prompt`}
+                  className="p-1 rounded-md text-[#6b7280] hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/5 transition-colors flex items-center gap-1"
+                >
+                  {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
+                </button>
               </div>
               <pre className="whitespace-pre-wrap text-[#0a0a0a] font-mono text-[11px] leading-relaxed bg-[#0a0a0a]/3 rounded-xl p-3">
                 {promptText}
@@ -379,8 +426,8 @@ export function WebsiteModal({ design, onClose }: { design: WebsiteDesign; onClo
                 onClick={handleCopy}
                 className="w-full h-11 rounded-full bg-[#4FC3F7] text-[#0a0a0a] font-bold text-[14px] flex items-center justify-center gap-2 hover:bg-[#4FC3F7]/90 transition-colors"
               >
-                <Copy className="w-4 h-4" />
-                Copy {activePl?.name} Prompt
+                {copied ? <Check className="w-4 h-4 text-green-700" /> : <Copy className="w-4 h-4" />}
+                {copied ? "Copied!" : `Copy ${activePl?.name} Prompt`}
               </button>
               <p className="text-[10px] text-[#6b7280] text-center mt-2">
                 Paste directly into {activePl?.name} to generate this website

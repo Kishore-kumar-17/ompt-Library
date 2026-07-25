@@ -15,7 +15,6 @@ const NAV_LINKS = [
   { label: "Library",      route: "library"      },
   { label: "Builder",      route: "builder"      },
   { label: "Improver",     route: "improver"     },
-  { label: "Compare",      route: "compare"      },
   { label: "Guide",        route: "guide"        },
   { label: "Pricing",      route: "pricing"      },
 ];

@@ -1,0 +1,76 @@
+[
+  {
+    "slug": "PEO-CUL-012",
+    "fixes": {
+      "gemini": "EDINBURGH PIPER AW26 Medium Shot Cultural Heritage Portrait 4:5 [SUBJECT] white beard ruddy [OUTFIT] Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. [SETTING]. McCullin Harris Tweed Nat Geo. Exclude: harsh flash, plastic skin, AI hallucination artifacts, cropped extremities, muddy shadows.",
+      "grok": "EDINBURGH PIPER AW26 Medium Shot Cultural [SUBJECT] white beard ruddy [OUTFIT] Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. [SETTING]. McCullin Harris Tweed. Exclude: harsh flash, plastic skin, AI hallucination artifacts, cropped extremities.",
+      "firefly": "EDINBURGH PIPER AW26 Medium Shot Cultural Heritage Portrait 4:5 [SUBJECT] white beard ruddy [OUTFIT] Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. [SETTING]. McCullin Harris Tweed. Exclude: harsh flash, plastic skin, AI hallucination artifacts, cropped extremities, muddy shadows."
+    }
+  },
+  {
+    "slug": "PEO-CUL-015",
+    "fixes": {
+      "gemini": "GUADALAJARA SON AW26 Medium Shot Cultural [SUBJECT] tan [OUTFIT] Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. [SETTING]. Graciela Iturbide Vogue México Nat Geo. Exclude: harsh flash, plastic skin, AI hallucination artifacts, cropped extremities, muddy shadows.",
+      "grok": "GUADALAJARA SON AW26 Medium Shot Cultural [SUBJECT] tan [OUTFIT] Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. [SETTING]. Graciela Iturbide Vogue México. Exclude: harsh flash, plastic skin, AI hallucination artifacts, cropped extremities.",
+      "firefly": "GUADALAJARA SON AW26 Medium Shot Cultural [SUBJECT] tan [OUTFIT] Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. [SETTING]. Graciela Iturbide Vogue México Nat Geo. Exclude: harsh flash, plastic skin, AI hallucination artifacts, cropped extremities, muddy shadows."
+    }
+  },
+  {
+    "slug": "PEO-PRO-012",
+    "fixes": {
+      "gemini": "Architect at Drafting Table Environmental Editorial Portrait 3:4. Subject: [SUBJECT], [SETTING] shade. Rule of Thirds eyes 38% x 36% y Eye-Level 0° 6° tilt 3:4 vertical waist-up 55% frame. Sony A7R V 50mm G Master f/2.5 1/125s ISO 320 handheld. Desk Lamp Key + Window Ambient Anglepoise 3000K 8-inch diffusion sock camera-right 40° 0.6m key motivated, 4×6ft silk north window camera-left 2.2m ambient fill, 2×3ft negative flag camera-right 1.0m contrast. Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. Capture One Warm-10 grain 8 +0.1 EV. Blueprint 34% cream 22% denim 18% concrete 16% brass 10%. Platon WSJ Teller i-D Dezeen. Exclude: plastic skin, flat lighting, cluttered desk, color cast, logo distortion.",
+      "grok": "Architect at Drafting Table Environmental Editorial Portrait 3:4. Subject: [SUBJECT], [SETTING]. Rule of Thirds eyes 38% x 36% y Eye-Level 0° 6° tilt 3:4 waist-up 55% frame. Sony A7R V 50mm G Master f/2.5 1/125s ISO 320 handheld. Desk Lamp Key + Window Ambient Anglepoise 3000K 8-inch diffusion sock camera-right 40° 0.6m key, 4×6ft silk window camera-left 2.2m fill, 2×3ft negative flag camera-right 1.0m contrast. Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. Capture One Warm-10 grain 8. Blueprint 34% cream 22% denim 18% concrete 16% brass 10%. Platon Teller Dezeen. Exclude: plastic skin, flat lighting, cluttered desk, color cast, logo distortion.",
+      "firefly": "Architect at Drafting Table Environmental Editorial Portrait 3:4. Subject: [SUBJECT], [SETTING]. Rule of Thirds eyes 38% x 36% y Eye-Level 0° 6° tilt 3:4 waist-up 55% frame. Sony A7R V 50mm G Master f/2.5 1/125s ISO 320 handheld. Desk Lamp Key + Window Ambient Anglepoise 3000K 8-inch diffusion sock camera-right 40° 0.6m key, 4×6ft silk window camera-left 2.2m fill, 2×3ft negative flag camera-right 1.0m contrast. Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. Capture One Warm-10 grain 8. Blueprint cream denim concrete brass palette. Platon Teller Dezeen. Exclude: plastic skin, flat lighting, cluttered desk, color cast, logo distortion."
+    }
+  },
+  {
+    "slug": "PEO-PRO-015",
+    "fixes": {
+      "gemini": "Software Engineer Portrait Environmental Editorial Portrait 4:5. Subject: [SUBJECT], [SETTING]. Rule of Thirds eyes 44% x 36% y Eye-Level 0° 4° downtilt 4:5 chest-up 55% frame. Sony A7R V 50mm G Master f/2.0 1/125s ISO 640 handheld. Window Key + Screen-Glow Fill 4×6ft silk window camera-left 55° 1.8m 5600K key, dual monitor-blue-glow #2E6CE0 panels front 0.6m fill wash jaw, amber-desk-lamp practical camera-right 0.5m warm rim, 4×4ft black flag overhead. Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. Capture One Neutral-06 grain 7 +0.1 EV. Monitor-blue 32% heather-grey 24% desk-black 20% fair-skin 14% amber 10%. Platon Hasbun Verge. Exclude: plastic skin, flat lighting, cluttered desk, color cast, logo distortion.",
+      "grok": "Software Engineer Portrait Environmental Editorial Portrait 4:5. Subject: [SUBJECT], [SETTING]. Rule of Thirds eyes 44% x 36% y Eye-Level 0° 4° downtilt 4:5 chest-up 55% frame. Sony A7R V 50mm G Master f/2.0 1/125s ISO 640 handheld. Window Key + Screen-Glow Fill 4×6ft silk window camera-left 55° 1.8m 5600K key, monitor-blue-glow #2E6CE0 panels front 0.6m fill, amber-desk-lamp practical camera-right 0.5m rim, 4×4ft black flag overhead. Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. Capture One Neutral-06 grain 7. Monitor-blue 32% heather-grey 24% black 20% skin 14% amber 10%. Platon Hasbun Verge. Exclude: plastic skin, flat lighting, cluttered desk, color cast, logo distortion.",
+      "firefly": "Software Engineer Portrait Environmental Editorial Portrait 4:5. Subject: [SUBJECT], [SETTING]. Rule of Thirds eyes 44% x 36% y Eye-Level 0° 4° downtilt 4:5 chest-up 55% frame. Sony A7R V 50mm G Master f/2.0 1/125s ISO 640 handheld. Window Key + Screen-Glow Fill 4×6ft silk window camera-left 55° 1.8m 5600K key, monitor-blue-glow #2E6CE0 panels front 0.6m fill, amber-desk-lamp practical camera-right 0.5m rim, 4×4ft black flag overhead. Subsurface Scattering · Visible Pores · Fine Micro-Textures · natural capillary flush. Capture One Neutral-06 grain 7. Monitor-blue heather-grey black skin amber palette. Platon Hasbun Verge. Exclude: plastic skin, flat lighting, cluttered desk, color cast, logo distortion."
+    }
+  },
+  {
+    "slug": "VRL-005",
+    "fixes": {
+      "grok": "Black-and-white studio split portrait: [SUBJECT], adult (2026) chin on hands smiling warmly at the child on right. Plain backdrop, cinematic lighting. 4:5.",
+      "firefly": "A soft emotional black-and-white studio split portrait showing [SUBJECT] with an innocent smile on the left and the adult version (\"2026\") looking warmly at the child on the right, in cinematic diffused studio lighting."
+    }
+  },
+  {
+    "slug": "VRL-006",
+    "fixes": {
+      "gemini": "Warm-toned cinematic portrait collage of [SUBJECT], deep maroon outfit, sheer dupatta, multiple face close-ups (eyes, lips, side profile) arranged aesthetically, beige-orange lily flowers around the frame, blurred music player overlay. Golden-hour lighting, editorial aesthetic, 4K.",
+      "grok": "Warm cinematic portrait collage of [SUBJECT], maroon outfit, multiple close-up face crops, lily flowers, blurred music player overlay, golden-hour lighting, 4K.",
+      "firefly": "A warm-toned cinematic portrait collage of [SUBJECT] in a deep maroon outfit, featuring multiple face close-ups, orange lily flowers, and a blurred music player overlay in golden-hour lighting."
+    }
+  },
+  {
+    "slug": "VRL-009",
+    "fixes": {
+      "grok": "Overhead selfie of [SUBJECT] at ivy-covered stone cottage wall, golden hour, earth-tone knit sweater, blooming vines in foreground, warm light, shallow DOF, 9:16."
+    }
+  },
+  {
+    "slug": "VRL-011",
+    "fixes": {
+      "grok": "Luxury editorial portrait of [SUBJECT] resting forehead against majestic dragon, cold silver-ash palette, cinematic fantasy realism, Vogue-level aesthetic. No text."
+    }
+  },
+  {
+    "slug": "VRL-012",
+    "fixes": {
+      "gemini": "Luxurious high-fashion editorial of [SUBJECT], seated beside an ancient fountain with rose-scattered reflective water. Rose crown in hair, warm afternoon golden light, Paolo Roversi-inspired painterly aesthetic. No text.",
+      "grok": "Luxury editorial of [SUBJECT] by ancient fountain, rose petals on water, rose crown, warm afternoon gold light, Hasselblad painterly aesthetic. No text.",
+      "firefly": "A luxurious high-fashion editorial of [SUBJECT], seated beside an ancient garden fountain with rose-scattered reflective water and a cascading rose crown in her hair."
+    }
+  },
+  {
+    "slug": "VRL-015",
+    "fixes": {
+      "grok": "Character portrait in Crayon Shin-chan anime style — stubby proportions, big oval eyes, bold outlines, flat cel colors. [SUBJECT]. Transparent background.",
+      "firefly": "A full-body character portrait in the official Crayon Shin-chan anime style with exaggerated cartoon humor, stubby proportions, big oval eyes, bold outlines, flat cel coloring, and [SUBJECT] on a transparent background."
+    }
+  }
+]
