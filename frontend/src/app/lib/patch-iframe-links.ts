@@ -24,8 +24,7 @@ export function patchIframeLinks(iframe: HTMLIFrameElement, slug: string) {
 
     /** Rewrite an absolute path to the preview directory. Returns null if no rewrite needed. */
     function rewritePath(href: string): string | null {
-      if (!href || !href.startsWith("/") || href.startsWith("//")) return null;
-      if (href.startsWith(basePath)) return null;
+      if (!href || (!href.startsWith("/") && !href.startsWith(basePath)) || href.startsWith("//")) return null;
 
       let pathname = href;
       let search = "";
@@ -36,12 +35,22 @@ export function patchIframeLinks(iframe: HTMLIFrameElement, slug: string) {
       const queryIdx = pathname.indexOf("?");
       if (queryIdx !== -1) { search = pathname.slice(queryIdx); pathname = pathname.slice(0, queryIdx); }
 
+      if (pathname.startsWith(basePath)) {
+        if (pathname.endsWith("/")) {
+          return `${pathname}index.html${search}${hash}`;
+        }
+        if (!pathname.endsWith(".html") && !pathname.includes(".")) {
+          return `${pathname}/index.html${search}${hash}`;
+        }
+        return null;
+      }
+
       if (pathname === "/" || pathname === "") {
         return `${basePath}/index.html${search}${hash}`;
       }
 
       const cleanPath = pathname.replace(/\/$/, "");
-      return `${basePath}${cleanPath}.html${search}${hash}`;
+      return `${basePath}${cleanPath}/index.html${search}${hash}`;
     }
 
     /** Rewrite a full URL string or URL object */
@@ -53,7 +62,6 @@ export function patchIframeLinks(iframe: HTMLIFrameElement, slug: string) {
       } catch { return null; }
 
       if (parsed.origin !== win!.location.origin) return null;
-      if (parsed.pathname.startsWith(basePath)) return null;
 
       const rewritten = rewritePath(parsed.pathname + parsed.search + parsed.hash);
       if (!rewritten) return null;
