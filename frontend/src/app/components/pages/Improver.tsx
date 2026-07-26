@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Wand2, Copy, Check, RefreshCw, ArrowLeft, Image, Video, FileText, PenTool, Globe, Save } from "lucide-react";
+import { Wand2, Copy, Check, RefreshCw, ArrowLeft, Image, Video, FileText, PenTool, Globe } from "lucide-react";
 import { toast } from "sonner";
 import { platforms, videoPlatforms, websitePlatforms } from "../theme";
 import { improverApi, variablesApi, refineApi, authStore, type ImproverResult, type RefineTurn, type PromptFormat } from "../../lib/api";
@@ -375,16 +375,7 @@ export function Improver({ go }: { go: (p: string) => void }) {
                 onClick={handleCopy}
                 className="h-10 px-5 rounded-full bg-[#4FC3F7] text-[#0a0a0a] font-bold inline-flex items-center gap-2 hover:bg-[#4FC3F7]/90 transition-colors"
               >
-                {copied ? <><Check className="w-4 h-4" />Copied!</> : <><Copy className="w-4 h-4" />Copy</>}
-              </button>
-              <button
-                onClick={() => {
-                  if (!authStore.getUser()) { toast.error("Sign in to save prompts"); return; }
-                  toast("Saving improved prompts isn't available yet", { description: "Copy it for now — we're working on it." });
-                }}
-                className="h-10 px-5 rounded-full border border-[#0a0a0a]/15 text-[#0a0a0a] font-semibold inline-flex items-center gap-2 hover:bg-[#0a0a0a]/5 transition-colors"
-              >
-                <Save className="w-4 h-4" />Save to Library
+                {copied ? <><Check className="w-4 h-4" />Copied!</> : <><Copy className="w-4 h-4" />Copy Prompt</>}
               </button>
             </div>
           )}

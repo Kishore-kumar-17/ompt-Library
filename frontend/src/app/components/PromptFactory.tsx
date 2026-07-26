@@ -53,9 +53,35 @@ export function PromptFactory({ go }: { go: (p: string) => void }) {
   const [interactive, setInteractive] = useState(false);
 
   useEffect(() => {
-    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    const isNarrow = window.matchMedia?.("(max-width: 768px)").matches;
-    setInteractive(!reduceMotion && !isNarrow);
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const updateInteractive = () => {
+      setInteractive(!motionQuery.matches && !mediaQuery.matches);
+    };
+
+    updateInteractive();
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", updateInteractive);
+      motionQuery.addEventListener("change", updateInteractive);
+    } else {
+      mediaQuery.addListener(updateInteractive);
+      motionQuery.addListener(updateInteractive);
+    }
+
+    window.addEventListener("resize", updateInteractive);
+
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener("change", updateInteractive);
+        motionQuery.removeEventListener("change", updateInteractive);
+      } else {
+        mediaQuery.removeListener(updateInteractive);
+        motionQuery.removeListener(updateInteractive);
+      }
+      window.removeEventListener("resize", updateInteractive);
+    };
   }, []);
 
   const jumpTo = (index: number) => {
@@ -158,18 +184,18 @@ export function PromptFactory({ go }: { go: (p: string) => void }) {
   return (
     <section
       ref={sectionRef}
-      className="relative border-t border-[#0a0a0a]/10 px-6"
+      className="relative border-t border-[#0a0a0a]/10 px-4 sm:px-6 overflow-hidden"
       style={{ background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)" }}
     >
       {interactive ? (
-        <div ref={stageRef} className="flex flex-col items-center justify-center w-full" style={{ minHeight: `calc(100vh - ${NAV_HEIGHT}px)` }}>
+        <div ref={stageRef} className="flex flex-col items-center justify-center w-full max-w-full overflow-hidden" style={{ minHeight: `calc(100vh - ${NAV_HEIGHT}px)` }}>
           <h2
-            className="text-center mb-2 shrink-0"
+            className="text-center mb-2 shrink-0 px-4"
             style={{ fontSize: "clamp(22px, 3.4vw, 40px)", fontWeight: 400, lineHeight: 1.08, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
           >
             From Idea to <span style={{ fontWeight: 800, color: ACCENT }}>Creation.</span>
           </h2>
-          <p className="text-[#6b7280] text-center max-w-[560px] mx-auto mb-4 md:mb-6 shrink-0" style={{ fontSize: "clamp(12px, 1.3vw, 15px)", lineHeight: 1.5 }}>
+          <p className="text-[#6b7280] text-center max-w-[560px] mx-auto mb-4 md:mb-6 shrink-0 px-4" style={{ fontSize: "clamp(12px, 1.3vw, 15px)", lineHeight: 1.5 }}>
             A complete workflow for turning ideas into exceptional AI results.
           </p>
 
@@ -272,25 +298,25 @@ export function PromptFactory({ go }: { go: (p: string) => void }) {
           </div>
         </div>
       ) : (
-        <div className="py-20 md:py-28">
+        <div className="py-12 md:py-28 max-w-full overflow-hidden">
           <h2
-            className="text-center mb-3"
-            style={{ fontSize: "clamp(30px, 4.5vw, 48px)", fontWeight: 400, lineHeight: 1.08, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+            className="text-center mb-3 px-2"
+            style={{ fontSize: "clamp(24px, 4.5vw, 48px)", fontWeight: 400, lineHeight: 1.08, letterSpacing: "-0.035em", fontFamily: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
           >
             From Idea to <span style={{ fontWeight: 800, color: ACCENT }}>Creation.</span>
           </h2>
-          <p className="text-[#6b7280] text-center max-w-[560px] mx-auto mb-16 md:mb-20" style={{ fontSize: "clamp(14px, 1.6vw, 18px)", lineHeight: 1.6 }}>
+          <p className="text-[#6b7280] text-center max-w-[560px] mx-auto mb-10 md:mb-20 px-2" style={{ fontSize: "clamp(13px, 1.6vw, 18px)", lineHeight: 1.6 }}>
             A complete workflow for turning ideas into exceptional AI results.
           </p>
-          <div className="relative w-full max-w-[560px] mx-auto flex flex-col gap-16">
-            <div className="absolute left-7 top-7 bottom-7 w-1 rounded-full bg-[#0a0a0a]/8" />
+          <div className="relative w-full max-w-[560px] mx-auto flex flex-col gap-8 sm:gap-16">
+            <div className="absolute left-6 sm:left-7 top-6 sm:top-7 bottom-6 sm:bottom-7 w-1 rounded-full bg-[#0a0a0a]/8" />
             {MODULES.map((m) => (
-              <div key={m.number} className="relative flex items-center gap-5">
+              <div key={m.number} className="relative flex items-center gap-3 sm:gap-5 w-full">
                 <IconNode Icon={m.icon} isActive />
                 <ModuleCard m={m} isActive />
               </div>
             ))}
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center mt-2 sm:mt-4">
               <button
                 onClick={() => go("builder")}
                 className="inline-flex items-center gap-2 bg-[#0a0a0a] text-white rounded-full px-6 py-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4FC3F7] focus-visible:outline-offset-2"
@@ -310,10 +336,10 @@ function IconNode({ Icon, isActive }: { Icon: any; isActive: boolean }) {
   return (
     <div className="relative z-10 shrink-0 flex items-center justify-center">
       <div
-        className="w-14 h-14 rounded-full flex items-center justify-center border-2 bg-white transition-colors"
+        className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border-2 bg-white transition-colors"
         style={{ borderColor: isActive ? ACCENT : "rgba(10,10,10,0.15)" }}
       >
-        <Icon className="w-6 h-6" style={{ color: isActive ? ACCENT : "#6b7280" }} />
+        <Icon className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: isActive ? ACCENT : "#6b7280" }} />
       </div>
     </div>
   );
@@ -322,7 +348,7 @@ function IconNode({ Icon, isActive }: { Icon: any; isActive: boolean }) {
 function ModuleCard({ m, isActive, complete }: { m: (typeof MODULES)[number]; isActive: boolean; complete?: boolean }) {
   return (
     <div
-      className="bg-white rounded-2xl border p-6 text-left transition-[border-color,box-shadow] duration-300"
+      className="bg-white rounded-2xl border p-4 sm:p-6 text-left transition-[border-color,box-shadow] duration-300 flex-1 min-w-0 max-w-[280px] sm:max-w-none sm:w-[260px]"
       style={{
         borderColor: complete || isActive ? ACCENT : "rgba(10,10,10,0.1)",
         boxShadow: complete
@@ -331,19 +357,18 @@ function ModuleCard({ m, isActive, complete }: { m: (typeof MODULES)[number]; is
             ? `0 0 0 1px ${ACCENT}, 0 16px 40px rgba(79,195,247,0.26)`
             : "0 1px 2px rgba(10,10,10,0.04)",
         transitionDelay: complete ? "120ms" : "0ms",
-        width: 260,
       }}
     >
-      <div className="flex items-baseline gap-2.5 mb-2">
-        <span className="text-[13px] text-[#6b7280] font-mono">{m.number}</span>
-        <span className="text-[20px]" style={{ fontWeight: 700 }}>{m.title}</span>
+      <div className="flex items-baseline gap-2 mb-1.5 sm:mb-2">
+        <span className="text-[12px] sm:text-[13px] text-[#6b7280] font-mono">{m.number}</span>
+        <span className="text-[17px] sm:text-[20px]" style={{ fontWeight: 700 }}>{m.title}</span>
       </div>
-      <div className="text-[14px] text-[#6b7280] mb-3">{m.subtitle}</div>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="text-[13px] sm:text-[14px] text-[#6b7280] mb-2.5 sm:mb-3">{m.subtitle}</div>
+      <div className="flex flex-wrap gap-1 sm:gap-1.5">
         {m.hints.map((h) => (
           <span
             key={h}
-            className="px-2.5 py-1 rounded-full text-[12px] border"
+            className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-[12px] border"
             style={{ borderColor: isActive ? `${ACCENT}55` : "rgba(10,10,10,0.12)", color: isActive ? "#0a0a0a" : "#6b7280" }}
           >
             {h}

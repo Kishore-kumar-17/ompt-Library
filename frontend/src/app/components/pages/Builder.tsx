@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   Copy, Sparkles, Wand2, ChevronDown, ChevronUp,
-  RefreshCw, Check, ArrowRight, Layers, ArrowLeft, Save, Download,
+  RefreshCw, Check, ArrowRight, Layers, ArrowLeft, Download,
 } from "lucide-react";
 import { toast } from "sonner";
 import { platforms, videoPlatforms, websitePlatforms } from "../theme";
@@ -965,23 +965,11 @@ export function Builder({ go }: { go: (p: string) => void }) {
                 <button
                   onClick={handleDownload}
                   disabled={!hasGenerated || isLoading}
-                  className="h-11 rounded-xl border border-[#0a0a0a]/15 text-[#0a0a0a] text-[13px] flex items-center justify-center gap-2 hover:bg-[#0a0a0a]/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  className="h-11 rounded-xl border border-[#0a0a0a]/15 text-[#0a0a0a] text-[13px] flex items-center justify-center gap-2 hover:bg-[#0a0a0a]/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all col-span-2"
                   style={{ fontWeight: 600 }}
                 >
                   <Download className="w-4 h-4" />
                   Download as .md
-                </button>
-                <button
-                  onClick={() => {
-                    if (!authStore.getUser()) { toast.error("Sign in to save prompts"); return; }
-                    toast("Saving generated prompts isn't available yet", { description: "Copy or download it for now — we're working on it." });
-                  }}
-                  disabled={!hasGenerated || isLoading}
-                  className="h-11 rounded-xl border border-[#0a0a0a]/15 text-[#0a0a0a] text-[13px] flex items-center justify-center gap-2 hover:bg-[#0a0a0a]/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all col-span-2"
-                  style={{ fontWeight: 600 }}
-                >
-                  <Save className="w-4 h-4" />
-                  Save to Library
                 </button>
               </>
             ) : (
@@ -1004,19 +992,6 @@ export function Builder({ go }: { go: (p: string) => void }) {
                 >
                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   {copied ? "Copied!" : "Copy Prompt"}
-                </button>
-
-                <button
-                  onClick={() => {
-                    if (!authStore.getUser()) { toast.error("Sign in to save prompts"); return; }
-                    toast("Saving generated prompts isn't available yet", { description: "Copy or download it for now — we're working on it." });
-                  }}
-                  disabled={!hasGenerated || isLoading}
-                  className="h-11 rounded-xl border border-[#0a0a0a]/15 text-[#0a0a0a] text-[13px] flex items-center justify-center gap-2 hover:bg-[#0a0a0a]/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all col-span-2"
-                  style={{ fontWeight: 600 }}
-                >
-                  <Save className="w-4 h-4" />
-                  Save to Library
                 </button>
               </>
             )}

@@ -50,11 +50,11 @@ export function Footer({ go }: { go: (route: string) => void }) {
       </div>
 
       {/* Giant watermark area */}
-      <div className="relative w-full" style={{ height: "clamp(180px, 22vw, 320px)" }}>
+      <div className="relative w-full max-w-full overflow-hidden" style={{ height: "clamp(80px, 16vw, 320px)" }}>
         <div
-          className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
+          className="absolute inset-0 flex items-center justify-center pointer-events-none select-none px-4 text-center"
           style={{
-            fontSize: "clamp(140px, 20vw, 340px)",
+            fontSize: "clamp(36px, 14vw, 340px)",
             fontWeight: 900,
             letterSpacing: "-0.03em",
             lineHeight: 1,
